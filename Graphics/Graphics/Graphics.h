@@ -3,7 +3,7 @@
 #define __GRAPHICS_H__
 
 
-namespace Graphics
+namespace graphics
 {
 	void Draw();
 

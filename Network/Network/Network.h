@@ -3,7 +3,7 @@
 #define __NETWORK_H__
 
 
-namespace Network
+namespace network
 {
 
 	void Send();

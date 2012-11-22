@@ -3,7 +3,7 @@
 #include "Graphics.h"
 
 
-void Graphics::Draw()
+void graphics::Draw()
 {
 
 }

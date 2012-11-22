@@ -3,13 +3,13 @@
 #include "Network.h"
 
 
-void Network::Send()
+void network::Send()
 {
 
 }
 
 
-void Network::Recv()
+void network::Recv()
 {
 
 }
