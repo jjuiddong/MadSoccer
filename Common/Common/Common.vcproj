@@ -193,6 +193,62 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 		</Filter>
+		<Filter
+			Name="Math"
+			>
+			<File
+				RelativePath=".\math\Math.h"
+				>
+			</File>
+			<File
+				RelativePath=".\math\Matrix.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\math\Matrix.h"
+				>
+			</File>
+			<File
+				RelativePath=".\math\plane.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\math\plane.h"
+				>
+			</File>
+			<File
+				RelativePath=".\math\Quaternion.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\math\Quaternion.h"
+				>
+			</File>
+			<File
+				RelativePath=".\math\triangle.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\math\triangle.h"
+				>
+			</File>
+			<File
+				RelativePath=".\math\Vector2.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\math\Vector2.h"
+				>
+			</File>
+			<File
+				RelativePath=".\math\Vector3.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\math\Vector3.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\ReadMe.txt"
 			>

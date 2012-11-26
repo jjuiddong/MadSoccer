@@ -23,5 +23,5 @@
 #include "../../Common/Common/Common.h"
 #include "../../Graphics/Graphics/Graphics.h"
 #include "../../Network/Network/Network.h"
-#include "../../AI/ai/AI.h"
+#include "../../AI/AI/AI.h"
 
