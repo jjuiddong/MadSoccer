@@ -1,5 +1,5 @@
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "box.h"
 
 
@@ -125,22 +125,22 @@ float Box::GetSize()
 //-----------------------------------------------------------------------------//
 void Box::Render()
 {
-	g_pDevice->SetRenderState( D3DRS_LIGHTING, FALSE );
-	g_pDevice->SetFVF( D3DFVF_XYZ );
-	g_pDevice->SetTransform( D3DTS_WORLD, (D3DXMATRIX*)&m_matWorld );
-	g_pDevice->DrawPrimitiveUP( D3DPT_LINESTRIP, 7, m_Box, sizeof(Vector3) );	
-	g_pDevice->SetRenderState( D3DRS_LIGHTING, TRUE );
+// 	g_pDevice->SetRenderState( D3DRS_LIGHTING, FALSE );
+// 	g_pDevice->SetFVF( D3DFVF_XYZ );
+// 	g_pDevice->SetTransform( D3DTS_WORLD, (D3DXMATRIX*)&m_matWorld );
+// 	g_pDevice->DrawPrimitiveUP( D3DPT_LINESTRIP, 7, m_Box, sizeof(Vector3) );	
+// 	g_pDevice->SetRenderState( D3DRS_LIGHTING, TRUE );
 }
 //-----------------------------------------------------------------------------//
 // 계층구조출력시 사용된다.
 //-----------------------------------------------------------------------------//
 void Box::Render_Hierarchy()
 {
-	g_pDevice->SetRenderState( D3DRS_LIGHTING, FALSE );
-	g_pDevice->SetFVF( D3DFVF_XYZ );
-	g_pDevice->MultiplyTransform( D3DTS_WORLD, (D3DXMATRIX*)&m_matWorld );
-	g_pDevice->DrawPrimitiveUP( D3DPT_LINESTRIP, 7, m_Box, sizeof(Vector3) );	
-	g_pDevice->SetRenderState( D3DRS_LIGHTING, TRUE );
+// 	g_pDevice->SetRenderState( D3DRS_LIGHTING, FALSE );
+// 	g_pDevice->SetFVF( D3DFVF_XYZ );
+// 	g_pDevice->MultiplyTransform( D3DTS_WORLD, (D3DXMATRIX*)&m_matWorld );
+// 	g_pDevice->DrawPrimitiveUP( D3DPT_LINESTRIP, 7, m_Box, sizeof(Vector3) );	
+// 	g_pDevice->SetRenderState( D3DRS_LIGHTING, TRUE );
 }
 
 
@@ -181,7 +181,7 @@ BOOL Box::Pick(const Vector2 &pickPos)
 	triangle[ 11].Init(box[4], box[6], box[7]);
 
 	Vector3 vOrig, vDir;
-	d3d::GetPickRay( (int)pickPos.x, (int)pickPos.y, &vOrig, &vDir );
+//	d3d::GetPickRay( (int)pickPos.x, (int)pickPos.y, &vOrig, &vDir );
 
 	BOOL isPick = FALSE;
 	float a, b, c;

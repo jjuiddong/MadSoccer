@@ -197,6 +197,14 @@
 			Name="Math"
 			>
 			<File
+				RelativePath=".\math\box.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\math\box.h"
+				>
+			</File>
+			<File
 				RelativePath=".\math\Math.h"
 				>
 			</File>

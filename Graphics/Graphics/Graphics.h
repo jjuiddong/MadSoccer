@@ -5,6 +5,7 @@
 
 namespace graphics
 {
+	void Init(HWND hWnd);
 	void Draw();
 
 };

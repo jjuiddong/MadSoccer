@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameApp", "GameApp\GameApp.vcproj", "{19A7C033-51E7-44A7-B07E-3C5E478A9414}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F5006545-7481-45EC-935C-0A8BFFF6637D} = {F5006545-7481-45EC-935C-0A8BFFF6637D}
+		{B38832D9-1311-42A3-8B82-BF802E8D3098} = {B38832D9-1311-42A3-8B82-BF802E8D3098}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Graphics", "..\Graphics\Graphics\Graphics.vcproj", "{14EC1FB5-9956-4030-A15B-77287E3346D7}"
 EndProject
