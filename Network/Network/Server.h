@@ -19,14 +19,13 @@ namespace network
 		virtual ~CServer();
 
 	protected:
-		SOCKET		m_ListenSocket;
-		int			m_ServerPort;
-		bool		m_IsServerOn;
+		SOCKET				m_ListenSocket;
+		int					m_ServerPort;
+		bool				m_IsServerOn;			// 서버가 정상적으로 실행이 되었다면 true
+		CRITICAL_SECTION	m_CriticalSection;
 
 		SocketList	m_ClientSockets;
 		PacketList	m_Packets;
-
-	protected:
 
 	public:
 		bool				Start(int port);
@@ -34,10 +33,12 @@ namespace network
 
 		SOCKET				GetListenSocket() { return m_ListenSocket; }
 		bool				IsServerOn() { return m_IsServerOn; }
-		const SocketList&		GetClientSockets() { return m_ClientSockets; }
+		const SocketList&	GetClientSockets() { return m_ClientSockets; }
 		bool				IsExist(SOCKET socket);
 		const PacketList&	GetPackets() { return m_Packets; }
 		void				MakeFDSET( fd_set *pfdset);
+		void				EnterSync();
+		void				LeaveSync();
 
 		bool				AddClient(SOCKET sock);
 		bool				RemoveClient(SOCKET sock);

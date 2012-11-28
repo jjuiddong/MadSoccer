@@ -119,18 +119,11 @@ bool network::StopClient(CClient *pClt)
 //------------------------------------------------------------------------
 void network::Proc()
 {
-// 	ServerItor sit = m_ServerList.begin();
-// 	while (m_ServerList.end() != sit)
-// 	{
-// 		CServer *psvr = *sit++;
-// 		psvr->Proc();
-// 	}
-// 
-// 	ClientItor cit = m_ClientList.begin();
-// 	while (m_ClientList.end() != cit)
-// 	{
-// 		CClient *pclt = *cit++;
-// 		pclt->Proc();
-// 	}
+	ClientItor cit = m_ClientList.begin();
+	while (m_ClientList.end() != cit)
+	{
+		CClient *pclt = *cit++;
+		pclt->Proc();
+	}
 }
 

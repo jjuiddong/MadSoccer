@@ -14,6 +14,7 @@ CServer::CServer() :
 	m_IsServerOn(true)
 {
 	m_ServerPort = 2333;
+	InitializeCriticalSection( &m_CriticalSection );
 
 }
 
@@ -180,6 +181,7 @@ void CServer::Clear()
 	}
 	m_ClientSockets.clear();
 
+	DeleteCriticalSection( &m_CriticalSection );
 	closesocket(m_ListenSocket);
 	WSACleanup();
 }
@@ -280,4 +282,22 @@ bool CServer::SendAll(const CPacket &packet)
 	}
 
 	return true;
+}
+
+
+//------------------------------------------------------------------------
+// 동기화 시작
+//------------------------------------------------------------------------
+void CServer::EnterSync()
+{
+	EnterCriticalSection( &m_CriticalSection );
+}
+
+
+//------------------------------------------------------------------------
+// 동기화 끝
+//------------------------------------------------------------------------
+void CServer::LeaveSync()
+{
+	LeaveCriticalSection( &m_CriticalSection );
 }
