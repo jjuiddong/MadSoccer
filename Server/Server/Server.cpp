@@ -1,8 +1,8 @@
-// GameApp.cpp : 응용 프로그램에 대한 진입점을 정의합니다.
+// Server.cpp : 응용 프로그램에 대한 진입점을 정의합니다.
 //
 
 #include "stdafx.h"
-#include "GameApp.h"
+#include "Server.h"
 
 #define MAX_LOADSTRING 100
 
@@ -11,12 +11,34 @@ HINSTANCE hInst;								// 현재 인스턴스입니다.
 TCHAR szTitle[MAX_LOADSTRING];					// 제목 표시줄 텍스트입니다.
 TCHAR szWindowClass[MAX_LOADSTRING];			// 기본 창 클래스 이름입니다.
 
+using namespace network;
+
+// 패킷을 받으면 연결된 모든 클라이언트에게 메세지를 보낸다.
+class ChatServer : public network::CServer
+{
+protected:
+	virtual void ProcessPacket( const CPacket &rcvPacket )
+	{
+		if (!IsExist(rcvPacket.GetSenderSocket()))
+			return;
+
+		// 클라이언트에게 값을 되돌려 줍니다.
+		char buf[ 256];
+		strcpy_s(buf, "server send ");
+		strcat_s(buf, rcvPacket.GetData());
+		CPacket sendPacket(GetListenSocket(), buf);
+		SendAll(sendPacket);
+	}
+};
+
+ChatServer g_Server;
+
+
 
 // 이 코드 모듈에 들어 있는 함수의 정방향 선언입니다.
 ATOM				MyRegisterClass(HINSTANCE hInstance);
 BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
@@ -32,7 +54,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	// 전역 문자열을 초기화합니다.
 	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-	LoadString(hInstance, IDC_GAMEAPP, szWindowClass, MAX_LOADSTRING);
+	LoadString(hInstance, IDC_SERVER, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
 
 	// 응용 프로그램 초기화를 수행합니다.
@@ -41,7 +63,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		return FALSE;
 	}
 
-	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_GAMEAPP));
+	network::StartServer( 2333, &g_Server );
+
+	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_SERVER));
 
 	// 기본 메시지 루프입니다.
 	while (GetMessage(&msg, NULL, 0, 0))
@@ -82,10 +106,10 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	wcex.cbClsExtra		= 0;
 	wcex.cbWndExtra		= 0;
 	wcex.hInstance		= hInstance;
-	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_GAMEAPP));
+	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_SERVER));
 	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
 	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
-	wcex.lpszMenuName	= MAKEINTRESOURCE(IDC_GAMEAPP);
+	wcex.lpszMenuName	= MAKEINTRESOURCE(IDC_SERVER);
 	wcex.lpszClassName	= szWindowClass;
 	wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
@@ -109,7 +133,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
 
    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, 800, 600, NULL, NULL, hInstance, NULL);
+      CW_USEDEFAULT, 0, 300, 300, NULL, NULL, hInstance, NULL);
 
    if (!hWnd)
    {
@@ -121,7 +145,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    return TRUE;
 }
-
 
 //
 //  함수: WndProc(HWND, UINT, WPARAM, LPARAM)
@@ -147,9 +170,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// 메뉴의 선택 영역을 구문 분석합니다.
 		switch (wmId)
 		{
-		case IDM_ABOUT:
-			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-			break;
+// 		case IDM_ABOUT:
+// 			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+// 			break;
 		case IDM_EXIT:
 			DestroyWindow(hWnd);
 			break;
@@ -157,20 +180,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
 		break;
-	case WM_KEYDOWN:
-		switch (wParam)
-		{
-		case VK_ESCAPE:
-			PostQuitMessage(0);
-			break;
-		case VK_RETURN:
-			break;
-		}
-
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
 		// TODO: 여기에 그리기 코드를 추가합니다.
 		EndPaint(hWnd, &ps);
+		break;
+	case WM_KEYDOWN:
+		{
+			switch (wParam)
+			{
+			case VK_ESCAPE:
+				PostQuitMessage(0);
+				break;
+			}
+		}
 		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
@@ -182,21 +205,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 // 정보 대화 상자의 메시지 처리기입니다.
-INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	UNREFERENCED_PARAMETER(lParam);
-	switch (message)
-	{
-	case WM_INITDIALOG:
-		return (INT_PTR)TRUE;
-
-	case WM_COMMAND:
-		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-		{
-			EndDialog(hDlg, LOWORD(wParam));
-			return (INT_PTR)TRUE;
-		}
-		break;
-	}
-	return (INT_PTR)FALSE;
-}
+// INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+// {
+// 	UNREFERENCED_PARAMETER(lParam);
+// 	switch (message)
+// 	{
+// 	case WM_INITDIALOG:
+// 		return (INT_PTR)TRUE;
+// 
+// 	case WM_COMMAND:
+// 		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+// 		{
+// 			EndDialog(hDlg, LOWORD(wParam));
+// 			return (INT_PTR)TRUE;
+// 		}
+// 		break;
+// 	}
+// 	return (INT_PTR)FALSE;
+// }

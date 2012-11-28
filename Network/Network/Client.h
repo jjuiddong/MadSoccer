@@ -19,14 +19,25 @@ namespace network
 	protected:
 		std::string	m_ServerIP;
 		int			m_ServerPort;
+		SOCKET		m_Socket;			// Socket
+		bool		m_IsConnect;
 
 	public:
-		virtual bool Start();
-		virtual bool Stop();
-		virtual void Connect();
-		virtual void OnMemberJoin();
-		virtual void OnMemberLeave();
-		virtual bool Proc();
+		bool		Start(std::string ip, int port);
+		bool		Stop();
+		void		Clear();
+		bool		Proc();
+
+		bool		IsConnect() const { return m_IsConnect; }
+		bool		Send(const CPacket &packet);
+
+	protected:
+		// oeverriding
+		virtual void ProcessPacket( const CPacket &rcvPacket ) {}
+		virtual void OnConnect() {}
+		virtual void OnDisconnect();
+		virtual void OnMemberJoin() {}
+		virtual void OnMemberLeave() {}
 
 	};
 

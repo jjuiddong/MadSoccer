@@ -14,11 +14,11 @@ namespace network
 	class CClient;
 
 	// Server
-	bool StartServer(CServer *pSvr);
+	bool StartServer(int port, CServer *pSvr);
 	bool StopServer(CServer *pSvr);
 
 	// Client
-	bool StartClient(CClient *pClt);
+	bool StartClient(std::string ip, int port, CClient *pClt);
 	bool StopClient(CClient *pClt);
 
 	// Common

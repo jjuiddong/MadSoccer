@@ -49,7 +49,7 @@ public:
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-bool network::StartServer(CServer *pSvr)
+bool network::StartServer(int port, CServer *pSvr)
 {
 	if (!pSvr)
 		return false;
@@ -57,7 +57,7 @@ bool network::StartServer(CServer *pSvr)
 	m_ServerList.push_back( pSvr );
 
 	// 서버 시작에 관련된 코드 추가
-	return pSvr->Start();
+	return pSvr->Start(port);
 }
 
 
@@ -83,7 +83,7 @@ bool network::StopServer(CServer *pSvr)
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-bool network::StartClient(CClient *pClt)
+bool network::StartClient(std::string ip, int port, CClient *pClt)
 {
 	if (!pClt)
 		return false;
@@ -91,7 +91,7 @@ bool network::StartClient(CClient *pClt)
 	m_ClientList.push_back( pClt );
 
 	// 클라이언트 접속 코드 추가
-	return pClt->Start();
+	return pClt->Start(ip, port);
 }
 
 
@@ -119,18 +119,18 @@ bool network::StopClient(CClient *pClt)
 //------------------------------------------------------------------------
 void network::Proc()
 {
-	ServerItor sit = m_ServerList.begin();
-	while (m_ServerList.end() != sit)
-	{
-		CServer *psvr = *sit++;
-		psvr->Proc();
-	}
-
-	ClientItor cit = m_ClientList.begin();
-	while (m_ClientList.end() != cit)
-	{
-		CClient *pclt = *cit++;
-		pclt->Proc();
-	}
+// 	ServerItor sit = m_ServerList.begin();
+// 	while (m_ServerList.end() != sit)
+// 	{
+// 		CServer *psvr = *sit++;
+// 		psvr->Proc();
+// 	}
+// 
+// 	ClientItor cit = m_ClientList.begin();
+// 	while (m_ClientList.end() != cit)
+// 	{
+// 		CClient *pclt = *cit++;
+// 		pclt->Proc();
+// 	}
 }
 

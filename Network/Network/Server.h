@@ -9,6 +9,7 @@
 
 #pragma once
 
+
 namespace network
 {
 	class CServer
@@ -18,26 +19,43 @@ namespace network
 		virtual ~CServer();
 
 	protected:
-		typedef std::list<SOCKET> SockList;
-		typedef SockList::iterator SockItor;
-
 		SOCKET		m_ListenSocket;
 		int			m_ServerPort;
-		SockList	m_SockList;
+		bool		m_IsServerOn;
+
+		SocketList	m_ClientSockets;
+		PacketList	m_Packets;
 
 	protected:
-		bool AddClient(SOCKET sock);
-		bool RemoveClient(SOCKET sock);
-		void Clear();
 
 	public:
-		virtual bool Start();
-		virtual bool Stop();
-		virtual void OnListen();
-		virtual void OnClientJoin();
-		virtual void OnClientLeave();
-		virtual void Recv();
-		virtual bool Proc();
+		bool				Start(int port);
+		bool				Stop();
+
+		SOCKET				GetListenSocket() { return m_ListenSocket; }
+		bool				IsServerOn() { return m_IsServerOn; }
+		const SocketList&		GetClientSockets() { return m_ClientSockets; }
+		bool				IsExist(SOCKET socket);
+		const PacketList&	GetPackets() { return m_Packets; }
+		void				MakeFDSET( fd_set *pfdset);
+
+		bool				AddClient(SOCKET sock);
+		bool				RemoveClient(SOCKET sock);
+		SockItor			RemoveClientInLoop(SOCKET sock);
+		bool				PushPacket(const CPacket &packet);
+		bool				Send(SOCKET sock, const CPacket &packet);
+		bool				SendAll(const CPacket &packet);
+		void				ClearPackets();
+		void				Clear();
+
+	public:
+		virtual void		ProcessPacket( const CPacket &rcvPacket );
+
+	protected:
+		// Overriding
+		virtual void		OnListen();
+		virtual void		OnClientJoin(SOCKET sock) {}
+		virtual void		OnClientLeave(SOCKET sock) {}
 
 	};
 
