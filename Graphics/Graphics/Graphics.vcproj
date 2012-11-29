@@ -183,6 +183,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GraphicsDef.h"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.h"
 				>
 			</File>
@@ -196,6 +200,26 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
+		</Filter>
+		<Filter
+			Name="Lib"
+			>
+			<File
+				RelativePath=".\DisplayObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DisplayObject.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Window.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Window.h"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\ReadMe.txt"

@@ -12,4 +12,15 @@
 #include "math/Math.h"
 
 
+
+
+#define SAFE_DELETE(p) {if (p) { delete p; p=NULL;}}
+#define SAFE_DELETEA(p) {if (p) { delete[] p; p=NULL;}}
+
+
+
+
+
+
+
 #endif // __COMMON_H__

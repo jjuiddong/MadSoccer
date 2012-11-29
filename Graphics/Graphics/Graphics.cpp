@@ -12,3 +12,8 @@ void graphics::Draw()
 {
 
 }
+
+void graphics::Render( Vector3 *pVtxBuff, Vector3 *pIdBuff )
+{
+
+}
