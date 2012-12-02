@@ -10,6 +10,8 @@ CWindow::CWindow(int id=0, std::string name="UnTitle") :
 	m_Id(id)
 ,	m_Name(name)
 ,	m_pDispObj(NULL)
+,	m_IsVisible(true)
+,	m_OldVisibleFlag(true)
 {
 
 }
@@ -23,18 +25,26 @@ CWindow::~CWindow()
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-void CWindow::Render()
-{
-	WindowItor it = m_Child.begin();
-	while (m_Child.end() != it)
-	{
-		CWindow *pwnd = *it++;
-		pwnd->Render();
-	}
-
-	if (m_pDispObj)
-		m_pDispObj->Render();
-}
+// void CWindow::Render()
+// {
+// 	if (m_IsVisible != m_OldVisibleFlag)
+// 	{
+// 		if (m_IsVisible)	OnShow();
+// 		else				OnHide();
+// 	}
+// 
+// 	// 자신을 먼저 출력하고 자식들을 출력한다.
+// 	if (m_pDispObj)
+// 		m_pDispObj->Render();
+// 
+// 	WindowItor it = m_Child.begin();
+// 	while (m_Child.end() != it)
+// 	{
+// 		CWindow *pwnd = *it++;
+// 		pwnd->Render();
+// 	}
+// 
+// }
 
 
 //------------------------------------------------------------------------
@@ -94,5 +104,57 @@ void CWindow::Clear()
 		delete pwnd;
 	}
 	m_Child.clear();
+}
+
+
+//------------------------------------------------------------------------
+// 윈도우 메세지처리, 오버라이딩해서 구현한다.
+//------------------------------------------------------------------------
+void CWindow::MessagePorc(UINT message, WPARAM wParam, LPARAM lParam)
+{
+
+}
+
+
+//------------------------------------------------------------------------
+// 화면에 출력할지 여부를 설정한다.
+//------------------------------------------------------------------------
+void CWindow::Show(bool isShow, bool isApplyChild) // applyChild=true
+{
+	m_OldVisibleFlag = m_IsVisible;
+	m_IsVisible = isShow;
+	// OnShow/OnHide 호출여부는 render() 에서 판단한다.
+
+	if (isApplyChild)
+	{
+		WindowItor it = m_Child.begin();
+		while (m_Child.end() != it)
+		{
+			CWindow *pwnd = *it++;
+			pwnd->Show(isShow, isApplyChild);
+		}
+	}
+}
+
+
+//------------------------------------------------------------------------
+// 윈도우가 화면에 표시될 때, 호출된다.
+//------------------------------------------------------------------------
+void CWindow::OnShow()
+{
+	m_IsVisible = true;
+	m_OldVisibleFlag = true;
+	OnShowHandling();
+}
+
+
+//------------------------------------------------------------------------
+// 윈도우가 화면에 가려질 때, 호출된다.
+//------------------------------------------------------------------------
+void CWindow::OnHide()
+{
+	m_IsVisible = false;
+	m_OldVisibleFlag = false;
+	OnHideHandling();
 }
 

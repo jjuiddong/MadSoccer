@@ -257,6 +257,26 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="Thread"
+			>
+			<File
+				RelativePath=".\thread\Task.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\thread\Task.h"
+				>
+			</File>
+			<File
+				RelativePath=".\thread\Thread.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\thread\Thread.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\ReadMe.txt"
 			>

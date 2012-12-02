@@ -60,4 +60,13 @@ namespace network
 
 	};
 
+	// list<CServer*> 에서 CServer를 찾는 객체
+	class IsServer : public std::unary_function<network::CServer*, bool>
+	{
+	public:
+		IsServer(network::CServer *p):m_p(p) {  }
+		network::CServer *m_p;
+		bool operator ()(network::CServer *t) const
+			{ return (t == m_p); }
+	};
 };

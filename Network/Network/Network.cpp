@@ -20,30 +20,7 @@ namespace network
 
 using namespace network;
 
-class IsServer : public std::unary_function<network::CServer*, bool>
-{
-public:
-	IsServer(network::CServer *p):m_p(p) {  }
-	network::CServer *m_p;
-	bool operator ()(network::CServer *t) const
-	{
-		if (t == m_p) 
-			return true;
-		return false;
-	}
-};
-class IsClient : public std::unary_function<network::CClient*, bool>
-{
-public:
-	IsClient(network::CClient *p):m_p(p) {  }
-	network::CClient *m_p;
-	bool operator ()(network::CClient *t) const
-	{
-		if (t == m_p) 
-			return true;
-		return false;
-	}
-};
+
 
 
 //------------------------------------------------------------------------

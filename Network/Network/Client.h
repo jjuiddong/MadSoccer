@@ -41,4 +41,14 @@ namespace network
 
 	};
 
+
+	// list<CClient*> 에서 CClient를 찾는 객체
+	class IsClient : public std::unary_function<network::CClient*, bool>
+	{
+	public:
+		IsClient(network::CClient *p):m_p(p) {  }
+		network::CClient *m_p;
+		bool operator ()(network::CClient *t) const
+			{ return (t == m_p); }
+	};
 };
