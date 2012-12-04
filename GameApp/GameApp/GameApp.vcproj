@@ -249,11 +249,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Game\FrameWork.cpp"
+				RelativePath=".\GameFrameWork.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Game\FrameWork.h"
+				RelativePath=".\GameFrameWork.h"
 				>
 			</File>
 			<File
@@ -262,6 +262,18 @@
 			</File>
 			<File
 				RelativePath=".\Game\TestWindow.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Lib"
+			>
+			<File
+				RelativePath=".\Game\FrameWork.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Game\FrameWork.h"
 				>
 			</File>
 		</Filter>

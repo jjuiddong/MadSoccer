@@ -20,7 +20,8 @@ namespace game
 	protected:
 
 	public:
-		virtual void	Move(int elapsTime) override;
+		// Override
+		virtual void	OnMoveHandling() override;
 
 	};
 

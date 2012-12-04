@@ -44,6 +44,7 @@ CField::CField() :
 		Vector3(25, 0, 95),		//19
 		Vector3(45, 0, 95),		//20
 		Vector3(45, 0, 105),	//21
+
 	};
 	const int vtxSize = sizeof(vtx)/sizeof(Vector3);
 
@@ -60,11 +61,33 @@ CField::CField() :
 		Short2(14,15), Short2(15,16), Short2(16,17), Short2(17,14),
 		Short2(18,19), Short2(19,20), Short2(20,21),
 		Short2(17,2),
+
+		// Áß¾Ó¿ø
+		Short2(22,23), Short2(23,24),Short2(24,25),Short2(25,26),
+		Short2(26,27), Short2(27,28),
 	};
 	const int idxSize = sizeof(idx) / sizeof(Short2);
 
+
+
+	std::list<Vector3> vtxList;
+	std::list<Short2> idxList;
+	for (int i=0; i < vtxSize; ++i)
+		vtxList.push_back( vtx[ i]);
+	for (int i=0; i < idxSize; ++i)
+		idxList.push_back( idx[ i]);
+
+	// Áß¾Ó¿ø
+	const int firstIdx = vtxList.size();
+	const float circleR = 9.15f;
+	for (float i=0; i < MATH_PI*2.1f; i+=0.1f)
+		vtxList.push_back( Vector3(35.f+cos(i)*circleR, 0, 52.5f+sin(i)*circleR) );
+	const int endIdx = vtxList.size();
+	for (int i=0; i < endIdx-firstIdx-1; ++i)
+		idxList.push_back(Short2(firstIdx+i, firstIdx+i+1));
+	
 	m_pDispObj = new graphics::CDisplayObject("Field");
-	m_pDispObj->Load(vtx, vtxSize, idx, idxSize);
+	m_pDispObj->Load(vtxList, idxList);
 
 }
 
@@ -77,7 +100,9 @@ CField::~CField()
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-void CField::Move(int elapsTime)
+void CField::OnMoveHandling()
 {
 
+
 }
+

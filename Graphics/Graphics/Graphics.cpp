@@ -19,8 +19,9 @@ namespace graphics
 	STATE		m_State = INIT;				// 엔진 상태
 	CWindow		*m_pRootWindow = NULL;		// 최상위 윈도우
  	int			m_Fps = 30;					// 초당 출력 프레임수
-	int			m_StartT = 0;				// 프로그램이 시작된 시간
+	int			m_StartTime = 0;				// 프로그램이 시작된 시간
  	int			m_CurTime = 0;				// 프로그램이 시작된 이후부터 흐른 시간 (millisecond 단위)
+	int			m_OldTime = 0;				// 그 전 프레임이 실행된 시간 (millisecond 단위)
 
 }
 
@@ -31,7 +32,8 @@ namespace graphics
 void graphics::Init(HWND hWnd)
 {
 	m_State = RENDER;
-	m_StartT = timeGetTime();
+	m_StartTime = timeGetTime();
+	m_OldTime = timeGetTime();
 
 	m_Thread.AddTask( new CRenderer() );
 	m_Thread.Start();
@@ -61,8 +63,9 @@ void graphics::ShutDown()
 void graphics::Proc()
 {
 	const int curT = timeGetTime();
-	const int elapseT = curT - m_CurTime;
-	m_CurTime = curT - m_StartT;
+	const int elapseT = curT - m_OldTime;
+	m_CurTime = curT - m_StartTime;
+	m_OldTime = curT;
 
 	if (RENDER == m_State)
 	{

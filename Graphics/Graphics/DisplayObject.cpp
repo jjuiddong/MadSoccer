@@ -37,7 +37,35 @@ void CDisplayObject::Load(Vector3 *pVtxBuff, int VtxSize, Short2 *pIdxBuff, int 
 	memcpy(m_pIndexBuffer, pIdxBuff, sizeof(Short2)*IdxSize);
 	m_VertexBufferSize = VtxSize;
 	m_IndexBufferSize = IdxSize;
+}
 
+
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
+void CDisplayObject::Load(const std::list<Vector3> &vtxList, const std::list<Short2> &idxList)
+{
+	SAFE_DELETEA(m_pVertexBuffer);
+	SAFE_DELETEA(m_pIndexBuffer);
+
+	if (vtxList.empty() || idxList.empty())
+		return;
+
+	m_pVertexBuffer = new Vector3[ vtxList.size()];
+	m_pIndexBuffer = new Short2[ idxList.size()];
+	
+	int cnt = 0;
+	std::list<Vector3>::const_iterator vit = vtxList.begin();
+	while (vtxList.end() != vit)
+		m_pVertexBuffer[ cnt++] = *vit++;
+
+	cnt = 0;
+	std::list<Short2>::const_iterator iit = idxList.begin();
+	while (idxList.end() != iit)
+		m_pIndexBuffer[ cnt++] = *iit++;
+
+	m_VertexBufferSize = vtxList.size();
+	m_IndexBufferSize = idxList.size();
 }
 
 

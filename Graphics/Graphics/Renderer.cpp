@@ -16,13 +16,14 @@ CRenderer::CRenderer() :
 ,	m_State(INIT)
 ,	m_pRootWindow(NULL)
 ,	m_CurTime(0)
+,	m_OldTime(0)
 ,	m_Fps(30)
 ,	m_RenderTime(1000/30)
 ,	m_IncT(0)
 ,	m_hWnd(NULL)
 {
-	m_StartT = timeGetTime();
-
+	m_StartTime = timeGetTime();
+	m_OldTime = timeGetTime();
 
 }
 
@@ -41,8 +42,9 @@ CTask::RUN_RESULT CRenderer::Run()
 		return CTask::RR_END;
 
 	const int curT = timeGetTime();
-	const int elapseT = curT - m_CurTime;
-	m_CurTime = curT - m_StartT;
+	const int elapseT = curT - m_OldTime;
+	m_CurTime = curT - m_StartTime;
+	m_OldTime = curT;
 
 	switch (m_State)
 	{

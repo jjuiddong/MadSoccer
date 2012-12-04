@@ -24,7 +24,8 @@ namespace graphics
 		CWindow				*m_pRootWindow;
 		HWND				m_hWnd;
 		int					m_CurTime;				// 프로그램이 시작된 이후부터 흐른 시간 (millisecond 단위)
-		int					m_StartT;				// 프로그램이 실행된 시간 (millisecond 단위)
+		int					m_OldTime;				// 전 프레임이 출력된 시간 (millisecond단위)
+		int					m_StartTime;			// 프로그램이 실행된 시간 (millisecond 단위)
 		int					m_Fps;					// 초당 출력 프레임수
 		int					m_RenderTime;			// (1000/fps) 몇 millisecond가 지나야 출력할지를 결정하는 값
 		int					m_IncT;					// 증가되는 시간 값 (millisecond 단위)

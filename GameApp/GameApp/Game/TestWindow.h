@@ -21,10 +21,10 @@ namespace game
 	protected:
 
 	public:
-		virtual void	Move(int elapsTime); // milli second
 		virtual void	MessagePorc(UINT message, WPARAM wParam, LPARAM lParam);
-		virtual void	OnShowHandling();
-		virtual void	OnHideHandling();
+		virtual void	OnMoveHandling() override;
+		virtual void	OnShowHandling() override;
+		virtual void	OnHideHandling() override;
 
 	};
 

@@ -53,6 +53,8 @@ CWindow::~CWindow()
 //------------------------------------------------------------------------
 void CWindow::Move(int elapsTime )
 {
+	OnMoveHandling();
+
 	SyncNodeItor it = m_Child.begin();
 	while (m_Child.end() != it)
 	{

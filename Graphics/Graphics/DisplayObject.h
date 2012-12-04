@@ -27,6 +27,7 @@ namespace graphics
 
 	public:
 		void			Load(Vector3 *pVtxBuff, int VtxSize, Short2 *pIdxBuff, int IdxSize );
+		void			Load(const std::list<Vector3> &vtxList, const std::list<Short2> &idxList);
 		Vector3*		GetVertexBuffer() const { return m_pVertexBuffer; }
 		Short2*			GetIndexBuffer() const { return m_pIndexBuffer; }
 		int				GetVertexBufferSize() const { return m_VertexBufferSize; }

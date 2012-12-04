@@ -23,9 +23,8 @@ CTestWindow::~CTestWindow()
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-void CTestWindow::Move(int elapsTime)
+void CTestWindow::MessagePorc(UINT message, WPARAM wParam, LPARAM lParam)
 {
-	int a= 0;
 
 }
 
@@ -33,7 +32,7 @@ void CTestWindow::Move(int elapsTime)
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-void CTestWindow::MessagePorc(UINT message, WPARAM wParam, LPARAM lParam)
+void CTestWindow::OnMoveHandling()
 {
 
 }

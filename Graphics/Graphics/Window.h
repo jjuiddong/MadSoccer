@@ -26,6 +26,7 @@ namespace graphics
 	public:
 		void			Show(bool isShow, bool isApplyChild=true);
 		void			Clear();
+		void			Move(int elapsTime); // milli second
 		virtual void	OnShow();
 		virtual void	OnHide();
 
@@ -38,8 +39,8 @@ namespace graphics
 		virtual bool	AddChild(CWindow *pChild);
 		virtual bool	RemoveChild(CWindow *pChild);
 
-		virtual void	Move(int elapsTime); // milli second
 		virtual void	MessagePorc(UINT message, WPARAM wParam, LPARAM lParam);
+		virtual void	OnMoveHandling() {}
 		virtual void	OnShowHandling() {}
 		virtual void	OnHideHandling() {}
 
