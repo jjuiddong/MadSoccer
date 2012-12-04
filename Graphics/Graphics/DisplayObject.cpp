@@ -86,6 +86,7 @@ void CDisplayObject::Render()
 }
 void CDisplayObject::RenderGDI(HDC hdc)
 {
+	graphics::SetTransform(m_matTM);
 	graphics::RenderGDI(hdc, m_pVertexBuffer, m_VertexBufferSize, m_pIndexBuffer, m_IndexBufferSize);
 
 	// 자식 출력
@@ -125,5 +126,14 @@ void CDisplayObject::Clear()
 	m_VertexBufferSize = 0;
 	m_IndexBufferSize = 0;
 
+}
+
+
+//------------------------------------------------------------------------
+// 위치 설정
+//------------------------------------------------------------------------
+void CDisplayObject::SetPos(const Vector3 &pos)
+{
+	m_matTM.Translate(pos);
 }
 

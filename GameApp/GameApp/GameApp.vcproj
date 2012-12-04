@@ -249,11 +249,23 @@
 				>
 			</File>
 			<File
-				RelativePath=".\GameFrameWork.cpp"
+				RelativePath=".\Game\GameDef.h"
 				>
 			</File>
 			<File
-				RelativePath=".\GameFrameWork.h"
+				RelativePath=".\Game\GameFrameWork.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Game\GameFrameWork.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Game\Player.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Game\Player.h"
 				>
 			</File>
 			<File

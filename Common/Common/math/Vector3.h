@@ -79,6 +79,6 @@ struct Vector3
 
 
 //MultipleMatrix
-Vector3& MultipleMatrix( Vector3& vIn, Matrix44& m, Vector3& vOut );
+Vector3& MultipleMatrix( const Vector3& vIn, const Matrix44& m, Vector3& vOut );
 
 #endif //#ifndef __Math_Vector3_Header__

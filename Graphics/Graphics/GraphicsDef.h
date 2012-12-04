@@ -10,12 +10,24 @@ namespace graphics
 {
 	class CDisplayObject;
 	class CWindow;
+	class CSyncNode;
 
 	typedef std::list<CDisplayObject*> DispObjList;
 	typedef DispObjList::iterator DispObjItor;
 
 	typedef std::list<CWindow*> WindowList;
 	typedef WindowList::iterator WindowItor;
+
+	typedef std::list<CSyncNode*> SyncNodeList;
+	typedef SyncNodeList::iterator SyncNodeItor;
+	typedef SyncNodeList::const_iterator SyncNodeCItor;
+
+
+	typedef std::list<Vector3> VertexList;
+	typedef VertexList::iterator VtxItor;
+
+	typedef std::list<Short2> IndexList;
+	typedef IndexList::iterator IdxItor;
 
 
 	enum STATE

@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 #include "GameFrameWork.h"
-#include "game/TestWindow.h"
+#include "TestWindow.h"
 
 
 using namespace game;

@@ -411,6 +411,14 @@ void Matrix44::Translate( const Vector3& vPos )
 	_43 += ( vPos.x * _13 ) + ( vPos.y * _23 ) + ( vPos.z * _33 );
 } //Matrix44::Translate
 
+void Matrix44::SetScale( const Vector3& scale)
+{
+	_11 = scale.x;
+	_22 = scale.y;
+	_33 = scale.z;
+}
+
+
 //---------------------------
 //
 //---------------------------

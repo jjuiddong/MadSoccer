@@ -33,12 +33,11 @@ namespace graphics
 		// Getter/Setter
 		int				GetId() const { return m_Id; }
 		CDisplayObject*	GetDisplayObject() const { return m_pDispObj; }
-
-		// overriding
-		virtual void	Release() override;
 		virtual bool	AddChild(CWindow *pChild);
 		virtual bool	RemoveChild(CWindow *pChild);
 
+		// overriding
+		virtual void	Release() override;
 		virtual void	MessagePorc(UINT message, WPARAM wParam, LPARAM lParam);
 		virtual void	OnMoveHandling() {}
 		virtual void	OnShowHandling() {}

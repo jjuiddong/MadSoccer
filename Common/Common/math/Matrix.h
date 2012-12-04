@@ -61,6 +61,7 @@ struct Matrix44
 
 		//void		SetPosition( const Vector3& vPos );
 		void		Translate( const Vector3& vPos );
+		void		SetScale( const Vector3& vScale);
 
 		Vector3		GetPosition();
 

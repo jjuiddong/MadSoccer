@@ -25,3 +25,5 @@
 #include "../../Network/Network/Network.h"
 #include "../../AI/AI/AI.h"
 
+#include "game/GameDef.h"
+

@@ -1,12 +1,13 @@
 
 #include "stdafx.h"
 #include "Field.h"
+#include "player.h"
 
 using namespace game;
 
 
 CField::CField() :
-	graphics::CWindow(0, "Field")
+	graphics::CWindow(ID_FIELD, "Field")
 {
 	Vector3 vtx[] = {
 		// Home
@@ -88,6 +89,14 @@ CField::CField() :
 	
 	m_pDispObj = new graphics::CDisplayObject("Field");
 	m_pDispObj->Load(vtxList, idxList);
+
+	Matrix44 matTM;
+	matTM.SetIdentity();
+	matTM.SetScale(Vector3(5,5,5));
+	m_pDispObj->SetTM(matTM);
+
+
+	AddChild( (graphics::CWindow*)new CPlayer() );
 
 }
 

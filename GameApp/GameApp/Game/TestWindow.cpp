@@ -7,7 +7,7 @@ using namespace game;
 
 
 CTestWindow::CTestWindow() :
-	graphics::CWindow(0, "testWindow")
+	graphics::CWindow(ID_TESTWINDOW, "testWindow")
 {
 	m_pDispObj = new graphics::CDummyDisplayObject();
 	AddChild( new CField() );

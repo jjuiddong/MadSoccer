@@ -37,9 +37,14 @@ namespace graphics
 	int			GetFPS();
 	int			GetCurTime();
 
+	// Graphic Global Function
+	int			GenerateWindowId();
 
 	// Rendering
 	// 멀티쓰레딩을 감안해서 구현했다.
+	void		SetIndentityTransform();
+	void		SetTransform( const Matrix44 &mat );
+	void		MultiplyTransform( const Matrix44 &mat );
 	void		Render( const Vector3 *pVtxBuff, const int VtxSize, const Short2 *pIdxBuff, const int IdxSize );
 	void		RenderGDI( HDC hdc, const Vector3 *pVtxBuff, const int VtxSize, const Short2 *pIdxBuff, const int IdxSize );
 

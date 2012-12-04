@@ -486,7 +486,7 @@ float fW = 0.0F;
 //-------------------------------
 // MultipleMatrix
 //-------------------------------
-Vector3& MultipleMatrix( Vector3& v, Matrix44& m, Vector3& vOut )
+Vector3& MultipleMatrix( const Vector3& v, const Matrix44& m, Vector3& vOut )
 {
 	fX = v.x * m._11 + v.y * m._21 + v.z * m._31 + m._41;
 	fY = v.x * m._12 + v.y * m._22 + v.z * m._32 + m._42;
