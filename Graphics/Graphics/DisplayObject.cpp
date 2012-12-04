@@ -5,9 +5,12 @@
 
 using namespace graphics;
 
-CDisplayObject::CDisplayObject() :
-	m_pVertexBuffer(NULL)
+CDisplayObject::CDisplayObject(std::string name) :
+	m_Name(name)
+,	m_pVertexBuffer(NULL)
 ,	m_pIndexBuffer(NULL)
+,	m_VertexBufferSize(0)
+,	m_IndexBufferSize(0)
 {
 	m_matTM.SetIdentity();
 
@@ -15,6 +18,7 @@ CDisplayObject::CDisplayObject() :
 
 CDisplayObject::~CDisplayObject() 
 {
+	Clear();
 
 }
 
@@ -22,32 +26,47 @@ CDisplayObject::~CDisplayObject()
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-void CDisplayObject::Load(Vector3 *pVtxBuff, int VtxSize, Vector3 *pIdxBuff, int IdxSize )
+void CDisplayObject::Load(Vector3 *pVtxBuff, int VtxSize, Short2 *pIdxBuff, int IdxSize )
 {
 	SAFE_DELETEA(m_pVertexBuffer);
 	SAFE_DELETEA(m_pIndexBuffer);
 
 	m_pVertexBuffer = new Vector3[ VtxSize];
-	m_pIndexBuffer = new Vector3[ IdxSize];
+	m_pIndexBuffer = new Short2[ IdxSize];
 	memcpy(m_pVertexBuffer, pVtxBuff, sizeof(Vector3)*VtxSize);
-	memcpy(m_pIndexBuffer, pIdxBuff, sizeof(Vector3)*IdxSize);
+	memcpy(m_pIndexBuffer, pIdxBuff, sizeof(Short2)*IdxSize);
+	m_VertexBufferSize = VtxSize;
+	m_IndexBufferSize = IdxSize;
 
 }
 
 
 //------------------------------------------------------------------------
-// 
+// 출력
 //------------------------------------------------------------------------
 void CDisplayObject::Render()
 {
-	DispObjItor it = m_Child.begin();
+	graphics::Render(m_pVertexBuffer, m_VertexBufferSize, m_pIndexBuffer, m_IndexBufferSize);
+
+	// 자식 출력
+	SyncNodeItor it = m_Child.begin();
 	while (m_Child.end() != it)
 	{
-		CDisplayObject *pobj = *it++;
+		CDisplayObject *pobj = (CDisplayObject*)*it++;
 		pobj->Render();
 	}
+}
+void CDisplayObject::RenderGDI(HDC hdc)
+{
+	graphics::RenderGDI(hdc, m_pVertexBuffer, m_VertexBufferSize, m_pIndexBuffer, m_IndexBufferSize);
 
-	graphics::Render(m_pVertexBuffer, m_pIndexBuffer);
+	// 자식 출력
+	SyncNodeItor it = m_Child.begin();
+	while (m_Child.end() != it)
+	{
+		CDisplayObject *pobj = (CDisplayObject*)*it++;
+		pobj->RenderGDI(hdc);
+	}
 }
 
 
@@ -56,43 +75,15 @@ void CDisplayObject::Render()
 //------------------------------------------------------------------------
 void CDisplayObject::Animation(int elapseTime)
 {
-	DispObjItor it = m_Child.begin();
+	// 에니메이션 처리
+
+	// 자식 에니메이션 처리
+	SyncNodeItor it = m_Child.begin();
 	while (m_Child.end() != it)
 	{
-		CDisplayObject *pobj = *it++;
+		CDisplayObject *pobj = (CDisplayObject*)*it++;
 		pobj->Animation(elapseTime);
 	}
-
-	// 에니메이션 처리
-}
-
-
-//------------------------------------------------------------------------
-// 자식 노드 추가
-//------------------------------------------------------------------------
-bool CDisplayObject::AddChild(CDisplayObject *pChild)
-{
-	DispObjItor it = find(m_Child.begin(), m_Child.end(), pChild);
-	if (m_Child.end() != it)
-		return false; // 이미 존재한다면 실패
-
-	m_Child.push_back(pChild);
-	return true;
-}
-
-
-//------------------------------------------------------------------------
-// 자식 노드 제거
-//------------------------------------------------------------------------
-bool CDisplayObject::RemoveChild(CDisplayObject *pChild)
-{
-	DispObjItor it = find(m_Child.begin(), m_Child.end(), pChild);
-	if (m_Child.end() == it)
-		return false; // 없다면 실패
-
-	m_Child.remove(pChild);
-	delete pChild;
-	return true;
 }
 
 
@@ -101,15 +92,10 @@ bool CDisplayObject::RemoveChild(CDisplayObject *pChild)
 //------------------------------------------------------------------------
 void CDisplayObject::Clear()
 {
-	DispObjItor it = m_Child.begin();
-	while (m_Child.end() != it)
-	{
-		CDisplayObject *pobj = *it++;
-		delete pobj;
-	}
-	m_Child.clear();
-
 	SAFE_DELETEA(m_pVertexBuffer);
 	SAFE_DELETEA(m_pIndexBuffer);
+	m_VertexBufferSize = 0;
+	m_IndexBufferSize = 0;
 
 }
+

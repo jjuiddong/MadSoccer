@@ -18,6 +18,9 @@
 	const float MATH_EPSILON = 0.0005F;//1.0e-5F;
 // ~Const
 
+	typedef unsigned short u_short;
+
+
 // Macro
 	#define random( m_posX )		(int)( ( (long)rand() * (m_posX) ) / ( RAND_MAX + 1 ) )
 	#define randomize()		srand( (unsigned)time( NULL ) )
@@ -61,6 +64,7 @@
 // ~Structure
 
 // Include
+	#include "Vector.h"	
 	#include "Vector2.h"
 	#include "Vector3.h"
 	#include "Matrix.h"	

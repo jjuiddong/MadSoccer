@@ -10,7 +10,7 @@
 namespace graphics
 {
 	class CDisplayObject;
-	class CWindow
+	class CWindow : public CSyncNode
 	{
 	public:
 		CWindow(int id, std::string name);
@@ -23,20 +23,21 @@ namespace graphics
 		bool			m_IsVisible;
 		bool			m_OldVisibleFlag; // isVisible 변수가 바뀌기 전의 값을 저장한다.
 
-		WindowList		m_Child;
-
 	public:
-		int				GetId() const { return m_Id; }
 		void			Show(bool isShow, bool isApplyChild=true);
-		bool			AddChild(CWindow *pChild);
-		bool			RemoveChild(CWindow *pChild);
-		CDisplayObject*	GetDisplayObject() const { return m_pDispObj; }
 		void			Clear();
 		virtual void	OnShow();
 		virtual void	OnHide();
 
+		// Getter/Setter
+		int				GetId() const { return m_Id; }
+		CDisplayObject*	GetDisplayObject() const { return m_pDispObj; }
+
 		// overriding
-		//virtual void	Render();
+		virtual void	Release() override;
+		virtual bool	AddChild(CWindow *pChild);
+		virtual bool	RemoveChild(CWindow *pChild);
+
 		virtual void	Move(int elapsTime); // milli second
 		virtual void	MessagePorc(UINT message, WPARAM wParam, LPARAM lParam);
 		virtual void	OnShowHandling() {}

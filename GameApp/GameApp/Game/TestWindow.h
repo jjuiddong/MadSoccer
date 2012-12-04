@@ -1,0 +1,31 @@
+//------------------------------------------------------------------------
+// Name:    TestWindow.h
+// Author:  jjuiddong
+// Date:    2012-12-03
+// 
+// 
+//------------------------------------------------------------------------
+
+#pragma once
+
+
+namespace game
+{
+
+	class CTestWindow : public graphics::CWindow
+	{
+	public:
+		CTestWindow();
+		virtual ~CTestWindow();
+
+	protected:
+
+	public:
+		virtual void	Move(int elapsTime); // milli second
+		virtual void	MessagePorc(UINT message, WPARAM wParam, LPARAM lParam);
+		virtual void	OnShowHandling();
+		virtual void	OnHideHandling();
+
+	};
+
+}

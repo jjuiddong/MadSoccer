@@ -22,6 +22,7 @@ namespace graphics
 	protected:
 		STATE				m_State;
 		CWindow				*m_pRootWindow;
+		HWND				m_hWnd;
 		int					m_CurTime;				// 프로그램이 시작된 이후부터 흐른 시간 (millisecond 단위)
 		int					m_StartT;				// 프로그램이 실행된 시간 (millisecond 단위)
 		int					m_Fps;					// 초당 출력 프레임수
@@ -32,6 +33,7 @@ namespace graphics
 		STATE				GetState() const { return m_State; }
 		CWindow*			GetRootWindow() const { return m_pRootWindow; }
 		int					GetFPS() const { return m_Fps; }
+		HWND				GetHWnd() const { return m_hWnd; }
 
 		// overriding
 		virtual RUN_RESULT	Run() override;
@@ -41,6 +43,11 @@ namespace graphics
 		void				SetState(STATE state) { m_State = state; }
 		void				SetRootWindow(CWindow *pWnd) { m_pRootWindow = pWnd; }
 		void				SetFPS(int fps);
+		void				SetHWnd(HWND hwnd) { m_hWnd = hwnd; }
+
+		void				RenderGDI(int elapsedTime);
+		void				RenderDX(int elapsedTime);
+		void				ReleasePtr( int type, WPARAM ptr);
 
 	};
 

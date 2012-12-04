@@ -10,6 +10,11 @@
 #define __GRAPHICS_H__
 
 #include "GraphicsDef.h"
+#include "SyncNode.h"
+#include "Window.h"
+#include "DisplayObject.h"
+#include "DummyDisplayObject.h"
+
 
 
 namespace graphics
@@ -20,6 +25,8 @@ namespace graphics
 	void		ShutDown();				// 엔진 종료
 	void		Proc();
 	void		WindowMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+	void		ReleaseSyncInstance(CSyncNode *pNode);
+
 
 	// Data Setting
  	void		SetState(STATE state);
@@ -30,8 +37,12 @@ namespace graphics
 	int			GetFPS();
 	int			GetCurTime();
 
+
 	// Rendering
-	void		Render( Vector3 *pVtxBuff, Vector3 *pIdBuff );
+	// 멀티쓰레딩을 감안해서 구현했다.
+	void		Render( const Vector3 *pVtxBuff, const int VtxSize, const Short2 *pIdxBuff, const int IdxSize );
+	void		RenderGDI( HDC hdc, const Vector3 *pVtxBuff, const int VtxSize, const Short2 *pIdxBuff, const int IdxSize );
+
 
 };
 

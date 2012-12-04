@@ -12,6 +12,7 @@ CWindow::CWindow(int id=0, std::string name="UnTitle") :
 ,	m_pDispObj(NULL)
 ,	m_IsVisible(true)
 ,	m_OldVisibleFlag(true)
+//,	m_pParent(NULL)
 {
 
 }
@@ -52,10 +53,10 @@ CWindow::~CWindow()
 //------------------------------------------------------------------------
 void CWindow::Move(int elapsTime )
 {
-	WindowItor it = m_Child.begin();
+	SyncNodeItor it = m_Child.begin();
 	while (m_Child.end() != it)
 	{
-		CWindow *pwnd = *it++;
+		CWindow *pwnd = (CWindow*)*it++;
 		pwnd->Move(elapsTime);
 	}
 
@@ -69,11 +70,11 @@ void CWindow::Move(int elapsTime )
 //------------------------------------------------------------------------
 bool CWindow::AddChild(CWindow *pChild)
 {
-	WindowItor it = find(m_Child.begin(), m_Child.end(), pChild);
-	if (m_Child.end() != it)
-		return false; // 이미 존재한다면 실패
+	if (!CSyncNode::AddChild(pChild))
+		return false;
 
-	m_Child.push_back(pChild);
+	if (m_pDispObj)
+		m_pDispObj->AddChild( pChild->GetDisplayObject() );
 	return true;
 }
 
@@ -83,11 +84,11 @@ bool CWindow::AddChild(CWindow *pChild)
 //------------------------------------------------------------------------
 bool CWindow::RemoveChild(CWindow *pChild)
 {
-	WindowItor it = find(m_Child.begin(), m_Child.end(), pChild);
-	if (m_Child.end() == it)
-		return false; // 없다면 실패
+	if (!CSyncNode::RemoveChild(pChild))
+		return false;
 
-	m_Child.remove(pChild);
+	if (m_pDispObj)
+		m_pDispObj->RemoveChild( pChild->GetDisplayObject() );
 	return true;
 }
 
@@ -97,13 +98,7 @@ bool CWindow::RemoveChild(CWindow *pChild)
 //------------------------------------------------------------------------
 void CWindow::Clear()
 {
-	WindowItor it = m_Child.begin();
-	while (m_Child.end() != it)
-	{
-		CWindow *pwnd = *it++;
-		delete pwnd;
-	}
-	m_Child.clear();
+
 }
 
 
@@ -127,10 +122,10 @@ void CWindow::Show(bool isShow, bool isApplyChild) // applyChild=true
 
 	if (isApplyChild)
 	{
-		WindowItor it = m_Child.begin();
+		SyncNodeItor it = m_Child.begin();
 		while (m_Child.end() != it)
 		{
-			CWindow *pwnd = *it++;
+			CWindow *pwnd = (CWindow*)*it++;
 			pwnd->Show(isShow, isApplyChild);
 		}
 	}
@@ -156,5 +151,16 @@ void CWindow::OnHide()
 	m_IsVisible = false;
 	m_OldVisibleFlag = false;
 	OnHideHandling();
+}
+
+
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
+void CWindow::Release()
+{
+	CSyncNode::Release();
+	SAFE_RELEASE(m_pDispObj);
+
 }
 

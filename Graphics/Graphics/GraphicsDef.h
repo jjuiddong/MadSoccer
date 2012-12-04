@@ -39,7 +39,8 @@ namespace graphics
 		MSG_RENDERER_SETSTATE,			// 상태 설정, wParam : state
 		MSG_RENDERER_SETFPS,			// FPS 설정, wParam : fps
 		MSG_RENDERER_SETROOTWINDOW,		// 루트윈도우 설정, wParam : rootWindow pointer
-
+		MSG_RENDERER_RELEASE,			// 오브젝트 제거, wParam : type, lParam : pointer
+		MSG_RENDERER_SETHWND,			// Hwnd 설정, wParam: hwnd
 
 	};
 

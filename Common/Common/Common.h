@@ -41,19 +41,25 @@ namespace common
 }
 
 
-
-#include "math/Math.h"
-#include "thread/Thread.h"
-#include "thread/Task.h"
+typedef unsigned short u_short;
 
 
-#define SAFE_DELETE(p) {if (p) { delete p; p=NULL;}}
-#define SAFE_DELETEA(p) {if (p) { delete[] p; p=NULL;}}
+#define SAFE_DELETE(p) {if (p) { delete p; p=NULL;} }
+#define SAFE_DELETEA(p) {if (p) { delete[] p; p=NULL;} }
+#define SAFE_RELEASE(p) {if (p) { p->Release(); p=NULL;} }
+
 
 // WinDef.h 에 정의 되어 있다.
 //#define IN		// 함수 인자의 입력으로 들어가는 파라메터 (생략함)
 //#define OUT		// 함수 인자로 들어가서 값이 설정되어 리턴되는 파라메터
 
+
+
+// 공용 헤더파일은 가장 나중에 선언한다.
+#include "math/Math.h"
+#include "thread/Thread.h"
+#include "thread/Task.h"
+#include "thread/Instance.h"
 
 
 

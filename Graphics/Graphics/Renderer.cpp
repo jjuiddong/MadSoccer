@@ -19,6 +19,7 @@ CRenderer::CRenderer() :
 ,	m_Fps(30)
 ,	m_RenderTime(1000/30)
 ,	m_IncT(0)
+,	m_hWnd(NULL)
 {
 	m_StartT = timeGetTime();
 
@@ -42,25 +43,12 @@ CTask::RUN_RESULT CRenderer::Run()
 	const int curT = timeGetTime();
 	const int elapseT = curT - m_CurTime;
 	m_CurTime = curT - m_StartT;
-	m_IncT += elapseT;
 
 	switch (m_State)
 	{
 	case INIT: break;
 	case RENDER:
-		{
-			if (m_IncT > m_RenderTime ) // FPS만큼 출력하게 한다.
-			{
-				CWindow *pRootWindow = graphics::GetRootWindow();
-				if (pRootWindow)
-				{
-					CDisplayObject *pDispObj = pRootWindow->GetDisplayObject();
-					pDispObj->Animation(elapseT);
-					pDispObj->Render();
-				}
-				m_IncT = 0; // 프레임 스킵
-			}
-		}
+		RenderGDI(elapseT);
 		break;
 
 	case PAUSE: break;
@@ -69,6 +57,42 @@ CTask::RUN_RESULT CRenderer::Run()
 	}
 
 	return CTask::RR_CONTINUE; 
+}
+
+
+//------------------------------------------------------------------------
+// GDI로 출력
+//------------------------------------------------------------------------
+void CRenderer::RenderGDI(int elapsedTime)
+{
+	m_IncT += elapsedTime;
+
+	if (m_IncT > m_RenderTime) // FPS만큼 출력하게 한다.
+	{
+		HDC hdc = GetDC(m_hWnd);
+		CWindow *pRootWindow = graphics::GetRootWindow();
+		if (pRootWindow)
+		{
+			CDisplayObject *pDispObj = pRootWindow->GetDisplayObject();
+			if (pDispObj)
+			{
+				pDispObj->Animation(elapsedTime);
+				pDispObj->RenderGDI(hdc);
+			}
+		}
+
+		m_IncT = 0; // 프레임 스킵
+		ReleaseDC(m_hWnd, hdc);
+	}
+}
+
+
+//------------------------------------------------------------------------
+// DirectX로 출력
+//------------------------------------------------------------------------
+void CRenderer::RenderDX(int elapsedTime)
+{
+
 }
 
 
@@ -82,7 +106,19 @@ void CRenderer::MessageProc( int msg, WPARAM wParam, LPARAM lParam )
 	case MSG_RENDERER_SETSTATE: SetState((STATE)wParam); break;
 	case MSG_RENDERER_SETFPS: SetFPS((int)wParam); break;
 	case MSG_RENDERER_SETROOTWINDOW: SetRootWindow( (CWindow*)wParam ); break;
+	case MSG_RENDERER_RELEASE: ReleasePtr(wParam, lParam); break;
+	case MSG_RENDERER_SETHWND: SetHWnd((HWND)wParam); break;
 	}
+}
+
+
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
+void CRenderer::ReleasePtr( int type, WPARAM ptr)
+{
+	CSyncNode *p = (CSyncNode*)ptr;
+	p->DeleteAll();
 }
 
 

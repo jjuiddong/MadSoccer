@@ -60,6 +60,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="winmm.lib D3dx9.lib "
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -132,6 +133,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="winmm.lib D3dx9.lib "
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -232,6 +234,34 @@
 			</File>
 			<File
 				RelativePath=".\small.ico"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Game"
+			>
+			<File
+				RelativePath=".\Game\Field.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Game\Field.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Game\FrameWork.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Game\FrameWork.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Game\TestWindow.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Game\TestWindow.h"
 				>
 			</File>
 		</Filter>

@@ -34,6 +34,7 @@ namespace common
 
 	protected:
 		STATE				m_State;
+		HANDLE				m_hThread;
 
 		// 외부 쓰레드에서 접근하기 때문에 동기화 코드가 들어가 있다.
 		CRITICAL_SECTION	m_TaskCriticalSection;
@@ -64,6 +65,7 @@ namespace common
 		virtual void	MessageProc( int msg, WPARAM wParam, LPARAM lParam ) {}
 
 	protected:
+		void			DispatchMessage();
 		void			EnterTaskSync();
 		void			LeaveTaskSync();
 		void			EnterMsgSync();

@@ -3,8 +3,16 @@
 
 #include "stdafx.h"
 #include "GameApp.h"
+#include "Game/FrameWork.h"
+
+using namespace game;
+
 
 #define MAX_LOADSTRING 100
+HWND		g_hWnd = NULL;
+bool		g_IsLoop = true;
+CFrameWork	g_FrameWork;
+
 
 // 전역 변수:
 HINSTANCE hInst;								// 현재 인스턴스입니다.
@@ -43,15 +51,23 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_GAMEAPP));
 
+	g_FrameWork.Init(g_hWnd);
+
 	// 기본 메시지 루프입니다.
-	while (GetMessage(&msg, NULL, 0, 0))
+	while (g_IsLoop)
 	{
-		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+		if (PeekMessage( &msg, g_hWnd, 0, 0, PM_NOREMOVE ))
 		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+			GetMessage(&msg, NULL, 0, 0);
+			if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
 		}
+		g_FrameWork.Proc();
 	}
+	g_FrameWork.ShutDown();
 
 	return (int) msg.wParam;
 }
@@ -104,20 +120,18 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   HWND hWnd;
-
    hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
 
-   hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+   g_hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, 800, 600, NULL, NULL, hInstance, NULL);
 
-   if (!hWnd)
+   if (!g_hWnd)
    {
       return FALSE;
    }
 
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
+   ShowWindow(g_hWnd, nCmdShow);
+   UpdateWindow(g_hWnd);
 
    return TRUE;
 }
@@ -161,6 +175,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch (wParam)
 		{
 		case VK_ESCAPE:
+			g_IsLoop = false;
 			PostQuitMessage(0);
 			break;
 		case VK_RETURN:
@@ -168,9 +183,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 
 	case WM_PAINT:
-		hdc = BeginPaint(hWnd, &ps);
-		// TODO: 여기에 그리기 코드를 추가합니다.
-		EndPaint(hWnd, &ps);
+ 		hdc = BeginPaint(hWnd, &ps);
+//		LineTo(hdc, 100, 100);
+ 		EndPaint(hWnd, &ps);
 		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);

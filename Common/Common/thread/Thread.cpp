@@ -8,10 +8,11 @@ using namespace common;
 
 namespace common
 {
-	void ThreadProcess(void *pThreadPtr )
+	unsigned __stdcall ThreadProcess(void *pThreadPtr )
 	{
 		CThread *pThread = (CThread*)pThreadPtr;
 		pThread->Run();
+		return 0;
 	}
 
 }
@@ -19,7 +20,10 @@ namespace common
 
 CThread::CThread() :
 	m_State(WAIT)
+,	m_hThread(NULL)
 {
+	InitializeCriticalSection( &m_TaskCriticalSection );
+	InitializeCriticalSection( &m_MsgCriticalSection );
 
 }
 
@@ -35,12 +39,9 @@ CThread::~CThread()
 //------------------------------------------------------------------------
 void CThread::Start()
 {
-	InitializeCriticalSection( &m_TaskCriticalSection );
-	InitializeCriticalSection( &m_MsgCriticalSection );
-
 	// 쓰레드 실행
 	m_State = RUN;
-	_beginthread(ThreadProcess, 0, this);
+	m_hThread = (HANDLE)_beginthreadex(NULL, 0, ThreadProcess, this, 0, NULL);
 }
 
 
@@ -50,6 +51,8 @@ void CThread::Start()
 void CThread::Kill()
 {
 	m_State = END;
+	WaitForSingleObject(m_hThread, 5000); // 쓰레드가 종료될 때까지 기다린다.
+
 }
 
 
@@ -233,6 +236,7 @@ void CThread::Clear()
 	DeleteCriticalSection( &m_TaskCriticalSection );
 	DeleteCriticalSection( &m_MsgCriticalSection );
 
+	CloseHandle(m_hThread);
 }
 
 
@@ -242,7 +246,7 @@ void CThread::Clear()
 //------------------------------------------------------------------------
 void CThread::Run()
 {
-	while (RUN == m_State )
+	while (RUN == m_State)
 	{
 		//1. 태스크 처리
 		EnterTaskSync();
@@ -266,33 +270,45 @@ void CThread::Run()
 		LeaveTaskSync();
 
 		//2. 메세지 처리
-		EnterMsgSync();
-		{
-			ExternalMsgItor it = m_ThreadMsgs.begin();
-			while (m_ThreadMsgs.end() != it)
-			{
-				if (0 == it->rcvTaskId) // Thread에게 온 메세지
-				{
-					MessageProc(it->msg, it->wParam, it->lParam);
-				}
-				else
-				{
-					TaskItor t = find_if(m_Tasks.begin(), m_Tasks.end(), IsTask(it->rcvTaskId));
-					if (m_Tasks.end() != t)
-					{
-						(*t)->MessageProc(it->msg, it->wParam, it->lParam);
-					}
-					else
-					{
-						// 목적지가 없는 메세지 error
-					}
-				}
-				++it;
-			}
-			m_ThreadMsgs.clear();
-		}
-		LeaveMsgSync();
+		DispatchMessage();
 
 		Sleep(1);
 	}
+
+	// 남았을지도 모를 메세지를 마지막으로 처리한다.
+	DispatchMessage();
+}
+
+
+//------------------------------------------------------------------------
+// 저장된 메세지들을 태스크로 보낸다.
+//------------------------------------------------------------------------
+void CThread::DispatchMessage()
+{
+	EnterMsgSync();
+	{
+		ExternalMsgItor it = m_ThreadMsgs.begin();
+		while (m_ThreadMsgs.end() != it)
+		{
+			if (0 == it->rcvTaskId) // Thread에게 온 메세지
+			{
+				MessageProc(it->msg, it->wParam, it->lParam);
+			}
+			else
+			{
+				TaskItor t = find_if(m_Tasks.begin(), m_Tasks.end(), IsTask(it->rcvTaskId));
+				if (m_Tasks.end() != t)
+				{
+					(*t)->MessageProc(it->msg, it->wParam, it->lParam);
+				}
+				else
+				{
+					// 목적지가 없는 메세지 error
+				}
+			}
+			++it;
+		}
+		m_ThreadMsgs.clear();
+	}
+	LeaveMsgSync();
 }

@@ -213,11 +213,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DummyDisplayObject.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Renderer.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\Renderer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SyncNode.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SyncNode.h"
 				>
 			</File>
 			<File

@@ -241,6 +241,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\math\Vector.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\math\Vector.h"
+				>
+			</File>
+			<File
 				RelativePath=".\math\Vector2.cpp"
 				>
 			</File>
@@ -260,6 +268,14 @@
 		<Filter
 			Name="Thread"
 			>
+			<File
+				RelativePath=".\thread\Instance.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\thread\Instance.h"
+				>
+			</File>
 			<File
 				RelativePath=".\thread\Task.cpp"
 				>
