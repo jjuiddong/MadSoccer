@@ -44,6 +44,7 @@ namespace graphics
 	// 멀티쓰레딩을 감안해서 구현했다.
 	void		SetIndentityTransform();
 	void		SetTransform( const Matrix44 &mat );
+	const Matrix44& GetTransform();
 	void		MultiplyTransform( const Matrix44 &mat );
 	void		Render( const Vector3 *pVtxBuff, const int VtxSize, const Short2 *pIdxBuff, const int IdxSize );
 	void		RenderGDI( HDC hdc, const Vector3 *pVtxBuff, const int VtxSize, const Short2 *pIdxBuff, const int IdxSize );

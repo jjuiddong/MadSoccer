@@ -45,9 +45,9 @@ struct Matrix44
 		Quaternion GetQuaternion() const;
 
 		void		SetIdentity();
-		void		SetRotationX( const float fAngle );
-		void		SetRotationY( const float fAngle );
-		void		SetRotationZ( const float fAngle );
+		void		SetRotationX( const float fRadian );
+		void		SetRotationY( const float fRadian );
+		void		SetRotationZ( const float fRadian );
 		void		SetRotation( const Vector3& vINAxis, const float fAngle );
 
 		void		SetView( const Vector3& vPos, const Vector3& vINDir, const Vector3& vINUp );

@@ -78,6 +78,9 @@ void CRenderer::RenderGDI(int elapsedTime)
 			CDisplayObject *pDispObj = pRootWindow->GetDisplayObject();
 			if (pDispObj)
 			{
+				graphics::SetIndentityTransform();
+
+				::InvalidateRect(m_hWnd, NULL, TRUE);
 				pDispObj->Animation(elapsedTime);
 				pDispObj->RenderGDI(hdc);
 			}

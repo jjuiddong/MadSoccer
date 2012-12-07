@@ -86,7 +86,8 @@ void CDisplayObject::Render()
 }
 void CDisplayObject::RenderGDI(HDC hdc)
 {
-	graphics::SetTransform(m_matTM);
+	Matrix44 mat = m_matTM * graphics::GetTransform();
+	graphics::SetTransform(mat);
 	graphics::RenderGDI(hdc, m_pVertexBuffer, m_VertexBufferSize, m_pIndexBuffer, m_IndexBufferSize);
 
 	// 자식 출력

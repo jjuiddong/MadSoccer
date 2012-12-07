@@ -158,10 +158,10 @@ Vector3 Quaternion::GetDirection() const
 //--------------------------------
 //
 //--------------------------------
-void Quaternion::SetRotationX( const float fAngle )
+void Quaternion::SetRotationX( const float fRadian )
 {
-	float s = sinf( fAngle / 2 );
-	float c = cosf( fAngle / 2 );
+	float s = sinf( fRadian / 2 );
+	float c = cosf( fRadian / 2 );
 	x = s * 1.0F;
 	y = s * 0.0F;
 	z = s * 0.0F;
@@ -171,10 +171,10 @@ void Quaternion::SetRotationX( const float fAngle )
 //--------------------------------
 //
 //--------------------------------
-void Quaternion::SetRotationY( const float fAngle )
+void Quaternion::SetRotationY( const float fRadian )
 {
-	float s = sinf( fAngle / 2 );
-	float c = cosf( fAngle / 2 );
+	float s = sinf( fRadian / 2 );
+	float c = cosf( fRadian / 2 );
 	x = s * 0.0F;
 	y = s * 1.0F;
 	z = s * 0.0F;
@@ -184,10 +184,10 @@ void Quaternion::SetRotationY( const float fAngle )
 //--------------------------------
 //
 //--------------------------------
-void Quaternion::SetRotationZ( const float fAngle )
+void Quaternion::SetRotationZ( const float fRadian )
 {
-	float s = sinf( fAngle / 2 );
-	float c = cosf( fAngle / 2 );
+	float s = sinf( fRadian / 2 );
+	float c = cosf( fRadian / 2 );
 	x = s * 0.0F;
 	y = s * 0.0F;
 	z = s * 1.0F;

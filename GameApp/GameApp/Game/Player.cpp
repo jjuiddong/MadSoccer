@@ -23,9 +23,9 @@ CPlayer::CPlayer() :
 
 	Matrix44 matTM;
 	matTM.SetIdentity();
-	matTM.SetScale(Vector3(5,5,5));
+	matTM.Translate(Vector3(35,0,50) );
+	matTM.SetScale(Vector3(2,2,2));
 	m_pDispObj->SetTM(matTM);
-	m_pDispObj->SetPos( Vector3(35,0,50) );
 
 }
 

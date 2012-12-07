@@ -54,9 +54,9 @@ struct Quaternion
 	// ~Function
 
 	// Rotate
-		void	SetRotationX( const float fAngle );
-		void	SetRotationY( const float fAngle );
-		void	SetRotationZ( const float fAngle );
+		void	SetRotationX( const float fRadian );
+		void	SetRotationY( const float fRadian );
+		void	SetRotationZ( const float fRadian );
 		void	SetOrientation( const Vector3& vDir, const Vector3& vUp );
 		void	SetRotationArc( const Vector3& vDir, const Vector3& vDir2 );
 	// ~Rotate

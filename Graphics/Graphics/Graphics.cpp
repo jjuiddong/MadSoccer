@@ -194,6 +194,10 @@ void graphics::SetTransform( const Matrix44 &mat )
 {
 	m_matTransform = mat;
 }
+const Matrix44& graphics::GetTransform()
+{
+	return m_matTransform;
+}
 void graphics::MultiplyTransform( const Matrix44 &mat )
 {
 	m_matTransform *= mat;

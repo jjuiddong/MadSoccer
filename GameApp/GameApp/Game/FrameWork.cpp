@@ -16,6 +16,8 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 //------------------------------------------------------------------------
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
+	std::locale::global(std::locale("")); // 한글이 유니코드, 멀티바이트 코드로 잘 변환되기 위해 호출해야함
+
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
@@ -39,9 +41,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	CFrameWork::Get()->MessageProc(message, wParam, lParam);
+
 	int wmId, wmEvent;
-	PAINTSTRUCT ps;
-	HDC hdc;
 
 	switch (message)
 	{
@@ -58,21 +60,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
 		break;
+
 	case WM_KEYDOWN:
 		switch (wParam)
 		{
 		case VK_ESCAPE:
-			CFrameWork::Get()->ShutDown();
+			DestroyWindow(hWnd);
 			break;
 		case VK_RETURN:
 			break;
 		}
-
-	case WM_PAINT:
-		hdc = BeginPaint(hWnd, &ps);
-		EndPaint(hWnd, &ps);
 		break;
+
+// 	case WM_PAINT:
+// 		hdc = BeginPaint(hWnd, &ps);
+// 		EndPaint(hWnd, &ps);
+// 		break;
 	case WM_DESTROY:
+		CFrameWork::Get()->ShutDown();
 		PostQuitMessage(0);
 		break;
 	default:
@@ -129,6 +134,24 @@ void CFrameWork::Proc()
 
 
 //------------------------------------------------------------------------
+// 메세지 이벤트 처리
+//------------------------------------------------------------------------
+void CFrameWork::MessageProc( UINT message, WPARAM wParam, LPARAM lParam)
+{
+	if (message >= WM_KEYFIRST && message <= WM_KEYLAST)
+	{
+		if (m_pRootWindow)
+			m_pRootWindow->KeyProc(message, wParam, lParam);
+	}
+	else
+	{
+		if (m_pRootWindow)
+			m_pRootWindow->MessageProc(message, wParam, lParam);	
+	}
+}
+
+
+//------------------------------------------------------------------------
 // 프로그램 종료
 //------------------------------------------------------------------------
 void CFrameWork::ShutDown()
@@ -169,12 +192,12 @@ bool CFrameWork::CreateWindowApp(HINSTANCE hInstance, int nCmdShow)
 	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
 	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
 	wcex.lpszMenuName	= MAKEINTRESOURCE(IDC_GAMEAPP);
-	wcex.lpszClassName	= m_ClassName;
+	wcex.lpszClassName	= m_ClassName.c_str();
 	wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 	RegisterClassEx(&wcex);
 
 	//	hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
-	m_hWnd = CreateWindow(m_ClassName, m_TitleName, WS_OVERLAPPEDWINDOW,
+	m_hWnd = CreateWindow(m_ClassName.c_str(), m_TitleName.c_str(), WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, 0, 800, 600, NULL, NULL, hInstance, NULL);
 	if (!m_hWnd)
 	{
@@ -188,7 +211,6 @@ bool CFrameWork::CreateWindowApp(HINSTANCE hInstance, int nCmdShow)
 
 	return true;
 }
-
 
 
 //------------------------------------------------------------------------

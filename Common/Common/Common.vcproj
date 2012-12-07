@@ -269,10 +269,6 @@
 			Name="Thread"
 			>
 			<File
-				RelativePath=".\thread\Instance.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\thread\Instance.h"
 				>
 			</File>
@@ -290,6 +286,34 @@
 			</File>
 			<File
 				RelativePath=".\thread\Thread.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Etc"
+			>
+			<File
+				RelativePath=".\etc\FastMemLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\etc\FastMemLoader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\etc\parser.h"
+				>
+			</File>
+			<File
+				RelativePath=".\etc\Singleton.h"
+				>
+			</File>
+			<File
+				RelativePath=".\etc\String.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\etc\String.h"
 				>
 			</File>
 		</Filter>

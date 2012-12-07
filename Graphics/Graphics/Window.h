@@ -29,6 +29,9 @@ namespace graphics
 		void			Move(int elapsTime); // milli second
 		virtual void	OnShow();
 		virtual void	OnHide();
+		virtual void	MessageProc(UINT message, WPARAM wParam, LPARAM lParam);
+		virtual void	KeyProc(UINT message, WPARAM wParam, LPARAM lParam);
+
 
 		// Getter/Setter
 		int				GetId() const { return m_Id; }
@@ -36,9 +39,11 @@ namespace graphics
 		virtual bool	AddChild(CWindow *pChild);
 		virtual bool	RemoveChild(CWindow *pChild);
 
+
 		// overriding
 		virtual void	Release() override;
-		virtual void	MessagePorc(UINT message, WPARAM wParam, LPARAM lParam);
+		virtual void	OnMessageProcHandling(UINT message, WPARAM wParam, LPARAM lParam) {}
+		virtual void	OnKeyProcHandling(UINT message, WPARAM wParam, LPARAM lParam) {}
 		virtual void	OnMoveHandling() {}
 		virtual void	OnShowHandling() {}
 		virtual void	OnHideHandling() {}

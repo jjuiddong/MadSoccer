@@ -37,34 +37,32 @@ namespace game
 	public:
 		static CFrameWork*	Get();
 	//-------------------------------------------
-		
 
 	protected:
 		STATE				m_State;
 		graphics::CWindow	*m_pRootWindow;
 		HWND				m_hWnd;
-// 		std::string			m_TitleName;
-// 		std::string			m_ClassName;
-		TCHAR				m_TitleName[MAX_LOADSTRING];	// 제목 표시줄 텍스트입니다.
-		TCHAR				m_ClassName[MAX_LOADSTRING];	// 기본 창 클래스 이름입니다.
-
+		tstring				m_TitleName;	// 제목 표시줄 텍스트입니다.
+		tstring				m_ClassName;	// 기본 창 클래스 이름입니다.
 		HACCEL				m_hAccelTable;
 
 	public:
 		void				Init();
+		void				ShutDown();
 		void				Proc();
 		void				MainLoop();
 		void				Clear();
 
-		void				ShutDown();
+		virtual void		MessageProc( UINT message, WPARAM wParam, LPARAM lParam);
 		bool				CreateWindowApp(HINSTANCE hInstance, int nCmdShow);
 
+		// Setter/Getter
  		void				SetRootWindow(graphics::CWindow *pWnd) { m_pRootWindow = pWnd; }
  		graphics::CWindow*	GetRootWindow() const { return m_pRootWindow; }
-		void				SetTitleName( TCHAR *titleName ) { wcscpy_s(m_TitleName, titleName); }
-		void				SetClassName( TCHAR *className ) { wcscpy_s(m_ClassName, className); }
-// 		std::string			GetTitleName() const { return m_TitleName; }
-// 		std::string			GetClassName() const { return m_ClassName; }
+		void				SetTitleName( TCHAR *titleName ) { m_TitleName= titleName; }
+		void				SetClassName( TCHAR *className ) { m_ClassName = className; }
+ 		tstring				GetTitleName() const { return m_TitleName; }
+ 		tstring				GetClassName() const { return m_ClassName; }
 
 		// Overriding
 		virtual void		OnInitHandling() {}

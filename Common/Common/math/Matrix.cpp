@@ -220,10 +220,10 @@ Quaternion Matrix44::GetQuaternion() const
 //---------------------------
 //
 //---------------------------
-void Matrix44::SetRotationX( const float fAngle )
+void Matrix44::SetRotationX( const float fRadian )
 {
-	float fCos = cosf( fAngle );
-	float fSin = sinf( fAngle );
+	float fCos = cosf( fRadian );
+	float fSin = sinf( fRadian );
 	SetIdentity();
 	_22 = fCos;
 	_23 = fSin;
@@ -234,10 +234,10 @@ void Matrix44::SetRotationX( const float fAngle )
 //---------------------------
 //
 //---------------------------
-void Matrix44::SetRotationY( const float fAngle )
+void Matrix44::SetRotationY( const float fRadian )
 {
-	float fCos = cosf( fAngle );
-	float fSin = sinf( fAngle );
+	float fCos = cosf( fRadian );
+	float fSin = sinf( fRadian );
 	SetIdentity();
 	_11 = fCos;
 	_13 = -fSin;
@@ -248,10 +248,10 @@ void Matrix44::SetRotationY( const float fAngle )
 //---------------------------
 //
 //---------------------------
-void Matrix44::SetRotationZ( const float fAngle )
+void Matrix44::SetRotationZ( const float fRadian )
 {
-	float fCos = cosf( fAngle );
-	float fSin = sinf( fAngle );
+	float fCos = cosf( fRadian );
+	float fSin = sinf( fRadian );
 	SetIdentity();
 	_11 = fCos;
 	_12 = fSin;

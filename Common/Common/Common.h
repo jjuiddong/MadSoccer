@@ -6,6 +6,7 @@
 #include <Windows.h>
 #include <list>
 #include <map>
+#include <vector>
 #include <algorithm>
 #include <string>
 
@@ -40,8 +41,14 @@ namespace common
 
 }
 
-
 typedef unsigned short u_short;
+
+
+#ifdef UNICODE
+	typedef std::wstring	tstring;
+#else
+	typedef std::string	tstring;
+#endif
 
 
 #define SAFE_DELETE(p) {if (p) { delete p; p=NULL;} }
@@ -60,6 +67,8 @@ typedef unsigned short u_short;
 #include "thread/Thread.h"
 #include "thread/Task.h"
 #include "thread/Instance.h"
+#include "etc/Singleton.h"
+#include "etc/String.h"
 
 
 

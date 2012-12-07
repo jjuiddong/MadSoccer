@@ -22,7 +22,7 @@ namespace game
 	public:
 		// Override
 		virtual void	OnMoveHandling() override;
-
+		virtual void	OnKeyProcHandling(UINT message, WPARAM wParam, LPARAM lParam) override;
 	};
 
 }

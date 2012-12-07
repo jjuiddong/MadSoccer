@@ -115,3 +115,31 @@ void CField::OnMoveHandling()
 
 }
 
+
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
+void CField::OnKeyProcHandling(UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch (message)
+	{
+	case WM_KEYDOWN:
+		switch (wParam)
+		{
+		case VK_LEFT:
+		case VK_RIGHT:
+			{
+				Quaternion qat;
+				qat.SetRotationY( (wParam == VK_LEFT)? -0.05f : 0.05f);
+				Matrix44 qmat = qat.GetMatrix();
+
+				Matrix44 mat = m_pDispObj->GetTM();
+				mat *= qmat;
+				m_pDispObj->SetTM(mat);
+			}
+			break;
+		}
+		break;
+	}
+
+}

@@ -107,9 +107,32 @@ void CWindow::Clear()
 //------------------------------------------------------------------------
 // 윈도우 메세지처리, 오버라이딩해서 구현한다.
 //------------------------------------------------------------------------
-void CWindow::MessagePorc(UINT message, WPARAM wParam, LPARAM lParam)
+void CWindow::MessageProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
+	OnMessageProcHandling(message, wParam, lParam);
 
+	SyncNodeItor it = m_Child.begin();
+	while (m_Child.end() != it)
+	{
+		CWindow *pwnd = (CWindow*)*it++;
+		pwnd->MessageProc(message, wParam, lParam);
+	}
+}
+
+
+//------------------------------------------------------------------------
+// 키보드 이벤트 처리
+//------------------------------------------------------------------------
+void CWindow::KeyProc(UINT message, WPARAM wParam, LPARAM lParam)
+{
+	OnKeyProcHandling(message, wParam, lParam);
+
+	SyncNodeItor it = m_Child.begin();
+	while (m_Child.end() != it)
+	{
+		CWindow *pwnd = (CWindow*)*it++;
+		pwnd->KeyProc(message, wParam, lParam);
+	}
 }
 
 
