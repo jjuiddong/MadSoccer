@@ -23,7 +23,7 @@ void error::ErrorMsg(const std::string &str)
 void error::ErrorLog(const std::string &str)
 {
 	FILE *fp;
-	fopen_s(&fp, "ErrorLog.txt", "a+");
+	fopen_s(&fp, "ErrorLog.log", "a+");
 	if (!fp) return;
 
 	std::string msg = "[";
@@ -42,7 +42,7 @@ void error::ErrorLog(const std::string &str)
 void error::Log(const std::string &str)
 {
 	FILE *fp;
-	fopen_s(&fp, "Log.txt", "a+");
+	fopen_s(&fp, "Log.log", "a+");
 	if (!fp) return;
 
 	std::string msg = "[";
