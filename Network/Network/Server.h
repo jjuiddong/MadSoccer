@@ -56,6 +56,8 @@ namespace network
 		void				ClearPackets();
 		void				Clear();
 
+		void				SetDispatcher(IPacketDispatcher *p) { m_pDispatcher = p; }
+		IPacketDispatcher*	GetDispatcher() const { return m_pDispatcher; }
 		bool				AddListener(IPacketListener *listener);
 		bool				RemoveListener(IPacketListener *listener);
 		const ListenerList&	GetListeners() const { return m_Listners; }

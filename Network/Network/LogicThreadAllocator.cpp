@@ -9,7 +9,7 @@ using namespace network;
 
 
 CLogicThreadAllocator::CLogicThreadAllocator() :
-	m_LogicThreadCount(0)
+	m_LogicThreadCount(1)
 {
 	InitializeCriticalSection(&m_CriticalSection);
 }
@@ -37,7 +37,7 @@ void CLogicThreadAllocator::Init( int logicThreadCount )
 
 
 //------------------------------------------------------------------------
-// 
+// 패킷을 저장한다.
 //------------------------------------------------------------------------
 void CLogicThreadAllocator::PushPacket(const SPacketData &data)
 {
@@ -50,7 +50,8 @@ void CLogicThreadAllocator::PushPacket(const SPacketData &data)
 
 
 //------------------------------------------------------------------------
-// 
+// 저장된 패킷이 있다면 복사해서 넘겨준다. 
+// 넘겨준 패킷은 제거된다.
 //------------------------------------------------------------------------
 bool CLogicThreadAllocator::PopPacket(OUT SPacketData &data)
 {

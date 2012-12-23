@@ -71,6 +71,7 @@ typedef unsigned short u_short;
 #include "etc/FastMemLoader.h"
 #include "etc/Reference.h"
 #include "etc/RandNoDuplicate.h"
+#include "etc/time.h"
 
 
 #endif // __COMMON_H__

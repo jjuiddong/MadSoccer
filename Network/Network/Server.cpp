@@ -13,8 +13,9 @@ using namespace network;
 
 
 CServer::CServer() :
-	m_IsServerOn(true)
-,	m_Id(common::GenerateId())
+	m_Id(common::GenerateId())
+,	m_IsServerOn(true)
+,	m_pDispatcher(NULL)
 {
 	m_ServerPort = 2333;
 	InitializeCriticalSection( &m_CriticalSection );

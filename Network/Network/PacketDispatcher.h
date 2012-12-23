@@ -14,6 +14,6 @@ namespace network
 	public:
  		virtual ~IPacketDispatcher() {}
 	public:
-		virtual void Dispatch(CPacket *pPacket, const ListenerList &listeners)=0;
+		virtual void Dispatch(const CPacket &packet, const ListenerList &listeners)=0;
 	};
 }

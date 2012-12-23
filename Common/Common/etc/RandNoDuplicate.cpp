@@ -18,6 +18,7 @@ namespace common
 	void InitRandNoDuplicate()
 	{
 		n_IsInitRand = true;
+		srand(GetTickCount());
 		for(int i=0; i < MAX_RAND_COUNT; ++i)
 			n_randNumber[ i] = i;
 	}

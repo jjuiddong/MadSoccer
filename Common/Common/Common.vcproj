@@ -328,6 +328,10 @@
 				RelativePath=".\etc\String.h"
 				>
 			</File>
+			<File
+				RelativePath=".\etc\Time.h"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\ReadMe.txt"

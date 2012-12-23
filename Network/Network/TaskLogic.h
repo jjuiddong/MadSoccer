@@ -19,15 +19,26 @@ namespace network
 		virtual RUN_RESULT	Run() override
 		{
 			CLogicThreadAllocator::SPacketData packetData;
-			if (CLogicThreadAllocator::Get()->PopPacket(packetData))
+			if (!CLogicThreadAllocator::Get()->PopPacket(packetData))
+				return RR_CONTINUE;
+
+			CServer *pSvr = GetServer(packetData.serverId);
+			if (!pSvr)
 			{
-				CServer *pSvr = GetServer(packetData.serverId);
-				if (!pSvr) return RR_CONTINUE;
-
-				
-
-
+				error::ErrorLog( common::format("%d 에 해당하는 서버가 없습니다.", packetData.serverId) );
+				return RR_CONTINUE;
 			}
+
+			IPacketDispatcher *pDispatcher = pSvr->GetDispatcher();
+			if (!pDispatcher)
+			{
+				error::ErrorLog( "Dispatcher가 설정되지 않았습니다." );
+				return RR_CONTINUE;
+			}
+
+			// 패킷과 일치하는 인터페이스를 호출한다.
+			pDispatcher->Dispatch(packetData.packet, pSvr->GetListeners() );
+
 			return RR_CONTINUE;
 		}
 	};

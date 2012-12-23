@@ -290,6 +290,18 @@
 				RelativePath=".\WorkTask.h"
 				>
 			</File>
+			<Filter
+				Name="ErrReport"
+				>
+				<File
+					RelativePath=".\ErrReport\Error.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\ErrReport\Error.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath=".\ReadMe.txt"

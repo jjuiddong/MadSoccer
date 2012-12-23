@@ -9,6 +9,8 @@
 #include <string>
 #include <algorithm>
 
+
+#include "ErrReport/Error.h"
 #include "Packet.h"
 #include "PacketListener.h"
 

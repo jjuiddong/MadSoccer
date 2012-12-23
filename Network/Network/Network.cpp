@@ -47,6 +47,8 @@ bool network::StartServer(int port, CServer *pSvr)
 	m_Servers.insert( ServerMap::value_type(pSvr->GetId(), pSvr) );
 
 	// 서버 시작에 관련된 코드 추가
+	error::Log( common::format("%d Server Start", pSvr->GetId()) );
+
 	return pSvr->Start(port);
 }
 
