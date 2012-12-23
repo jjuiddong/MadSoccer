@@ -305,6 +305,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\etc\RandNoDuplicate.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\etc\RandNoDuplicate.h"
+				>
+			</File>
+			<File
+				RelativePath=".\etc\Reference.h"
+				>
+			</File>
+			<File
 				RelativePath=".\etc\Singleton.h"
 				>
 			</File>

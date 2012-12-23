@@ -3,10 +3,8 @@
 // Author:  jjuiddong
 // Date:    2012-11-27
 // 
-// 
 // CClient가 접속할 Server를 표현한다.
 //------------------------------------------------------------------------
-
 #pragma once
 
 
@@ -19,18 +17,27 @@ namespace network
 		virtual ~CServer();
 
 	protected:
+		int					m_Id;					// 서버 고유ID
 		SOCKET				m_ListenSocket;
 		int					m_ServerPort;
 		bool				m_IsServerOn;			// 서버가 정상적으로 실행이 되었다면 true
 		CRITICAL_SECTION	m_CriticalSection;
 
-		SocketList	m_ClientSockets;
-		PacketList	m_Packets;
+		SocketList			m_ClientSockets;
+		PacketList			m_Packets;
+
+		ListenerList		m_Listners;
+		IPacketDispatcher	*m_pDispatcher;
+
+		common::CThread		m_AcceptThread;
+		common::CThread		m_RecvThread;
+		common::CThread		m_WorkThread;
 
 	public:
 		bool				Start(int port);
 		bool				Stop();
 
+		int					GetId() const { return m_Id; }
 		SOCKET				GetListenSocket() { return m_ListenSocket; }
 		bool				IsServerOn() { return m_IsServerOn; }
 		const SocketList&	GetClientSockets() { return m_ClientSockets; }
@@ -49,6 +56,10 @@ namespace network
 		void				ClearPackets();
 		void				Clear();
 
+		bool				AddListener(IPacketListener *listener);
+		bool				RemoveListener(IPacketListener *listener);
+		const ListenerList&	GetListeners() const { return m_Listners; }
+
 	public:
 		virtual void		ProcessPacket( const CPacket &rcvPacket );
 
@@ -60,13 +71,4 @@ namespace network
 
 	};
 
-	// list<CServer*> 에서 CServer를 찾는 객체
-	class IsServer : public std::unary_function<network::CServer*, bool>
-	{
-	public:
-		IsServer(network::CServer *p):m_p(p) {  }
-		network::CServer *m_p;
-		bool operator ()(network::CServer *t) const
-			{ return (t == m_p); }
-	};
 };

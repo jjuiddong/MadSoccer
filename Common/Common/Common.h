@@ -38,7 +38,6 @@ namespace common
 	typedef ExternalMsgList::iterator ExternalMsgItor;
 
 
-
 }
 
 typedef unsigned short u_short;
@@ -69,7 +68,9 @@ typedef unsigned short u_short;
 #include "thread/Instance.h"
 #include "etc/Singleton.h"
 #include "etc/String.h"
-
+#include "etc/FastMemLoader.h"
+#include "etc/Reference.h"
+#include "etc/RandNoDuplicate.h"
 
 
 #endif // __COMMON_H__

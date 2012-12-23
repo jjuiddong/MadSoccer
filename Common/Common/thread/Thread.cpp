@@ -48,10 +48,10 @@ void CThread::Start()
 //------------------------------------------------------------------------
 // 쓰레드 종료
 //------------------------------------------------------------------------
-void CThread::Kill()
+void CThread::Terminate()
 {
 	m_State = END;
-	WaitForSingleObject(m_hThread, 5000); // 쓰레드가 종료될 때까지 기다린다.
+	WaitForSingleObject(m_hThread, 500); // 쓰레드가 종료될 때까지 기다린다.
 
 }
 

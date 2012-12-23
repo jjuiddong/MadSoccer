@@ -11,6 +11,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Graphics", "..\Graphics\Graphics\Graphics.vcproj", "{14EC1FB5-9956-4030-A15B-77287E3346D7}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Network", "..\Network\Network\Network.vcproj", "{F5006545-7481-45EC-935C-0A8BFFF6637D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B38832D9-1311-42A3-8B82-BF802E8D3098} = {B38832D9-1311-42A3-8B82-BF802E8D3098}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AI", "..\AI\AI\AI.vcproj", "{9B1AD4C2-4604-4F53-8DFF-6916E12F08C8}"
 EndProject

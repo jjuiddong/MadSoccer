@@ -4,7 +4,9 @@
 #include <winsock.h>
 #include <process.h> 
 #include "ServerThread.h"
-
+#include "AcceptTask.h"
+#include "RecvTask.h"
+#include "WorkTask.h"
 
 
 using namespace network;
@@ -12,6 +14,7 @@ using namespace network;
 
 CServer::CServer() :
 	m_IsServerOn(true)
+,	m_Id(common::GenerateId())
 {
 	m_ServerPort = 2333;
 	InitializeCriticalSection( &m_CriticalSection );
@@ -90,11 +93,14 @@ bool CServer::Start(int port)
         return false;
     }
 
-	_beginthread( AcceptThread, 0, this );
+	m_AcceptThread.AddTask( new CAcceptTask(this) );
+	m_AcceptThread.Start();
 
-	_beginthread( RecvThread, 0, this );
+	m_RecvThread.AddTask( new CRecvTask(this) );
+	m_RecvThread.Start();
 
-	_beginthread( WorkThread, 0, this );
+	m_WorkThread.AddTask( new CWorkTask(this) );
+	m_WorkThread.Start();
 
 	return true;
 }
@@ -172,6 +178,10 @@ void CServer::Clear()
 {
 	m_IsServerOn = false;
 	Sleep(100);
+
+	m_AcceptThread.Terminate();
+	m_RecvThread.Terminate();
+	m_WorkThread.Terminate();
 
 	SockItor it = m_ClientSockets.begin();
 	while (m_ClientSockets.end() != it)
@@ -301,3 +311,28 @@ void CServer::LeaveSync()
 {
 	LeaveCriticalSection( &m_CriticalSection );
 }
+
+
+//------------------------------------------------------------------------
+// 리스너 등록
+//------------------------------------------------------------------------
+bool CServer::AddListener(IPacketListener *pListener)
+{
+	ListenerItor it = std::find(m_Listners.begin(), m_Listners.end(), pListener);
+	if (m_Listners.end() != it)
+		return false; // 이미 존재한다면 실패
+
+	m_Listners.push_back(pListener);
+	return true;
+}
+
+
+//------------------------------------------------------------------------
+// 리스너 제거
+//------------------------------------------------------------------------
+bool CServer::RemoveListener(IPacketListener *listener)
+{
+	m_Listners.remove(listener);
+	return true;
+}
+

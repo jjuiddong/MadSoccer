@@ -171,7 +171,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\Server.cpp"
+				RelativePath=".\ServerApp.cpp"
 				>
 			</File>
 			<File
@@ -205,10 +205,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Server.h"
-				>
-			</File>
-			<File
 				RelativePath=".\stdafx.h"
 				>
 			</File>
@@ -232,6 +228,26 @@
 			</File>
 			<File
 				RelativePath=".\small.ico"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Lib"
+			>
+			<File
+				RelativePath=".\ChatServer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ChatServer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ServerLauncher.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ServerLauncher.h"
 				>
 			</File>
 		</Filter>

@@ -207,6 +207,10 @@
 			Name="Lib"
 			>
 			<File
+				RelativePath=".\AcceptTask.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Client.cpp"
 				>
 			</File>
@@ -215,7 +219,43 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LogicThreadAllocator.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LogicThreadAllocator.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Packet.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PacketDispatcher.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PacketDispatcher.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PacketListener.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PacketListener.h"
+				>
+			</File>
+			<File
+				RelativePath=".\RecvTask.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Room.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Room.h"
 				>
 			</File>
 			<File
@@ -232,6 +272,22 @@
 			</File>
 			<File
 				RelativePath=".\ServerThread.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TaskLogic.h"
+				>
+			</File>
+			<File
+				RelativePath=".\User.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\User.h"
+				>
+			</File>
+			<File
+				RelativePath=".\WorkTask.h"
 				>
 			</File>
 		</Filter>

@@ -2,6 +2,7 @@
 //
 
 #include "stdafx.h"
+#include "../../Common/Common/Common.h"
 #include "../../Network/Network/Network.h"
 #include <conio.h>
 #include <stdio.h>

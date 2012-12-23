@@ -55,7 +55,7 @@ void graphics::ShutDown()
 {
 	m_State = SHUTDOWN;
 	m_Thread.Send2ThreadMessage( TASK_RENDERER, MSG_RENDERER_SETSTATE, SHUTDOWN, 0 );
-	m_Thread.Kill();
+	m_Thread.Terminate();
 }
 
 

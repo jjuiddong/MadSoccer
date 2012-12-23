@@ -6,7 +6,8 @@
 using namespace network;
 
 
-CClient::CClient() 
+CClient::CClient() :
+	m_Id(common::GenerateId())
 {
 	m_ServerIP = "127.0.0.1";
 	m_ServerPort = 2333;

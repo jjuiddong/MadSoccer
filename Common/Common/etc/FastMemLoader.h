@@ -19,6 +19,9 @@
 //		<key, value> 형태의 스크립트로 수정
 //		** 모든 기능이 잘 돌아가게 수정 완료함 ** 
 //
+//
+// FastMemLoader로 생성한 메모리를 자동으로 제거해주는 함수 추가하자.
+// 스크립트에서 중괄호 안에서 속성값을 설정할 수 있게 하자.
 //-----------------------------------------------------------------------------//
 
 #if !defined(__FASTMEMLOADER_H__)
@@ -41,7 +44,7 @@ class CFastMemLoader
 {
 public:
 	CFastMemLoader();
-	CFastMemLoader( char *szDataStructureFileName );
+	CFastMemLoader( const char *szDataStructureFileName );
 	virtual ~CFastMemLoader();
 
 protected:
@@ -140,15 +143,15 @@ public:
 	std::string			m_ErrString;			// 가장 최근에 발생한 에러정보를 저장한다.
 
 public:
-	BOOL WriteBin( char *szFileName, void *pStruct, char *typeName );
-	BOOL WriteBin( FILE *fp, void *pStruct, char *typeName );
-	BOOL WriteScript( char *szFileName, void *pStruct, char *typeName );
-	BOOL WriteScript( FILE *fp, void *pStruct, char *typeName, int tab );
-	BYTE* ReadBin( char *szFileName, char *typeName );
-	int ReadBin( BYTE *pReadMem, char *typeName );
-	BYTE* ReadScript( char *szFileName, char *typeName );
-	BOOL LoadDataStructureFile( char *szFileName, int opt=0 );
-	BOOL AddType( char *typeName, int nSize, int nOffset, char *szParentName=NULL );
+	BOOL WriteBin( const char *szFileName, void *pStruct, const char *typeName );
+	BOOL WriteBin( FILE *fp, void *pStruct, const char *typeName );
+	BOOL WriteScript( const char *szFileName, void *pStruct, const char *typeName );
+	BOOL WriteScript( FILE *fp, void *pStruct, const char *typeName, int tab );
+	BYTE* ReadBin( const char *szFileName, const char *typeName );
+	int ReadBinMem( BYTE *pReadMem, const char *typeName );
+	BYTE* ReadScript( const char *szFileName, const char *typeName );
+	BOOL LoadDataStructureFile( const char *szFileName, int opt=0 );
+	BOOL AddType( const char *typeName, int nSize, int nOffset, const char *szParentName=NULL );
 	void Clear();
 
 protected:

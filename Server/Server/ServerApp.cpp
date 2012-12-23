@@ -2,7 +2,10 @@
 //
 
 #include "stdafx.h"
-#include "Server.h"
+#include "Resource.h"
+#include "ChatServer.h"
+#include "ServerLauncher.h"
+
 
 #define MAX_LOADSTRING 100
 
@@ -10,29 +13,7 @@
 HINSTANCE hInst;								// 현재 인스턴스입니다.
 TCHAR szTitle[MAX_LOADSTRING];					// 제목 표시줄 텍스트입니다.
 TCHAR szWindowClass[MAX_LOADSTRING];			// 기본 창 클래스 이름입니다.
-
-using namespace network;
-
-// 패킷을 받으면 연결된 모든 클라이언트에게 메세지를 보낸다.
-class ChatServer : public network::CServer
-{
-protected:
-	virtual void ProcessPacket( const CPacket &rcvPacket )
-	{
-		if (!IsExist(rcvPacket.GetSenderSocket()))
-			return;
-
-		// 클라이언트에게 값을 되돌려 줍니다.
-		char buf[ 256];
-		strcpy_s(buf, "server send ");
-		strcat_s(buf, rcvPacket.GetData());
-		CPacket sendPacket(GetListenSocket(), buf);
-		SendAll(sendPacket);
-	}
-};
-
-ChatServer g_Server;
-
+CChatServer g_Server;
 
 
 // 이 코드 모듈에 들어 있는 함수의 정방향 선언입니다.
@@ -41,14 +22,14 @@ BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
-                     HINSTANCE hPrevInstance,
-                     LPTSTR    lpCmdLine,
-                     int       nCmdShow)
+					   HINSTANCE hPrevInstance,
+					   LPTSTR    lpCmdLine,
+					   int       nCmdShow)
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
- 	// TODO: 여기에 코드를 입력합니다.
+	// TODO: 여기에 코드를 입력합니다.
 	MSG msg;
 	HACCEL hAccelTable;
 
@@ -62,6 +43,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	{
 		return FALSE;
 	}
+
+	CServerLauncher::Get()->Launcher( "script/serverstartconfig.txt" );
 
 	network::StartServer( 2333, &g_Server );
 
@@ -128,22 +111,22 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   HWND hWnd;
+	HWND hWnd;
 
-   hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
+	hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
 
-   hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, 300, 300, NULL, NULL, hInstance, NULL);
+	hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT, 0, 300, 300, NULL, NULL, hInstance, NULL);
 
-   if (!hWnd)
-   {
-      return FALSE;
-   }
+	if (!hWnd)
+	{
+		return FALSE;
+	}
 
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
+	ShowWindow(hWnd, nCmdShow);
+	UpdateWindow(hWnd);
 
-   return TRUE;
+	return TRUE;
 }
 
 //
@@ -170,9 +153,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// 메뉴의 선택 영역을 구문 분석합니다.
 		switch (wmId)
 		{
-// 		case IDM_ABOUT:
-// 			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-// 			break;
+			// 		case IDM_ABOUT:
+			// 			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+			// 			break;
 		case IDM_EXIT:
 			DestroyWindow(hWnd);
 			break;
@@ -203,23 +186,3 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	return 0;
 }
-
-// 정보 대화 상자의 메시지 처리기입니다.
-// INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
-// {
-// 	UNREFERENCED_PARAMETER(lParam);
-// 	switch (message)
-// 	{
-// 	case WM_INITDIALOG:
-// 		return (INT_PTR)TRUE;
-// 
-// 	case WM_COMMAND:
-// 		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-// 		{
-// 			EndDialog(hDlg, LOWORD(wParam));
-// 			return (INT_PTR)TRUE;
-// 		}
-// 		break;
-// 	}
-// 	return (INT_PTR)FALSE;
-// }

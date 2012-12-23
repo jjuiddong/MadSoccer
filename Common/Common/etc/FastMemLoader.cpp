@@ -171,7 +171,7 @@ CFastMemLoader::CFastMemLoader()
 	CreateDefaultType();
 }
 
-CFastMemLoader::CFastMemLoader( char *szDataStructureFileName )
+CFastMemLoader::CFastMemLoader( const char *szDataStructureFileName )
 {
 	CreateDefaultType();
 	if( szDataStructureFileName )
@@ -212,7 +212,7 @@ void CFastMemLoader::CreateDefaultType()
 // opt: 0 중복된 데이타가 발생하면 에러를 발생한다.
 //		1 중복된 데이타가 발생하면 덮어 씌운다.
 //-----------------------------------------------------------------------------//
-BOOL CFastMemLoader::LoadDataStructureFile( char *szFileName, int opt )
+BOOL CFastMemLoader::LoadDataStructureFile( const char *szFileName, int opt )
 {
 	SDftDataParser parser;
 	SScriptParseTree *pRoot = parser.OpenScriptFile( szFileName );
@@ -363,7 +363,7 @@ BOOL CFastMemLoader::LoadMemberList( SScriptParseTree *pParseTree, MemberList *p
 // pStruct: 정보를 저장하고있는 메모리
 // szTokenName : 구조체 타입
 //-----------------------------------------------------------------------------//
-BOOL CFastMemLoader::WriteBin( char *szFileName, void *pStruct, char *typeName )
+BOOL CFastMemLoader::WriteBin( const char *szFileName, void *pStruct, const char *typeName )
 {
 	if( !pStruct ) return FALSE;
 
@@ -376,7 +376,7 @@ BOOL CFastMemLoader::WriteBin( char *szFileName, void *pStruct, char *typeName )
 
 	return TRUE;
 }
-BOOL CFastMemLoader::WriteScript( char *szFileName, void *pStruct, char *typeName )
+BOOL CFastMemLoader::WriteScript( const char *szFileName, void *pStruct, const char *typeName )
 {
 	if( !pStruct ) return FALSE;
 
@@ -397,7 +397,7 @@ BOOL CFastMemLoader::WriteScript( char *szFileName, void *pStruct, char *typeNam
 // pStruct: 정보를 저장하고있는 메모리
 // typeName : 구조체 타입
 //-----------------------------------------------------------------------------//
-BOOL CFastMemLoader::WriteBin( FILE *fp, void *pStruct, char *typeName )
+BOOL CFastMemLoader::WriteBin( FILE *fp, void *pStruct, const char *typeName )
 {
 	queue<SWsp> wspQueue;
 	wspQueue.push( SWsp(typeName, TYPE_DATA, 0, 0, (BYTE*)pStruct) );
@@ -455,7 +455,7 @@ BOOL CFastMemLoader::WriteBin( FILE *fp, void *pStruct, char *typeName )
 //-----------------------------------------------------------------------------//
 // 구조체포인터 pStruct를 szTokenName포맷에 맞게 스크립트로 저장한다.
 //-----------------------------------------------------------------------------//
-BOOL CFastMemLoader::WriteScript( FILE *fp, void *pStruct, char *typeName, int tab )
+BOOL CFastMemLoader::WriteScript( FILE *fp, void *pStruct, const char *typeName, int tab )
 {
 	TokenItor titor = m_DataStructureMap.find( typeName );
 	if( m_DataStructureMap.end() == titor ) return FALSE; // error !!
@@ -574,7 +574,7 @@ BOOL CFastMemLoader::WriteScript( FILE *fp, void *pStruct, char *typeName, int t
 // binary file로된 szFileName 파일을 typeName 타입으로 읽는다.
 // 읽은 데이타는 BYTE* 리턴된다. (메모리제거는 직접해줘야함)
 //-----------------------------------------------------------------------------//
-BYTE* CFastMemLoader::ReadBin( char *szFileName, char *typeName )
+BYTE* CFastMemLoader::ReadBin( const char *szFileName, const char *typeName )
 {
 	FILE *fp;
 	fopen_s( &fp, szFileName, "rb" );
@@ -588,7 +588,7 @@ BYTE* CFastMemLoader::ReadBin( char *szFileName, char *typeName )
 	fread( pRead, 1, filesize, fp );
 	fclose( fp );
 
-	if( !ReadBin(pRead, typeName) )
+	if( !ReadBinMem(pRead, typeName) )
 	{
 		delete[] pRead;
 		pRead = NULL;
@@ -605,7 +605,7 @@ BYTE* CFastMemLoader::ReadBin( char *szFileName, char *typeName )
 // **읽은 byte수를 리턴할려고 했지만 속도최적화를 이유로 뺐다.**
 // 함수가 올바로 작동하지 못했다면 0을 리턴한다.
 //-----------------------------------------------------------------------------//
-int CFastMemLoader::ReadBin( BYTE *pReadMem, char *typeName )
+int CFastMemLoader::ReadBinMem( BYTE *pReadMem, const char *typeName )
 {
 	TokenItor itor = m_DataStructureMap.find( typeName );
 	if( m_DataStructureMap.end() == itor ) return 0;
@@ -663,7 +663,7 @@ BOOL CFastMemLoader::IsPointer( MemberList *pList )
 // nSize : type의 byte수
 // szParentName : parent type name (이경우 parent의 child로 추가된다.)
 //-----------------------------------------------------------------------------//
-BOOL CFastMemLoader::AddType( char *szTypeName, int nSize, int nOffset, char *szParentName ) // szParentName = NULL
+BOOL CFastMemLoader::AddType( const char *szTypeName, int nSize, int nOffset, const char *szParentName ) // szParentName = NULL
 {
 	if( szParentName )
 	{
@@ -836,7 +836,7 @@ BOOL CFastMemLoader::ReadRec( DWORD dwOffset, BYTE *pStruct, MemberList *pMList 
 // 포인터가 포함된 타입일 경우 동적으로 메모리를 생성하기 때문에, 제거할 때 
 // 포인터는 delete를 호출해 주어야 한다.
 //-----------------------------------------------------------------------------//
-BYTE* CFastMemLoader::ReadScript( char *szFileName, char *typeName )
+BYTE* CFastMemLoader::ReadScript( const char *szFileName, const char *typeName )
 {
 	SDftDataParser parser;
 	SScriptParseTree *pRoot = parser.OpenScriptFile( szFileName );

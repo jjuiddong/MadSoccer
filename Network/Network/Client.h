@@ -17,6 +17,7 @@ namespace network
 		virtual ~CClient();
 
 	protected:
+		int			m_Id;				// 클라이언트 아이디
 		std::string	m_ServerIP;
 		int			m_ServerPort;
 		SOCKET		m_Socket;			// Socket
@@ -28,6 +29,7 @@ namespace network
 		void		Clear();
 		bool		Proc();
 
+		int			GetId()	const { return m_Id; }
 		bool		IsConnect() const { return m_IsConnect; }
 		bool		Send(const CPacket &packet);
 
@@ -41,14 +43,4 @@ namespace network
 
 	};
 
-
-	// list<CClient*> 에서 CClient를 찾는 객체
-	class IsClient : public std::unary_function<network::CClient*, bool>
-	{
-	public:
-		IsClient(network::CClient *p):m_p(p) {  }
-		network::CClient *m_p;
-		bool operator ()(network::CClient *t) const
-			{ return (t == m_p); }
-	};
 };

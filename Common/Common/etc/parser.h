@@ -107,7 +107,7 @@ public:
 	// Name: Script Load
 	// Date: (¿Ã¿Á¡§ 2003-03-11 16:3)
 	//-----------------------------------------------------------------------------//
-	SParseTree* OpenScriptFile( char *szFileName )
+	SParseTree* OpenScriptFile( const char *szFileName )
 	{
 		FILE *fp;
 		fopen_s( &fp, szFileName, "r" );
