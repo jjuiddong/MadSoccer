@@ -9,7 +9,7 @@
 #include <vector>
 #include <algorithm>
 #include <string>
-
+#include <assert.h>
 
 namespace common
 {

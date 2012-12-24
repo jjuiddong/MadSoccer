@@ -18,6 +18,5 @@ namespace common
 	std::wstring string2wstring(const std::string &str);
 
 	std::string format(const char* fmt, ...);
-
 }
 

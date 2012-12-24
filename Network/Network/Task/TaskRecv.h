@@ -7,13 +7,15 @@
 //------------------------------------------------------------------------
 #pragma once
 
+#include "LogicThreadAllocator.h"
+
 namespace network
 {
-	class CRecvTask : public common::CTask
+	class CTaskRecv : public common::CTask
 	{
 	public:
-		CRecvTask(CServer *psvr):CTask(1), m_pServer(psvr) {}
-		virtual ~CRecvTask() {}
+		CTaskRecv(CServer *psvr):CTask(1), m_pServer(psvr) {}
+		virtual ~CTaskRecv() {}
 
 	protected:
 		common::ReferencePtr<CServer>	m_pServer;
@@ -39,16 +41,21 @@ namespace network
 					memset( buf, 0, sizeof(buf) );
 					const int result = recv(readSockets.fd_array[ i], buf, sizeof(buf), 0);
 
-					m_pServer->EnterSync();
-					if (result == INVALID_SOCKET)
-					{
-						m_pServer->RemoveClient( readSockets.fd_array[ i] );
-					}
-					else
-					{
-						m_pServer->PushPacket( CPacket(readSockets.fd_array[ i], buf) );
-					}
-					m_pServer->LeaveSync();
+// 					m_pServer->EnterSync();
+// 					if (result == INVALID_SOCKET)
+// 					{
+// 						m_pServer->RemoveClient( readSockets.fd_array[ i] );
+// 					}
+// 					else
+// 					{
+// 						m_pServer->PushPacket( CPacket(readSockets.fd_array[ i], buf) );
+// 					}
+// 					m_pServer->LeaveSync();
+
+					CLogicThreadAllocator::Get()->PushPacket( 
+						CLogicThreadAllocator::SPacketData(m_pServer->GetId(), 
+							CPacket(readSockets.fd_array[ i], buf)));
+
 				}
 			}
 

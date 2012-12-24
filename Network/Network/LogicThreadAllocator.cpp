@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 #include "LogicThreadAllocator.h"
-#include "TaskLogic.h"
+#include "Task/TaskLogic.h"
 #include <boost/foreach.hpp>
 
 
@@ -9,7 +9,7 @@ using namespace network;
 
 
 CLogicThreadAllocator::CLogicThreadAllocator() :
-	m_LogicThreadCount(1)
+	m_LogicThreadCount(0)
 {
 	InitializeCriticalSection(&m_CriticalSection);
 }
@@ -31,6 +31,7 @@ void CLogicThreadAllocator::Init( int logicThreadCount )
 	{
 		common::CThread *pThread = new common::CThread();
 		pThread->AddTask( new CTaskLogic() );
+		pThread->Start();
 		m_Threads.push_back( pThread );
 	}
 }

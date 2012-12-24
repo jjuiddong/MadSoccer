@@ -5,17 +5,15 @@
 // 
 // 클라이언트를 받아서 소켓을 서버에게 넘겨준다.
 //------------------------------------------------------------------------
-
 #pragma once
-
 
 namespace network
 {
-	class CAcceptTask : public common::CTask
+	class CTaskAccept : public common::CTask
 	{
 	public:
-		CAcceptTask(CServer*psvr) : CTask(0), m_pServer(psvr) {}
-		virtual ~CAcceptTask() {}
+		CTaskAccept(CServer*psvr) : CTask(0), m_pServer(psvr) {}
+		virtual ~CTaskAccept() {}
 
 	protected:
 		common::ReferencePtr<CServer>	m_pServer;

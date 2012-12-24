@@ -22,7 +22,7 @@ namespace common
 		T *m_p;
 	public:
 		T* operator->() { return m_p; }
-		bool operator!() { return (m_p)? true : false; }
+		bool operator!() { return (m_p)? false : true; }
 		T* operator=(T *p) { m_p = p; return m_p; }
 	};
 }

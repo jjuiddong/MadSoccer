@@ -207,10 +207,6 @@
 			Name="Lib"
 			>
 			<File
-				RelativePath=".\AcceptTask.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Client.cpp"
 				>
 			</File>
@@ -227,15 +223,11 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Packet.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Packet.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PacketDispatcher.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PacketDispatcher.h"
 				>
 			</File>
 			<File
@@ -247,7 +239,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\RecvTask.h"
+				RelativePath=".\Protocol.h"
 				>
 			</File>
 			<File
@@ -275,19 +267,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\TaskLogic.h"
-				>
-			</File>
-			<File
 				RelativePath=".\User.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\User.h"
-				>
-			</File>
-			<File
-				RelativePath=".\WorkTask.h"
 				>
 			</File>
 			<Filter
@@ -299,6 +283,26 @@
 				</File>
 				<File
 					RelativePath=".\ErrReport\Error.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Task"
+				>
+				<File
+					RelativePath=".\Task\TaskAccept.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Task\TaskLogic.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Task\TaskRecv.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Task\TaskWork.h"
 					>
 				</File>
 			</Filter>

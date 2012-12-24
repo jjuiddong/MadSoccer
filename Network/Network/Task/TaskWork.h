@@ -9,11 +9,11 @@
 
 namespace network
 {
-	class CWorkTask : public common::CTask
+	class CTaskWork : public common::CTask
 	{
 	public:
-		CWorkTask(CServer*psvr) : CTask(2), m_pServer(psvr) {}
-		virtual ~CWorkTask() {}
+		CTaskWork(CServer*psvr) : CTask(2), m_pServer(psvr) {}
+		virtual ~CTaskWork() {}
 
 	protected:
 		common::ReferencePtr<CServer>	m_pServer;

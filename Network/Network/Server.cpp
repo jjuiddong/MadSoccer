@@ -4,9 +4,9 @@
 #include <winsock.h>
 #include <process.h> 
 #include "ServerThread.h"
-#include "AcceptTask.h"
-#include "RecvTask.h"
-#include "WorkTask.h"
+#include "Task/TaskAccept.h"
+#include "Task/TaskRecv.h"
+#include "Task/TaskWork.h"
 
 
 using namespace network;
@@ -15,7 +15,6 @@ using namespace network;
 CServer::CServer() :
 	m_Id(common::GenerateId())
 ,	m_IsServerOn(true)
-,	m_pDispatcher(NULL)
 {
 	m_ServerPort = 2333;
 	InitializeCriticalSection( &m_CriticalSection );
@@ -94,13 +93,13 @@ bool CServer::Start(int port)
         return false;
     }
 
-	m_AcceptThread.AddTask( new CAcceptTask(this) );
+	m_AcceptThread.AddTask( new CTaskAccept(this) );
 	m_AcceptThread.Start();
 
-	m_RecvThread.AddTask( new CRecvTask(this) );
+	m_RecvThread.AddTask( new CTaskRecv(this) );
 	m_RecvThread.Start();
 
-	m_WorkThread.AddTask( new CWorkTask(this) );
+	m_WorkThread.AddTask( new CTaskWork(this) );
 	m_WorkThread.Start();
 
 	return true;

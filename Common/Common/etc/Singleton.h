@@ -31,7 +31,6 @@ namespace common
 			}
 		}
 	};
-
 	template <class T>
 	T* CSingleton<T>::m_pInstance = NULL;
 }

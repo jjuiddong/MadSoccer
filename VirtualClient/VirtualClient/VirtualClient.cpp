@@ -7,7 +7,6 @@
 #include <conio.h>
 #include <stdio.h>
 
-
 using namespace network;
 
 class CVirtualClient : public network::CClient
@@ -37,9 +36,11 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		if (_kbhit())
 		{
-	 		char buf[ 256];
+	 		char buf[ 8];
 	 		gets_s(buf);
-	 		client.Send( CPacket(0, buf) );
+			char pack[ 256];
+			*(int*)pack = atoi(buf);
+	 		client.Send( CPacket(0, pack) );
 		}
 
 		Sleep(1);

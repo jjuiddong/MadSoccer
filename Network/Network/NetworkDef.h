@@ -25,7 +25,11 @@ typedef std::list<network::IPacketListener*> ListenerList;
 typedef ListenerList::iterator ListenerItor;
 
 
-#include "PacketDispatcher.h"
+#include "Protocol.h"
+
+
+typedef common::ReferencePtr<network::IProtocol> ProtocolPtr;
+
 
 
 

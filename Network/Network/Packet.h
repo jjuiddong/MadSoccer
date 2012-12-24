@@ -5,9 +5,7 @@
 // 
 // 네트워크 통신으로 받은 패킷을 정의한다.
 //------------------------------------------------------------------------
-
 #pragma once
-
 
 namespace network
 {
@@ -30,6 +28,7 @@ namespace network
 		char		m_Data[ MAX_PACKETSIZE];
 
 	public:
+		int			GetProtocol() const;
 		SOCKET		GetSenderSocket() const { return m_Sender; }
 		char*		GetData() const { return (char*)m_Data; }
 		int			GetPacketSize() const { return MAX_PACKETSIZE; }

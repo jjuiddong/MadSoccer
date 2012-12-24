@@ -29,15 +29,16 @@ namespace network
 				return RR_CONTINUE;
 			}
 
-			IPacketDispatcher *pDispatcher = pSvr->GetDispatcher();
-			if (!pDispatcher)
+//			IPacketDispatcher *pDispatcher = pSvr->GetDispatcher();
+			ProtocolPtr protocol = pSvr->GetProtocol();
+			if (!protocol)
 			{
 				error::ErrorLog( "Dispatcher가 설정되지 않았습니다." );
 				return RR_CONTINUE;
 			}
 
 			// 패킷과 일치하는 인터페이스를 호출한다.
-			pDispatcher->Dispatch(packetData.packet, pSvr->GetListeners() );
+			protocol->Dispatch(packetData.packet, pSvr->GetListeners() );
 
 			return RR_CONTINUE;
 		}

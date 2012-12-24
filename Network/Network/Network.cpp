@@ -3,6 +3,7 @@
 #include "Network.h"
 #include "Server.h"
 #include "Client.h"
+#include "LogicThreadAllocator.h"
 
 
 
@@ -27,6 +28,7 @@ using namespace network;
 bool network::Init()
 {
 	common::InitRandNoDuplicate();
+	CLogicThreadAllocator::Get()->Init(1);
 
 	return true;
 }
@@ -78,9 +80,8 @@ bool network::StopServer(CServer *pSvr)
 CServer* network::GetServer(int serverId)
 {
 	ServerItor it = m_Servers.find(serverId);
-	if (m_Servers.end() != it)
+	if (m_Servers.end() == it)
 		return NULL;
-
 	return it->second;
 }
 

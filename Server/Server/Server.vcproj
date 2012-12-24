@@ -243,6 +243,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\S2CProtocol.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\S2CProtocol.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ServerLauncher.cpp"
 				>
 			</File>

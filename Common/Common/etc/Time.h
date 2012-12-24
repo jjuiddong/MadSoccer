@@ -17,5 +17,4 @@ namespace common
 		return common::format("(%d-%d-%d) %dΩ√%d∫–%d√ ", t.wYear, t.wMonth, t.wDay, 
 			t.wHour, t.wMinute, t.wSecond);
 	}
-
 }

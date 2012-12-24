@@ -27,7 +27,7 @@ namespace network
 		PacketList			m_Packets;
 
 		ListenerList		m_Listners;
-		IPacketDispatcher	*m_pDispatcher;
+		ProtocolPtr			m_pProtocol;
 
 		common::CThread		m_AcceptThread;
 		common::CThread		m_RecvThread;
@@ -56,8 +56,8 @@ namespace network
 		void				ClearPackets();
 		void				Clear();
 
-		void				SetDispatcher(IPacketDispatcher *p) { m_pDispatcher = p; }
-		IPacketDispatcher*	GetDispatcher() const { return m_pDispatcher; }
+		void				SetProtocol(ProtocolPtr protocol) { m_pProtocol = protocol; }
+		ProtocolPtr			GetProtocol() const { return m_pProtocol; }
 		bool				AddListener(IPacketListener *listener);
 		bool				RemoveListener(IPacketListener *listener);
 		const ListenerList&	GetListeners() const { return m_Listners; }
