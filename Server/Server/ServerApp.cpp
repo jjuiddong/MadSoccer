@@ -50,7 +50,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	CServerLauncher::Get()->Launcher( "script/serverstartconfig.txt" );
 
-	network::Init();
+	network::Init(1);
 	g_Server.SetProtocol( &g_S2CProtocol );
 	g_Server.AddListener( new network::CS2CPacketListener() );
 	network::StartServer( 2333, &g_Server );
@@ -67,6 +67,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		}
 	}
 
+	network::Clear();
 	return (int) msg.wParam;
 }
 

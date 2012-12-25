@@ -7,7 +7,6 @@
 //------------------------------------------------------------------------
 #pragma once
 
-
 namespace network
 {
 	class CServer
@@ -15,34 +14,27 @@ namespace network
 	public:
 		CServer();
 		virtual ~CServer();
+		friend class CNetLauncher;
 
 	protected:
-		int					m_Id;					// 서버 고유ID
-		SOCKET				m_ListenSocket;
+		int					m_Id;					// 서버 고유ID (자동생성)
+		SOCKET				m_Socket;				// ListenSocket
 		int					m_ServerPort;
 		bool				m_IsServerOn;			// 서버가 정상적으로 실행이 되었다면 true
-		CRITICAL_SECTION	m_CriticalSection;
-
 		SocketList			m_ClientSockets;
-		PacketList			m_Packets;
 
 		ListenerList		m_Listners;
 		ProtocolPtr			m_pProtocol;
-
-		common::CThread		m_AcceptThread;
-		common::CThread		m_RecvThread;
-		common::CThread		m_WorkThread;
+		CRITICAL_SECTION	m_CriticalSection;
 
 	public:
-		bool				Start(int port);
 		bool				Stop();
 
 		int					GetId() const { return m_Id; }
-		SOCKET				GetListenSocket() { return m_ListenSocket; }
+		SOCKET				GetSocket() { return m_Socket; }
 		bool				IsServerOn() { return m_IsServerOn; }
 		const SocketList&	GetClientSockets() { return m_ClientSockets; }
 		bool				IsExist(SOCKET socket);
-		const PacketList&	GetPackets() { return m_Packets; }
 		void				MakeFDSET( fd_set *pfdset);
 		void				EnterSync();
 		void				LeaveSync();
@@ -50,10 +42,8 @@ namespace network
 		bool				AddClient(SOCKET sock);
 		bool				RemoveClient(SOCKET sock);
 		SockItor			RemoveClientInLoop(SOCKET sock);
-		bool				PushPacket(const CPacket &packet);
 		bool				Send(SOCKET sock, const CPacket &packet);
 		bool				SendAll(const CPacket &packet);
-		void				ClearPackets();
 		void				Clear();
 
 		void				SetProtocol(ProtocolPtr protocol) { m_pProtocol = protocol; }
@@ -62,10 +52,10 @@ namespace network
 		bool				RemoveListener(IPacketListener *listener);
 		const ListenerList&	GetListeners() const { return m_Listners; }
 
-	public:
-		virtual void		ProcessPacket( const CPacket &rcvPacket );
-
 	protected:
+		void				SetPort(int port) { m_ServerPort = port; }
+		void				SetSocket(SOCKET sock) { m_Socket = sock; }
+
 		// Overriding
 		virtual void		OnListen();
 		virtual void		OnClientJoin(SOCKET sock) {}

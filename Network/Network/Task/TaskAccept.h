@@ -7,39 +7,50 @@
 //------------------------------------------------------------------------
 #pragma once
 
+#include "NetController.h"
+
 namespace network
 {
 	class CTaskAccept : public common::CTask
 	{
 	public:
-		CTaskAccept(CServer*psvr) : CTask(0), m_pServer(psvr) {}
+		CTaskAccept() : CTask(0) {}
 		virtual ~CTaskAccept() {}
 
-	protected:
-		common::ReferencePtr<CServer>	m_pServer;
-
 	public:
-		void	SetServerPtr(CServer *psvr) { m_pServer = psvr; }
-
 		virtual RUN_RESULT	Run() override
 		{
-			if (!m_pServer) return RR_CONTINUE;
+			const timeval t = {0, 10}; // 10 millisecond
+			fd_set readSockets;
+			CNetController::Get()->MakeServersFDSET(&readSockets);
 
-			// 오는 요청을 기다립니다.
-			SOCKET remoteSocket;
-
-			// accept(요청을 받으 소켓, 선택 클라이언트 주소)
-			remoteSocket = accept(m_pServer->GetListenSocket(), NULL, NULL);
-			if(remoteSocket == INVALID_SOCKET)
+			const int ret = select( readSockets.fd_count, &readSockets, NULL, NULL, &t);
+			if (ret != 0 && ret != SOCKET_ERROR)
 			{
-				//PRINTERROR("accept()");
-				//closesocket(m_ListenSocket);
-				return RR_END;
-			}
+				for (u_int i=0; i < readSockets.fd_count; ++i)
+				{
+					// accept(요청을 받으 소켓, 선택 클라이언트 주소)
+					SOCKET remoteSocket = accept(readSockets.fd_array[ i], NULL, NULL);
+					if (remoteSocket == INVALID_SOCKET)
+					{
+						error::ErrorLog( "Client를 Accept하는 도중에 에러가 발생함" );
+						return RR_CONTINUE;
+					}
 
- 			m_pServer->EnterSync();
- 			m_pServer->AddClient( remoteSocket );
- 			m_pServer->LeaveSync();
+					CServer *pSvr = CNetController::Get()->GetServer(readSockets.fd_array[ i]);
+					if (!pSvr)
+					{
+						error::ErrorLog( 
+							common::format("%d 소켓에 해당하는 클라이언트를 찾지못함", 
+								readSockets.fd_array[ i]) );
+						return RR_CONTINUE;
+					}
+
+ 					pSvr->EnterSync();
+ 					pSvr->AddClient( remoteSocket );
+ 					pSvr->LeaveSync();
+				}
+			}
 
 			return RR_CONTINUE; 
 		}

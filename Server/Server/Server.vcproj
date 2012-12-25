@@ -243,6 +243,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\S2CPacketListener.h"
+				>
+			</File>
+			<File
 				RelativePath=".\S2CProtocol.cpp"
 				>
 			</File>

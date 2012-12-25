@@ -8,6 +8,9 @@
 //------------------------------------------------------------------------
 #pragma once
 
+#include "PacketQueue.h"
+
+
 namespace network
 {
 	class CTaskLogic : public common::CTask
@@ -18,18 +21,19 @@ namespace network
 	public:
 		virtual RUN_RESULT	Run() override
 		{
-			CLogicThreadAllocator::SPacketData packetData;
-			if (!CLogicThreadAllocator::Get()->PopPacket(packetData))
+			CPacketQueue::SPacketData packetData;
+			if (!CPacketQueue::Get()->PopPacket(packetData))
 				return RR_CONTINUE;
 
-			CServer *pSvr = GetServer(packetData.serverId);
+			CServer *pSvr = GetServer(packetData.rcvServerSock);
 			if (!pSvr)
 			{
-				error::ErrorLog( common::format("%d 에 해당하는 서버가 없습니다.", packetData.serverId) );
+				error::ErrorLog( 
+					common::format("CTaskLogic:: %d 에 해당하는 서버가 없습니다.", 
+						packetData.rcvServerSock) );
 				return RR_CONTINUE;
 			}
 
-//			IPacketDispatcher *pDispatcher = pSvr->GetDispatcher();
 			ProtocolPtr protocol = pSvr->GetProtocol();
 			if (!protocol)
 			{

@@ -19,13 +19,14 @@ namespace network
 	CServer*	GetServer(int serverId);
 
 	// Client
-	bool		StartClient(std::string ip, int port, CClient *pClt);
+	bool		StartClient(const std::string &ip, int port, CClient *pClt);
 	bool		StopClient(CClient *pClt);
 	CClient*	GetClient(int clientId);
 
 	// Common
-	bool		Init();
+	bool		Init(int logicThreadCount);
 	void		Proc();
+	void		Clear();
 
 
 };

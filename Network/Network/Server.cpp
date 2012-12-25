@@ -3,10 +3,6 @@
 #include "Server.h"
 #include <winsock.h>
 #include <process.h> 
-#include "ServerThread.h"
-#include "Task/TaskAccept.h"
-#include "Task/TaskRecv.h"
-#include "Task/TaskWork.h"
 
 
 using namespace network;
@@ -25,84 +21,6 @@ CServer::CServer() :
 CServer::~CServer()
 {
 	Clear();
-}
-
-
-//------------------------------------------------------------------------
-// 서버를 띄운다.
-//------------------------------------------------------------------------
-bool CServer::Start(int port)
-{
-	m_ServerPort = port;
-
-	// 윈속을 시작하고 버전을 확인합니다
-	WORD wVersionRequested = MAKEWORD(1, 1);
-	WSADATA wsaData;
-	int nRet = WSAStartup(wVersionRequested, &wsaData);
-	if(wsaData.wVersion != wVersionRequested)
-	{
-//		fprintf(stderr, "\n 윈속 버전이 틀렸습니다.\n");
-		return false;
-	}
-
-    // socket(주소계열, 소켓 형식, 프로토콜)
-    m_ListenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if(m_ListenSocket == INVALID_SOCKET)
-    {
-//        PRINTERROR("socket()");
-        return false;
-    }
-
-    // 주소 구조체를 채웁니다.
-    SOCKADDR_IN saServer;
-    saServer.sin_family = AF_INET;
-    saServer.sin_addr.s_addr = INADDR_ANY;    // 윈속이 제공하게 둡니다.
-    saServer.sin_port = htons(m_ServerPort);        // 명령줄에서 받은 포트를 넣습니다.
-
-    // 소켓과 listensocket 을 bind(묶습) 합니다.
-    // bind(소켓, 서버 주소, 주소 구조체의 길이
-    nRet = bind(m_ListenSocket, (LPSOCKADDR)&saServer, sizeof(struct sockaddr) );
-    if(nRet == SOCKET_ERROR)
-    {
-//        PRINTERROR("bind()");
-        closesocket(m_ListenSocket);
-        return false;
-    }
-
-    int nLen;
-    nLen = sizeof(SOCKADDR);
-    char szBuf[256];
-
-    nRet = gethostname( szBuf, sizeof(szBuf) );
-    if (nRet == SOCKET_ERROR)
-    {
-//        PRINTERROR("gethostname()");
-        closesocket(m_ListenSocket);
-        return false;
-    }
-
-    // 소켓에게 기다리게 합니다.
-
-    // listen(오는 소켓, 요청 수용 가능한 용량)
-    nRet = listen(m_ListenSocket, SOMAXCONN);
-
-    if(nRet == SOCKET_ERROR)
-    {
-//        PRINTERROR("listen()");
-        closesocket(m_ListenSocket);
-        return false;
-    }
-
-	m_AcceptThread.AddTask( new CTaskAccept(this) );
-	m_AcceptThread.Start();
-
-	m_RecvThread.AddTask( new CTaskRecv(this) );
-	m_RecvThread.Start();
-
-	m_WorkThread.AddTask( new CTaskWork(this) );
-	m_WorkThread.Start();
-
-	return true;
 }
 
 
@@ -179,10 +97,6 @@ void CServer::Clear()
 	m_IsServerOn = false;
 	Sleep(100);
 
-	m_AcceptThread.Terminate();
-	m_RecvThread.Terminate();
-	m_WorkThread.Terminate();
-
 	SockItor it = m_ClientSockets.begin();
 	while (m_ClientSockets.end() != it)
 	{
@@ -192,7 +106,7 @@ void CServer::Clear()
 	m_ClientSockets.clear();
 
 	DeleteCriticalSection( &m_CriticalSection );
-	closesocket(m_ListenSocket);
+	closesocket(m_Socket);
 	WSACleanup();
 }
 
@@ -212,36 +126,6 @@ void CServer::MakeFDSET( fd_set *pfdset)
 		pfdset->fd_array[ pfdset->fd_count] = *it++;
 		pfdset->fd_count++;
 	}
-}
-
-
-//------------------------------------------------------------------------
-// 패킷을 저장한다.
-//------------------------------------------------------------------------
-bool CServer::PushPacket(const CPacket &packet)
-{
-	m_Packets.push_back( packet );
-	return true;
-}
-
-
-//------------------------------------------------------------------------
-// 패킷을 모두 제거한다.
-//------------------------------------------------------------------------
-void CServer::ClearPackets()
-{
-	m_Packets.clear();
-}
-
-
-//------------------------------------------------------------------------
-// 패킷 처리
-// 상속받는 클래스에서 오버라이딩해서 처리한다.
-//------------------------------------------------------------------------
-void CServer::ProcessPacket( const CPacket &rcvPacket )
-{
-	if (!IsExist(rcvPacket.GetSenderSocket()))
-		return; // 해당 클라이언트가 없다면 리턴시킨다.
 }
 
 

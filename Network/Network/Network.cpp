@@ -1,22 +1,11 @@
 
 #include "stdafx.h"
 #include "Network.h"
-#include "Server.h"
-#include "Client.h"
-#include "LogicThreadAllocator.h"
-
-
+#include "NetController.h"
 
 namespace network
 {
-	typedef std::map<int, CServer*> ServerMap;
-	typedef std::map<int, CClient*> ClientMap;
-	typedef ServerMap::iterator ServerItor;
-	typedef ClientMap::iterator ClientItor;
-
-	ServerMap m_Servers;
-	ClientMap m_Clients;
-
+	// 아직아무것도없음
 };
 
 using namespace network;
@@ -25,12 +14,22 @@ using namespace network;
 //------------------------------------------------------------------------
 // 네트워크에 관련된 클래스들을 초기화 한다.
 //------------------------------------------------------------------------
-bool network::Init()
+bool network::Init(int logicThreadCount)
 {
 	common::InitRandNoDuplicate();
-	CLogicThreadAllocator::Get()->Init(1);
+	const bool result = CNetController::Get()->Init(logicThreadCount);
 
-	return true;
+	return result;
+}
+
+
+//------------------------------------------------------------------------
+// 메모리 제거
+//------------------------------------------------------------------------
+void network::Clear()
+{
+	CNetController::Release();
+
 }
 
 
@@ -39,88 +38,39 @@ bool network::Init()
 //------------------------------------------------------------------------
 bool network::StartServer(int port, CServer *pSvr)
 {
-	if (!pSvr)
-		return false;
-
-	ServerItor it = m_Servers.find(pSvr->GetId());
-	if (m_Servers.end() != it)
-		return false; // 이미존재한다면 실패
-
-	m_Servers.insert( ServerMap::value_type(pSvr->GetId(), pSvr) );
-
-	// 서버 시작에 관련된 코드 추가
-	error::Log( common::format("%d Server Start", pSvr->GetId()) );
-
-	return pSvr->Start(port);
+	return CNetController::Get()->StartServer(port, pSvr);
 }
-
 
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
 bool network::StopServer(CServer *pSvr)
 {
-	if (!pSvr)
-		return false;
-
-	ServerItor it = m_Servers.find(pSvr->GetId());
-	if (m_Servers.end() == it)
-		return false;
-
-	m_Servers.erase(it);
-
-	// 서버 종료 코드 추가
-	return pSvr->Stop();
+	return CNetController::Get()->StopServer(pSvr);
 }
-
 
 //------------------------------------------------------------------------
 // serverid 에 해당하는 서버를 리턴한다.
 //------------------------------------------------------------------------
 CServer* network::GetServer(int serverId)
 {
-	ServerItor it = m_Servers.find(serverId);
-	if (m_Servers.end() == it)
-		return NULL;
-	return it->second;
+	return CNetController::Get()->GetServer(serverId);
 }
 
-
 //------------------------------------------------------------------------
-// 
+// 클라이언트 실행
 //------------------------------------------------------------------------
-bool network::StartClient(std::string ip, int port, CClient *pClt)
+bool network::StartClient(const std::string &ip, int port, CClient *pClt)
 {
-	if (!pClt)
-		return false;
-
-	ClientItor it = m_Clients.find(pClt->GetId());
-	if (m_Clients.end() != it)
-		return false; // 이미 존재한다면 실패
-
-	m_Clients.insert( ClientMap::value_type(pClt->GetId(), pClt) );
-
-	// 클라이언트 접속 코드 추가
-	return pClt->Start(ip, port);
+	return CNetController::Get()->StartClient(ip, port, pClt);
 }
-
 
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
 bool network::StopClient(CClient *pClt)
 {
-	if (!pClt)
-		return false;
-
-	ClientItor it = m_Clients.find(pClt->GetId());
-	if (m_Clients.end() == it)
-		return false;
-
-	m_Clients.erase(it);
-
-	// 클라이언트 종료 코드 추가
-	return pClt->Stop();
+	return CNetController::Get()->StopClient(pClt);
 }
 
 
@@ -129,23 +79,14 @@ bool network::StopClient(CClient *pClt)
 //------------------------------------------------------------------------
 CClient* network::GetClient(int clientId)
 {
-	ClientItor it = m_Clients.find(clientId);
-	if (m_Clients.end() == it)
-		return NULL;
-	return it->second;
+	return CNetController::Get()->GetClient(clientId);
 }
-
 
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
 void network::Proc()
 {
-	ClientItor cit = m_Clients.begin();
-	while (m_Clients.end() != cit)
-	{
-		CClient *pclt = cit++->second;
-		pclt->Proc();
-	}
+	CNetController::Get()->Proc();
 }
 

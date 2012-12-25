@@ -2,7 +2,6 @@
 #include "stdafx.h"
 #include "S2CProtocol.h"
 #include "S2CPacketListener.h"
-#include <boost/foreach.hpp>
 
 using namespace network;
 

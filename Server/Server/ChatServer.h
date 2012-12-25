@@ -12,7 +12,7 @@
 class CChatServer : public network::CServer
 {
 protected:
-	virtual void ProcessPacket( const network::CPacket &rcvPacket ) override;
+	virtual void ProcessPacket( const network::CPacket &rcvPacket );
 
 };
 

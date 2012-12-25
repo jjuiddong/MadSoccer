@@ -15,22 +15,18 @@ namespace network
 		void func1()
 		{
 			int a = 0;
-		
 		}
 		void func2()
 		{
 			int a = 0;
-		
 		}
 		void func3()
 		{
-			int a = 0;
-		
+			int a = 0;		
 		}
 		void func4()
 		{
 			int a = 0;
-		
 		}
 	};
 }

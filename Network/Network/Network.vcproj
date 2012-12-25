@@ -215,39 +215,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LogicThreadAllocator.cpp"
+				RelativePath=".\NetController.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\LogicThreadAllocator.h"
+				RelativePath=".\NetController.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Packet.cpp"
+				RelativePath=".\NetLauncher.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Packet.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PacketListener.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PacketListener.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Protocol.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Room.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Room.h"
+				RelativePath=".\NetLauncher.h"
 				>
 			</File>
 			<File
@@ -256,22 +236,6 @@
 			</File>
 			<File
 				RelativePath=".\Server.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ServerThread.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ServerThread.h"
-				>
-			</File>
-			<File
-				RelativePath=".\User.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\User.h"
 				>
 			</File>
 			<Filter
@@ -298,11 +262,51 @@
 					>
 				</File>
 				<File
-					RelativePath=".\Task\TaskRecv.h"
+					RelativePath=".\Task\TaskWork.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="DataStructure"
+				>
+				<File
+					RelativePath=".\Packet.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\Task\TaskWork.h"
+					RelativePath=".\Packet.h"
+					>
+				</File>
+				<File
+					RelativePath=".\PacketQueue.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Room.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Room.h"
+					>
+				</File>
+				<File
+					RelativePath=".\User.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\User.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Interface"
+				>
+				<File
+					RelativePath=".\PacketListener.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Protocol.h"
 					>
 				</File>
 			</Filter>

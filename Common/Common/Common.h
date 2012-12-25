@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <string>
 #include <assert.h>
+#include <boost/foreach.hpp>
 
 namespace common
 {

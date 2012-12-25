@@ -15,6 +15,6 @@ void CChatServer::ProcessPacket( const network::CPacket &rcvPacket )
 	char buf[ 256];
 	strcpy_s(buf, "server send ");
 	strcat_s(buf, rcvPacket.GetData());
-	network::CPacket sendPacket(GetListenSocket(), buf);
+	network::CPacket sendPacket(GetSocket(), buf);
 	SendAll(sendPacket);
 }
