@@ -7,9 +7,11 @@
 //------------------------------------------------------------------------
 #pragma once
 
+#include "netobject.h"
+
 namespace network
 {
-	class CServer
+	class CServer : public CNetObject
 	{
 	public:
 		CServer();
@@ -17,49 +19,40 @@ namespace network
 		friend class CNetLauncher;
 
 	protected:
-		int					m_Id;					// 서버 고유ID (자동생성)
-		SOCKET				m_Socket;				// ListenSocket
 		int					m_ServerPort;
 		bool				m_IsServerOn;			// 서버가 정상적으로 실행이 되었다면 true
-		SocketList			m_ClientSockets;
-
-		ListenerList		m_Listners;
-		ProtocolPtr			m_pProtocol;
+		RemoteClientList	m_RemoteClients;		// 서버와 연결된 클라이언트 정보리스트
 		CRITICAL_SECTION	m_CriticalSection;
 
 	public:
 		bool				Stop();
 
-		int					GetId() const { return m_Id; }
-		SOCKET				GetSocket() { return m_Socket; }
-		bool				IsServerOn() { return m_IsServerOn; }
-		const SocketList&	GetClientSockets() { return m_ClientSockets; }
-		bool				IsExist(SOCKET socket);
+		bool				IsServerOn() const { return m_IsServerOn; }
+		bool				IsExist(netid netId);
 		void				MakeFDSET( fd_set *pfdset);
 		void				EnterSync();
 		void				LeaveSync();
 
 		bool				AddClient(SOCKET sock);
-		bool				RemoveClient(SOCKET sock);
-		SockItor			RemoveClientInLoop(SOCKET sock);
-		bool				Send(SOCKET sock, const CPacket &packet);
-		bool				SendAll(const CPacket &packet);
+		CRemoteClient*		GetRemoteClient(netid netId);
+		CRemoteClient*		GetRemoteClientFromSocket(SOCKET sock);
+		bool				RemoveClient(netid netId);
+		bool				RemoveClientFromSocket(SOCKET sock);
+		RemoteClientItor	RemoveClientInLoop(netid netId);
+		netid				GetNetIdFromSocket(SOCKET sock);
 		void				Clear();
 
-		void				SetProtocol(ProtocolPtr protocol) { m_pProtocol = protocol; }
-		ProtocolPtr			GetProtocol() const { return m_pProtocol; }
-		bool				AddListener(IPacketListener *listener);
-		bool				RemoveListener(IPacketListener *listener);
-		const ListenerList&	GetListeners() const { return m_Listners; }
+		virtual bool		Send(netid netId, const CPacket &packet) override;
+		virtual bool		SendAll(const CPacket &packet) override;
 
 	protected:
 		void				SetPort(int port) { m_ServerPort = port; }
-		void				SetSocket(SOCKET sock) { m_Socket = sock; }
+		RemoteClientItor	RemoveClientProcess(RemoteClientItor it);
 
 		// Overriding
 		virtual void		OnListen();
-		virtual void		OnClientJoin(SOCKET sock) {}
-		virtual void		OnClientLeave(SOCKET sock) {}
+		virtual void		OnClientJoin(netid netId) {}
+		virtual void		OnClientLeave(netid netId) {}
 
 	};
 

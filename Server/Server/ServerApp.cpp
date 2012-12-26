@@ -5,7 +5,7 @@
 #include "Resource.h"
 #include "ChatServer.h"
 #include "ServerLauncher.h"
-#include "S2CPacketListener.h"
+#include "S2CProtocolListener.h"
 #include "S2CProtocol.h"
 
 
@@ -17,7 +17,6 @@ HINSTANCE hInst;								// 현재 인스턴스입니다.
 TCHAR szTitle[MAX_LOADSTRING];					// 제목 표시줄 텍스트입니다.
 TCHAR szWindowClass[MAX_LOADSTRING];			// 기본 창 클래스 이름입니다.
 CChatServer g_Server;
-network::CS2CProtocol g_S2CProtocol;
 
 
 // 이 코드 모듈에 들어 있는 함수의 정방향 선언입니다.
@@ -51,8 +50,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	CServerLauncher::Get()->Launcher( "script/serverstartconfig.txt" );
 
 	network::Init(1);
-	g_Server.SetProtocol( &g_S2CProtocol );
-	g_Server.AddListener( new network::CS2CPacketListener() );
 	network::StartServer( 2333, &g_Server );
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_SERVER));

@@ -21,8 +21,8 @@ namespace common
 	protected:
 		T *m_p;
 	public:
-		T* operator->() { return m_p; }
-		bool operator!() { return (m_p)? false : true; }
+		T* operator->() const { return m_p; }
+		bool operator!() const { return (m_p)? false : true; }
 		T* operator=(T *p) { m_p = p; return m_p; }
 	};
 }

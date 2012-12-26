@@ -14,11 +14,11 @@ namespace network
 	class CTaskWork : public common::CTask
 	{
 	public:
-		CTaskWork(CServer *psvr):CTask(1), m_pServer(psvr) {}
+		CTaskWork(ServerPtr psvr):CTask(1), m_pServer(psvr) {}
 		virtual ~CTaskWork() {}
 
 	protected:
-		common::ReferencePtr<CServer>	m_pServer;
+		ServerPtr	m_pServer;
 
 	public:
 		virtual RUN_RESULT	Run() override
@@ -40,10 +40,17 @@ namespace network
 					char buf[ 256];
 					memset( buf, 0, sizeof(buf) );
 					const int result = recv(readSockets.fd_array[ i], buf, sizeof(buf), 0);
-
-					CPacketQueue::Get()->PushPacket( 
-						CPacketQueue::SPacketData(m_pServer->GetSocket(),
-							CPacket(readSockets.fd_array[ i], buf)));
+					if (result == INVALID_SOCKET)
+					{
+						m_pServer->RemoveClientFromSocket(readSockets.fd_array[ i]);
+					}
+					else
+					{
+						const netid netId = m_pServer->GetNetIdFromSocket(readSockets.fd_array[ i]);
+						CPacketQueue::Get()->PushPacket( 
+							CPacketQueue::SPacketData(m_pServer->GetSocket(),CPacket(netId, buf))
+							);
+					}
 				}
 			}
 

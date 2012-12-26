@@ -15,8 +15,6 @@ namespace network
 		CNetLauncher() {}
 		virtual ~CNetLauncher() {}
 
-	protected:
-
 	public:
 		bool	LaunchServer(CServer *pSvr, int port);
 		bool	LaunchClient(CClient *pClient, const std::string &ip, int port);

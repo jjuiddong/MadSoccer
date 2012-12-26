@@ -2,15 +2,15 @@
 //
 
 #include "stdafx.h"
-#include "../../Common/Common/Common.h"
-#include "../../Network/Network/Network.h"
 #include <conio.h>
 #include <stdio.h>
 #include <iostream>
+#include "C2SProtocol.h"
+#include "S2CProtocolListener.h"
 
 using namespace network;
 
-class CVirtualClient : public network::CClient
+class CVirtualClient : public network::CClient, public CS2CProtocolListener
 {
 public:
 	CVirtualClient() {}
@@ -18,7 +18,24 @@ public:
 protected:
 	virtual void ProcessPacket( const CPacket &rcvPacket )
 	{
-		printf( "recv %s\n", rcvPacket.GetData() );
+//		printf( "recv %s\n", rcvPacket.GetData() );
+	}
+
+	virtual void func1(netid senderId) override
+	{
+		int a = 0;
+	}
+	virtual void func2(netid senderId, std::string &str) override
+	{
+		printf( "func2 senderId: %d, str: %s\n", senderId, str.c_str());
+	}
+	virtual void func3(netid senderId, float value) override
+	{
+		int a = 0;
+	}
+	virtual void func4(netid senderId) override
+	{
+		int a = 0;
 	}
 };
 
@@ -36,12 +53,15 @@ const CPacket& operator<<(CPacket &lhs, const SA &rhs)
 	return lhs;
 }
 
-
-
 int _tmain(int argc, _TCHAR* argv[])
 {
+	CC2SProtocol protocol;
 	CVirtualClient client;
+	client.SetProtocol(&protocol);
+	client.AddListener(&client);
+
 	network::StartClient( "127.0.0.1", 2333, &client );
+
 	if (client.IsConnect())
 	{
 		printf( "Connect\n" );
@@ -53,22 +73,10 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		if (_kbhit())
 		{
-	 		char buf[ 8];
-	 		gets_s(buf);
-			const int protocol = atoi(buf);
-			CPacket packet;
-			packet << protocol;
+			std::string str;
+			std::getline(std::cin, str);
 
-			SA a;
-			a.a = 100;
-			packet << a;
-			packet << 10;
-			packet << 0.1f;
-
-			char buf2[32] = {"continue String"};
-			packet << 10 << 11 << buf2;
-
-	 		client.Send( packet );
+			protocol.func(SERVER_NETID, str);
 		}
 
 		Sleep(1);

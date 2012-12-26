@@ -48,7 +48,7 @@ namespace common
 		STATE			GetState() const { return m_State; }
 
 		void			Start();						// 쓰레드 실행
-		void			Terminate();							// 쓰레드 종료
+		void			Terminate();					// 쓰레드 종료
 
 		void			Send2ThreadMessage( int rcvTaskId, int msg, WPARAM wParam, LPARAM lParam);
 		void			Send2ExternalMessage( int msg, WPARAM wParam, LPARAM lParam );

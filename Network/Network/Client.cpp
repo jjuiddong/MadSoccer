@@ -1,13 +1,13 @@
 
 #include "stdafx.h"
 #include "Client.h"
+#include "Protocol.h"
 
 
 using namespace network;
 
 
-CClient::CClient() :
-	m_Id(common::GenerateId())
+CClient::CClient()
 {
 	m_ServerIP = "127.0.0.1";
 	m_ServerPort = 2333;
@@ -58,7 +58,7 @@ bool CClient::Proc()
 		}
 		else
 		{
-			ProcessPacket( CPacket(m_Socket,buf) );
+			m_pProtocol->Dispatch(CPacket(SERVER_NETID,buf), m_Listners);
 		}
 	}
 
@@ -91,7 +91,7 @@ void CClient::OnDisconnect()
 //------------------------------------------------------------------------
 // 패킷 전송
 //------------------------------------------------------------------------
-bool CClient::Send(const CPacket &packet)
+bool CClient::Send(netid netId, const CPacket &packet)
 {
 	// send(연결된 소켓, 보낼 버퍼, 버퍼의 길이, 상태값)
 	const int result = send(m_Socket, packet.GetData(), packet.GetPacketSize(), 0);
@@ -102,3 +102,14 @@ bool CClient::Send(const CPacket &packet)
 	}
 	return true;
 }
+
+
+//------------------------------------------------------------------------
+// 연결된 모든 클라이언트들에게 메세지를 보낸다.
+//------------------------------------------------------------------------
+bool CClient::SendAll(const CPacket &packet)
+{
+	// 아직 아무것도 없음
+	return true;
+}
+

@@ -19,26 +19,7 @@ CNetController::CNetController()
 
 CNetController::~CNetController() 
 {
-	CPacketQueue::Release();
-
-	DeleteCriticalSection(&m_CriticalSection);
-
-	m_AcceptThread.Terminate();
-
-	BOOST_FOREACH( common::CThread *pThread, m_LogicThreads)
-	{
-		pThread->Terminate();
-		delete pThread;
-	}
-	m_LogicThreads.clear();
-
-	BOOST_FOREACH( common::CThread *pThread, m_WorkThreads)
-	{
-		pThread->Terminate();
-		delete pThread;
-	}
-	m_WorkThreads.clear();
-
+	Clear();
 }
 
 
@@ -86,9 +67,6 @@ bool CNetController::StartServer(int port, CServer *pSvr)
 	if (!pSvr)
 		return false;
 
-	if (!CNetLauncher::Get()->LaunchServer(pSvr, port))
-		return false;
-
 	ServerItor it = m_Servers.find(pSvr->GetSocket());
 	if (m_Servers.end() != it)
 	{
@@ -96,8 +74,11 @@ bool CNetController::StartServer(int port, CServer *pSvr)
 		return false;
 	}
 
+	if (!CNetLauncher::Get()->LaunchServer(pSvr, port))
+		return false;
+
 	// 서버 시작에 관련된 코드 추가
-	error::Log( common::format("%d Server Start", pSvr->GetId()) );
+	error::Log( common::format("%d Server Start", pSvr->GetNetId()) );
 	m_Servers.insert( ServerMap::value_type(pSvr->GetSocket(), pSvr) );
 
 	// Work쓰레드 생성
@@ -149,16 +130,16 @@ bool CNetController::StartClient(const std::string &ip, int port, CClient *pClt)
 	if (!pClt)
 		return false;
 
-	if (!CNetLauncher::Get()->LaunchClient(pClt, ip, port))
-		return false;
-
 	ClientItor it = m_Clients.find(pClt->GetSocket());
 	if (m_Clients.end() != it)
 		return false; // 이미 존재한다면 실패
 
+	if (!CNetLauncher::Get()->LaunchClient(pClt, ip, port))
+		return false;
+
 	// 클라이언트 접속 코드 추가
 	// 서버 시작에 관련된 코드 추가
-	error::Log( common::format("%d Client Start", pClt->GetId()) );
+	error::Log( common::format("%d Client Start", pClt->GetNetId()) );
 	m_Clients.insert( ClientMap::value_type(pClt->GetSocket(), pClt) );
 
 	return true;
@@ -231,3 +212,30 @@ void CNetController::LeaveSync()
 	LeaveCriticalSection( &m_CriticalSection );
 }
 
+
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
+void CNetController::Clear()
+{
+	CPacketQueue::Release();
+
+	DeleteCriticalSection(&m_CriticalSection);
+
+	m_AcceptThread.Terminate();
+
+	BOOST_FOREACH( common::CThread *pThread, m_LogicThreads)
+	{
+		pThread->Terminate();
+		delete pThread;
+	}
+	m_LogicThreads.clear();
+
+	BOOST_FOREACH( common::CThread *pThread, m_WorkThreads)
+	{
+		pThread->Terminate();
+		delete pThread;
+	}
+	m_WorkThreads.clear();
+
+}

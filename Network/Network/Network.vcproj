@@ -231,6 +231,22 @@
 				>
 			</File>
 			<File
+				RelativePath=".\NetObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\NetObject.h"
+				>
+			</File>
+			<File
+				RelativePath=".\RemoteClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\RemoteClient.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Server.cpp"
 				>
 			</File>
@@ -307,6 +323,14 @@
 				</File>
 				<File
 					RelativePath=".\Protocol.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Algorithm"
+				>
+				<File
+					RelativePath=".\Algorithm\BindCore.h"
 					>
 				</File>
 			</Filter>

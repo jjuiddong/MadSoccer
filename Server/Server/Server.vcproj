@@ -235,6 +235,18 @@
 			Name="Lib"
 			>
 			<File
+				RelativePath=".\C2SProtocol.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\C2SProtocol.h"
+				>
+			</File>
+			<File
+				RelativePath=".\C2SProtocolListener.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ChatServer.cpp"
 				>
 			</File>
@@ -243,15 +255,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\S2CPacketListener.h"
-				>
-			</File>
-			<File
 				RelativePath=".\S2CProtocol.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\S2CProtocol.h"
+				>
+			</File>
+			<File
+				RelativePath=".\S2CProtocolListener.h"
 				>
 			</File>
 			<File

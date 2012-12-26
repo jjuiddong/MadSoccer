@@ -56,6 +56,10 @@ typedef unsigned short u_short;
 #define SAFE_RELEASE(p) {if (p) { p->Release(); p=NULL;} }
 
 
+#define RET(exp)		{if((exp)) return; }			// exp가 true이면 리턴
+#define RETV(exp,val)	{if((exp)) return val; }
+
+
 // WinDef.h 에 정의 되어 있다.
 //#define IN		// 함수 인자의 입력으로 들어가는 파라메터 (생략함)
 //#define OUT		// 함수 인자로 들어가서 값이 설정되어 리턴되는 파라메터

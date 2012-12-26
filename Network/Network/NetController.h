@@ -34,6 +34,7 @@ namespace network
 	public:
 		bool		Init(int logicThreadCount);
 		void		Proc();
+		void		Clear();
 
 		// server
 		bool		StartServer(int port, CServer *pSvr);

@@ -3,7 +3,7 @@
 // Author:  jjuiddong
 // Date:    2012-11-28
 // 
-// 네트워크 통신으로 받은 패킷을 정의한다.
+// 네트워크 통신에 쓰이는 패킷을 정의한다.
 //------------------------------------------------------------------------
 #pragma once
 
@@ -15,26 +15,24 @@ namespace network
 	class CPacket
 	{
 	public:
-		enum { MAX_PACKETSIZE = 256, };
+		enum { 
+			MAX_PACKETSIZE = 256, 
+			MAX_STRINGSIZE = 128, //최대 스트링 사이즈
+		};
 
 		CPacket();
-		CPacket(SOCKET sender, char *buf256) 
-		{
-			m_Sender = sender;
-			if (buf256)
-				memcpy( m_Data, buf256, MAX_PACKETSIZE);
-		}
+		CPacket(netid senderId, char *buf256);
 		virtual ~CPacket() {}
 
 	protected:
-		SOCKET		m_Sender;					// 패킷을 보낸 소켓
+		netid		m_SenderId;
 		char		m_Data[ MAX_PACKETSIZE];
 		int			m_ReadIdx;
 		int			m_WriteIdx;
 
 	public:
 		int			GetProtocol() const;
-		SOCKET		GetSenderSocket() const { return m_Sender; }
+		netid		GetSenderId() const { return m_SenderId; }
 		char*		GetData() const { return (char*)m_Data; }
 		int			GetPacketSize() const { return m_WriteIdx; }
 
@@ -44,6 +42,7 @@ namespace network
 		CPacket& operator<<(const float &rhs);
 		CPacket& operator<<(const double &rhs);
 		CPacket& operator<<(const short &rhs);
+		CPacket& operator<<(const std::string &rhs);
 
 		template<class T>
 		CPacket& operator<<(const T& rhs)
@@ -62,6 +61,7 @@ namespace network
 		CPacket& operator>>(float &rhs);
 		CPacket& operator>>(double &rhs);
 		CPacket& operator>>(short &rhs);
+		CPacket& operator>>(std::string &rhs);
 
 		template<class T>
 		CPacket& operator>>(T& rhs)
@@ -75,7 +75,7 @@ namespace network
 		}
 
 		//------------------------------------------------------------------------
-		// 패킷의 마지막에 데이타를 저장한다.
+		// 패킷의 m_WriteIdx부터 데이타를 저장한다.
 		//------------------------------------------------------------------------
 		template<class T> void Append(const T &rhs)
 		{

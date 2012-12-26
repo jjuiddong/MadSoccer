@@ -10,7 +10,6 @@
 
 #include "PacketQueue.h"
 
-
 namespace network
 {
 	class CTaskLogic : public common::CTask
@@ -47,5 +46,4 @@ namespace network
 			return RR_CONTINUE;
 		}
 	};
-
 }

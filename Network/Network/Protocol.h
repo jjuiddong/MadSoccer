@@ -13,7 +13,17 @@ namespace network
 {
 	class IProtocol
 	{
+		friend class CTaskLogic;
+		friend class CClient;
+	protected:
+		int m_Id;
+		NetObjectPtr m_pNetObject;
 	public:
-		virtual void Dispatch(const CPacket &packet, const ListenerList &listeners)=0;
+		void SetId(int id) { m_Id = id; }
+		void SetNetObject(NetObjectPtr pServer) { m_pNetObject = pServer; }
+		const NetObjectPtr& GetNetObject() { return m_pNetObject; }
+
+	protected:
+		virtual void Dispatch(CPacket &packet, const ListenerList &listeners)=0;
 	};
 }

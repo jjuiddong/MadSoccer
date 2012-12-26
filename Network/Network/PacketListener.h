@@ -9,10 +9,10 @@
 
 namespace network
 {
-	class IPacketListener
+	class IProtocolListener
 	{
 	public:
-		virtual ~IPacketListener() {}
+		virtual ~IProtocolListener() {}
 
 		virtual void BeforePacketProcess(const CPacket &packet) {} // 패킷처리를 시작하기 전에 호출
 		virtual void AfterPacketProcess(const CPacket &packet) {} // 패킷을 처리한 후 호출된다.
