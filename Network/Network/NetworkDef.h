@@ -19,21 +19,21 @@ namespace network
 {
 	class CServer;
 	class CClient;
-	class CNetObject;
+	class CNetConnector;
+	class IProtocol;
+	class IProtocolListener;
 }
 typedef common::ReferencePtr<network::CServer> ServerPtr;
 typedef common::ReferencePtr<network::CClient> ClientPtr;
-typedef common::ReferencePtr<network::CNetObject> NetObjectPtr;
+typedef common::ReferencePtr<network::CNetConnector> NetConnectorPtr;
 
 
 
 
 #include "ErrReport/Error.h"
 #include "Packet.h"
-#include "PacketListener.h"
 #include "RemoteClient.h"
 #include "Algorithm/BindCore.h"
-
 
 
 typedef std::list<SOCKET> SocketList;
@@ -48,15 +48,19 @@ typedef std::list<network::CPacket> PacketList;
 typedef PacketList::iterator PacketItor;
 typedef PacketList::const_iterator PacketCItor;
 
-typedef std::list<network::IProtocolListener*> ListenerList;
-typedef ListenerList::iterator ListenerItor;
 
+typedef common::ReferencePtr<network::IProtocolListener> ProtocolListenerPtr;
+typedef std::list<ProtocolListenerPtr> ProtocolListenerList;
+typedef ProtocolListenerList::iterator ProtocolListenerItor;
+typedef std::map<int,ProtocolListenerList> ProtocolListenerMap;
+typedef ProtocolListenerMap::iterator ProtocolListenerMapItor;
 
+typedef common::ReferencePtr<network::IProtocol> ProtocolPtr;
+typedef std::map<int,ProtocolPtr> ProtocolMap;
+typedef ProtocolMap::iterator ProtocolItor;
 
 #include "Protocol.h"
-typedef common::ReferencePtr<network::IProtocol> ProtocolPtr;
-
-
+#include "ProtocolListener.h"
 
 
 

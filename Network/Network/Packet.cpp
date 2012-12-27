@@ -24,9 +24,19 @@ CPacket::CPacket(netid senderId, char *buf256) :
 //------------------------------------------------------------------------
 // 패킷의 프로토콜 정보를 리턴한다.
 //------------------------------------------------------------------------
-int	CPacket::GetProtocol() const
+int	CPacket::GetProtocolId() const
 {
 	const int id = *(int*)m_Data;
+	return id;
+}
+
+
+//------------------------------------------------------------------------
+// 패킷의 패킷 아이디 정보를 리턴한다.
+//------------------------------------------------------------------------
+int	CPacket::GetPacketId() const 
+{
+	const int id = *(int*)(m_Data+sizeof(int));
 	return id;
 }
 

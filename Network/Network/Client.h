@@ -7,11 +7,11 @@
 //------------------------------------------------------------------------
 #pragma once
 
-#include "netobject.h"
+#include "NetConnector.h"
 
 namespace network
 {
-	class CClient : public CNetObject
+	class CClient : public CNetConnector
 	{
 	public:
 		CClient();

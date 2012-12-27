@@ -215,6 +215,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\NetConnector.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\NetConnector.h"
+				>
+			</File>
+			<File
 				RelativePath=".\NetController.cpp"
 				>
 			</File>
@@ -228,14 +236,6 @@
 			</File>
 			<File
 				RelativePath=".\NetLauncher.h"
-				>
-			</File>
-			<File
-				RelativePath=".\NetObject.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\NetObject.h"
 				>
 			</File>
 			<File
@@ -318,11 +318,11 @@
 				Name="Interface"
 				>
 				<File
-					RelativePath=".\PacketListener.h"
+					RelativePath=".\Protocol.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Protocol.h"
+					RelativePath=".\ProtocolListener.h"
 					>
 				</File>
 			</Filter>

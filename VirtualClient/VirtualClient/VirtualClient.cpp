@@ -6,11 +6,12 @@
 #include <stdio.h>
 #include <iostream>
 #include "C2SProtocol.h"
-#include "S2CProtocolListener.h"
+#include "S2CProtocol.h"
+
 
 using namespace network;
 
-class CVirtualClient : public network::CClient, public CS2CProtocolListener
+class CVirtualClient : public network::CClient, public S2CProtocolListener
 {
 public:
 	CVirtualClient() {}
@@ -38,6 +39,7 @@ protected:
 		int a = 0;
 	}
 };
+/**/
 
 struct SA
 {
@@ -45,6 +47,11 @@ struct SA
 	char b;
 	float d;
 	double e;
+
+	operator char ()
+	{ 
+		return b;
+	}
 };
 
 const CPacket& operator<<(CPacket &lhs, const SA &rhs)
@@ -55,9 +62,9 @@ const CPacket& operator<<(CPacket &lhs, const SA &rhs)
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	CC2SProtocol protocol;
+	C2SProtocol protocol;
 	CVirtualClient client;
-	client.SetProtocol(&protocol);
+	client.RegisterProtocol(&protocol);
 	client.AddListener(&client);
 
 	network::StartClient( "127.0.0.1", 2333, &client );
@@ -82,5 +89,6 @@ int _tmain(int argc, _TCHAR* argv[])
 		Sleep(1);
 	}
 
+/**/
 	return 0;
 }

@@ -3,15 +3,15 @@
 // Author:  jjuiddong
 // Date:    2012-11-27
 // 
-// CClient가 접속할 Server를 표현한다.
+// 클라이언트가 접속할 Server를 표현한다.
 //------------------------------------------------------------------------
 #pragma once
 
-#include "netobject.h"
+#include "NetConnector.h"
 
 namespace network
 {
-	class CServer : public CNetObject
+	class CServer : public CNetConnector
 	{
 	public:
 		CServer();
@@ -37,7 +37,7 @@ namespace network
 		CRemoteClient*		GetRemoteClient(netid netId);
 		CRemoteClient*		GetRemoteClientFromSocket(SOCKET sock);
 		bool				RemoveClient(netid netId);
-		bool				RemoveClientFromSocket(SOCKET sock);
+		bool				RemoveClientBySocket(SOCKET sock);
 		RemoteClientItor	RemoveClientInLoop(netid netId);
 		netid				GetNetIdFromSocket(SOCKET sock);
 		void				Clear();

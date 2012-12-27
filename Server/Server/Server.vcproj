@@ -60,6 +60,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="winmm.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -132,6 +133,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="winmm.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -243,10 +245,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\C2SProtocolListener.h"
-				>
-			</File>
-			<File
 				RelativePath=".\ChatServer.cpp"
 				>
 			</File>
@@ -260,10 +258,6 @@
 			</File>
 			<File
 				RelativePath=".\S2CProtocol.h"
-				>
-			</File>
-			<File
-				RelativePath=".\S2CProtocolListener.h"
 				>
 			</File>
 			<File

@@ -121,7 +121,7 @@ bool CServer::RemoveClient(netid netId)
 //------------------------------------------------------------------------
 // 클라이언트 제거
 //------------------------------------------------------------------------
-bool CServer::RemoveClientFromSocket(SOCKET sock)
+bool CServer::RemoveClientBySocket(SOCKET sock)
 {
 	RemoteClientItor it = find_if(m_RemoteClients.begin(), m_RemoteClients.end(), 
 		bind(IsSameSocket<CRemoteClient>,_1,sock));
@@ -234,11 +234,11 @@ void CServer::LeaveSync()
 //------------------------------------------------------------------------
 bool CServer::Send(netid netId, const CPacket &packet)
 {
-	RemoteClientItor it = find_if(m_RemoteClients.begin(), m_RemoteClients.end(), bind(IsSameNetId<CRemoteClient>,_1,netId));
+	RemoteClientItor it = find_if(m_RemoteClients.begin(), m_RemoteClients.end(), 
+		bind(IsSameNetId<CRemoteClient>,_1,netId));
 	if (m_RemoteClients.end() == it)
 		return false;
 
-	// send(연결된 소켓, 보낼 버퍼, 버퍼의 길이, 상태값)
 	const int result = send((*it)->GetSocket(), packet.GetData(), packet.GetPacketSize(), 0);
 	if (result == INVALID_SOCKET)
 	{
@@ -258,7 +258,6 @@ bool CServer::SendAll(const CPacket &packet)
 	RemoteClientItor it = m_RemoteClients.begin();
 	while (m_RemoteClients.end() != it)
 	{
-		// send(연결된 소켓, 보낼 버퍼, 버퍼의 길이, 상태값)
 		const int result = send((*it)->GetSocket(), packet.GetData(), packet.GetPacketSize(), 0);
 		if (result == INVALID_SOCKET)
 		{

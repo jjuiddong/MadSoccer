@@ -33,15 +33,19 @@ namespace network
 				return RR_CONTINUE;
 			}
 
-			ProtocolPtr protocol = pSvr->GetProtocol();
-			if (!protocol)
+			const int protocolId = packetData.packet.GetProtocolId();
+			const ProtocolListenerList &listeners = pSvr->GetListeners( protocolId );
+			if (listeners.empty())
 			{
-				error::ErrorLog( "Dispatcher가 설정되지 않았습니다." );
+				error::ErrorLog( 
+					common::format("CTaskLogic:: %d 에 해당하는 프로토콜 리스너가 없습니다.", 
+					protocolId) );
 				return RR_CONTINUE;
 			}
-
-			// 패킷과 일치하는 인터페이스를 호출한다.
-			protocol->Dispatch(packetData.packet, pSvr->GetListeners() );
+			else
+			{
+				listeners.front()->Dispatch(packetData.packet, listeners);
+			}
 
 			return RR_CONTINUE;
 		}

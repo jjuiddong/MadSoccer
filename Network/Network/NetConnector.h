@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------
-// Name:    NetObject.h
+// Name:    NetConnector.h
 // Author:  jjuiddong
 // Date:    12/25/2012
 // 
@@ -10,31 +10,29 @@
 
 namespace network
 {
-	class CNetObject
+	class CNetConnector
 	{
 	public:
-		CNetObject();
-		virtual ~CNetObject();
+		CNetConnector();
+		virtual ~CNetConnector();
 		friend class CNetLauncher;
 
 	protected:
 		netid				m_NetId;				// 고유ID (자동생성)
-		SOCKET				m_Socket;				// ListenSocket
-
-		ListenerList		m_Listners;
-		ProtocolPtr			m_pProtocol;
+		SOCKET				m_Socket;
+		ProtocolListenerMap	m_ProtocolListeners;
 
 	public:
 		netid				GetNetId() const { return m_NetId; }
 		SOCKET				GetSocket() const { return m_Socket; }
 
-		void				SetProtocol(ProtocolPtr protocol);
-		ProtocolPtr			GetProtocol() const { return m_pProtocol; }
-		bool				AddListener(IProtocolListener *listener);
-		bool				RemoveListener(IProtocolListener *listener);
-		const ListenerList&	GetListeners() const { return m_Listners; }
+		bool				RegisterProtocol(ProtocolPtr protocol);
+		bool				AddListener(ProtocolListenerPtr pListener);
+		bool				RemoveListener(ProtocolListenerPtr pListener);
+		const ProtocolListenerList&	GetListeners(int listenerId);
+		bool				IsExistListener(int listenerId);
 
-		// overriding
+		// child implementes
 		virtual bool		Send(netid netId, const CPacket &packet) = 0;
 		virtual bool		SendAll(const CPacket &packet) = 0;
 

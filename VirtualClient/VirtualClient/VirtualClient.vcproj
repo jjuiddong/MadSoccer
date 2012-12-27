@@ -60,6 +60,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="winmm.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -132,6 +133,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="winmm.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -179,7 +181,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\S2CProtocolListener.h"
+				RelativePath=".\S2CProtocol.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\S2CProtocol.h"
 				>
 			</File>
 			<File

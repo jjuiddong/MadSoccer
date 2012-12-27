@@ -42,7 +42,7 @@ namespace network
 					const int result = recv(readSockets.fd_array[ i], buf, sizeof(buf), 0);
 					if (result == INVALID_SOCKET)
 					{
-						m_pServer->RemoveClientFromSocket(readSockets.fd_array[ i]);
+						m_pServer->RemoveClientBySocket(readSockets.fd_array[ i]);
 					}
 					else
 					{

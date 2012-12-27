@@ -31,7 +31,8 @@ namespace network
 		int			m_WriteIdx;
 
 	public:
-		int			GetProtocol() const;
+		int			GetProtocolId() const;
+		int			GetPacketId() const;
 		netid		GetSenderId() const { return m_SenderId; }
 		char*		GetData() const { return (char*)m_Data; }
 		int			GetPacketSize() const { return m_WriteIdx; }

@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "RandNoDuplicate.h"
 #include <assert.h>
-
+#include <mmSystem.h>
 
 namespace common
 {
@@ -18,9 +18,9 @@ namespace common
 	void InitRandNoDuplicate()
 	{
 		n_IsInitRand = true;
-		srand(GetTickCount());
+		srand(timeGetTime());
 		for(int i=0; i < MAX_RAND_COUNT; ++i)
-			n_randNumber[ i] = i;
+			n_randNumber[ i] = i+1; // 랜덤값은 1번부터 시작한다.
 	}
 
 	//------------------------------------------------------------------------

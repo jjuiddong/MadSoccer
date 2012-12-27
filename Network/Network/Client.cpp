@@ -58,7 +58,20 @@ bool CClient::Proc()
 		}
 		else
 		{
-			m_pProtocol->Dispatch(CPacket(SERVER_NETID,buf), m_Listners);
+			CPacket packet(SERVER_NETID,buf);
+
+			const int protocolId = packet.GetProtocolId();
+			const ProtocolListenerList &listeners = GetListeners( protocolId );
+			if (listeners.empty())
+			{
+				error::ErrorLog( 
+					common::format(" CClient::Proc():: %d 에 해당하는 프로토콜 리스너가 없습니다.", 
+						protocolId) );
+			}
+			else
+			{
+				listeners.front()->Dispatch(packet, listeners);
+			}
 		}
 	}
 

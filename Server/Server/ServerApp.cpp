@@ -5,9 +5,6 @@
 #include "Resource.h"
 #include "ChatServer.h"
 #include "ServerLauncher.h"
-#include "S2CProtocolListener.h"
-#include "S2CProtocol.h"
-
 
 
 #define MAX_LOADSTRING 100
