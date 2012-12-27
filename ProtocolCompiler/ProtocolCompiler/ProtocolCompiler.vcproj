@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="VirtualClient"
-	ProjectGUID="{698AC63E-3B4C-4283-B573-7FA977E9ED93}"
-	RootNamespace="VirtualClient"
+	Name="ProtocolCompiler"
+	ProjectGUID="{B254E3A9-21D7-4A7C-80D8-410B4922ED4D}"
+	RootNamespace="ProtocolCompiler"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -45,7 +45,7 @@
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
@@ -60,7 +60,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -118,7 +117,7 @@
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -133,7 +132,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -168,89 +166,59 @@
 	</References>
 	<Files>
 		<Filter
-			Name="소스 파일"
-			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
+			Name="Generator"
 			>
 			<File
-				RelativePath=".\c2s_Protocol.cpp"
+				RelativePath=".\GenerateListenerCpp.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\c2s_Protocol.h"
+				RelativePath=".\GenerateListenerCpp.h"
 				>
 			</File>
 			<File
-				RelativePath=".\C2SProtocol.cpp"
+				RelativePath=".\GenerateListenerHeader.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\C2SProtocol.h"
-				>
-			</File>
-			<File
-				RelativePath=".\s2c_Protocol.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\s2c_Protocol.h"
-				>
-			</File>
-			<File
-				RelativePath=".\S2CProtocol.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\S2CProtocol.h"
-				>
-			</File>
-			<File
-				RelativePath=".\stdafx.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\VirtualClient.cpp"
+				RelativePath=".\GenerateListenerHeader.h"
 				>
 			</File>
 		</Filter>
 		<Filter
-			Name="헤더 파일"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+			Name="Compiler"
 			>
 			<File
-				RelativePath=".\stdafx.h"
+				RelativePath=".\ProtocolParser.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\targetver.h"
+				RelativePath=".\ProtocolParser.h"
 				>
 			</File>
-		</Filter>
-		<Filter
-			Name="리소스 파일"
-			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
-			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
-			>
+			<File
+				RelativePath=".\ProtocolScanner.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ProtocolScanner.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ScriptDefine.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ScriptDefine.h"
+				>
+			</File>
 		</Filter>
 		<File
-			RelativePath=".\ReadMe.txt"
+			RelativePath=".\Global.h"
+			>
+		</File>
+		<File
+			RelativePath=".\main.cpp"
 			>
 		</File>
 	</Files>

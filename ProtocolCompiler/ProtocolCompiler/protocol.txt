@@ -1,0 +1,14 @@
+protocol s2c_ 200
+{
+	func1( );
+	func2( std::string str );
+	func3( float value );
+	func4( );
+
+}
+
+protocol c2s_ 300
+{
+	func2( std::string str );
+	func3( float value );
+}

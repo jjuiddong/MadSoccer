@@ -5,13 +5,14 @@
 #include <conio.h>
 #include <stdio.h>
 #include <iostream>
-#include "C2SProtocol.h"
-#include "S2CProtocol.h"
-
+//#include "C2SProtocol.h"
+//#include "S2CProtocol.h"
+#include "c2s_Protocol.h"
+#include "s2c_Protocol.h"
 
 using namespace network;
 
-class CVirtualClient : public network::CClient, public S2CProtocolListener
+class CVirtualClient : public network::CClient, public s2c_ProtocolListener
 {
 public:
 	CVirtualClient() {}
@@ -26,11 +27,11 @@ protected:
 	{
 		int a = 0;
 	}
-	virtual void func2(netid senderId, std::string &str) override
+	virtual void func2(netid senderId, const std::string &str) override
 	{
 		printf( "func2 senderId: %d, str: %s\n", senderId, str.c_str());
 	}
-	virtual void func3(netid senderId, float value) override
+	virtual void func3(netid senderId, const float &value) override
 	{
 		int a = 0;
 	}
@@ -62,7 +63,7 @@ const CPacket& operator<<(CPacket &lhs, const SA &rhs)
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	C2SProtocol protocol;
+	c2s_Protocol protocol;
 	CVirtualClient client;
 	client.RegisterProtocol(&protocol);
 	client.AddListener(&client);
@@ -83,7 +84,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			std::string str;
 			std::getline(std::cin, str);
 
-			protocol.func(SERVER_NETID, str);
+			protocol.func2(SERVER_NETID, str);
 		}
 
 		Sleep(1);

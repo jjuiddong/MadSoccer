@@ -7,13 +7,27 @@ using namespace network;
 //------------------------------------------------------------------------
 // Protocol
 //------------------------------------------------------------------------
-void C2SProtocol::func(netid targetId, const std::string &str)
+void C2SProtocol::func2(netid targetId, const std::string &str)
 {
 	CPacket packet;
 	packet << GetId();
 	packet << 2;
+	packet << str;
 	GetNetConnector()->Send(targetId, packet);
 }
+
+//------------------------------------------------------------------------
+// Protoco2
+//------------------------------------------------------------------------
+void C2SProtocol::func3(netid targetId, float value)
+{
+	CPacket packet;
+	packet << GetId();
+	packet << 3;
+	packet << value;
+	GetNetConnector()->Send(targetId, packet);
+}
+
 
 
 //------------------------------------------------------------------------
@@ -35,10 +49,6 @@ void C2SProtocolListener::Dispatch(CPacket &packet, const ProtocolListenerList &
 		packet >> protocolId >> packetId;
 		switch (packetId)
 		{
-		case 1:
-			lstr->func1(packet.GetSenderId());
-			break;
-
 		case 2:
 			{
 				std::string str;
@@ -46,17 +56,12 @@ void C2SProtocolListener::Dispatch(CPacket &packet, const ProtocolListenerList &
 				lstr->func2(packet.GetSenderId(), str);
 			}
 			break;
-
 		case 3:
 			{
 				float value;
 				packet >> value;
-				lstr->func3(packet.GetSenderId(), value );
+				lstr->func3(packet.GetSenderId(), value);
 			}
-			break;
-
-		case 4:
-			lstr->func4(packet.GetSenderId());
 			break;
 
 		default:

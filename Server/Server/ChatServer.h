@@ -10,9 +10,11 @@
 #pragma once
 
 #include "C2SProtocol.h"
-#include "S2CProtocol.h"
+//#include "S2CProtocol.h"
+#include "s2c_Protocol.h"
+#include "c2s_Protocol.h"
 
-class CChatServer : public network::CServer, public C2SProtocolListener
+class CChatServer : public network::CServer, public c2s_ProtocolListener
 {
 public:
 	CChatServer()
@@ -22,24 +24,16 @@ public:
 	}
 
 protected:
-	S2CProtocol m_S2CProtocol;
+	s2c_Protocol m_S2CProtocol;
 
 public:
-	virtual void func1(netid senderId) override
-	{
-
-	}
-	virtual void func2(netid senderId, std::string &str) override
+	virtual void func2(netid senderId, const std::string &str) override
 	{
 		std::string sndStr = "server send ";
 		sndStr += str;
 		m_S2CProtocol.func2(senderId, sndStr);
 	}
-	virtual void func3(netid senderId, float value) override
-	{
-		int a = 0;
-	}
-	virtual void func4(netid senderId) override
+	virtual void func3(netid senderId, const float &value) override
 	{
 		int a = 0;
 	}
