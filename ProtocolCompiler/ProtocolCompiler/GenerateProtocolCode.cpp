@@ -1,6 +1,6 @@
 
 #include "Global.h"
-#include "GenerateListenerHeader.h"
+#include "GenerateProtocolCode.h"
 
 namespace compiler
 {

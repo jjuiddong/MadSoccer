@@ -1,7 +1,7 @@
 
 #include "Global.h"
 #include "ProtocolParser.h"
-#include "GenerateListenerHeader.h"
+#include "GenerateProtocolCode.h"
 
 
 cProtocolParser::cProtocolParser() 
@@ -345,7 +345,7 @@ void cProtocolParser::WritePIDLMacro(string PIDLFileName, sRmi *rmi)
 
 	char srcFileName[ MAX_PATH];
 	strcpy_s(srcFileName, MAX_PATH, PIDLFileName.c_str() );
-	char *name = strtok(srcFileName, ".");
+	char *name = strtok_s(srcFileName, ".", NULL);
 
 	string fileName = name;
 	fileName += "_procstub.h";

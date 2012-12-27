@@ -6,6 +6,9 @@
 #include "ChatServer.h"
 #include "ServerLauncher.h"
 
+#include "c2s_Protocol.cpp"
+#include "s2c_Protocol.cpp"
+
 
 #define MAX_LOADSTRING 100
 

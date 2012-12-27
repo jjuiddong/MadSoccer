@@ -9,10 +9,9 @@
 
 #pragma once
 
-#include "C2SProtocol.h"
-//#include "S2CProtocol.h"
 #include "s2c_Protocol.h"
 #include "c2s_Protocol.h"
+
 
 class CChatServer : public network::CServer, public c2s_ProtocolListener
 {

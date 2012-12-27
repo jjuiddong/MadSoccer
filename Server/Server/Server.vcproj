@@ -237,43 +237,11 @@
 			Name="Lib"
 			>
 			<File
-				RelativePath=".\c2s_Protocol.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\c2s_Protocol.h"
-				>
-			</File>
-			<File
-				RelativePath=".\C2SProtocol.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\C2SProtocol.h"
-				>
-			</File>
-			<File
 				RelativePath=".\ChatServer.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\ChatServer.h"
-				>
-			</File>
-			<File
-				RelativePath=".\s2c_Protocol.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\s2c_Protocol.h"
-				>
-			</File>
-			<File
-				RelativePath=".\S2CProtocol.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\S2CProtocol.h"
 				>
 			</File>
 			<File
