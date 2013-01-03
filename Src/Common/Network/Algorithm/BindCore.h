@@ -23,5 +23,25 @@ namespace network
 		return p->GetNetId() == netId;
 	} 
 
+	template<class T>
+	static bool IsSameId(T *p, int id)
+	{
+		if (!p) return false;
+		return p->GetId() == id;
+	} 
+
+	template<typename T>
+	struct Match_Second 
+	{
+		T val;
+		Match_Second ( T const & t ) : val ( t )
+		{}
+		template<typename Pair>
+		bool operator() (Pair const & p) const 
+		{
+			return ( val == p.second );
+		}
+	};
+
 
 }

@@ -6,15 +6,22 @@
 #pragma once
 
 namespace basic {
-static const int s2c_ProtocolListener_ID = 200;
+static const int s2c_Dispatcher_ID = 200;
 
-// ProtocolListener
-class s2c_ProtocolListener : public network::IProtocolListener
+// Protocol Dispatcher
+class s2c_Dispatcher : public network::IProtocolDispatcher
 {
 public:
-	s2c_ProtocolListener() : IProtocolListener(s2c_ProtocolListener_ID) {}
+	s2c_Dispatcher();
 protected:
 	virtual void Dispatch(network::CPacket &packet, const ProtocolListenerList &listeners) override;
+};
+
+
+// ProtocolListener
+class s2c_ProtocolListener : virtual public network::IProtocolListener
+{
+	friend class s2c_Dispatcher;
 	virtual void func1(netid senderId){}
 	virtual void func2(netid senderId, const std::string &str){}
 	virtual void func3(netid senderId, const float &value){}
@@ -22,15 +29,22 @@ protected:
 };
 
 
-static const int c2s_ProtocolListener_ID = 300;
+static const int c2s_Dispatcher_ID = 300;
 
-// ProtocolListener
-class c2s_ProtocolListener : public network::IProtocolListener
+// Protocol Dispatcher
+class c2s_Dispatcher : public network::IProtocolDispatcher
 {
 public:
-	c2s_ProtocolListener() : IProtocolListener(c2s_ProtocolListener_ID) {}
+	c2s_Dispatcher();
 protected:
 	virtual void Dispatch(network::CPacket &packet, const ProtocolListenerList &listeners) override;
+};
+
+
+// ProtocolListener
+class c2s_ProtocolListener : virtual public network::IProtocolListener
+{
+	friend class c2s_Dispatcher;
 	virtual void func2(netid senderId, const std::string &str){}
 	virtual void func3(netid senderId, const float &value){}
 };

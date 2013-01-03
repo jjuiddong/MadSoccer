@@ -9,6 +9,7 @@
 #pragma once
 
 #include "../DataStructure/PacketQueue.h"
+#include "../Controller/NetController.h"
 
 namespace network
 {
@@ -34,17 +35,27 @@ namespace network
 			}
 
 			const int protocolId = packetData.packet.GetProtocolId();
-			const ProtocolListenerList &listeners = pSvr->GetListeners( protocolId );
+			IProtocolDispatcher *pDispatcher = CNetController::Get()->GetDispatcher(protocolId);
+			if (!pDispatcher)
+			{
+				error::ErrorLog( 
+					common::format("CTaskLogic:: %d 에 해당하는 프로토콜 디스패쳐가 없습니다.", 
+					protocolId) );
+				return RR_CONTINUE;
+			}
+
+ 			const ProtocolListenerList &listeners = pSvr->GetListeners();
 			if (listeners.empty())
 			{
 				error::ErrorLog( 
-					common::format("CTaskLogic:: %d 에 해당하는 프로토콜 리스너가 없습니다.", 
-					protocolId) );
+					common::format("CTaskLogic %d NetConnector의 프로토콜 리스너가 없습니다.", 
+					pSvr->GetNetId() ) );
 				return RR_CONTINUE;
 			}
 			else
 			{
-				listeners.front()->Dispatch(packetData.packet, listeners);
+				//listeners.front()->Dispatch(packetData.packet, listeners);
+				pDispatcher->Dispatch(packetData.packet, listeners);
 			}
 
 			return RR_CONTINUE;

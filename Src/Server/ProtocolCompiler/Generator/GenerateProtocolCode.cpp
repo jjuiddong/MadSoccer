@@ -46,6 +46,9 @@ namespace compiler
 	string GetProtocolName(const string &fileName);
 	string GetProtocolClassName(const string &protocolName, const string &rmiName );
 	string GetProtocolListenerClassName(const string &protocolName, const string &rmiName );
+	string GetProtocolDispatcherClassName(const string &protocolName, const string &rmiName );
+
+
 
 }
 
@@ -64,10 +67,10 @@ bool compiler::WriteProtocolCode(string protocolFileName, sRmi *rmi)
 	n_protocolName = GetProtocolName(protocolFileName);
 
 	WriteFirstProtocolClassHeader(rmi);
-	WriteFirstProtocolCpp(rmi, true);
+	WriteFirstProtocolCpp(rmi, false);
 
 	WriteFirstListenerHeader(rmi);
-	WriteFirstListenerCpp(rmi, true);
+	WriteFirstListenerCpp(rmi, false);
 
 	return true;
 }
@@ -116,6 +119,15 @@ string compiler::GetProtocolClassName(const string &protocolName, const string &
 string compiler::GetProtocolListenerClassName(const string &protocolName, const string &rmiName )
 {
 	return rmiName + "_ProtocolListener";
+}
+
+
+//------------------------------------------------------------------------
+// 프로토콜 디스패쳐 클래스 이름을 리턴한다.
+//------------------------------------------------------------------------
+string compiler::GetProtocolDispatcherClassName(const string &protocolName, const string &rmiName )
+{
+	return rmiName + "_Dispatcher";
 }
 
 
@@ -208,20 +220,36 @@ bool compiler::WriteListenerHeader(FILE *fp, sRmi *rmi)
 {
 	if (!rmi) return true;
 
-	n_className = GetProtocolListenerClassName(n_protocolName, rmi->name);
+	n_className = GetProtocolDispatcherClassName(n_protocolName, rmi->name);
 	n_protocolId = n_className + "_ID";
 
-	// CProtocolListener class
 	fprintf( fp, "static const int %s = %d;\n", n_protocolId.c_str(), rmi->number );
 	fprintf( fp, "\n" );
 
-	fprintf( fp, "// ProtocolListener\n" );
-	fprintf( fp, "class %s : public network::IProtocolListener\n", n_className.c_str() );
+	// Protocol Dispatcher
+	fprintf( fp, "// Protocol Dispatcher\n" );
+	fprintf( fp, "class %s : public network::IProtocolDispatcher\n", n_className.c_str() );
 	fprintf( fp, "{\n" );
 	fprintf( fp, "public:\n" );
-	fprintf( fp, "\t%s() : IProtocolListener(%s) {}\n", n_className.c_str(), n_protocolId.c_str() );
+	fprintf( fp, "\t%s();\n", n_className.c_str() );
 	fprintf( fp, "protected:\n");
 	fprintf( fp, "\tvirtual void Dispatch(network::CPacket &packet, const ProtocolListenerList &listeners) override;\n" );
+	fprintf( fp, "};\n" );
+	fprintf( fp, "\n" );
+	fprintf( fp, "\n" );
+
+	// CProtocolListener class
+	n_className = GetProtocolListenerClassName(n_protocolName, rmi->name);
+	string dispatcherClassName = GetProtocolDispatcherClassName(n_protocolName, rmi->name);
+
+	fprintf( fp, "// ProtocolListener\n" );
+	fprintf( fp, "class %s : virtual public network::IProtocolListener\n", n_className.c_str() );
+	fprintf( fp, "{\n" );
+//	fprintf( fp, "public:\n" );
+// 	fprintf( fp, "\t%s() : IProtocolListener(%s) {}\n", n_className.c_str(), n_protocolId.c_str() );
+// 	fprintf( fp, "protected:\n");
+// 	fprintf( fp, "\tvirtual void Dispatch(network::CPacket &packet, const ProtocolListenerList &listeners) override;\n" );
+	fprintf( fp, "\tfriend class %s;\n", dispatcherClassName.c_str() );
 	WriteDeclProtocolList( fp, rmi->protocol, true, true, false);
 	fprintf( fp, "};\n" );
 	fprintf( fp, "\n" );
@@ -245,7 +273,8 @@ bool compiler::WriteFirstListenerCpp(sRmi *rmi, bool IsAddStdafxHeader)
 
 	if (IsAddStdafxHeader)
 		fprintf( fp, "#include \"stdafx.h\"\n");
-	fprintf( fp, "#include \"%s\"", headerFileName.c_str());
+	fprintf( fp, "#include \"%s\"\n", headerFileName.c_str());
+	fprintf( fp, "#include \"Network/Controller/NetController.h\"\n" );
 	fprintf( fp, "\n");
 	fprintf( fp, "using namespace network;\n");
 	fprintf( fp, "using namespace %s;\n", n_protocolName.c_str());
@@ -265,8 +294,24 @@ bool compiler::WriteListenerCpp(FILE *fp, sRmi *rmi)
 {
 	if (!rmi) return true;
 
-	n_className = GetProtocolListenerClassName(n_protocolName, rmi->name);
+	n_className = GetProtocolDispatcherClassName(n_protocolName, rmi->name);
+	n_protocolId = n_className + "_ID";
+
+	// Dispatcher 생성자 코드 생성
+	fprintf( fp, "static %s::%s g_%s_%s;\n", 
+		n_protocolName.c_str(), n_className.c_str(), n_protocolName.c_str(), n_className.c_str() ); // 전역변수 선언
+	fprintf( fp, "\n" );
+	fprintf( fp, "%s::%s::%s()\n", n_protocolName.c_str(), n_className.c_str(), n_className.c_str() );
+	fprintf( fp, "\t: IProtocolDispatcher(%s::%s)\n", n_protocolName.c_str(), n_protocolId.c_str() );
+	fprintf( fp, "{\n" );
+	fprintf( fp, "\tCNetController::Get()->AddDispatcher(this);\n" );
+	fprintf( fp, "}\n" );
+	fprintf( fp, "\n" );
+	//
+
+	// Diaptcher 클래스의 Dispatch() 함수 코드 생성
 	WriteProtocolDispatchFunc(fp, rmi);
+	fprintf( fp, "\n" );
 	fprintf( fp, "\n" );
 	fprintf( fp, "\n" );
 
@@ -304,7 +349,7 @@ void compiler::WriteImplProtocolList(FILE *fp, sProtocol *pProtocol, int packetI
 	fprintf( fp, "//------------------------------------------------------------------------\n");
 	fprintf( fp, "// Protocol: %s\n", pProtocol->name.c_str());
 	fprintf( fp, "//------------------------------------------------------------------------\n");
-	fprintf( fp, "void %s::%s(", n_className.c_str(), pProtocol->name.c_str() );
+	fprintf( fp, "void %s::%s::%s(", n_protocolName.c_str(), n_className.c_str(), pProtocol->name.c_str() );
 	WriteFirstArg(fp, pProtocol->argList, true);
 	fprintf( fp, ")\n" );
 	fprintf( fp, "{\n" );
@@ -429,19 +474,21 @@ bool compiler::WriteProtocolCpp(FILE *fp, sRmi *rmi)
 //------------------------------------------------------------------------
 void compiler::WriteProtocolDispatchFunc(FILE *fp, sRmi *rmi)
 {
+	string listenerClassName = GetProtocolListenerClassName(n_protocolName, rmi->name);
+
 	fprintf( fp, "//------------------------------------------------------------------------\n");
 	fprintf( fp, "// // 패킷의 프로토콜에 따라 해당하는 리스너의 함수를 호출한다.\n" );
 	fprintf( fp, "//------------------------------------------------------------------------\n");
-	fprintf( fp, "void %s::Dispatch(CPacket &packet, const ProtocolListenerList &listeners)\n", 
-		n_className.c_str() );
+	fprintf( fp, "void %s::%s::Dispatch(CPacket &packet, const ProtocolListenerList &listeners)\n", 
+		n_protocolName.c_str(), n_className.c_str() );
 	fprintf( fp, "{\n" );
 	fprintf( fp, "\tBOOST_FOREACH(ProtocolListenerPtr p, listeners)\n");
 	fprintf( fp, "\t{\n" );
 		fprintf( fp, "\t\tIProtocolListener *ptmp = p;\n");
-		fprintf( fp, "\t\t%s *lstr = static_cast<%s*>(ptmp);\n", n_className.c_str(), n_className.c_str());
+		fprintf( fp, "\t\t%s *lstr = dynamic_cast<%s*>(ptmp);\n", listenerClassName.c_str(), listenerClassName.c_str());
 			fprintf( fp, "\t\tif (!lstr)\n");
 			fprintf( fp, "\t\t{\n");
-				fprintf( fp, "\t\t\terror::ErrorLog( \"%s::Dispatch Convert Error\" );\n", n_className.c_str());
+				//fprintf( fp, "\t\t\terror::ErrorLog( \"%s::Dispatch Convert Error\" );\n", n_className.c_str());
 				fprintf( fp, "\t\t\tcontinue;\n");
 			fprintf( fp, "\t\t}\n");
 	fprintf( fp, "\n" );

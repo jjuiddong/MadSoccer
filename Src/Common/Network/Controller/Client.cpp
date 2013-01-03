@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "Client.h"
 #include "../Interface/Protocol.h"
+#include "../Controller/NetController.h"
 
 
 using namespace network;
@@ -61,17 +62,39 @@ bool CClient::Proc()
 			CPacket packet(SERVER_NETID,buf);
 
 			const int protocolId = packet.GetProtocolId();
-			const ProtocolListenerList &listeners = GetListeners( protocolId );
-			if (listeners.empty())
+			IProtocolDispatcher *pDispatcher = CNetController::Get()->GetDispatcher(protocolId);
+			if (!pDispatcher)
 			{
 				error::ErrorLog( 
-					common::format(" CClient::Proc():: %d 에 해당하는 프로토콜 리스너가 없습니다.", 
-						protocolId) );
+					common::format(" CClient::Proc() %d 에 해당하는 프로토콜 디스패쳐가 없습니다.", 
+					protocolId) );
 			}
 			else
 			{
-				listeners.front()->Dispatch(packet, listeners);
+				const ProtocolListenerList &listeners = GetListeners();
+				if (listeners.empty())
+				{
+					error::ErrorLog( 
+						common::format(" CClient::Proc():: %d 에 해당하는 프로토콜 리스너가 없습니다.", 
+							protocolId) );
+				}
+				else
+				{
+					pDispatcher->Dispatch(packet, listeners);
+				}				
 			}
+
+// 			const ProtocolListenerList &listeners = GetListeners( protocolId );
+// 			if (listeners.empty())
+// 			{
+// 				error::ErrorLog( 
+// 					common::format(" CClient::Proc():: %d 에 해당하는 프로토콜 리스너가 없습니다.", 
+// 						protocolId) );
+// 			}
+// 			else
+// 			{
+// 				listeners.front()->Dispatch(packet, listeners);
+// 			}
 		}
 	}
 

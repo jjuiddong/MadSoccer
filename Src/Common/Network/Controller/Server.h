@@ -21,7 +21,7 @@ namespace network
 	protected:
 		int					m_ServerPort;
 		bool				m_IsServerOn;			// 서버가 정상적으로 실행이 되었다면 true
-		RemoteClientList	m_RemoteClients;		// 서버와 연결된 클라이언트 정보리스트
+		RemoteClientMap		m_RemoteClients;		// 서버와 연결된 클라이언트 정보리스트
 		CRITICAL_SECTION	m_CriticalSection;
 
 	public:
@@ -48,6 +48,8 @@ namespace network
 	protected:
 		void				SetPort(int port) { m_ServerPort = port; }
 		RemoteClientItor	RemoveClientProcess(RemoteClientItor it);
+		RemoteClientItor	FindRemoteClientBySocket(SOCKET sock);
+		
 
 		// Overriding
 		virtual void		OnListen();

@@ -13,28 +13,28 @@
 #include "NetCommon/basic_ProtocolListener.h"
 
 
-class CChatServer : public network::CServer, public basic::c2s_ProtocolListener
+class CChatServer : public network::CServer
 {
 public:
 	CChatServer()
 	{
 		RegisterProtocol(&m_S2CProtocol);
-		AddListener( this );
+		//AddListener( this );
 	}
 
 protected:
 	basic::s2c_Protocol m_S2CProtocol;
 
 public:
-	virtual void func2(netid senderId, const std::string &str) override
-	{
-		std::string sndStr = "server send ";
-		sndStr += str;
-		m_S2CProtocol.func2(senderId, sndStr);
-	}
-	virtual void func3(netid senderId, const float &value) override
-	{
-		int a = 0;
-	}
+// 	virtual void func2(netid senderId, const std::string &str) override
+// 	{
+// 		std::string sndStr = "server send ";
+// 		sndStr += str;
+// 		m_S2CProtocol.func2(senderId, sndStr);
+// 	}
+// 	virtual void func3(netid senderId, const float &value) override
+// 	{
+// 		int a = 0;
+// 	}
 
 };

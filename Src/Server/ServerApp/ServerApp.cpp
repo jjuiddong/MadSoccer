@@ -3,20 +3,35 @@
 
 #include "stdafx.h"
 #include "ServerApp.h"
-#include "Lib/ChatServer.h"
-#include "Lib/ServerLauncher.h"
 
+#include "NetCommon/login_Protocol.h"
+#include "NetCommon/login_ProtocolListener.h"
+#include "NetCommon/login_Protocol.cpp"
+#include "NetCommon/login_ProtocolListener.cpp"
+
+#include "NetCommon/basic_Protocol.h"
+#include "NetCommon/basic_ProtocolListener.h"
 #include "NetCommon/basic_Protocol.cpp"
 #include "NetCommon/basic_ProtocolListener.cpp"
 
 
-#define MAX_LOADSTRING 100
+#include "Lib/ChatServer.h"
+#include "Lib/ServerLauncher.h"
+#include "Lib/LobbyServer.h"
+
+
+
+CChatServer g_Server;
+CLobbyServer g_LobbyServer;
+
+
+
 
 // 전역 변수:
+#define MAX_LOADSTRING 100
 HINSTANCE hInst;								// 현재 인스턴스입니다.
 TCHAR szTitle[MAX_LOADSTRING];					// 제목 표시줄 텍스트입니다.
 TCHAR szWindowClass[MAX_LOADSTRING];			// 기본 창 클래스 이름입니다.
-CChatServer g_Server;
 
 
 // 이 코드 모듈에 들어 있는 함수의 정방향 선언입니다.
@@ -52,6 +67,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	network::Init(1);
 	network::StartServer( 2333, &g_Server );
+	network::StartServer( 2334, &g_LobbyServer );
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_SERVERAPP));
 

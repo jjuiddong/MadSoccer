@@ -249,6 +249,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Lib\LobbyServer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Lib\LobbyServer.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Lib\ServerLauncher.cpp"
 				>
 			</File>
@@ -256,6 +264,30 @@
 				RelativePath=".\Lib\ServerLauncher.h"
 				>
 			</File>
+		</Filter>
+		<Filter
+			Name="DataStructure"
+			>
+			<File
+				RelativePath=".\DataStructure\RoomLobby.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DataStructure\RoomLobby.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DataStructure\UserLobby.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DataStructure\UserLobby.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="PacketListener"
+			>
 		</Filter>
 		<File
 			RelativePath=".\ReadMe.txt"

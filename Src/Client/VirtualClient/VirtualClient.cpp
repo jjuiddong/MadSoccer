@@ -9,10 +9,17 @@
 #include "NetCommon/basic_ProtocolListener.h"
 #include "NetCommon/basic_Protocol.cpp"
 #include "NetCommon/basic_ProtocolListener.cpp"
+#include "NetCommon/login_Protocol.h"
+#include "NetCommon/login_ProtocolListener.h"
+#include "NetCommon/login_Protocol.cpp"
+#include "NetCommon/login_ProtocolListener.cpp"
+
 
 using namespace network;
 
-class CVirtualClient : public network::CClient, public basic::s2c_ProtocolListener
+class CVirtualClient :	public network::CClient
+					 ,  public login::s2c_ProtocolListener
+					 ,	public basic::s2c_ProtocolListener
 {
 public:
 	CVirtualClient() {}
@@ -23,9 +30,14 @@ protected:
 		//		printf( "recv %s\n", rcvPacket.GetData() );
 	}
 
+	virtual void AckLogin(netid senderId, const std::string &id, const int &result) override
+	{
+		printf( "id: %s, result: %d\n", id.c_str(), result );
+	}
 	virtual void func1(netid senderId) override
 	{
 		int a = 0;
+		printf( "func1 recv senderId: %d\n", senderId );
 	}
 	virtual void func2(netid senderId, const std::string &str) override
 	{
@@ -39,8 +51,9 @@ protected:
 	{
 		int a = 0;
 	}
+
 };
-/**/
+
 
 struct SA
 {
@@ -63,12 +76,14 @@ const CPacket& operator<<(CPacket &lhs, const SA &rhs)
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	c2s_Protocol protocol;
+	basic::c2s_Protocol protocol;
+	login::c2s_Protocol login_protocol;
 	CVirtualClient client;
 	client.RegisterProtocol(&protocol);
-	client.AddListener(&client);
+	client.RegisterProtocol(&login_protocol);
+	client.AddListener( &client );
 
-	network::StartClient( "127.0.0.1", 2333, &client );
+	network::StartClient( "127.0.0.1", 2334, &client );
 
 	if (client.IsConnect())
 	{
@@ -84,7 +99,14 @@ int _tmain(int argc, _TCHAR* argv[])
 			std::string str;
 			std::getline(std::cin, str);
 
-			protocol.func2(SERVER_NETID, str);
+//			protocol.func2(SERVER_NETID, str);
+			static bool flag = true;
+
+			if (flag)
+				login_protocol.ReqLogin(SERVER_NETID, "testLogin", "pass1234" );
+			else
+				protocol.func2(SERVER_NETID, "client send func2" );
+			flag = !flag;
 		}
 
 		Sleep(1);

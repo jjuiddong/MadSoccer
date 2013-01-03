@@ -19,13 +19,16 @@ namespace network
 	protected:
 		typedef std::map<SOCKET, CServer*> ServerMap;
 		typedef std::map<SOCKET, CClient*> ClientMap;
+		typedef std::map<int,IProtocolDispatcher*> DispatcherMap;
 		typedef ServerMap::iterator ServerItor;
 		typedef ClientMap::iterator ClientItor;
+		typedef DispatcherMap::iterator DispatcherItor;
 		typedef std::list<common::CThread*> ThreadList;
 		typedef ThreadList::iterator ThreadItor;
 
 		ServerMap			m_Servers;
 		ClientMap			m_Clients;
+		DispatcherMap		m_Dipatchers;
 		common::CThread		m_AcceptThread;
 		ThreadList			m_WorkThreads;
 		ThreadList			m_LogicThreads;
@@ -45,6 +48,10 @@ namespace network
 		bool		StartClient(const std::string &ip, int port, CClient *pClt);
 		bool		StopClient(CClient *pClt);
 		CClient*	GetClient(SOCKET sock);
+
+		// protocol
+		void		AddDispatcher(IProtocolDispatcher *pDispatcher);
+		IProtocolDispatcher* GetDispatcher(int protocolID);
 
 	protected:
 		void		MakeServersFDSET( fd_set *pfdset);

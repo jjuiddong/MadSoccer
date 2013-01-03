@@ -32,16 +32,10 @@ bool CNetConnector::RegisterProtocol(ProtocolPtr protocol)
 //------------------------------------------------------------------------
 bool CNetConnector::AddListener(ProtocolListenerPtr pListener)
 {
-	ProtocolListenerMapItor it = m_ProtocolListeners.find(pListener->GetId());
-	if (m_ProtocolListeners.end() == it)
-	{
-		m_ProtocolListeners.insert( ProtocolListenerMap::value_type(pListener->GetId(), ProtocolListenerList()) );
-		m_ProtocolListeners[ pListener->GetId()].push_back(pListener);
-	}
-	else
-	{
-		it->second.push_back(pListener);
-	}
+	ProtocolListenerItor it = find(m_ProtocolListeners.begin(), m_ProtocolListeners.end(), pListener);
+	if (m_ProtocolListeners.end() != it)
+		return false; // 이미 존재한다면 실패
+	m_ProtocolListeners.push_back( pListener);
 	return true;
 }
 
@@ -51,37 +45,9 @@ bool CNetConnector::AddListener(ProtocolListenerPtr pListener)
 //------------------------------------------------------------------------
 bool CNetConnector::RemoveListener(ProtocolListenerPtr pListener)
 {
-	ProtocolListenerMapItor it = m_ProtocolListeners.find(pListener->GetId());
+	ProtocolListenerItor it = find(m_ProtocolListeners.begin(), m_ProtocolListeners.end(), pListener);
 	if (m_ProtocolListeners.end() == it)
-	{
-		return false;
-	}
-	else
-	{
-		it->second.remove(pListener);
-	}
+		return false; // 없다면 실패
+	m_ProtocolListeners.erase(it);
 	return true;
-}
-
-
-//------------------------------------------------------------------------
-// 리스너 얻기
-//------------------------------------------------------------------------
-const ProtocolListenerList&	CNetConnector::GetListeners(int listenerId)
-{
-	static ProtocolListenerList emptyList; // reference return 용 임시 변수
-	ProtocolListenerMapItor it = m_ProtocolListeners.find(listenerId);
-	if (m_ProtocolListeners.end() == it)
-		return emptyList; // 없으면 빈 리스트를 리턴한다.
-	return it->second;
-}
-
-
-//------------------------------------------------------------------------
-// listenerId에 해당하는 리스너가 존재한다면 true를 리턴한다.
-//------------------------------------------------------------------------
-bool CNetConnector::IsExistListener(int listenerId)
-{
-	ProtocolListenerMapItor it = m_ProtocolListeners.find(listenerId);
-	return m_ProtocolListeners.end() != it;
 }

@@ -2,7 +2,6 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
-
 #include <Windows.h>
 #include <list>
 #include <map>
@@ -11,6 +10,9 @@
 #include <string>
 #include <assert.h>
 #include <boost/foreach.hpp>
+
+#pragma warning(disable: 4355) // disable warning, using this pointer in constructor 
+
 
 namespace common
 {
@@ -77,6 +79,6 @@ typedef unsigned short u_short;
 #include "etc/Reference.h"
 #include "etc/RandNoDuplicate.h"
 #include "etc/time.h"
-
+#include "CodeGen.h"
 
 #endif // __COMMON_H__

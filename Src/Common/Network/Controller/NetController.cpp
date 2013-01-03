@@ -178,6 +178,34 @@ CClient* CNetController::GetClient(SOCKET sock)
 
 
 //------------------------------------------------------------------------
+// Protocol Dispatcher 추가
+//------------------------------------------------------------------------
+void CNetController::AddDispatcher(IProtocolDispatcher *pDispatcher)
+{
+	DispatcherItor it = m_Dipatchers.find(pDispatcher->GetId());
+	if (m_Dipatchers.end() != it)
+	{
+		error::ErrorLog( 
+			common::format( "같은 ProtocolDispatcher를 이미 등록했습니다. DispatcherId: %d ", pDispatcher->GetId()) );
+		return; // 이미 존재한다면 실패
+	}
+	m_Dipatchers.insert( DispatcherMap::value_type(pDispatcher->GetId(), pDispatcher) );
+}
+
+
+//------------------------------------------------------------------------
+// Protocol Dispatcher 얻음
+//------------------------------------------------------------------------
+IProtocolDispatcher* CNetController::GetDispatcher(int protocolID)
+{
+	DispatcherItor it = m_Dipatchers.find(protocolID);
+	if (m_Dipatchers.end() == it)
+		return NULL; // 없다면 실패
+	return it->second;
+}
+
+
+//------------------------------------------------------------------------
 // 서버들의 fd_set 을 생성해서 리턴한다.
 //------------------------------------------------------------------------
 void CNetController::MakeServersFDSET( fd_set *pfdset )

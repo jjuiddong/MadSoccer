@@ -162,6 +162,20 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\login.prt"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="$(InputName) protocol Compile..."
+						CommandLine="$(BIN)\ProtocolCompiler.exe $(InputPath)"
+						Outputs="$(InputName)_Protocol.h;$(InputName)_Protocol.cpp;$(InputName)_ProtocolListener.h;$(InputName)_ProtocolListener.cpp;"
+					/>
+				</FileConfiguration>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

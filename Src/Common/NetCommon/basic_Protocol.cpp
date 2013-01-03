@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "basic_Protocol.h"
 using namespace network;
 using namespace basic;
@@ -6,22 +5,22 @@ using namespace basic;
 //------------------------------------------------------------------------
 // Protocol: func1
 //------------------------------------------------------------------------
-void s2c_Protocol::func1(netid targetId)
+void basic::s2c_Protocol::func1(netid targetId)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 200;
+	packet << 500;
 	GetNetConnector()->Send(targetId, packet);
 }
 
 //------------------------------------------------------------------------
 // Protocol: func2
 //------------------------------------------------------------------------
-void s2c_Protocol::func2(netid targetId, const std::string &str)
+void basic::s2c_Protocol::func2(netid targetId, const std::string &str)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 201;
+	packet << 501;
 	packet << str;
 	GetNetConnector()->Send(targetId, packet);
 }
@@ -29,11 +28,11 @@ void s2c_Protocol::func2(netid targetId, const std::string &str)
 //------------------------------------------------------------------------
 // Protocol: func3
 //------------------------------------------------------------------------
-void s2c_Protocol::func3(netid targetId, const float &value)
+void basic::s2c_Protocol::func3(netid targetId, const float &value)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 202;
+	packet << 502;
 	packet << value;
 	GetNetConnector()->Send(targetId, packet);
 }
@@ -41,22 +40,22 @@ void s2c_Protocol::func3(netid targetId, const float &value)
 //------------------------------------------------------------------------
 // Protocol: func4
 //------------------------------------------------------------------------
-void s2c_Protocol::func4(netid targetId)
+void basic::s2c_Protocol::func4(netid targetId)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 203;
+	packet << 503;
 	GetNetConnector()->Send(targetId, packet);
 }
 
 //------------------------------------------------------------------------
 // Protocol: func5
 //------------------------------------------------------------------------
-void s2c_Protocol::func5(netid targetId, const std::string &ok, const float &a, const int &b)
+void basic::s2c_Protocol::func5(netid targetId, const std::string &ok, const float &a, const int &b)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 204;
+	packet << 504;
 	packet << ok;
 	packet << a;
 	packet << b;
@@ -68,11 +67,11 @@ void s2c_Protocol::func5(netid targetId, const std::string &ok, const float &a, 
 //------------------------------------------------------------------------
 // Protocol: func2
 //------------------------------------------------------------------------
-void c2s_Protocol::func2(netid targetId, const std::string &str)
+void basic::c2s_Protocol::func2(netid targetId, const std::string &str)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 300;
+	packet << 600;
 	packet << str;
 	GetNetConnector()->Send(targetId, packet);
 }
@@ -80,11 +79,11 @@ void c2s_Protocol::func2(netid targetId, const std::string &str)
 //------------------------------------------------------------------------
 // Protocol: func3
 //------------------------------------------------------------------------
-void c2s_Protocol::func3(netid targetId, const float &value)
+void basic::c2s_Protocol::func3(netid targetId, const float &value)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 301;
+	packet << 601;
 	packet << value;
 	GetNetConnector()->Send(targetId, packet);
 }

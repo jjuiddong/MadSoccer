@@ -22,10 +22,15 @@ namespace network
 	class CNetConnector;
 	class IProtocol;
 	class IProtocolListener;
+	class CCharacter;
+	class CGroup;
+	class CRoom;
+	class CUser;
 }
 typedef common::ReferencePtr<network::CServer> ServerPtr;
 typedef common::ReferencePtr<network::CClient> ClientPtr;
 typedef common::ReferencePtr<network::CNetConnector> NetConnectorPtr;
+typedef common::ReferencePtr<network::CCharacter> CharacterPtr;
 
 
 
@@ -39,15 +44,28 @@ typedef common::ReferencePtr<network::CNetConnector> NetConnectorPtr;
 typedef std::list<SOCKET> SocketList;
 typedef SocketList::iterator SockItor;
 
-typedef std::list<network::CRemoteClient*> RemoteClientList;
-typedef RemoteClientList::iterator RemoteClientItor;
-typedef common::ReferencePtr<network::CRemoteClient> RemoteClientPtr;
+typedef std::list<netid> NetIdList;
+typedef NetIdList::iterator NetIdItor;
 
+typedef std::map<netid,network::CRemoteClient*> RemoteClientMap;
+typedef RemoteClientMap::iterator RemoteClientItor;
+typedef common::ReferencePtr<network::CRemoteClient> RemoteClientPtr;
 
 typedef std::list<network::CPacket> PacketList;
 typedef PacketList::iterator PacketItor;
 typedef PacketList::const_iterator PacketCItor;
 
+typedef std::list<network::CGroup*> GroupList;
+typedef GroupList::iterator GroupItor;
+typedef common::ReferencePtr<network::CGroup> GroupPtr;
+
+typedef std::map<netid,network::CUser*> UserMap;
+typedef UserMap::iterator UserItor;
+typedef common::ReferencePtr<network::CUser> UserPtr;
+
+typedef std::map<int,network::CRoom*> RoomMap;
+typedef RoomMap::iterator RoomItor;
+typedef common::ReferencePtr<network::CRoom> RoomPtr;
 
 typedef common::ReferencePtr<network::IProtocolListener> ProtocolListenerPtr;
 typedef std::list<ProtocolListenerPtr> ProtocolListenerList;
@@ -61,6 +79,10 @@ typedef ProtocolMap::iterator ProtocolItor;
 
 #include "Interface/Protocol.h"
 #include "Interface/ProtocolListener.h"
+#include "Interface/ProtocolDispatcher.h"
+#include "DataStructure/Group.h"
+#include "DataStructure/Room.h"
+#include "DataStructure/User.h"
 
 
 

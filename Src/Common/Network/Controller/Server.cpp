@@ -48,14 +48,14 @@ void CServer::OnListen()
 //------------------------------------------------------------------------
 bool CServer::AddClient(SOCKET sock)
 {
-	RemoteClientItor it = find_if(m_RemoteClients.begin(), m_RemoteClients.end(), 
-		bind(IsSameSocket<CRemoteClient>,_1,sock) );
+ 	RemoteClientItor it = FindRemoteClientBySocket(sock);
 	if (m_RemoteClients.end() != it)
 		return false; // 이미존재한다면 실패
 
 	CRemoteClient *pNewRemoteClient = new CRemoteClient();
 	pNewRemoteClient->SetSocket(sock);
-	m_RemoteClients.push_back( pNewRemoteClient );
+	m_RemoteClients.insert( 
+		RemoteClientMap::value_type(pNewRemoteClient->GetNetId(), pNewRemoteClient) );
 
 	error::Log( common::format("AddClient netid: %d", pNewRemoteClient->GetNetId()) );
 
@@ -69,11 +69,10 @@ bool CServer::AddClient(SOCKET sock)
 //------------------------------------------------------------------------
 CRemoteClient* CServer::GetRemoteClient(netid netId)
 {
-	RemoteClientItor it = find_if(m_RemoteClients.begin(), m_RemoteClients.end(), 
-		bind(IsSameNetId<CRemoteClient>,_1,netId));
+	RemoteClientItor it = m_RemoteClients.find(netId);
 	if (m_RemoteClients.end() == it)
 		return NULL; //없다면 실패
-	return *it;
+	return it->second;
 }
 
 
@@ -82,11 +81,10 @@ CRemoteClient* CServer::GetRemoteClient(netid netId)
 //------------------------------------------------------------------------
 CRemoteClient* CServer::GetRemoteClientFromSocket(SOCKET sock)
 {
-	RemoteClientItor it = find_if(m_RemoteClients.begin(), m_RemoteClients.end(), 
-		bind(IsSameSocket<CRemoteClient>,_1,sock));
+	RemoteClientItor it = FindRemoteClientBySocket(sock);
 	if (m_RemoteClients.end() == it)
 		return NULL; //없다면 실패
-	return *it;
+ 	return it->second;
 }
 
 
@@ -95,11 +93,10 @@ CRemoteClient* CServer::GetRemoteClientFromSocket(SOCKET sock)
 //------------------------------------------------------------------------
 netid CServer::GetNetIdFromSocket(SOCKET sock)
 {
-	RemoteClientItor it = find_if(m_RemoteClients.begin(), m_RemoteClients.end(), 
-		bind(IsSameSocket<CRemoteClient>,_1,sock));
-	if (m_RemoteClients.end() == it)
-		return INVALID_NETID; //없다면 실패
-	return (*it)->GetNetId();
+	RemoteClientItor it = FindRemoteClientBySocket(sock);
+ 	if (m_RemoteClients.end() == it)
+ 		return INVALID_NETID; //없다면 실패
+ 	return it->second->GetNetId();
 }
 
 
@@ -108,8 +105,7 @@ netid CServer::GetNetIdFromSocket(SOCKET sock)
 //------------------------------------------------------------------------
 bool CServer::RemoveClient(netid netId)
 {
-	RemoteClientItor it = find_if(m_RemoteClients.begin(), m_RemoteClients.end(), 
-		bind(IsSameNetId<CRemoteClient>,_1,netId));
+	RemoteClientItor it = m_RemoteClients.find(netId);
 	if (m_RemoteClients.end() == it)
 		return false; //없다면 실패
 
@@ -123,13 +119,27 @@ bool CServer::RemoveClient(netid netId)
 //------------------------------------------------------------------------
 bool CServer::RemoveClientBySocket(SOCKET sock)
 {
-	RemoteClientItor it = find_if(m_RemoteClients.begin(), m_RemoteClients.end(), 
-		bind(IsSameSocket<CRemoteClient>,_1,sock));
-	if (m_RemoteClients.end() == it)
-		return false; //없다면 실패
-
-	RemoveClientProcess(it);
+	RemoteClientItor it = FindRemoteClientBySocket(sock);
+ 	if (m_RemoteClients.end() == it)
+ 		return false; //없다면 실패
+ 
+ 	RemoveClientProcess(it);
 	return true;
+}
+
+
+//------------------------------------------------------------------------
+// m_RemoteClients에서 sock에 해당하는 클라이언트를 리턴한다.
+//------------------------------------------------------------------------
+RemoteClientItor CServer::FindRemoteClientBySocket(SOCKET sock)
+{
+	RemoteClientItor it = m_RemoteClients.begin();
+	while (m_RemoteClients.end() != it)
+	{
+		if (it->second->GetSocket() == sock)
+			return it;
+	}
+	return m_RemoteClients.end();	
 }
 
 
@@ -139,8 +149,7 @@ bool CServer::RemoveClientBySocket(SOCKET sock)
 //------------------------------------------------------------------------
 RemoteClientItor CServer::RemoveClientInLoop(netid netId)
 {
-	RemoteClientItor it = find_if(m_RemoteClients.begin(), m_RemoteClients.end(), 
-		bind(IsSameNetId<CRemoteClient>,_1,netId));
+	RemoteClientItor it = m_RemoteClients.find(netId);
 	if (m_RemoteClients.end() == it)
 		return m_RemoteClients.end(); //없다면 실패
 
@@ -154,8 +163,8 @@ RemoteClientItor CServer::RemoveClientInLoop(netid netId)
 //------------------------------------------------------------------------
 RemoteClientItor CServer::RemoveClientProcess(RemoteClientItor it)
 {
-	const netid netId = (*it)->GetNetId();
-	delete *it;
+	const netid netId = it->second->GetNetId();
+	delete it->second;
 	RemoteClientItor r = m_RemoteClients.erase(it);
 
 	OnClientLeave(netId);
@@ -171,9 +180,9 @@ void CServer::Clear()
 	m_IsServerOn = false;
 	Sleep(100);
 
-	BOOST_FOREACH(CRemoteClient *p, m_RemoteClients)
+	BOOST_FOREACH( RemoteClientMap::value_type &kv, m_RemoteClients)
 	{
-		delete p;
+		delete kv.second;
 	}
 	m_RemoteClients.clear();
 
@@ -192,9 +201,9 @@ void CServer::MakeFDSET( fd_set *pfdset)
 		return;
 
 	FD_ZERO(pfdset);
-	BOOST_FOREACH(CRemoteClient *p, m_RemoteClients)
+	BOOST_FOREACH(RemoteClientMap::value_type &kv, m_RemoteClients)
 	{
-		pfdset->fd_array[ pfdset->fd_count] = p->GetSocket();
+		pfdset->fd_array[ pfdset->fd_count] = kv.second->GetSocket();
 		pfdset->fd_count++;
 	}
 }
@@ -205,8 +214,7 @@ void CServer::MakeFDSET( fd_set *pfdset)
 //------------------------------------------------------------------------
 bool CServer::IsExist(netid netId)
 {
-	RemoteClientItor it = find_if(m_RemoteClients.begin(), m_RemoteClients.end(), 
-		bind(IsSameNetId<CRemoteClient>,_1,netId) );
+	RemoteClientItor it = m_RemoteClients.find(netId);
 	return m_RemoteClients.end() != it;
 }
 
@@ -234,15 +242,14 @@ void CServer::LeaveSync()
 //------------------------------------------------------------------------
 bool CServer::Send(netid netId, const CPacket &packet)
 {
-	RemoteClientItor it = find_if(m_RemoteClients.begin(), m_RemoteClients.end(), 
-		bind(IsSameNetId<CRemoteClient>,_1,netId));
+	RemoteClientItor it = m_RemoteClients.find(netId);
 	if (m_RemoteClients.end() == it)
 		return false;
 
-	const int result = send((*it)->GetSocket(), packet.GetData(), packet.GetPacketSize(), 0);
+	const int result = send(it->second->GetSocket(), packet.GetData(), packet.GetPacketSize(), 0);
 	if (result == INVALID_SOCKET)
 	{
-		error::ErrorLog( common::format("CServer::Send() Socket Error id=%d", (*it)->GetNetId()) );
+		error::ErrorLog( common::format("CServer::Send() Socket Error id=%d", it->second->GetNetId()) );
 		RemoveClient(packet.GetSenderId());
 		return false;
 	}
@@ -258,10 +265,10 @@ bool CServer::SendAll(const CPacket &packet)
 	RemoteClientItor it = m_RemoteClients.begin();
 	while (m_RemoteClients.end() != it)
 	{
-		const int result = send((*it)->GetSocket(), packet.GetData(), packet.GetPacketSize(), 0);
+		const int result = send(it->second->GetSocket(), packet.GetData(), packet.GetPacketSize(), 0);
 		if (result == INVALID_SOCKET)
 		{
-			it = RemoveClientInLoop((*it)->GetNetId());
+			it = RemoveClientInLoop(it->second->GetNetId());
 		}
 		else
 		{

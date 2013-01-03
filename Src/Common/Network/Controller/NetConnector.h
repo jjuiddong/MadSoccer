@@ -20,7 +20,7 @@ namespace network
 	protected:
 		netid				m_NetId;				// 고유ID (자동생성)
 		SOCKET				m_Socket;
-		ProtocolListenerMap	m_ProtocolListeners;
+		ProtocolListenerList m_ProtocolListeners;
 
 	public:
 		netid				GetNetId() const { return m_NetId; }
@@ -29,8 +29,7 @@ namespace network
 		bool				RegisterProtocol(ProtocolPtr protocol);
 		bool				AddListener(ProtocolListenerPtr pListener);
 		bool				RemoveListener(ProtocolListenerPtr pListener);
-		const ProtocolListenerList&	GetListeners(int listenerId);
-		bool				IsExistListener(int listenerId);
+		const ProtocolListenerList&	GetListeners() { return m_ProtocolListeners; }
 
 		// child implementes
 		virtual bool		Send(netid netId, const CPacket &packet) = 0;

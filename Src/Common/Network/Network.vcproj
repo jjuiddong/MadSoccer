@@ -214,6 +214,22 @@
 				Name="DataStructure"
 				>
 				<File
+					RelativePath=".\DataStructure\Character.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\DataStructure\Character.h"
+					>
+				</File>
+				<File
+					RelativePath=".\DataStructure\Group.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\DataStructure\Group.h"
+					>
+				</File>
+				<File
 					RelativePath=".\DataStructure\Packet.cpp"
 					>
 				</File>
@@ -259,6 +275,10 @@
 				>
 				<File
 					RelativePath=".\Interface\Protocol.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Interface\ProtocolDispatcher.h"
 					>
 				</File>
 				<File

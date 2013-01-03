@@ -1,20 +1,28 @@
-#include "stdafx.h"
 #include "basic_ProtocolListener.h"
+#include "Network/Controller/NetController.h"
+
 using namespace network;
 using namespace basic;
+
+static basic::s2c_Dispatcher g_basic_s2c_Dispatcher;
+
+basic::s2c_Dispatcher::s2c_Dispatcher()
+	: IProtocolDispatcher(basic::s2c_Dispatcher_ID)
+{
+	CNetController::Get()->AddDispatcher(this);
+}
 
 //------------------------------------------------------------------------
 // // 패킷의 프로토콜에 따라 해당하는 리스너의 함수를 호출한다.
 //------------------------------------------------------------------------
-void s2c_ProtocolListener::Dispatch(CPacket &packet, const ProtocolListenerList &listeners)
+void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList &listeners)
 {
 	BOOST_FOREACH(ProtocolListenerPtr p, listeners)
 	{
 		IProtocolListener *ptmp = p;
-		s2c_ProtocolListener *lstr = static_cast<s2c_ProtocolListener*>(ptmp);
+		s2c_ProtocolListener *lstr = dynamic_cast<s2c_ProtocolListener*>(ptmp);
 		if (!lstr)
 		{
-			error::ErrorLog( "s2c_ProtocolListener::Dispatch Convert Error" );
 			continue;
 		}
 
@@ -22,13 +30,13 @@ void s2c_ProtocolListener::Dispatch(CPacket &packet, const ProtocolListenerList 
 		packet >> protocolId >> packetId;
 		switch (packetId)
 		{
-		case 200:
+		case 500:
 			{
 				lstr->func1(packet.GetSenderId());
 			}
 			break;
 
-		case 201:
+		case 501:
 			{
 				std::string str;
 				packet >> str;
@@ -36,7 +44,7 @@ void s2c_ProtocolListener::Dispatch(CPacket &packet, const ProtocolListenerList 
 			}
 			break;
 
-		case 202:
+		case 502:
 			{
 				float value;
 				packet >> value;
@@ -44,13 +52,13 @@ void s2c_ProtocolListener::Dispatch(CPacket &packet, const ProtocolListenerList 
 			}
 			break;
 
-		case 203:
+		case 503:
 			{
 				lstr->func4(packet.GetSenderId());
 			}
 			break;
 
-		case 204:
+		case 504:
 			{
 				std::string ok;
 				packet >> ok;
@@ -70,18 +78,26 @@ void s2c_ProtocolListener::Dispatch(CPacket &packet, const ProtocolListenerList 
 }
 
 
+
+static basic::c2s_Dispatcher g_basic_c2s_Dispatcher;
+
+basic::c2s_Dispatcher::c2s_Dispatcher()
+	: IProtocolDispatcher(basic::c2s_Dispatcher_ID)
+{
+	CNetController::Get()->AddDispatcher(this);
+}
+
 //------------------------------------------------------------------------
 // // 패킷의 프로토콜에 따라 해당하는 리스너의 함수를 호출한다.
 //------------------------------------------------------------------------
-void c2s_ProtocolListener::Dispatch(CPacket &packet, const ProtocolListenerList &listeners)
+void basic::c2s_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList &listeners)
 {
 	BOOST_FOREACH(ProtocolListenerPtr p, listeners)
 	{
 		IProtocolListener *ptmp = p;
-		c2s_ProtocolListener *lstr = static_cast<c2s_ProtocolListener*>(ptmp);
+		c2s_ProtocolListener *lstr = dynamic_cast<c2s_ProtocolListener*>(ptmp);
 		if (!lstr)
 		{
-			error::ErrorLog( "c2s_ProtocolListener::Dispatch Convert Error" );
 			continue;
 		}
 
@@ -89,7 +105,7 @@ void c2s_ProtocolListener::Dispatch(CPacket &packet, const ProtocolListenerList 
 		packet >> protocolId >> packetId;
 		switch (packetId)
 		{
-		case 300:
+		case 600:
 			{
 				std::string str;
 				packet >> str;
@@ -97,7 +113,7 @@ void c2s_ProtocolListener::Dispatch(CPacket &packet, const ProtocolListenerList 
 			}
 			break;
 
-		case 301:
+		case 601:
 			{
 				float value;
 				packet >> value;
@@ -111,5 +127,6 @@ void c2s_ProtocolListener::Dispatch(CPacket &packet, const ProtocolListenerList 
 		}
 	}
 }
+
 
 
