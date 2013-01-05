@@ -171,10 +171,22 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="$(InputName) protocol Compile..."
-						CommandLine="$(BIN)\ProtocolCompiler.exe $(InputPath)"
+						CommandLine="$(BIN)\ProtocolCompiler.exe $(InputPath)&#x0D;&#x0A;"
 						Outputs="$(InputName)_Protocol.h;$(InputName)_Protocol.cpp;$(InputName)_ProtocolListener.h;$(InputName)_ProtocolListener.cpp;"
 					/>
 				</FileConfiguration>
+			</File>
+		</Filter>
+		<Filter
+			Name="Src"
+			>
+			<File
+				RelativePath=".\NetCommon.h"
+				>
+			</File>
+			<File
+				RelativePath=".\StdAfx.h"
+				>
 			</File>
 		</Filter>
 	</Files>
