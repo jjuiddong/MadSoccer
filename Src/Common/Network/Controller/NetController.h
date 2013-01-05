@@ -17,8 +17,8 @@ namespace network
 		friend class CTaskAccept;
 
 	protected:
-		typedef std::map<SOCKET, CServer*> ServerMap;
-		typedef std::map<SOCKET, CClient*> ClientMap;
+		typedef std::map<SOCKET, ServerPtr> ServerMap;
+		typedef std::map<SOCKET, ClientPtr> ClientMap;
 		typedef std::map<int,IProtocolDispatcher*> DispatcherMap;
 		typedef ServerMap::iterator ServerItor;
 		typedef ClientMap::iterator ClientItor;
@@ -40,14 +40,14 @@ namespace network
 		void		Clear();
 
 		// server
-		bool		StartServer(int port, CServer *pSvr);
+		bool		StartServer(int port, ServerPtr pSvr);
 		bool		StopServer(CServer *pSvr);
-		CServer*	GetServer(SOCKET sock);
+		ServerPtr	GetServer(SOCKET sock);
 
 		// client
-		bool		StartClient(const std::string &ip, int port, CClient *pClt);
+		bool		StartClient(const std::string &ip, int port, ClientPtr pClt);
 		bool		StopClient(CClient *pClt);
-		CClient*	GetClient(SOCKET sock);
+		ClientPtr	GetClient(SOCKET sock);
 
 		// protocol
 		void		AddDispatcher(IProtocolDispatcher *pDispatcher);

@@ -38,12 +38,17 @@ namespace network
 		int			GetPacketSize() const { return m_WriteIdx; }
 
 		CPacket& operator<<(const bool &rhs);
+		CPacket& operator<<(const long &rhs);
 		CPacket& operator<<(const int &rhs);
+		CPacket& operator<<(const unsigned int &rhs);
 		CPacket& operator<<(const char &rhs);
+		CPacket& operator<<(const unsigned char &rhs);
 		CPacket& operator<<(const float &rhs);
 		CPacket& operator<<(const double &rhs);
 		CPacket& operator<<(const short &rhs);
+		CPacket& operator<<(const unsigned short &rhs);
 		CPacket& operator<<(const std::string &rhs);
+		CPacket& operator<<(const _variant_t &rhs);
 
 		template<class T>
 		CPacket& operator<<(const T& rhs)
@@ -57,11 +62,15 @@ namespace network
 		}
 
 		CPacket& operator>>(bool &rhs);
+		CPacket& operator>>(long &rhs);
 		CPacket& operator>>(int &rhs);
+		CPacket& operator>>(unsigned int &rhs);
 		CPacket& operator>>(char &rhs);
+		CPacket& operator>>(unsigned char &rhs);
 		CPacket& operator>>(float &rhs);
 		CPacket& operator>>(double &rhs);
 		CPacket& operator>>(short &rhs);
+		CPacket& operator>>(unsigned short &rhs);
 		CPacket& operator>>(std::string &rhs);
 
 		template<class T>
@@ -110,5 +119,6 @@ namespace network
 			memmove_s(rhs, sizeof(T), m_Data+m_ReadIdx, sizeof(T));
 			m_ReadIdx += sizeof(T);
 		}
+		_variant_t GetVariant(const _variant_t &varType);
 	};
 }

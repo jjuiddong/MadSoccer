@@ -10,6 +10,8 @@
 
 #include "../DataStructure/PacketQueue.h"
 #include "../Controller/NetController.h"
+#include "../Service/AllProtocolListener.h"
+
 
 namespace network
 {
@@ -34,6 +36,20 @@ namespace network
 				return RR_CONTINUE;
 			}
 
+ 			const ProtocolListenerList &listeners = pSvr->GetListeners();
+			if (listeners.empty())
+			{
+				error::ErrorLog( 
+					common::format("CTaskLogic %d NetConnector의 프로토콜 리스너가 없습니다.", 
+					pSvr->GetNetId()) );
+				return RR_CONTINUE;
+			}
+
+			// 모든 패킷을 받아서 처리하는 리스너에게 패킷을 보낸다.
+			all::Dispatcher allDispatcher;
+			allDispatcher.Dispatch(packetData.packet, listeners);
+			// 
+
 			const int protocolId = packetData.packet.GetProtocolId();
 			IProtocolDispatcher *pDispatcher = CNetController::Get()->GetDispatcher(protocolId);
 			if (!pDispatcher)
@@ -44,19 +60,7 @@ namespace network
 				return RR_CONTINUE;
 			}
 
- 			const ProtocolListenerList &listeners = pSvr->GetListeners();
-			if (listeners.empty())
-			{
-				error::ErrorLog( 
-					common::format("CTaskLogic %d NetConnector의 프로토콜 리스너가 없습니다.", 
-					pSvr->GetNetId() ) );
-				return RR_CONTINUE;
-			}
-			else
-			{
-				//listeners.front()->Dispatch(packetData.packet, listeners);
-				pDispatcher->Dispatch(packetData.packet, listeners);
-			}
+			pDispatcher->Dispatch(packetData.packet, listeners);
 
 			return RR_CONTINUE;
 		}

@@ -9,6 +9,6 @@
 
 namespace compiler
 {
-	bool WriteProtocolCode(string protocolFileName, sRmi *rmi);
+	bool WriteProtocolCode(std::string protocolFileName, network::sRmi *rmi);
 
 }

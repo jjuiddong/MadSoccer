@@ -2,8 +2,8 @@
 #include "stdafx.h"
 #include "NetController.h"
 #include "NetLauncher.h"
-#include "Server.h"
-#include "Client.h"
+#include "../Service/Server.h"
+#include "../Service/Client.h"
 #include "../Task/TaskLogic.h"
 #include "../task/TaskAccept.h"
 #include "../task/TaskWork.h"
@@ -38,8 +38,8 @@ bool CNetController::Init(int logicThreadCount)
 	}
 
 	// Accept 쓰레드 생성
-	m_AcceptThread.AddTask( new CTaskAccept() );
-	m_AcceptThread.Start();
+  	m_AcceptThread.AddTask( new CTaskAccept() );
+  	m_AcceptThread.Start();
 
 	return true;
 }
@@ -62,7 +62,7 @@ void CNetController::Proc()
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-bool CNetController::StartServer(int port, CServer *pSvr)
+bool CNetController::StartServer(int port, ServerPtr pSvr)
 {
 	if (!pSvr)
 		return false;
@@ -113,7 +113,7 @@ bool CNetController::StopServer(CServer *pSvr)
 //------------------------------------------------------------------------
 // serverid 에 해당하는 서버를 리턴한다.
 //------------------------------------------------------------------------
-CServer* CNetController::GetServer(SOCKET sock)
+ServerPtr CNetController::GetServer(SOCKET sock)
 {
 	ServerItor it = m_Servers.find(sock);
 	if (m_Servers.end() == it)
@@ -125,22 +125,24 @@ CServer* CNetController::GetServer(SOCKET sock)
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-bool CNetController::StartClient(const std::string &ip, int port, CClient *pClt)
+bool CNetController::StartClient(const std::string &ip, int port, ClientPtr pClt)
 {
 	if (!pClt)
 		return false;
 
-	ClientItor it = m_Clients.find(pClt->GetSocket());
-	if (m_Clients.end() != it)
-		return false; // 이미 존재한다면 실패
+	if (pClt->IsConnect())
+		pClt->Stop(); // 연결을 끊고
 
+	// 서버 시작에 관련된 코드 추가
+	error::Log( common::format("%d Client Start", pClt->GetNetId()) );
 	if (!CNetLauncher::Get()->LaunchClient(pClt, ip, port))
 		return false;
 
-	// 클라이언트 접속 코드 추가
-	// 서버 시작에 관련된 코드 추가
-	error::Log( common::format("%d Client Start", pClt->GetNetId()) );
-	m_Clients.insert( ClientMap::value_type(pClt->GetSocket(), pClt) );
+	ClientItor it = m_Clients.find(pClt->GetSocket());
+	if (m_Clients.end() == it)
+	{
+		m_Clients.insert( ClientMap::value_type(pClt->GetSocket(), pClt) );
+	}
 
 	return true;
 }
@@ -168,7 +170,7 @@ bool CNetController::StopClient(CClient *pClt)
 //------------------------------------------------------------------------
 // clientId에 해당하는 클라이언트를 리턴한다.
 //------------------------------------------------------------------------
-CClient* CNetController::GetClient(SOCKET sock)
+ClientPtr CNetController::GetClient(SOCKET sock)
 {
 	ClientItor it = m_Clients.find(sock);
 	if (m_Clients.end() == it)
@@ -246,10 +248,6 @@ void CNetController::LeaveSync()
 //------------------------------------------------------------------------
 void CNetController::Clear()
 {
-	CPacketQueue::Release();
-
-	DeleteCriticalSection(&m_CriticalSection);
-
 	m_AcceptThread.Terminate();
 
 	BOOST_FOREACH( common::CThread *pThread, m_LogicThreads)
@@ -265,5 +263,9 @@ void CNetController::Clear()
 		delete pThread;
 	}
 	m_WorkThreads.clear();
+
+	CPacketQueue::Release();
+
+	DeleteCriticalSection(&m_CriticalSection);
 
 }

@@ -83,7 +83,8 @@ typedef ProtocolMap::iterator ProtocolItor;
 #include "DataStructure/Group.h"
 #include "DataStructure/Room.h"
 #include "DataStructure/User.h"
-
+#include "Service/AllProtocol.h"
+#include "Service/AllProtocolListener.h"
 
 
 

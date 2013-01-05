@@ -4,6 +4,9 @@
 #include <shlwapi.h>
 #pragma comment(lib, "shlwapi")
 
+using namespace network;
+using namespace std;
+
 namespace compiler
 {
 	string n_className; // Protocol, ProtocolListener 공동으로 사용하고 있다.
@@ -11,6 +14,7 @@ namespace compiler
 	string n_fileName;
 	string n_protocolName;	// *.prt 파일의 확장자와 경로를 제외한 파일이름을 저장한다.
 	string n_OrigianlFileName;
+	string n_listenerClassName;
 	
 	
 
@@ -275,6 +279,7 @@ bool compiler::WriteFirstListenerCpp(sRmi *rmi, bool IsAddStdafxHeader)
 		fprintf( fp, "#include \"stdafx.h\"\n");
 	fprintf( fp, "#include \"%s\"\n", headerFileName.c_str());
 	fprintf( fp, "#include \"Network/Controller/NetController.h\"\n" );
+	fprintf( fp, "#include \"network/PrtCompiler/ProtocolMacro.h\"\n");
 	fprintf( fp, "\n");
 	fprintf( fp, "using namespace network;\n");
 	fprintf( fp, "using namespace %s;\n", n_protocolName.c_str());
@@ -461,7 +466,7 @@ bool compiler::WriteProtocolCpp(FILE *fp, sRmi *rmi)
 	if (!rmi) return true;
 	
 	n_className = GetProtocolClassName(n_protocolName, rmi->name);
-	WriteImplProtocolList( fp, rmi->protocol, rmi->number );
+	WriteImplProtocolList( fp, rmi->protocol, rmi->number+1 );
 	fprintf( fp, "\n" );
 	fprintf( fp, "\n" );
 
@@ -474,40 +479,29 @@ bool compiler::WriteProtocolCpp(FILE *fp, sRmi *rmi)
 //------------------------------------------------------------------------
 void compiler::WriteProtocolDispatchFunc(FILE *fp, sRmi *rmi)
 {
-	string listenerClassName = GetProtocolListenerClassName(n_protocolName, rmi->name);
+	n_listenerClassName = GetProtocolListenerClassName(n_protocolName, rmi->name);
 
 	fprintf( fp, "//------------------------------------------------------------------------\n");
-	fprintf( fp, "// // 패킷의 프로토콜에 따라 해당하는 리스너의 함수를 호출한다.\n" );
+	fprintf( fp, "// 패킷의 프로토콜에 따라 해당하는 리스너의 함수를 호출한다.\n" );
 	fprintf( fp, "//------------------------------------------------------------------------\n");
 	fprintf( fp, "void %s::%s::Dispatch(CPacket &packet, const ProtocolListenerList &listeners)\n", 
 		n_protocolName.c_str(), n_className.c_str() );
 	fprintf( fp, "{\n" );
-	fprintf( fp, "\tBOOST_FOREACH(ProtocolListenerPtr p, listeners)\n");
-	fprintf( fp, "\t{\n" );
-		fprintf( fp, "\t\tIProtocolListener *ptmp = p;\n");
-		fprintf( fp, "\t\t%s *lstr = dynamic_cast<%s*>(ptmp);\n", listenerClassName.c_str(), listenerClassName.c_str());
-			fprintf( fp, "\t\tif (!lstr)\n");
-			fprintf( fp, "\t\t{\n");
-				//fprintf( fp, "\t\t\terror::ErrorLog( \"%s::Dispatch Convert Error\" );\n", n_className.c_str());
-				fprintf( fp, "\t\t\tcontinue;\n");
-			fprintf( fp, "\t\t}\n");
-	fprintf( fp, "\n" );
-		fprintf( fp, "\t\tint protocolId, packetId;\n");
-		fprintf( fp, "\t\tpacket >> protocolId >> packetId;\n");
+		fprintf( fp, "\tint protocolId, packetId;\n");
+		fprintf( fp, "\tpacket >> protocolId >> packetId;\n");
 
 	if (rmi->protocol)
 	{
-			fprintf( fp, "\t\tswitch (packetId)\n");
-			fprintf( fp, "\t\t{\n");
+			fprintf( fp, "\tswitch (packetId)\n");
+			fprintf( fp, "\t{\n");
 
-			WriteDispatchSwitchCase(fp, rmi->protocol, rmi->number);
+			WriteDispatchSwitchCase(fp, rmi->protocol, rmi->number+1);
 
-			fprintf( fp, "\t\tdefault:\n");
-				fprintf( fp, "\t\t\tassert(0);\n");
-				fprintf( fp, "\t\t\tbreak;\n");
-			fprintf( fp, "\t\t}\n");
+			fprintf( fp, "\tdefault:\n");
+				fprintf( fp, "\t\tassert(0);\n");
+				fprintf( fp, "\t\tbreak;\n");
+			fprintf( fp, "\t}\n");
 	}
-	fprintf( fp, "\t}\n");
 	fprintf( fp, "}\n" );	
 }
 
@@ -519,14 +513,14 @@ void compiler::WriteDispatchSwitchCase(FILE *fp, sProtocol *pProtocol, int packe
 {
 	if (!pProtocol) return;
 
-	fprintf( fp, "\t\tcase %d:\n", packetId );
-	fprintf( fp, "\t\t\t{\n" );
+	fprintf( fp, "\tcase %d:\n", packetId );
+	fprintf( fp, "\t\t{\n" );
 
 	WriteDispatchImpleArg(fp, pProtocol->argList);
 	WriteLastDispatchSwitchCase(fp, pProtocol);
 
-	fprintf( fp, "\t\t\t}\n" );
-	fprintf( fp, "\t\t\tbreak;\n" );
+	fprintf( fp, "\t\t}\n" );
+	fprintf( fp, "\t\tbreak;\n" );
 	fprintf( fp, "\n" );
 
 	WriteDispatchSwitchCase(fp, pProtocol->next, packetId+1);
@@ -541,9 +535,9 @@ void compiler::WriteDispatchImpleArg(FILE *fp, sArg*p)
 {
 	if (!p) return;
 	// 변수 선언
-	fprintf( fp, "\t\t\t\t%s %s;\n", p->var->type.c_str(), p->var->var.c_str() );
+	fprintf( fp, "\t\t\t%s %s;\n", p->var->type.c_str(), p->var->var.c_str() );
 	// 패킷에서 데이타 얻음
-	fprintf( fp, "\t\t\t\tpacket >> %s;\n", p->var->var.c_str() );
+	fprintf( fp, "\t\t\tpacket >> %s;\n", p->var->var.c_str() );
 	WriteDispatchImpleArg(fp, p->next);
 }
 
@@ -554,7 +548,8 @@ void compiler::WriteDispatchImpleArg(FILE *fp, sArg*p)
 //------------------------------------------------------------------------
 void compiler::WriteLastDispatchSwitchCase(FILE *fp, sProtocol *pProtocol)
 {
-	fprintf( fp, "\t\t\t\tlstr->%s(packet.GetSenderId()", pProtocol->name.c_str() );
+	fprintf( fp, "\t\t\tSEND_LISTENER(%s, listeners, %s(packet.GetSenderId()", 
+		n_listenerClassName.c_str(), pProtocol->name.c_str() );
 	WriteArgVar(fp, pProtocol->argList, true );
-	fprintf( fp, ");\n" );
+	fprintf( fp, ") );\n" );
 }

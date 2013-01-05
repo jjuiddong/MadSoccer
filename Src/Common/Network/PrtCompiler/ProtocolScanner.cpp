@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "ProtocolScanner.h"
 
+using namespace network;
 
 // lookup table of reserved words
 typedef struct _SReservedWord
@@ -57,7 +58,7 @@ cProtocolScanner::~cProtocolScanner()
 //----------------------------------------------------------------------------
 // 
 //----------------------------------------------------------------------------
-BOOL cProtocolScanner::LoadFile( char *szFileName, BOOL bTrace ) // bTrace=FALSE
+BOOL cProtocolScanner::LoadFile( const char *szFileName, BOOL bTrace ) // bTrace=FALSE
 {
 	OFSTRUCT of;
 

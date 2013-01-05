@@ -46,6 +46,47 @@ std::wstring common::string2wstring(const std::string &str)
 
 
 //------------------------------------------------------------------------
+// _variant_t 타입을 스트링으로 변환시킨다. 데이타 출력용을 만들어졌다.
+//------------------------------------------------------------------------
+std::string common::variant2string(const _variant_t &var)
+{
+	std::stringstream ss;
+	switch (var.vt)
+	{
+	case VT_I2: ss << var.iVal; break;
+	case VT_I4: ss << var.lVal; break;
+	case VT_R4: ss << var.fltVal; break;
+	case VT_R8: ss << var.dblVal; break;
+
+	case VT_BSTR:
+		{
+			tstring str = (LPCTSTR) (_bstr_t)var.bstrVal;
+#ifdef _UNICODE
+			ss << common::wstring2string(str);
+#else
+			ss << str;
+#endif
+		}
+		break;
+
+	case VT_DECIMAL:
+	case VT_I1:
+	case VT_UI1:
+	case VT_UI2:
+	case VT_UI4:
+		break;
+
+	case VT_INT: ss << var.intVal; break;
+	case VT_UINT: ss << var.uintVal; break;
+	default:
+		break;
+	}
+
+	return ss.str();
+}
+
+
+//------------------------------------------------------------------------
 // 스트링포맷
 //------------------------------------------------------------------------
 std::string common::format(const char* fmt, ...)

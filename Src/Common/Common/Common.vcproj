@@ -199,6 +199,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\etc\Directory.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\etc\Directory.h"
+				>
+			</File>
+			<File
 				RelativePath=".\etc\FastMemLoader.cpp"
 				>
 			</File>

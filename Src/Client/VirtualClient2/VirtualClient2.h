@@ -21,8 +21,11 @@ public:
 	CVirtualClient2App();
 
 // 재정의입니다.
-	public:
+public:
 	virtual BOOL InitInstance();
+	DlgConsolePtr GetConsole();
+	DlgPropertyPtr GetProperty();
+	DlgTreePtr GetTree();
 
 // 구현입니다.
 
@@ -30,3 +33,18 @@ public:
 };
 
 extern CVirtualClient2App theApp;
+
+static DlgConsolePtr GetConsole()
+{
+	return theApp.GetConsole();
+}
+static DlgPropertyPtr GetProperty()
+{
+	return theApp.GetProperty();
+}
+static DlgTreePtr GetTree()
+{
+	return theApp.GetTree();
+}
+
+

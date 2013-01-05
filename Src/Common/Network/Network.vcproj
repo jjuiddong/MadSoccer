@@ -306,14 +306,6 @@
 				Name="Controller"
 				>
 				<File
-					RelativePath=".\Controller\Client.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Controller\Client.h"
-					>
-				</File>
-				<File
 					RelativePath=".\Controller\NetConnector.cpp"
 					>
 				</File>
@@ -345,12 +337,72 @@
 					RelativePath=".\Controller\RemoteClient.h"
 					>
 				</File>
+			</Filter>
+			<Filter
+				Name="PrtCompiler"
+				>
 				<File
-					RelativePath=".\Controller\Server.cpp"
+					RelativePath=".\PrtCompiler\ProtocolDefine.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\Controller\Server.h"
+					RelativePath=".\PrtCompiler\ProtocolDefine.h"
+					>
+				</File>
+				<File
+					RelativePath=".\PrtCompiler\ProtocolMacro.h"
+					>
+				</File>
+				<File
+					RelativePath=".\PrtCompiler\ProtocolParser.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\PrtCompiler\ProtocolParser.h"
+					>
+				</File>
+				<File
+					RelativePath=".\PrtCompiler\ProtocolScanner.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\PrtCompiler\ProtocolScanner.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Service"
+				>
+				<File
+					RelativePath=".\Service\AllProtocol.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Service\AllProtocol.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Service\AllProtocolListener.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Service\AllProtocolListener.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Service\Client.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Service\Client.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Service\Server.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Service\Server.h"
 					>
 				</File>
 			</Filter>

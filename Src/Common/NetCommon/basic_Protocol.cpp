@@ -9,7 +9,7 @@ void basic::s2c_Protocol::func1(netid targetId)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 500;
+	packet << 501;
 	GetNetConnector()->Send(targetId, packet);
 }
 
@@ -20,7 +20,7 @@ void basic::s2c_Protocol::func2(netid targetId, const std::string &str)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 501;
+	packet << 502;
 	packet << str;
 	GetNetConnector()->Send(targetId, packet);
 }
@@ -32,7 +32,7 @@ void basic::s2c_Protocol::func3(netid targetId, const float &value)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 502;
+	packet << 503;
 	packet << value;
 	GetNetConnector()->Send(targetId, packet);
 }
@@ -44,7 +44,7 @@ void basic::s2c_Protocol::func4(netid targetId)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 503;
+	packet << 504;
 	GetNetConnector()->Send(targetId, packet);
 }
 
@@ -55,7 +55,7 @@ void basic::s2c_Protocol::func5(netid targetId, const std::string &ok, const flo
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 504;
+	packet << 505;
 	packet << ok;
 	packet << a;
 	packet << b;
@@ -71,7 +71,7 @@ void basic::c2s_Protocol::func2(netid targetId, const std::string &str)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 600;
+	packet << 601;
 	packet << str;
 	GetNetConnector()->Send(targetId, packet);
 }
@@ -83,7 +83,7 @@ void basic::c2s_Protocol::func3(netid targetId, const float &value)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 601;
+	packet << 602;
 	packet << value;
 	GetNetConnector()->Send(targetId, packet);
 }

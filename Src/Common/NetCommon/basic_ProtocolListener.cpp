@@ -1,5 +1,6 @@
 #include "basic_ProtocolListener.h"
 #include "Network/Controller/NetController.h"
+#include "network/PrtCompiler/ProtocolMacro.h"
 
 using namespace network;
 using namespace basic;
@@ -13,67 +14,57 @@ basic::s2c_Dispatcher::s2c_Dispatcher()
 }
 
 //------------------------------------------------------------------------
-// // 패킷의 프로토콜에 따라 해당하는 리스너의 함수를 호출한다.
+// 패킷의 프로토콜에 따라 해당하는 리스너의 함수를 호출한다.
 //------------------------------------------------------------------------
 void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList &listeners)
 {
-	BOOST_FOREACH(ProtocolListenerPtr p, listeners)
+	int protocolId, packetId;
+	packet >> protocolId >> packetId;
+	switch (packetId)
 	{
-		IProtocolListener *ptmp = p;
-		s2c_ProtocolListener *lstr = dynamic_cast<s2c_ProtocolListener*>(ptmp);
-		if (!lstr)
+	case 501:
 		{
-			continue;
+			SEND_LISTENER(s2c_ProtocolListener, listeners, func1(packet.GetSenderId()) );
 		}
+		break;
 
-		int protocolId, packetId;
-		packet >> protocolId >> packetId;
-		switch (packetId)
+	case 502:
 		{
-		case 500:
-			{
-				lstr->func1(packet.GetSenderId());
-			}
-			break;
-
-		case 501:
-			{
-				std::string str;
-				packet >> str;
-				lstr->func2(packet.GetSenderId(), str);
-			}
-			break;
-
-		case 502:
-			{
-				float value;
-				packet >> value;
-				lstr->func3(packet.GetSenderId(), value);
-			}
-			break;
-
-		case 503:
-			{
-				lstr->func4(packet.GetSenderId());
-			}
-			break;
-
-		case 504:
-			{
-				std::string ok;
-				packet >> ok;
-				float a;
-				packet >> a;
-				int b;
-				packet >> b;
-				lstr->func5(packet.GetSenderId(), ok, a, b);
-			}
-			break;
-
-		default:
-			assert(0);
-			break;
+			std::string str;
+			packet >> str;
+			SEND_LISTENER(s2c_ProtocolListener, listeners, func2(packet.GetSenderId(), str) );
 		}
+		break;
+
+	case 503:
+		{
+			float value;
+			packet >> value;
+			SEND_LISTENER(s2c_ProtocolListener, listeners, func3(packet.GetSenderId(), value) );
+		}
+		break;
+
+	case 504:
+		{
+			SEND_LISTENER(s2c_ProtocolListener, listeners, func4(packet.GetSenderId()) );
+		}
+		break;
+
+	case 505:
+		{
+			std::string ok;
+			packet >> ok;
+			float a;
+			packet >> a;
+			int b;
+			packet >> b;
+			SEND_LISTENER(s2c_ProtocolListener, listeners, func5(packet.GetSenderId(), ok, a, b) );
+		}
+		break;
+
+	default:
+		assert(0);
+		break;
 	}
 }
 
@@ -88,43 +79,33 @@ basic::c2s_Dispatcher::c2s_Dispatcher()
 }
 
 //------------------------------------------------------------------------
-// // 패킷의 프로토콜에 따라 해당하는 리스너의 함수를 호출한다.
+// 패킷의 프로토콜에 따라 해당하는 리스너의 함수를 호출한다.
 //------------------------------------------------------------------------
 void basic::c2s_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList &listeners)
 {
-	BOOST_FOREACH(ProtocolListenerPtr p, listeners)
+	int protocolId, packetId;
+	packet >> protocolId >> packetId;
+	switch (packetId)
 	{
-		IProtocolListener *ptmp = p;
-		c2s_ProtocolListener *lstr = dynamic_cast<c2s_ProtocolListener*>(ptmp);
-		if (!lstr)
+	case 601:
 		{
-			continue;
+			std::string str;
+			packet >> str;
+			SEND_LISTENER(c2s_ProtocolListener, listeners, func2(packet.GetSenderId(), str) );
 		}
+		break;
 
-		int protocolId, packetId;
-		packet >> protocolId >> packetId;
-		switch (packetId)
+	case 602:
 		{
-		case 600:
-			{
-				std::string str;
-				packet >> str;
-				lstr->func2(packet.GetSenderId(), str);
-			}
-			break;
-
-		case 601:
-			{
-				float value;
-				packet >> value;
-				lstr->func3(packet.GetSenderId(), value);
-			}
-			break;
-
-		default:
-			assert(0);
-			break;
+			float value;
+			packet >> value;
+			SEND_LISTENER(c2s_ProtocolListener, listeners, func3(packet.GetSenderId(), value) );
 		}
+		break;
+
+	default:
+		assert(0);
+		break;
 	}
 }
 

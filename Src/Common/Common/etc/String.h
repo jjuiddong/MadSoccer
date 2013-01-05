@@ -16,7 +16,10 @@ namespace common
 {
 	std::string wstring2string(const std::wstring &wstr);
 	std::wstring string2wstring(const std::string &str);
+	std::string variant2string(const _variant_t &var);
 
 	std::string format(const char* fmt, ...);
+
+
 }
 

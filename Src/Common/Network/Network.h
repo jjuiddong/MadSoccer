@@ -4,8 +4,8 @@
 
 
 #include "NetworkDef.h"
-#include "Controller/Server.h"
-#include "Controller/Client.h"
+#include "Service/Server.h"
+#include "Service/Client.h"
 
 
 namespace network

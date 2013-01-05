@@ -1,0 +1,7 @@
+
+
+protocol s2c 100
+{
+	Connect( std::string ip, int port );	
+}
+

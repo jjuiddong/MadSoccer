@@ -8,8 +8,10 @@
 #include <vector>
 #include <algorithm>
 #include <string>
+#include <sstream>
 #include <assert.h>
 #include <boost/foreach.hpp>
+#include <comdef.h> // for _variant_t
 
 #pragma warning(disable: 4355) // disable warning, using this pointer in constructor 
 
@@ -53,9 +55,15 @@ typedef unsigned short u_short;
 #endif
 
 
-#define SAFE_DELETE(p) {if (p) { delete p; p=NULL;} }
-#define SAFE_DELETEA(p) {if (p) { delete[] p; p=NULL;} }
-#define SAFE_RELEASE(p) {if (p) { p->Release(); p=NULL;} }
+#ifndef SAFE_DELETE
+	#define SAFE_DELETE(p) {if (p) { delete p; p=NULL;} }
+#endif
+#ifndef SAFE_DELETEA
+	#define SAFE_DELETEA(p) {if (p) { delete[] p; p=NULL;} }
+#endif
+#ifndef SAFE_RELEASE
+	#define SAFE_RELEASE(p) {if (p) { p->Release(); p=NULL;} }
+#endif
 
 
 #define RET(exp)		{if((exp)) return; }			// exp가 true이면 리턴
@@ -79,6 +87,8 @@ typedef unsigned short u_short;
 #include "etc/Reference.h"
 #include "etc/RandNoDuplicate.h"
 #include "etc/time.h"
+#include "etc/FilePath.h"
+#include "etc/Directory.h"
 #include "CodeGen.h"
 
 #endif // __COMMON_H__

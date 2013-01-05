@@ -40,7 +40,7 @@ namespace network
 					char buf[ 256];
 					memset( buf, 0, sizeof(buf) );
 					const int result = recv(readSockets.fd_array[ i], buf, sizeof(buf), 0);
-					if (result == INVALID_SOCKET)
+					if (result == INVALID_SOCKET || 0 == result)
 					{
 						m_pServer->RemoveClientBySocket(readSockets.fd_array[ i]);
 					}
@@ -48,8 +48,7 @@ namespace network
 					{
 						const netid netId = m_pServer->GetNetIdFromSocket(readSockets.fd_array[ i]);
 						CPacketQueue::Get()->PushPacket( 
-							CPacketQueue::SPacketData(m_pServer->GetSocket(),CPacket(netId, buf))
-							);
+							CPacketQueue::SPacketData(m_pServer->GetSocket(),CPacket(netId, buf)) );
 					}
 				}
 			}

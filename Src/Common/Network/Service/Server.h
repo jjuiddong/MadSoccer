@@ -7,7 +7,7 @@
 //------------------------------------------------------------------------
 #pragma once
 
-#include "NetConnector.h"
+#include "Controller/NetConnector.h"
 
 namespace network
 {

@@ -29,6 +29,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Network", "..\Common\Network\Network.vcproj", "{DFEC316A-4224-4E50-ABB0-1FDEBE77461F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VirtualClient2", "VirtualClient2\VirtualClient2.vcproj", "{A6BE4A4B-AF6A-4B20-A56C-BD0C5CF36E84}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DFEC316A-4224-4E50-ABB0-1FDEBE77461F} = {DFEC316A-4224-4E50-ABB0-1FDEBE77461F}
+		{F3998DC9-8441-45D0-A8F0-719C0A06C955} = {F3998DC9-8441-45D0-A8F0-719C0A06C955}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

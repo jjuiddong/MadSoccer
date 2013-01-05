@@ -3,6 +3,7 @@
 #include "Client.h"
 #include "../Interface/Protocol.h"
 #include "../Controller/NetController.h"
+#include "AllProtocolListener.h"
 
 
 using namespace network;
@@ -29,7 +30,7 @@ CClient::~CClient()
 //------------------------------------------------------------------------
 bool CClient::Stop()
 {
-	closesocket(m_Socket);
+	Disconnect();
 
 	return true;
 }
@@ -55,50 +56,54 @@ bool CClient::Proc()
 		const int result = recv( readSockets.fd_array[ 0], buf, sizeof(buf), 0);
 		if (result == SOCKET_ERROR || result == 0) // 받은 패킷사이즈가 0이면 서버와 끊겼다는 의미다.
 		{
-			OnDisconnect();
+			Disconnect();
 		}
 		else
 		{
-			CPacket packet(SERVER_NETID,buf);
-
-			const int protocolId = packet.GetProtocolId();
-			IProtocolDispatcher *pDispatcher = CNetController::Get()->GetDispatcher(protocolId);
-			if (!pDispatcher)
+			const ProtocolListenerList &listeners = GetListeners();
+			if (listeners.empty())
 			{
-				error::ErrorLog( 
-					common::format(" CClient::Proc() %d 에 해당하는 프로토콜 디스패쳐가 없습니다.", 
-					protocolId) );
+				error::ErrorLog( " CClient::Proc():: 프로토콜 리스너가 없습니다.");
 			}
 			else
 			{
-				const ProtocolListenerList &listeners = GetListeners();
-				if (listeners.empty())
+				CPacket packet(SERVER_NETID,buf);
+
+				// 모든 패킷을 받아서 처리하는 리스너에게 패킷을 보낸다.
+				all::Dispatcher allDispatcher;
+				allDispatcher.Dispatch(packet, listeners);
+				// 
+
+				const int protocolId = packet.GetProtocolId();
+				IProtocolDispatcher *pDispatcher = CNetController::Get()->GetDispatcher(protocolId);
+				if (!pDispatcher)
 				{
 					error::ErrorLog( 
-						common::format(" CClient::Proc():: %d 에 해당하는 프로토콜 리스너가 없습니다.", 
-							protocolId) );
+						common::format(" CClient::Proc() %d 에 해당하는 프로토콜 디스패쳐가 없습니다.", 
+						protocolId) );
 				}
 				else
 				{
 					pDispatcher->Dispatch(packet, listeners);
-				}				
+				}
 			}
-
-// 			const ProtocolListenerList &listeners = GetListeners( protocolId );
-// 			if (listeners.empty())
-// 			{
-// 				error::ErrorLog( 
-// 					common::format(" CClient::Proc():: %d 에 해당하는 프로토콜 리스너가 없습니다.", 
-// 						protocolId) );
-// 			}
-// 			else
-// 			{
-// 				listeners.front()->Dispatch(packet, listeners);
-// 			}
 		}
 	}
 
 	return true;
+}
+
+
+//------------------------------------------------------------------------
+// 서버와 접속이 끊어질때 호출된다.
+//------------------------------------------------------------------------
+void CClient::Disconnect()
+{
+	m_IsConnect = false;
+	closesocket(m_Socket);
+	WSACleanup();
+
+	OnDisconnect();
 }
 
 
@@ -115,16 +120,6 @@ void CClient::Clear()
 
 
 //------------------------------------------------------------------------
-// 서버와 통신이 끊겼을 때 호출된다.
-//------------------------------------------------------------------------
-void CClient::OnDisconnect()
-{
-	m_IsConnect = false;
-
-}
-
-
-//------------------------------------------------------------------------
 // 패킷 전송
 //------------------------------------------------------------------------
 bool CClient::Send(netid netId, const CPacket &packet)
@@ -133,7 +128,7 @@ bool CClient::Send(netid netId, const CPacket &packet)
 	const int result = send(m_Socket, packet.GetData(), packet.GetPacketSize(), 0);
 	if (result == INVALID_SOCKET)
 	{
-		OnDisconnect();
+		Disconnect();
 		return false;
 	}
 	return true;

@@ -9,7 +9,7 @@ void login::s2c_Protocol::AckLogin(netid targetId, const std::string &id, const 
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 100;
+	packet << 101;
 	packet << id;
 	packet << result;
 	GetNetConnector()->Send(targetId, packet);
@@ -24,7 +24,7 @@ void login::c2s_Protocol::ReqLogin(netid targetId, const std::string &id, const 
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 200;
+	packet << 201;
 	packet << id;
 	packet << password;
 	GetNetConnector()->Send(targetId, packet);

@@ -5,54 +5,28 @@
 #include "stdafx.h"
 #include "VirtualClient2.h"
 #include "VirtualClient2Dlg.h"
+#include "DlgProperty.h"
+#include "DlgConsole.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
 
-// 응용 프로그램 정보에 사용되는 CAboutDlg 대화 상자입니다.
-
-class CAboutDlg : public CDialog
-{
-public:
-	CAboutDlg();
-
-// 대화 상자 데이터입니다.
-	enum { IDD = IDD_ABOUTBOX };
-
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
-
-// 구현입니다.
-protected:
-	DECLARE_MESSAGE_MAP()
-};
-
-CAboutDlg::CAboutDlg() : CDialog(CAboutDlg::IDD)
-{
-	EnableActiveAccessibility();
-}
-
-void CAboutDlg::DoDataExchange(CDataExchange* pDX)
-{
-	CDialog::DoDataExchange(pDX);
-}
-
-BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
-END_MESSAGE_MAP()
-
-
-// CVirtualClient2Dlg 대화 상자
-
-
-
-
 CVirtualClient2Dlg::CVirtualClient2Dlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CVirtualClient2Dlg::IDD, pParent)
+,	m_pDlgConsole(NULL)
 {
 	EnableActiveAccessibility();
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+}
+
+CVirtualClient2Dlg::~CVirtualClient2Dlg()
+{
+	SAFE_DELETE(m_pDlgConsole);
+	network::Clear();
+	CVClient::Release();
 }
 
 void CVirtualClient2Dlg::DoDataExchange(CDataExchange* pDX)
@@ -65,18 +39,21 @@ BEGIN_MESSAGE_MAP(CVirtualClient2Dlg, CDialog)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	//}}AFX_MSG_MAP
+	ON_BN_CLICKED(IDOK, &CVirtualClient2Dlg::OnBnClickedOk)
+	ON_BN_CLICKED(IDCANCEL, &CVirtualClient2Dlg::OnBnClickedCancel)
+	ON_WM_SIZE()
+	ON_WM_DESTROY()
+	ON_WM_CREATE()
 END_MESSAGE_MAP()
 
 
-// CVirtualClient2Dlg 메시지 처리기
-
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
 BOOL CVirtualClient2Dlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	// 시스템 메뉴에 "정보..." 메뉴 항목을 추가합니다.
-
-	// IDM_ABOUTBOX는 시스템 명령 범위에 있어야 합니다.
 	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
 	ASSERT(IDM_ABOUTBOX < 0xF000);
 
@@ -94,22 +71,48 @@ BOOL CVirtualClient2Dlg::OnInitDialog()
 		}
 	}
 
-	// 이 대화 상자의 아이콘을 설정합니다. 응용 프로그램의 주 창이 대화 상자가 아닐 경우에는
-	//  프레임워크가 이 작업을 자동으로 수행합니다.
 	SetIcon(m_hIcon, TRUE);			// 큰 아이콘을 설정합니다.
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
-
-	// TODO: 여기에 추가 초기화 작업을 추가합니다.
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
 
+
+//------------------------------------------------------------------------
+// WM_CREATE 메세지를 오버라이딩 해야 WM_SIZE와 연계해서 크기를 정확하게
+// 맞출 수 있다. OninitialDialog 에서 DlgProperty를 생성하면 OnSize와 
+// 순서가 맞지 않아 코드 중복이 발생하게 된다.
+//------------------------------------------------------------------------
+int CVirtualClient2Dlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CDialog::OnCreate(lpCreateStruct) == -1)
+		return -1;
+
+	std::locale::global(std::locale(""));
+
+	m_pDlgConsole = new CDlgConsole(this);
+	m_pDlgConsole->Create( CDlgConsole::IDD, this );
+	m_pDlgConsole->ShowWindow(TRUE);
+
+	m_ProtocolTree.Create(WS_VISIBLE | WS_CHILD |
+		TVS_FULLROWSELECT | TVS_HASLINES | TVS_HASBUTTONS | TVS_LINESATROOT | TVS_SHOWSELALWAYS 
+		, CRect(0,0,100,100), this, 0);
+	m_ProtocolTree.Init();
+
+	network::Init(1);
+
+	return 0;
+}
+
+
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
 void CVirtualClient2Dlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
 	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
 	{
-		CAboutDlg dlgAbout;
-		dlgAbout.DoModal();
+
 	}
 	else
 	{
@@ -117,10 +120,10 @@ void CVirtualClient2Dlg::OnSysCommand(UINT nID, LPARAM lParam)
 	}
 }
 
-// 대화 상자에 최소화 단추를 추가할 경우 아이콘을 그리려면
-//  아래 코드가 필요합니다. 문서/뷰 모델을 사용하는 MFC 응용 프로그램의 경우에는
-//  프레임워크에서 이 작업을 자동으로 수행합니다.
 
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
 void CVirtualClient2Dlg::OnPaint()
 {
 	if (IsIconic())
@@ -146,10 +149,60 @@ void CVirtualClient2Dlg::OnPaint()
 	}
 }
 
-// 사용자가 최소화된 창을 끄는 동안에 커서가 표시되도록 시스템에서
-//  이 함수를 호출합니다.
+
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
 HCURSOR CVirtualClient2Dlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
+void CVirtualClient2Dlg::OnBnClickedOk()
+{
+//	OnOK();
+}
+
+
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
+void CVirtualClient2Dlg::OnBnClickedCancel()
+{
+	PostQuitMessage(0);
+
+}
+
+
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
+void CVirtualClient2Dlg::OnSize(UINT nType, int cx, int cy)
+{
+	CDialog::OnSize(nType, cx, cy);
+
+	// 전체 다이얼로그 크기의 2/3만큼 DlgProperty 가 차지 하고,
+	// 1/3은 TreeCtrl 이 차지하게 한다.
+	const int dlgPropW = (int)(cx * 0.3333f);
+	const int treeCtrlW = (int)(cx * 0.3333f);
+	const int consoleW = (int)(cx * 0.3333f);
+
+	if (m_ProtocolTree.GetSafeHwnd())
+		m_ProtocolTree.MoveWindow(CRect(0,0,treeCtrlW,cy));
+	if (m_pDlgConsole)
+		m_pDlgConsole->MoveWindow(CRect(treeCtrlW+dlgPropW, 0,treeCtrlW+dlgPropW+consoleW,cy));
+}
+
+
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
+void CVirtualClient2Dlg::OnDestroy()
+{
+	CDialog::OnDestroy();
+
+}

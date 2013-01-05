@@ -18,9 +18,10 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(BIN)"
+			IntermediateDirectory="$(OUT)"
 			ConfigurationType="1"
+			InheritedPropertySheets="..\..\CommonPropertySheet.vsprops"
 			UseOfMFC="2"
 			CharacterSet="1"
 			>
@@ -50,6 +51,8 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="StdAfx.h"
+				PrecompiledHeaderFile="$(IntDir)\$(TargetName).pch"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
@@ -96,8 +99,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(BIN)"
+			IntermediateDirectory="$(OUT)"
 			ConfigurationType="1"
 			UseOfMFC="2"
 			CharacterSet="1"
@@ -186,27 +189,19 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\stdafx.cpp"
+				RelativePath=".\DlgConsole.cpp"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\VirtualClient2.cpp"
+				RelativePath=".\DlgProperty.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ProtocolTree.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\VClient.cpp"
 				>
 			</File>
 			<File
@@ -220,19 +215,19 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\Resource.h"
+				RelativePath=".\DlgConsole.h"
 				>
 			</File>
 			<File
-				RelativePath=".\stdafx.h"
+				RelativePath=".\DlgProperty.h"
 				>
 			</File>
 			<File
-				RelativePath=".\targetver.h"
+				RelativePath=".\ProtocolTree.h"
 				>
 			</File>
 			<File
-				RelativePath=".\VirtualClient2.h"
+				RelativePath=".\VClient.h"
 				>
 			</File>
 			<File
@@ -258,11 +253,71 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="Lib"
+			>
+			<File
+				RelativePath=".\Lib\TreeCtrlBase.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Lib\TreeCtrlBase.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="MFC"
+			>
+			<File
+				RelativePath=".\Resource.h"
+				>
+			</File>
+			<File
+				RelativePath=".\stdafx.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\stdafx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\targetver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\VirtualClient2.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\VirtualClient2.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\ReadMe.txt"
 			>
 		</File>
 	</Files>
 	<Globals>
+		<Global
+			Name="RESOURCE_FILE"
+			Value="VirtualClient2.rc"
+		/>
 	</Globals>
 </VisualStudioProject>

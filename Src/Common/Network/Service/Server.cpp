@@ -30,6 +30,7 @@ CServer::~CServer()
 bool CServer::Stop()
 {
 
+
 	return true;
 }
 
@@ -57,7 +58,7 @@ bool CServer::AddClient(SOCKET sock)
 	m_RemoteClients.insert( 
 		RemoteClientMap::value_type(pNewRemoteClient->GetNetId(), pNewRemoteClient) );
 
-	error::Log( common::format("AddClient netid: %d", pNewRemoteClient->GetNetId()) );
+	error::Log( common::format("AddClient netid: %d, socket: %d", pNewRemoteClient->GetNetId(), sock) );
 
 	OnClientJoin(sock);
 	return true;
@@ -138,6 +139,7 @@ RemoteClientItor CServer::FindRemoteClientBySocket(SOCKET sock)
 	{
 		if (it->second->GetSocket() == sock)
 			return it;
+		++it;
 	}
 	return m_RemoteClients.end();	
 }

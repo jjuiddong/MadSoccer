@@ -1,12 +1,13 @@
 
 #include "stdafx.h"
 #include "ProtocolParser.h"
-#include "../Generator/GenerateProtocolCode.h"
 
+using namespace network;
 
 cProtocolParser::cProtocolParser() 
 {
 	m_pScan = new cProtocolScanner();
+	m_pRmiList = NULL;
 	m_bTrace = FALSE;
 	m_bError = FALSE;
 
@@ -16,7 +17,7 @@ cProtocolParser::cProtocolParser()
 cProtocolParser::~cProtocolParser()
 {
 	SAFE_DELETE(m_pScan);
-//	DeleteParseTree(m_pParseTree);
+	ReleaseRmi(m_pRmiList);
 
 }
 
@@ -24,10 +25,10 @@ cProtocolParser::~cProtocolParser()
 //---------------------------------------------------------------------
 // 튜토리얼 스크립트를 파싱한다.
 //---------------------------------------------------------------------
-BOOL cProtocolParser::Parse( char *szFileName, BOOL bTrace )
+sRmi* cProtocolParser::Parse( const char *szFileName, BOOL bTrace )
 {
 	if( !m_pScan->LoadFile(szFileName, bTrace) )
-		return FALSE;
+		return NULL;
 
 	strcpy_s( m_FileName, sizeof(m_FileName), szFileName );
 	printf( "%s file Compile\n", szFileName );
@@ -39,21 +40,21 @@ BOOL cProtocolParser::Parse( char *szFileName, BOOL bTrace )
 		return NULL;
 	}
 
-	sRmi *rmiList = rmi_list();
+	m_pRmiList = rmi_list();
 
 	if( ENDFILE != m_Token )
 	{
 		SyntaxError( " code ends before file " );
 		PrintToken( m_Token, m_pScan->GetTokenStringQ(0) );
 		m_pScan->Clear();
-		return FALSE;
+		return NULL;
 	}
 
 	//WritePIDLMacro(m_FileName, rmiList);
-	const bool result = compiler::WriteProtocolCode(szFileName, rmiList);
-	ReleaseRmi(rmiList);
+// 	const bool result = compiler::WriteProtocolCode(szFileName, rmiList);
+// 	ReleaseRmi(rmiList);
 
-	return result;
+	return m_pRmiList;
 }
 
 
@@ -175,9 +176,9 @@ sTypeVar* cProtocolParser::type()
 // type_sub -> id '<' type_sub '>'
 //			| id::id
 //			| id
-string cProtocolParser::type_sub()
+std::string cProtocolParser::type_sub()
 {
-	string str = "";
+	std::string str = "";
 
 	if (ID == m_Token)
 	{
@@ -212,9 +213,9 @@ string cProtocolParser::type_sub()
 //		| id (index)?
 //	    | '*'
 //		| '&'
-string cProtocolParser::var()
+std::string cProtocolParser::var()
 {
-	string str = "";
+	std::string str = "";
 	Tokentype nextTok = m_pScan->GetTokenQ(1);
 
 	if (TIMES == m_Token && ID == nextTok)
@@ -250,9 +251,9 @@ string cProtocolParser::var()
 	return str;
 }
 
-string cProtocolParser::index()
+std::string cProtocolParser::index()
 {
-	string str = "";
+	std::string str = "";
 	if (LBRACKET == m_Token)
 	{
 		Match(LBRACKET);
@@ -264,9 +265,9 @@ string cProtocolParser::index()
 	return str;
 }
 
-string cProtocolParser::number()
+std::string cProtocolParser::number()
 {
-	string str = "";
+	std::string str = "";
 	str = m_pScan->GetTokenStringQ(0);
 	Match(NUM);
 	return str;
@@ -279,9 +280,9 @@ int cProtocolParser::num()
 	return n;
 }
 
-string cProtocolParser::id()
+std::string cProtocolParser::id()
 {
-	string str = m_pScan->GetTokenStringQ(0);
+	std::string str = m_pScan->GetTokenStringQ(0);
 	Match( ID );
 	return str;
 }
@@ -338,7 +339,7 @@ void cProtocolParser::ReleaseArg(sArg *p)
 	delete p;
 }
 
-void cProtocolParser::WritePIDLMacro(string PIDLFileName, sRmi *rmi)
+void cProtocolParser::WritePIDLMacro(std::string PIDLFileName, sRmi *rmi)
 {
 // 	string fileName = PIDLFileName;
 // 	fileName += "_procstub";
@@ -347,7 +348,7 @@ void cProtocolParser::WritePIDLMacro(string PIDLFileName, sRmi *rmi)
 	strcpy_s(srcFileName, MAX_PATH, PIDLFileName.c_str() );
 	char *name = strtok_s(srcFileName, ".", NULL);
 
-	string fileName = name;
+	std::string fileName = name;
 	fileName += "_procstub.h";
 
 //	OFSTRUCT of;

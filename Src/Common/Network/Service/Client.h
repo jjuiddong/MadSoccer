@@ -7,7 +7,7 @@
 //------------------------------------------------------------------------
 #pragma once
 
-#include "NetConnector.h"
+#include "Controller/NetConnector.h"
 
 namespace network
 {
@@ -38,13 +38,14 @@ namespace network
 		void				SetSocket(SOCKET sock) { m_Socket = sock; }
 		void				SetServerIp(const std::string &ip) { m_ServerIP = ip; }
 		void				SetServerPort(int port) { m_ServerPort = port; }
+		void				Disconnect();
+
 
 		// oeverriding
-		//virtual void ProcessPacket( const CPacket &rcvPacket ) {}
-		virtual void OnConnect() {}
-		virtual void OnDisconnect();
-		virtual void OnMemberJoin() {}
-		virtual void OnMemberLeave() {}
+		virtual void		OnConnect() {}
+		virtual void		OnDisconnect() {}
+		virtual void		OnMemberJoin() {}
+		virtual void		OnMemberLeave() {}
 
 	};
 
