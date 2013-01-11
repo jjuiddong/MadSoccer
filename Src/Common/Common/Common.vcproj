@@ -199,11 +199,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\etc\Dbg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\etc\Dbg.h"
+				>
+			</File>
+			<File
 				RelativePath=".\etc\Directory.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\etc\Directory.h"
+				>
+			</File>
+			<File
+				RelativePath=".\etc\Dump.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\etc\Dump.h"
 				>
 			</File>
 			<File
@@ -220,6 +236,18 @@
 			</File>
 			<File
 				RelativePath=".\etc\FilePath.h"
+				>
+			</File>
+			<File
+				RelativePath=".\etc\Log.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\etc\Log.h"
+				>
+			</File>
+			<File
+				RelativePath=".\etc\MemProtect.h"
 				>
 			</File>
 			<File

@@ -12,17 +12,25 @@ using namespace common;
 //------------------------------------------------------------------------
 std::string common::wstring2string(const std::wstring &wstr)
 {
-	std::locale const& loc = std::locale();
-	typedef std::codecvt<wchar_t, char, std::mbstate_t> codecvt_t;
-	codecvt_t const& codecvt = std::use_facet<codecvt_t>(loc);
-	std::mbstate_t state = 0;
-	std::vector<char> buf((wstr.size() + 1) * codecvt.max_length());
-	wchar_t const* in_next = wstr.c_str();
-	char* out_next = &buf[0];
-	codecvt_t::result r = codecvt.out(state, 
-		wstr.c_str(), wstr.c_str() + wstr.size(), in_next, 
-		&buf[0], &buf[0] + buf.size(), out_next);
-	return std::string(&buf[0]);
+// 	std::locale const& loc = std::locale();
+// 	typedef std::codecvt<wchar_t, char, std::mbstate_t> codecvt_t;
+// 	codecvt_t const& codecvt = std::use_facet<codecvt_t>(loc);
+// 	std::mbstate_t state = 0;
+// 	std::vector<char> buf((wstr.size() + 1) * codecvt.max_length());
+// 	wchar_t const* in_next = wstr.c_str();
+// 	char* out_next = &buf[0];
+// 	codecvt_t::result r = codecvt.out(state, 
+// 		wstr.c_str(), wstr.c_str() + wstr.size(), in_next, 
+// 		&buf[0], &buf[0] + buf.size(), out_next);
+// 	return std::string(&buf[0]);
+
+	const int slength = (int)wstr.length() + 1;
+	const int len = ::WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), slength, 0, 0, NULL, FALSE);
+	char* buf = new char[len];
+	::WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), slength, buf, len, NULL, FALSE);
+	std::string r(buf);
+	delete[] buf;
+	return r;
 }
 
 
@@ -31,17 +39,26 @@ std::string common::wstring2string(const std::wstring &wstr)
 //------------------------------------------------------------------------
 std::wstring common::string2wstring(const std::string &str)
 {
-	std::locale const& loc = std::locale();
-	typedef std::codecvt<wchar_t, char, std::mbstate_t> codecvt_t;
-	codecvt_t const& codecvt = std::use_facet<codecvt_t>(loc);
-	std::mbstate_t state = 0;
-	std::vector<wchar_t> buf(str.size() + 1);
-	char const* in_next = str.c_str();
-	wchar_t* out_next = &buf[0];
-	codecvt_t::result r = codecvt.in(state, 
-		str.c_str(), str.c_str() + str.size(), in_next, 
-		&buf[0], &buf[0] + buf.size(), out_next);
-	return std::wstring(&buf[0]);
+// 	std::locale const& loc = std::locale();
+// 	typedef std::codecvt<wchar_t, char, std::mbstate_t> codecvt_t;
+// 	codecvt_t const& codecvt = std::use_facet<codecvt_t>(loc);
+// 	std::mbstate_t state = 0;
+// 	std::vector<wchar_t> buf(str.size() + 1);
+// 	char const* in_next = str.c_str();
+// 	wchar_t* out_next = &buf[0];
+// 	codecvt_t::result r = codecvt.in(state, 
+// 		str.c_str(), str.c_str() + str.size(), in_next, 
+// 		&buf[0], &buf[0] + buf.size(), out_next);
+// 	return std::wstring(&buf[0]);
+
+	int len;
+	int slength = (int)str.length() + 1;
+	len = ::MultiByteToWideChar(CP_ACP, 0, str.c_str(), slength, 0, 0);
+	wchar_t* buf = new wchar_t[len];
+	::MultiByteToWideChar(CP_ACP, 0, str.c_str(), slength, buf, len);
+	std::wstring r(buf);
+	delete[] buf;
+	return r;
 }
 
 

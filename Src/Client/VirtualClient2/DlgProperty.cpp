@@ -256,6 +256,10 @@ void CDlgProperty::OnBnClickedButtonSend()
 		packet >> ip >> port;
 		network::StartClient(ip, port, CVClient::Get());
 	}
+	else if (m_pProtocol->name == "DisConnect")
+	{
+		network::StopClient(CVClient::Get());
+	}
 	else
 	{
 		std::stringstream ss;

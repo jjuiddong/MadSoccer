@@ -28,6 +28,8 @@ namespace network
 	void		Proc();
 	void		Clear();
 
+	// Debug
+	std::string ToString();
 
 };
 

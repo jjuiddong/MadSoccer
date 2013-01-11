@@ -197,6 +197,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ProtocolPropertyCtrl.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ProtocolTree.cpp"
 				>
 			</File>
@@ -220,6 +224,10 @@
 			</File>
 			<File
 				RelativePath=".\DlgProperty.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ProtocolPropertyCtrl.h"
 				>
 			</File>
 			<File

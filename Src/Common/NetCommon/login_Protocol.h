@@ -6,7 +6,7 @@
 #pragma once
 
 namespace login {
-static const int s2c_Protocol_ID = 100;
+static const int s2c_Protocol_ID= 100;
 
 class s2c_Protocol : public network::IProtocol
 {
@@ -14,7 +14,7 @@ public:
 	s2c_Protocol() : IProtocol(s2c_Protocol_ID) {}
 	void AckLogin(netid targetId, const std::string &id, const int &result);
 };
-static const int c2s_Protocol_ID = 200;
+static const int c2s_Protocol_ID= 200;
 
 class c2s_Protocol : public network::IProtocol
 {

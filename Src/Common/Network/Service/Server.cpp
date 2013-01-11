@@ -30,7 +30,6 @@ CServer::~CServer()
 bool CServer::Stop()
 {
 
-
 	return true;
 }
 
@@ -58,7 +57,8 @@ bool CServer::AddClient(SOCKET sock)
 	m_RemoteClients.insert( 
 		RemoteClientMap::value_type(pNewRemoteClient->GetNetId(), pNewRemoteClient) );
 
-	error::Log( common::format("AddClient netid: %d, socket: %d", pNewRemoteClient->GetNetId(), sock) );
+	clog::Log( "AddClient netid: %d, socket: %d", pNewRemoteClient->GetNetId(), sock );
+	dbg::Print( "AddClient netid: %d, socket: %d", pNewRemoteClient->GetNetId(), sock);
 
 	OnClientJoin(sock);
 	return true;
@@ -169,6 +169,7 @@ RemoteClientItor CServer::RemoveClientProcess(RemoteClientItor it)
 	delete it->second;
 	RemoteClientItor r = m_RemoteClients.erase(it);
 
+	dbg::Print( "Leave Client %d", netId );
 	OnClientLeave(netId);
 	return r;
 }
@@ -252,6 +253,7 @@ bool CServer::Send(netid netId, const CPacket &packet)
 	if (result == INVALID_SOCKET)
 	{
 		error::ErrorLog( common::format("CServer::Send() Socket Error id=%d", it->second->GetNetId()) );
+		dbg::Print( "CServer::Send() Socket Error id=%d", it->second->GetNetId() );
 		RemoveClient(packet.GetSenderId());
 		return false;
 	}

@@ -16,7 +16,7 @@ namespace common
 	class CThread
 	{
 	public:
-		CThread();
+		CThread(const std::string &name="");
 		virtual ~CThread();
 
 		enum MSG_OPT
@@ -35,6 +35,7 @@ namespace common
 	protected:
 		STATE				m_State;
 		HANDLE				m_hThread;
+		std::string			m_Name;
 
 		// 외부 쓰레드에서 접근하기 때문에 동기화 코드가 들어가 있다.
 		CRITICAL_SECTION	m_TaskCriticalSection;
@@ -46,6 +47,7 @@ namespace common
 
 	public:
 		STATE			GetState() const { return m_State; }
+		const std::string& GetName() const { return m_Name; }
 
 		void			Start();						// 쓰레드 실행
 		void			Terminate();					// 쓰레드 종료

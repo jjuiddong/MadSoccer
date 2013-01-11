@@ -53,6 +53,9 @@ namespace network
 		void		AddDispatcher(IProtocolDispatcher *pDispatcher);
 		IProtocolDispatcher* GetDispatcher(int protocolID);
 
+		// debug
+		std::string ToString();
+
 	protected:
 		void		MakeServersFDSET( fd_set *pfdset);
 		void		EnterSync();

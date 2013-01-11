@@ -15,3 +15,7 @@
 #include "Common/Common.h"
 #include "Network.h"
 
+
+// 긴이름을 짧게..
+namespace dbg = common::dbg;
+namespace clog = common::log;

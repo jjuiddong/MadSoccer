@@ -47,7 +47,7 @@ END_MESSAGE_MAP()
 //------------------------------------------------------------------------
 bool CProtocolTree::Init()
 {
-	std::list<std::string> fileList = common::FindFileList_ApplyCurrentDirector( "*.prt" );
+	std::list<std::string> fileList = common::FindFileList( "C:\\Project\\MadSoccer\\MadSoccer\\Src\\Common\\NetCommon\\*.prt" );
 	BOOST_FOREACH(std::string &str, fileList)
 	{
 		cProtocolParser *pParser = new cProtocolParser();
@@ -151,6 +151,7 @@ CProtocolTree::SItemInfo* CProtocolTree::NewItemInfo(ITEM_TYPE type, sRmi *rmi, 
 	else
 	{
 		// 중복 ID 라면 실패
+		::AfxMessageBox( _T("중복된 PacketID가 있습니다.") );
 		assert(0);
 	}
 
@@ -195,7 +196,7 @@ void CProtocolTree::OnTvnSelchanged(NMHDR *pNMHDR, LRESULT *pResult)
 		{
 			CRect cr;
 			GetClientRect(cr);
-			pInfo->dlg->MoveWindow(cr.Width()+1, 0, cr.Width(), cr.Height());
+			pInfo->dlg->MoveWindow(cr.Width()+1, 0, cr.Width()-1, cr.Height());
 
 			pInfo->dlg->ShowWindow(SW_SHOW);
 		}

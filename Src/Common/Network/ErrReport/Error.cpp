@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
+#include <fstream>
 #include "error.h"
-
 
 using namespace network;
 using namespace error;
@@ -22,35 +22,10 @@ void error::ErrorMsg(const std::string &str)
 //------------------------------------------------------------------------
 void error::ErrorLog(const std::string &str)
 {
-	FILE *fp;
-	fopen_s(&fp, "ErrorLog.log", "a+");
-	if (!fp) return;
+	std::ofstream fs("ErrorLog.log", std::ios_base::out);
+	if (!fs.is_open()) return;
 
-	std::string msg = "[";
-	msg += common::GetTimeString();
-	msg += "]	";
-	msg += str;
-	fprintf( fp, "%s\n", msg.c_str() );
-	fclose(fp);	
-}
-
-
-//------------------------------------------------------------------------
-// Log.log 파일에 로그를 남긴다.
-// 날짜/시간 + 메세지
-//------------------------------------------------------------------------
-void error::Log(const std::string &str)
-{
-	FILE *fp;
-	fopen_s(&fp, "Log.log", "a+");
-	if (!fp) return;
-
-	std::string msg = "[";
-	msg += common::GetTimeString();
-	msg += "]	";
-	msg += str;
-	fprintf( fp, "%s\n", msg.c_str() );
-	fclose(fp);	
+	fs << "[" << common::GetTimeString() << "]	" << str << std::endl;
 }
 
 
@@ -61,4 +36,3 @@ void error::Msg(const std::string &str)
 {
 	::MessageBoxA(NULL, str.c_str(), "Msg", MB_OK );
 }
-

@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <string>
 #include <sstream>
+#include <fstream>
 #include <assert.h>
 #include <boost/foreach.hpp>
 #include <comdef.h> // for _variant_t
@@ -89,6 +90,11 @@ typedef unsigned short u_short;
 #include "etc/time.h"
 #include "etc/FilePath.h"
 #include "etc/Directory.h"
+#include "etc/Dbg.h"
+#include "etc/Log.h"
+#include "etc/Dump.h"
 #include "CodeGen.h"
+
+
 
 #endif // __COMMON_H__

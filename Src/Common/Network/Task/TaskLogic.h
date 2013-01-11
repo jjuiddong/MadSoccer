@@ -18,7 +18,7 @@ namespace network
 	class CTaskLogic : public common::CTask
 	{
 	public:
-		CTaskLogic() : CTask(0) {}
+		CTaskLogic() : CTask(0,"TaskLogic") {}
 
 	public:
 		virtual RUN_RESULT	Run() override

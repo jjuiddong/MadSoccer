@@ -18,7 +18,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(OUT)"
+			OutputDirectory="$(BIN)"
 			IntermediateDirectory="$(OUT)"
 			ConfigurationType="1"
 			InheritedPropertySheets="..\..\CommonPropertySheet.vsprops"

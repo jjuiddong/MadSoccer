@@ -11,7 +11,6 @@ namespace network { namespace error
 {
 	void ErrorMsg(const std::string &str);
  	void ErrorLog(const std::string &str);
- 	void Log(const std::string &str);
  	void Msg(const std::string &str);
 
 }}

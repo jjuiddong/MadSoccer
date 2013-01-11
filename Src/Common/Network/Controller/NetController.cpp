@@ -12,7 +12,8 @@
 using namespace network;
 
 
-CNetController::CNetController() 
+CNetController::CNetController() :
+	m_AcceptThread("AcceptThread")
 {
 	InitializeCriticalSection(&m_CriticalSection);
 }
@@ -31,15 +32,18 @@ bool CNetController::Init(int logicThreadCount)
 	// 로직쓰레드 생성
 	for (int i=0; i < logicThreadCount; ++i)
 	{
-		common::CThread *pThread = new common::CThread();
+		common::CThread *pThread = new common::CThread("LogicThread");
 		pThread->AddTask( new CTaskLogic() );
 		pThread->Start();
 		m_LogicThreads.push_back( pThread );
 	}
 
 	// Accept 쓰레드 생성
-  	m_AcceptThread.AddTask( new CTaskAccept() );
-  	m_AcceptThread.Start();
+	if (logicThreadCount > 0)
+	{
+  		m_AcceptThread.AddTask( new CTaskAccept() );
+  		m_AcceptThread.Start();
+	}
 
 	return true;
 }
@@ -78,11 +82,12 @@ bool CNetController::StartServer(int port, ServerPtr pSvr)
 		return false;
 
 	// 서버 시작에 관련된 코드 추가
-	error::Log( common::format("%d Server Start", pSvr->GetNetId()) );
+	clog::Log( "%d Server Start", pSvr->GetNetId() );
+	dbg::Print( "%d Server Start", pSvr->GetNetId() );
 	m_Servers.insert( ServerMap::value_type(pSvr->GetSocket(), pSvr) );
 
 	// Work쓰레드 생성
-	common::CThread *pWorkTread = new common::CThread();
+	common::CThread *pWorkTread = new common::CThread("WorkThread");
 	pWorkTread->AddTask( new CTaskWork(pSvr) );
 	pWorkTread->Start();
 	m_WorkThreads.push_back(pWorkTread);
@@ -134,7 +139,8 @@ bool CNetController::StartClient(const std::string &ip, int port, ClientPtr pClt
 		pClt->Stop(); // 연결을 끊고
 
 	// 서버 시작에 관련된 코드 추가
-	error::Log( common::format("%d Client Start", pClt->GetNetId()) );
+	clog::Log( "%d Client Start", pClt->GetNetId() );
+	dbg::Print( "%d Client Start", pClt->GetNetId() );
 	if (!CNetLauncher::Get()->LaunchClient(pClt, ip, port))
 		return false;
 
@@ -268,4 +274,39 @@ void CNetController::Clear()
 
 	DeleteCriticalSection(&m_CriticalSection);
 
+}
+
+
+//------------------------------------------------------------------------
+// 스트링으로 변환, 주로 디버깅에 관련된 정보를 스트링으로 내보낸다.
+//------------------------------------------------------------------------
+std::string CNetController::ToString()
+{
+	std::stringstream ss;
+
+	// 쓰레드 상태
+	ss << "Thread.. " << std::endl;
+	ss << m_AcceptThread.GetName() << " state: " << m_AcceptThread.GetState() << std::endl;
+
+	BOOST_FOREACH( common::CThread *pThread, m_LogicThreads)
+	{
+		ss << pThread->GetName() << " state: " << pThread->GetState() << std::endl;
+	}
+	BOOST_FOREACH( common::CThread *pThread, m_WorkThreads)
+	{
+		ss << pThread->GetName() << " state: " << pThread->GetState() << std::endl;
+	}	
+
+	// 서버 갯수
+	ss << std::endl;
+	ss << "Server Cnt: " << m_Servers.size() << std::endl;
+
+	// 디스패쳐갯수
+	ss << "Dispatcher Cnt: " << m_Dipatchers.size() << std::endl;
+	BOOST_FOREACH( DispatcherMap::value_type &kv, m_Dipatchers)
+	{
+		ss << "id: " << kv.second->GetId() << std::endl;
+	}
+
+	return ss.str();
 }

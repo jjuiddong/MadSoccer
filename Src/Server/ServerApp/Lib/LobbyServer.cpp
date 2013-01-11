@@ -166,3 +166,24 @@ void CLobbyServer::OnClientLeave(netid netId)
 {
 
 }
+
+
+//------------------------------------------------------------------------
+// 스트링으로 변환, 주로 디버깅에 관련된 정보를 스트링으로 보낸다.
+//------------------------------------------------------------------------
+std::string	CLobbyServer::ToString()
+{
+	std::stringstream ss;
+
+	EnterSync();
+	{
+		ss << "RemoteClient: " << m_RemoteClients.size() << std::endl;
+		BOOST_FOREACH(RemoteClientMap::value_type &kv, m_RemoteClients)
+		{
+			ss << "netid: " << kv.second->GetNetId() << ", sock: " << kv.second->GetSocket() << std::endl;			
+		}
+	}
+	LeaveSync();
+
+	return ss.str();
+}

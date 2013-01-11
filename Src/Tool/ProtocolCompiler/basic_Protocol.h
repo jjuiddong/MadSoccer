@@ -1,4 +1,5 @@
 //------------------------------------------------------------------------
+//------------------------------------------------------------------------
 // Name:    basic_Protocol.h
 // Author:  ProtocolCompiler (by jjuiddong)
 // Date:    
@@ -6,7 +7,7 @@
 #pragma once
 
 namespace basic {
-static const int s2c_Protocol_ID = 200;
+static const int s2c_Protocol_ID= 200;
 
 class s2c_Protocol : public network::IProtocol
 {
@@ -17,7 +18,7 @@ public:
 	void func3(netid targetId, const float &value);
 	void func4(netid targetId);
 };
-static const int c2s_Protocol_ID = 300;
+static const int c2s_Protocol_ID= 300;
 
 class c2s_Protocol : public network::IProtocol
 {

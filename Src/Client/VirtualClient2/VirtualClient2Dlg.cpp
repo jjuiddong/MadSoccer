@@ -99,7 +99,7 @@ int CVirtualClient2Dlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		, CRect(0,0,100,100), this, 0);
 	m_ProtocolTree.Init();
 
-	network::Init(1);
+	network::Init(0);
 
 	return 0;
 }

@@ -46,6 +46,10 @@ public:
 
 	login::s2c_Protocol& GetLogInProtocol() { return m_LoginProtocol; }
 
+
+	// Debug¿ë
+	std::string		ToString();
+
 protected:
 	virtual void	OnClientJoin(netid netId) override;
 	virtual void	OnClientLeave(netid netId) override;

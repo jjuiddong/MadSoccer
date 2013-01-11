@@ -1,11 +1,15 @@
 //------------------------------------------------------------------------
-// Name:    NetCommon.h
+// Name:    Dbg.h
 // Author:  jjuiddong
 // Date:    1/5/2013
 // 
-// NetCommon 에서 필요한 정의 모음
-// 아직 아무일도 없음
+// 디버그에 관련된 함수를 모아놓았다.
 //------------------------------------------------------------------------
 #pragma once
 
- const int NET_COMMON_VERSION = 1;
+namespace common { namespace dbg
+{
+	void Print( const std::string &str );
+	void Print( const char* fmt, ...);
+
+}}

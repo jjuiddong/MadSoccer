@@ -9,7 +9,7 @@ namespace basic {
 static const int s2c_Dispatcher_ID = 500;
 
 // Protocol Dispatcher
-class s2c_Dispatcher : public network::IProtocolDispatcher
+class s2c_Dispatcher: public network::IProtocolDispatcher
 {
 public:
 	s2c_Dispatcher();
@@ -33,7 +33,7 @@ class s2c_ProtocolListener : virtual public network::IProtocolListener
 static const int c2s_Dispatcher_ID = 600;
 
 // Protocol Dispatcher
-class c2s_Dispatcher : public network::IProtocolDispatcher
+class c2s_Dispatcher: public network::IProtocolDispatcher
 {
 public:
 	c2s_Dispatcher();

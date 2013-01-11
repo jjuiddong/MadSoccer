@@ -19,12 +19,8 @@
 #include "Lib/ServerLauncher.h"
 #include "Lib/LobbyServer.h"
 
-
-
 CChatServer g_Server;
 CLobbyServer g_LobbyServer;
-
-
 
 
 // 전역 변수:
@@ -32,13 +28,13 @@ CLobbyServer g_LobbyServer;
 HINSTANCE hInst;								// 현재 인스턴스입니다.
 TCHAR szTitle[MAX_LOADSTRING];					// 제목 표시줄 텍스트입니다.
 TCHAR szWindowClass[MAX_LOADSTRING];			// 기본 창 클래스 이름입니다.
+HWND g_Hwnd = NULL;
 
 
 // 이 코드 모듈에 들어 있는 함수의 정방향 선언입니다.
 ATOM				MyRegisterClass(HINSTANCE hInstance);
 BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
@@ -71,13 +67,30 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_SERVERAPP));
 
-	// 기본 메시지 루프입니다.
-	while (GetMessage(&msg, NULL, 0, 0))
-	{
-		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+	int tick = GetTickCount();
+	bool bDoingBackgroundProcessing = true;
+	while ( bDoingBackgroundProcessing ) 
+	{ 
+		//MSG msg;
+		while ( ::PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) ) 
+		{ 
+			if ( !GetMessage(&msg, NULL, 0, 0)) 
+			{ 
+				bDoingBackgroundProcessing = FALSE; 
+				break; 
+			}
+			if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+		}
+
+		const int curT = GetTickCount();
+		if (curT - tick > 300)
 		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+			InvalidateRect(g_Hwnd,NULL,TRUE);
+			tick = curT;
 		}
 	}
 
@@ -139,6 +152,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, 300, 300, NULL, NULL, hInstance, NULL);
+   g_Hwnd = hWnd;
 
    if (!hWnd)
    {
@@ -151,16 +165,34 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    return TRUE;
 }
 
-//
-//  함수: WndProc(HWND, UINT, WPARAM, LPARAM)
-//
-//  목적: 주 창의 메시지를 처리합니다.
-//
-//  WM_COMMAND	- 응용 프로그램 메뉴를 처리합니다.
-//  WM_PAINT	- 주 창을 그립니다.
-//  WM_DESTROY	- 종료 메시지를 게시하고 반환합니다.
-//
-//
+
+//------------------------------------------------------------------------
+// 서버정보 출력
+//------------------------------------------------------------------------
+int PrintString(HDC hdc, int x, int y, const std::string &str)
+{
+	int fi = 0, li=0;
+	while (1)
+	{
+		li = str.find('\n', fi);
+		if (li < 0)
+			break;
+		std::string s0 = str.substr(fi, li-fi);
+		TextOutA( hdc, x, y, s0.c_str(), s0.size() );
+		y += 16;
+		fi = li+1;
+	}
+	return y;
+}
+void Paint(HDC hdc)
+{
+	std::string str1 = g_LobbyServer.ToString();
+	std::string str2 = network::ToString();
+	int y = PrintString(hdc, 10, 0, str1);
+	y += PrintString(hdc, 10, y+16, str2);
+}
+
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	int wmId, wmEvent;
@@ -175,9 +207,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// 메뉴의 선택 영역을 구문 분석합니다.
 		switch (wmId)
 		{
-		case IDM_ABOUT:
-			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-			break;
 		case IDM_EXIT:
 			DestroyWindow(hWnd);
 			break;
@@ -187,7 +216,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
-		// TODO: 여기에 그리기 코드를 추가합니다.
+		Paint(hdc);
 		EndPaint(hWnd, &ps);
 		break;
 	case WM_KEYDOWN:
@@ -209,22 +238,3 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-// 정보 대화 상자의 메시지 처리기입니다.
-INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	UNREFERENCED_PARAMETER(lParam);
-	switch (message)
-	{
-	case WM_INITDIALOG:
-		return (INT_PTR)TRUE;
-
-	case WM_COMMAND:
-		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-		{
-			EndDialog(hDlg, LOWORD(wParam));
-			return (INT_PTR)TRUE;
-		}
-		break;
-	}
-	return (INT_PTR)FALSE;
-}

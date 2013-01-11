@@ -6,6 +6,7 @@
 #include "VirtualClient2.h"
 #include "VirtualClient2Dlg.h"
 
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -66,21 +67,12 @@ BOOL CVirtualClient2App::InitInstance()
 	// 적절한 내용으로 수정해야 합니다.
 	SetRegistryKey(_T("로컬 응용 프로그램 마법사에서 생성된 응용 프로그램"));
 
+	common::dump::InstallSelfMiniDump();
+
 	CVirtualClient2Dlg *pdlg = new CVirtualClient2Dlg();
 	pdlg->Create(CVirtualClient2Dlg::IDD, NULL);
 	m_pMainWnd = pdlg;
 	pdlg->ShowWindow(SW_SHOW);
-// 	INT_PTR nResponse = dlg.DoModal();
-// 	if (nResponse == IDOK)
-// 	{
-// 		// TODO: 여기에 [확인]을 클릭하여 대화 상자가 없어질 때 처리할
-// 		//  코드를 배치합니다.
-// 	}
-// 	else if (nResponse == IDCANCEL)
-// 	{
-// 		// TODO: 여기에 [취소]를 클릭하여 대화 상자가 없어질 때 처리할
-// 		//  코드를 배치합니다.
-// 	}
 
 	bool bDoingBackgroundProcessing = true;
 	while ( bDoingBackgroundProcessing ) 
@@ -102,10 +94,13 @@ BOOL CVirtualClient2App::InitInstance()
 		// Perform some background processing here 
 		// using another call to OnIdle
 		CVClient::Get()->Proc();
+		Sleep(1);
 	}
 
 	pdlg->DestroyWindow();
 	delete pdlg;
+
+
 	// 대화 상자가 닫혔으므로 응용 프로그램의 메시지 펌프를 시작하지 않고  응용 프로그램을 끝낼 수 있도록 FALSE를
 	// 반환합니다.
 	return FALSE;

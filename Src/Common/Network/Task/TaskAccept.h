@@ -14,7 +14,7 @@ namespace network
 	class CTaskAccept : public common::CTask
 	{
 	public:
-		CTaskAccept() : CTask(0) {}
+		CTaskAccept() : CTask(0,"TaskAccept") {}
 		virtual ~CTaskAccept() {}
 
 	public:

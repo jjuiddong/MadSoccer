@@ -14,7 +14,7 @@ namespace network
 	class CTaskWork : public common::CTask
 	{
 	public:
-		CTaskWork(ServerPtr psvr):CTask(1), m_pServer(psvr) {}
+		CTaskWork(ServerPtr psvr):CTask(1,"TaskWork"), m_pServer(psvr) {}
 		virtual ~CTaskWork() {}
 
 	protected:

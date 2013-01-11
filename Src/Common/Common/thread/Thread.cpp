@@ -18,9 +18,10 @@ namespace common
 }
 
 
-CThread::CThread() :
+CThread::CThread(const std::string &name) :
 	m_State(WAIT)
 ,	m_hThread(NULL)
+,	m_Name(name)
 {
 	InitializeCriticalSection( &m_TaskCriticalSection );
 	InitializeCriticalSection( &m_MsgCriticalSection );

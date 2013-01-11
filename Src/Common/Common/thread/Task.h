@@ -13,7 +13,7 @@ namespace common
 	class CTask
 	{
 	public:
-		CTask(int id) : m_Id(id), m_pThread(NULL) {}
+		CTask(int id, const std::string &name="") : m_Id(id), m_pThread(NULL), m_Name(name) {}
 		virtual ~CTask() {}
 
 		enum RUN_RESULT
@@ -25,9 +25,11 @@ namespace common
 	protected:
 		int					m_Id;
 		CThread				*m_pThread;
+		std::string			m_Name;
 
 	public:
 		int					GetId() const { return m_Id; }
+		const std::string&	GetName() const { return m_Name; }
 		void				SetThread(CThread *p) { m_pThread = p; }
 
 		// overriding

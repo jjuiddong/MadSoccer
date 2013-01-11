@@ -3,6 +3,7 @@
 #include "Network.h"
 #include "Controller/NetController.h"
 
+
 namespace network
 {
 	// 아직아무것도없음
@@ -16,6 +17,8 @@ using namespace network;
 //------------------------------------------------------------------------
 bool network::Init(int logicThreadCount)
 {
+	dbg::Print( "Network Init" );
+
 	common::InitRandNoDuplicate();
 	const bool result = CNetController::Get()->Init(logicThreadCount);
 
@@ -28,6 +31,8 @@ bool network::Init(int logicThreadCount)
 //------------------------------------------------------------------------
 void network::Clear()
 {
+	dbg::Print( "Network Clear" );
+
 	CNetController::Release();
 
 }
@@ -38,6 +43,7 @@ void network::Clear()
 //------------------------------------------------------------------------
 bool network::StartServer(int port, CServer *pSvr)
 {
+	dbg::Print( "StartServer port: %d", port );
 	return CNetController::Get()->StartServer(port, pSvr);
 }
 
@@ -46,6 +52,7 @@ bool network::StartServer(int port, CServer *pSvr)
 //------------------------------------------------------------------------
 bool network::StopServer(CServer *pSvr)
 {
+	dbg::Print( "StopServer netid: %d", pSvr->GetNetId() );
 	return CNetController::Get()->StopServer(pSvr);
 }
 
@@ -62,6 +69,7 @@ CServer* network::GetServer(int serverId)
 //------------------------------------------------------------------------
 bool network::StartClient(const std::string &ip, int port, CClient *pClt)
 {
+	dbg::Print( "StartClient %s, %d", ip.c_str(), port);
 	return CNetController::Get()->StartClient(ip, port, pClt);
 }
 
@@ -70,6 +78,7 @@ bool network::StartClient(const std::string &ip, int port, CClient *pClt)
 //------------------------------------------------------------------------
 bool network::StopClient(CClient *pClt)
 {
+	dbg::Print( "StopClient netid: %d", pClt->GetNetId() );
 	return CNetController::Get()->StopClient(pClt);
 }
 
@@ -90,3 +99,11 @@ void network::Proc()
 	CNetController::Get()->Proc();
 }
 
+
+//------------------------------------------------------------------------
+// 스트링변환, 디버그에 필요한 정보를 스트링으로 내보낸다.
+//------------------------------------------------------------------------
+std::string network::ToString()
+{
+	return CNetController::Get()->ToString();
+}

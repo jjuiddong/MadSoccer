@@ -6,7 +6,7 @@
 #pragma once
 
 namespace basic {
-static const int s2c_Protocol_ID = 500;
+static const int s2c_Protocol_ID= 500;
 
 class s2c_Protocol : public network::IProtocol
 {
@@ -18,7 +18,7 @@ public:
 	void func4(netid targetId);
 	void func5(netid targetId, const std::string &ok, const float &a, const int &b);
 };
-static const int c2s_Protocol_ID = 600;
+static const int c2s_Protocol_ID= 600;
 
 class c2s_Protocol : public network::IProtocol
 {

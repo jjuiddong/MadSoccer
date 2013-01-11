@@ -1,11 +1,15 @@
 //------------------------------------------------------------------------
-// Name:    StdAfx.h
+// Name:    Log.h
 // Author:  jjuiddong
 // Date:    1/5/2013
 // 
-// stdafx.h
+// 로그 기능
 //------------------------------------------------------------------------
 #pragma once
 
-#include <windows.h>
+namespace common { namespace log {
 
+ 	void Log(const std::string &str);
+	void Log( const char* fmt, ...);
+
+}}

@@ -14,7 +14,7 @@ basic::s2c_Dispatcher::s2c_Dispatcher()
 }
 
 //------------------------------------------------------------------------
-// // 패킷의 프로토콜에 따라 해당하는 리스너의 함수를 호출한다.
+// 패킷의 프로토콜에 따라 해당하는 리스너의 함수를 호출한다.
 //------------------------------------------------------------------------
 void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList &listeners)
 {
@@ -22,13 +22,13 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 	packet >> protocolId >> packetId;
 	switch (packetId)
 	{
-	case 200:
+	case 201:
 		{
 			SEND_LISTENER(s2c_ProtocolListener, listeners, func1(packet.GetSenderId()) );
 		}
 		break;
 
-	case 201:
+	case 202:
 		{
 			std::string str;
 			packet >> str;
@@ -36,7 +36,7 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		}
 		break;
 
-	case 202:
+	case 203:
 		{
 			float value;
 			packet >> value;
@@ -44,7 +44,7 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		}
 		break;
 
-	case 203:
+	case 204:
 		{
 			SEND_LISTENER(s2c_ProtocolListener, listeners, func4(packet.GetSenderId()) );
 		}
@@ -67,7 +67,7 @@ basic::c2s_Dispatcher::c2s_Dispatcher()
 }
 
 //------------------------------------------------------------------------
-// // 패킷의 프로토콜에 따라 해당하는 리스너의 함수를 호출한다.
+// 패킷의 프로토콜에 따라 해당하는 리스너의 함수를 호출한다.
 //------------------------------------------------------------------------
 void basic::c2s_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList &listeners)
 {
@@ -75,7 +75,7 @@ void basic::c2s_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 	packet >> protocolId >> packetId;
 	switch (packetId)
 	{
-	case 300:
+	case 301:
 		{
 			std::string str;
 			packet >> str;
@@ -83,7 +83,7 @@ void basic::c2s_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		}
 		break;
 
-	case 301:
+	case 302:
 		{
 			float value;
 			packet >> value;

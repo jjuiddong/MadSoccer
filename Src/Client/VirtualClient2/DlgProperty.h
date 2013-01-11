@@ -9,6 +9,8 @@
 
 #include "Network/PrtCompiler/ProtocolDefine.h"
 #include "afxwin.h"
+#include "ProtocolPropertyCtrl.h"
+
 
 class CDlgProperty : public CDialog
 {
@@ -33,7 +35,7 @@ protected:
 	network::sRmi			*m_pRmi;
 
 	CButton					m_BtnSend;
-	CMFCPropertyGridCtrl	m_wndPropList;
+	CProtocolPropertyCtrl	m_wndPropList;
 
 public:
 	void					UpdateProperty(network::sRmi *rmi, network::sProtocol *protocol);

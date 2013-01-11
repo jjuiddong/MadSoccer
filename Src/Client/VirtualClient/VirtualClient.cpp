@@ -76,6 +76,18 @@ const CPacket& operator<<(CPacket &lhs, const SA &rhs)
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	common::dump::InstallSelfMiniDump();
+
+	try
+	{
+		char *p = NULL;
+		*p = 'c';
+	}
+	catch(...)
+	{
+
+	}
+
 	basic::c2s_Protocol protocol;
 	login::c2s_Protocol login_protocol;
 	CVirtualClient client;
