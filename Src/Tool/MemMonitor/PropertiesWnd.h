@@ -45,12 +45,29 @@ public:
 	void	SetVSDotNetLook(BOOL bSet);
 
 protected:
-	void	MakeProperty(CMFCPropertyGridProperty *pParentProp, SSymbolInfo &symbol);
-	void    MakeUDT(CMFCPropertyGridProperty *pParentProp, SSymbolInfo &symbol);
-	void	MakeData(CMFCPropertyGridProperty *pParentProp, SSymbolInfo &symbol);
+	void		MakeProperty(CMFCPropertyGridProperty *pParentProp, 
+						dia::SSymbolInfo &symbol, 
+						const sharedmemory::SMemoryInfo &memInfo);
 
-	void	AddProperty(CMFCPropertyGridProperty *prop);
-	void	DeleteAllProperty();
+	void		MakeProperty_UDT(CMFCPropertyGridProperty *pParentProp, 
+						dia::SSymbolInfo &symbol, 
+						const sharedmemory::SMemoryInfo &memInfo);
+
+	void		MakeProperty_Data(CMFCPropertyGridProperty *pParentProp, 
+						dia::SSymbolInfo &symbol, 
+						const sharedmemory::SMemoryInfo &memInfo);
+
+	void		MakeProperty_Array(CMFCPropertyGridProperty *pParentProp, 
+						dia::SSymbolInfo &symbol, 
+						const sharedmemory::SMemoryInfo &memInfo);
+
+	void		MakeProperty_Final(CMFCPropertyGridProperty *pParentProp, 
+						const std::string valueName, _variant_t value );
+
+	void		AddProperty(CMFCPropertyGridProperty *prop);
+
+	_variant_t	GetValue( dia::SSymbolInfo &symbol, 
+						const sharedmemory::SMemoryInfo &memInfo);
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

@@ -9,6 +9,8 @@ using namespace network;
 
 int main(int argc, char* argv[])
 {
+// 	common::ReferencePtr<int> ptr(new int(10));
+// 	delete ptr;
 	if (argc >= 2)
 	{
 		network::cProtocolParser parser;
@@ -18,5 +20,6 @@ int main(int argc, char* argv[])
 			 compiler::WriteProtocolCode(argv[1], rmiList);
 		}
 	}
+	
 	return 0;
 }

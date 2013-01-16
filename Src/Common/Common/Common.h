@@ -14,6 +14,7 @@
 #include <boost/foreach.hpp>
 #include <comdef.h> // for _variant_t
 
+#define  BOOST_DATE_TIME_NO_LIB // boost/interprocess
 #pragma warning(disable: 4355) // disable warning, using this pointer in constructor 
 
 
@@ -93,6 +94,8 @@ typedef unsigned short u_short;
 #include "etc/Dbg.h"
 #include "etc/Log.h"
 #include "etc/Dump.h"
+#include "etc/SharedMemoryMng.h"
+#include "etc/SharedMemory.h"
 #include "CodeGen.h"
 
 

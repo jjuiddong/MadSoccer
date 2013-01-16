@@ -47,7 +47,7 @@ END_MESSAGE_MAP()
 //------------------------------------------------------------------------
 bool CProtocolTree::Init()
 {
-	std::list<std::string> fileList = common::FindFileList( "C:\\Project\\MadSoccer\\MadSoccer\\Src\\Common\\NetCommon\\*.prt" );
+	std::list<std::string> fileList = common::FindFileList( "C:\\Project\\GitHub\\MadSoccer\\Src\\Common\\NetCommon\\*.prt" );
 	BOOST_FOREACH(std::string &str, fileList)
 	{
 		cProtocolParser *pParser = new cProtocolParser();

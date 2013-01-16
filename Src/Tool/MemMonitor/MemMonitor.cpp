@@ -10,6 +10,11 @@
 #include "MemMonitorDoc.h"
 #include "MemMonitorView.h"
 #include "Lib/DiaWrapper.h"
+#include <typeinfo.h>
+
+
+
+
 
 
 #ifdef _DEBUG
@@ -42,8 +47,8 @@ CMemMonitorApp::CMemMonitorApp()
 
 CMemMonitorApp::~CMemMonitorApp()
 {
-	CDiaWrapper::Get()->Release();
-
+	dia::CDiaWrapper::Get()->Release();
+	sharedmemory::Release();
 }
 
 
@@ -96,7 +101,14 @@ BOOL CMemMonitorApp::InitInstance()
 		RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
 
 	// Pdb Load
-	CDiaWrapper::Get()->Init("FileTest.pdb");
+	if (!dia::CDiaWrapper::Get()->Init("SharememLibrary.pdb"))
+	{
+		::AfxMessageBox( _T("Pdb 파일이 없습니다.") );
+	}
+	if (!sharedmemory::Init("MySharedMemory", sharedmemory::SHARED_CLIENT))
+	{
+		::AfxMessageBox( _T("MySharedMemory 이름의 공유메모리가 없습니다.") );
+	}
 
 	// 응용 프로그램의 문서 템플릿을 등록합니다. 문서 템플릿은
 	//  문서, 프레임 창 및 뷰 사이의 연결 역할을 합니다.

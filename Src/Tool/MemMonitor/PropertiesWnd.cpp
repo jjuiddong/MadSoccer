@@ -7,6 +7,9 @@
 #include "MemMonitor.h"
 #include "Lib/DiaWrapper.h"
 
+using namespace dia;
+using namespace sharedmemory;
+
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -290,7 +293,8 @@ void CPropertiesWnd::SetVSDotNetLook(BOOL bSet)
 //------------------------------------------------------------------------
 void CPropertiesWnd::UpdateProperty(const CString &symbolTypeName)
 {
-	std::string str = common::wstring2string((LPCWSTR)symbolTypeName);
+	std::string tmpStr = common::wstring2string((LPCWSTR)symbolTypeName);
+	std::string str = sharedmemory::ParseObjectName(tmpStr);
 	SSymbolInfo symbolInfo;
 	if (!CDiaWrapper::Get()->FindType(str, symbolInfo))
 	{
@@ -298,30 +302,64 @@ void CPropertiesWnd::UpdateProperty(const CString &symbolTypeName)
 		return;
 	}
 
-	DeleteAllProperty();
+	m_wndPropList.RemoveAll();
 
+	sharedmemory::SMemoryInfo memInfo;
+	if (!sharedmemory::FindMemoryInfo(tmpStr, memInfo))
+	{
+		::AfxMessageBox( 
+			common::string2wstring(
+				common::format("공유메모리에 %s 타입의 정보가 없습니다.",
+					tmpStr.c_str() )).c_str() );
+		return;
+	}
+
+	// Output창에 출력
 	CMainFrame *pFrm = (CMainFrame*)::AfxGetMainWnd();
 	CString output = L"[ " + symbolTypeName;
 	output += L" ] 심볼 변경";
 	pFrm->GetOutputWnd().AddString( output );
+	//
 
-	MakeProperty(NULL, symbolInfo);
+	MakeProperty(NULL, symbolInfo, memInfo);
 }
 
 
 //------------------------------------------------------------------------
 // Property 생성
 //------------------------------------------------------------------------
-void CPropertiesWnd::MakeProperty(CMFCPropertyGridProperty *pParentProp, SSymbolInfo &symbol)
+void CPropertiesWnd::MakeProperty(CMFCPropertyGridProperty *pParentProp, SSymbolInfo &symbol, 
+								const sharedmemory::SMemoryInfo &memInfo)
 {
 	switch (symbol.type)
 	{
 	case SymTagData: 
-		MakeData(pParentProp, symbol);
+		MakeProperty_Data(pParentProp, symbol, memInfo);
+		break;
+
+	case SymTagArrayType:
+		MakeProperty_Array(pParentProp, symbol, memInfo);
+		break;
+
+	case SymTagPointerType:
+		break;
+
+	case SymTagBaseClass:
+	case SymTagVTable:
+	case SymTagFunction:
 		break;
 
 	case SymTagUDT:
-		MakeUDT(pParentProp, symbol);
+		MakeProperty_UDT(pParentProp, symbol, memInfo);
+		break;
+
+	default:
+		{
+			CMainFrame *pFrm = (CMainFrame*)::AfxGetMainWnd();
+			std::stringstream ss;
+			ss << symbol.name << "값의 데이타를 Property애 추가하지 못했습니다.";
+			pFrm->GetOutputWnd().AddString( common::string2wstring(ss.str()).c_str() );
+		}
 		break;
 	}
 }
@@ -330,16 +368,18 @@ void CPropertiesWnd::MakeProperty(CMFCPropertyGridProperty *pParentProp, SSymbol
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-void CPropertiesWnd::MakeUDT(CMFCPropertyGridProperty *pParentProp, SSymbolInfo &symbol)
+void CPropertiesWnd::MakeProperty_UDT(CMFCPropertyGridProperty *pParentProp, 
+									SSymbolInfo &symbol,
+									const sharedmemory::SMemoryInfo &memInfo)
 {
-	dbg::Print( "MakeUDT" );
+	dbg::Print( "MakeProperty_UDT" );
 
 	CMFCPropertyGridProperty *pProp = 
 		new CMFCPropertyGridProperty( common::string2wstring(symbol.name).c_str() ); 
 
 	BOOST_FOREACH(SSymbolInfo &info, symbol.childs)
 	{
-		MakeProperty(pProp, info);
+		MakeProperty(pProp, info, memInfo);
 	}
 	
 	if (pParentProp)
@@ -350,43 +390,120 @@ void CPropertiesWnd::MakeUDT(CMFCPropertyGridProperty *pParentProp, SSymbolInfo 
 
 
 //------------------------------------------------------------------------
+// Property창에 Control을 추가한다.
+// 변수 이름과 타입, 값을 설정한다.
+//------------------------------------------------------------------------
+void CPropertiesWnd::MakeProperty_Data(CMFCPropertyGridProperty *pParentProp, 
+								SSymbolInfo &symbol,
+								const sharedmemory::SMemoryInfo &memInfo)
+{
+	dbg::Print( "MakeProperty_Data" );
+
+	_variant_t value = GetValue(symbol, memInfo);
+	std::string valueTypeName = symbol.name + " (" + dia::GetTypeName(symbol) + ")";	
+	MakeProperty_Final( pParentProp, valueTypeName, value );
+}
+
+
+//------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-void CPropertiesWnd::MakeData(CMFCPropertyGridProperty *pParentProp, SSymbolInfo &symbol)
+void CPropertiesWnd::MakeProperty_Array(CMFCPropertyGridProperty *pParentProp, 
+							   dia::SSymbolInfo &symbol, 
+							   const sharedmemory::SMemoryInfo &memInfo)
+{
+	dbg::Print( "MakeProperty_Array" );	
+
+	std::string valueTypeName = symbol.name + " (" + dia::GetTypeName(symbol) + ")";	
+	CMFCPropertyGridProperty *pProp = 
+		new CMFCPropertyGridProperty( common::string2wstring(valueTypeName).c_str() ); 
+
+	for (ULONGLONG i=0; i < symbol.length; i += symbol.element_length)
+	{
+		void *ptr = (BYTE*)memInfo.ptr + i;
+		SMemoryInfo arrayElem(memInfo.name.c_str(), ptr, (size_t)symbol.element_length);
+		_variant_t value = GetValue(symbol, arrayElem);
+
+		std::stringstream ss;
+		ss << symbol.name << "[" << i/symbol.element_length << "]";
+		MakeProperty_Final(pProp, ss.str(), value);
+
+
+// 		SSymbolInfo symbolInfo;
+// 		if (!CDiaWrapper::Get()->FindType(str, symbolInfo))
+		{
+// 			::AfxMessageBox(L"해당하는 심볼은 Pdb파일에 없습니다.");
+// 			dbg::Print( "%s 해당하는 심볼은 Pdb파일에 없습니다." );
+//			return;
+		}
+
+
+//		MakeProperty(pProp, info, memInfo);
+	}
+
+	if (pParentProp)
+		pParentProp->AddSubItem(pProp);
+	else
+		AddProperty(pProp);
+}
+
+
+//------------------------------------------------------------------------
+// m_wndPropList 에 Row 를 추가한다.
+//------------------------------------------------------------------------
+void CPropertiesWnd::MakeProperty_Final(CMFCPropertyGridProperty *pParentProp, 
+							   const std::string valueName, _variant_t value )
 {
 	CMFCPropertyGridProperty *pProp = NULL;
-	switch (symbol.btype)
+	_variant_t tmp;
+
+	switch (value.vt)
 	{
-	case btBool:
-		pProp = new CMFCPropertyGridProperty( common::string2wstring(symbol.name).c_str(), (_variant_t)(true == true), _T(""));
+	case VT_I2:
+	case VT_I4:
+	case VT_R4:
+	case VT_R8:
+	case VT_BOOL:
+	case VT_DECIMAL:
+	case VT_UI2:
+	case VT_UI4:
+	case VT_INT:
+	case VT_UINT:
+		pProp = new CMFCPropertyGridProperty( 
+			common::string2wstring(valueName).c_str(), value, _T(""));
 		break;
 
-	case btChar:
-	case btInt:
-	case btUInt:
-	case btLong:
-	case btULong:
-		pProp = new CMFCPropertyGridProperty( common::string2wstring(symbol.name).c_str(), (_variant_t)0, _T(""));
+	case VT_I1:
+	case VT_UI1:
+		tmp = (VT_I1 == value.vt)? (int)value.cVal : (int)value.bVal;
+		pProp = new CMFCPropertyGridProperty( 
+			common::string2wstring(valueName).c_str(), tmp, _T(""));
 		break;
 
-	case btFloat:
-		pProp = new CMFCPropertyGridProperty( common::string2wstring(symbol.name).c_str(), (_variant_t)0.1f, _T(""));
-		break;
+		// 	case VT_BSTR:
+		// 		{
+		// 			std::string str;
+		// 			operator>>(str);
+		// #ifdef _UNICODE
+		// 			var.bstrVal = (_bstr_t)common::string2wstring(str).c_str();
+		// #else
+		// 			var.bstrVal = (_bstr_t)str.c_str();
+		// #endif
+		// 		}
+		// 		break;
 
 	default:
 		{
- 			CMainFrame *pFrm = (CMainFrame*)::AfxGetMainWnd();
-			CString str;
-			str.Format(L"%d 값의 데이타를 Property애 추가하지 못했습니다.", symbol.btype);
-			pFrm->GetOutputWnd().AddString( str );
+			CMainFrame *pFrm = (CMainFrame*)::AfxGetMainWnd();
+			std::stringstream ss;
+			ss << valueName << "값의 데이타를 Property애 추가하지 못했습니다.";
+			pFrm->GetOutputWnd().AddString( common::string2wstring(ss.str()).c_str() );
 		}
 		break;
 	}
 
-	if (!pProp)
-		return;
-
-	dbg::Print( "MakeData btype: %d", symbol.btype);
+	RET(!pProp);
+//	dbg::Print( "MakeData btype: %d", symbol.btype);
 
 	if (pParentProp)
 		pParentProp->AddSubItem(pProp);
@@ -400,9 +517,7 @@ void CPropertiesWnd::MakeData(CMFCPropertyGridProperty *pParentProp, SSymbolInfo
 //------------------------------------------------------------------------
 void CPropertiesWnd::AddProperty(CMFCPropertyGridProperty *prop)
 {
-	if (!prop)
-		return;
-
+	RET(!prop)
 	SPropItem *p = new SPropItem;
 	p->prop = prop;
 	m_PropList.push_back(p);
@@ -411,15 +526,12 @@ void CPropertiesWnd::AddProperty(CMFCPropertyGridProperty *prop)
 
 
 //------------------------------------------------------------------------
-// 추가된 모든 Property를 제거한다.
+// memory에 있는 정보를 symbol타입으로 분석해 리턴한다.
 //------------------------------------------------------------------------
-void CPropertiesWnd::DeleteAllProperty()
+_variant_t CPropertiesWnd::GetValue( SSymbolInfo &symbol, 
+					 const sharedmemory::SMemoryInfo &memInfo)
 {
-// 	BOOST_FOREACH(SPropItem *item, m_PropList)
-// 	{
-// 		m_wndPropList.DeleteProperty( item->prop );
-// 		SAFE_DELETE(item);
-// 	}
-// 	m_PropList.clear();	
-	m_wndPropList.RemoveAll();
+	void *ptr = (BYTE*)memInfo.ptr + symbol.offset;
+	_variant_t value = dia::GetValueFromAddress(ptr, symbol);
+	return value;
 }

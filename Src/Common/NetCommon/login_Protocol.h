@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------
-// Name:    c:\Project\MadSoccer\MadSoccer\Src\Common\NetCommon\login_Protocol.h
+// Name:    c:\Project\GitHub\MadSoccer\Src\Common\NetCommon\login_Protocol.h
 // Author:  ProtocolCompiler (by jjuiddong)
 // Date:    
 //------------------------------------------------------------------------

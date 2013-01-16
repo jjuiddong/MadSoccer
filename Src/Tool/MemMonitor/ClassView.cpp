@@ -80,35 +80,34 @@ int CClassView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;      // 만들지 못했습니다.
 	}
 
-
 	// 이미지를 로드합니다.
-	m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_SORT);
-	m_wndToolBar.LoadToolBar(IDR_SORT, 0, 0, TRUE );
-
-	OnChangeVisualStyle();
-
-	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() | CBRS_TOOLTIPS | CBRS_FLYBY);
-	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() & ~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM | CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
-
-	m_wndToolBar.SetOwner(this);
-
-	// 모든 명령은 부모 프레임이 아닌 이 컨트롤을 통해 라우팅됩니다.
-	m_wndToolBar.SetRouteCommandsViaFrame(FALSE);
-
-	CMenu menuSort;
-	menuSort.LoadMenu(IDR_POPUP_SORT);
-
-	m_wndToolBar.ReplaceButton(ID_SORT_MENU, CClassViewMenuButton(menuSort.GetSubMenu(0)->GetSafeHmenu()));
-
-	CClassViewMenuButton* pButton =  DYNAMIC_DOWNCAST(CClassViewMenuButton, m_wndToolBar.GetButton(0));
-
-	if (pButton != NULL)
-	{
-		pButton->m_bText = FALSE;
-		pButton->m_bImage = TRUE;
-		pButton->SetImage(GetCmdMgr()->GetCmdImage(m_nCurrSort));
-		pButton->SetMessageWnd(this);
-	}
+// 	m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_SORT);
+// 	m_wndToolBar.LoadToolBar(IDR_SORT, 0, 0, TRUE );
+// 
+// 	OnChangeVisualStyle();
+// 
+// 	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() | CBRS_TOOLTIPS | CBRS_FLYBY);
+// 	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() & ~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM | CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
+// 
+// 	m_wndToolBar.SetOwner(this);
+// 
+// 	// 모든 명령은 부모 프레임이 아닌 이 컨트롤을 통해 라우팅됩니다.
+// 	m_wndToolBar.SetRouteCommandsViaFrame(FALSE);
+// 
+// 	CMenu menuSort;
+// 	menuSort.LoadMenu(IDR_POPUP_SORT);
+// 
+// 	m_wndToolBar.ReplaceButton(ID_SORT_MENU, CClassViewMenuButton(menuSort.GetSubMenu(0)->GetSafeHmenu()));
+// 
+// 	CClassViewMenuButton* pButton =  DYNAMIC_DOWNCAST(CClassViewMenuButton, m_wndToolBar.GetButton(0));
+// 
+// 	if (pButton != NULL)
+// 	{
+// 		pButton->m_bText = FALSE;
+// 		pButton->m_bImage = TRUE;
+// 		pButton->SetImage(GetCmdMgr()->GetCmdImage(m_nCurrSort));
+// 		pButton->SetMessageWnd(this);
+// 	}
 
 	// 정적 트리 뷰 데이터를 더미 코드로 채웁니다.
 	FillClassView();
@@ -124,10 +123,14 @@ void CClassView::OnSize(UINT nType, int cx, int cy)
 
 void CClassView::FillClassView()
 {
-	HTREEITEM hRoot = m_wndClassView.InsertItem(_T("_tagTestData"), 0, 0);
-	m_wndClassView.SetItemState(hRoot, TVIS_BOLD, TVIS_BOLD);
+	sharedmemory::MemoryList memList;
+	sharedmemory::EnumerateMemoryInfo(memList);
+	BOOST_FOREACH(sharedmemory::SMemoryInfo &info, memList)
+	{
+		std::wstring wstr = common::string2wstring( info.name );
+		m_wndClassView.InsertItem( wstr.c_str(), 0, 0);
+	}
 
-	m_wndClassView.InsertItem(_T("TestData"), 0, 0);
 
 
 // 	HTREEITEM hRoot = m_wndClassView.InsertItem(_T("FakeApp 클래스"), 0, 0);
@@ -219,16 +222,18 @@ void CClassView::AdjustLayout()
 	CRect rectClient;
 	GetClientRect(rectClient);
 
-	int cyTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
-
-	m_wndToolBar.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), cyTlb, SWP_NOACTIVATE | SWP_NOZORDER);
+	int cyTlb = 0;
+// 	int cyTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
+// 
+// 	m_wndToolBar.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), cyTlb, SWP_NOACTIVATE | SWP_NOZORDER);
+// 	m_wndClassView.SetWindowPos(NULL, rectClient.left + 1, rectClient.top + cyTlb + 1, rectClient.Width() - 2, rectClient.Height() - cyTlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
 	m_wndClassView.SetWindowPos(NULL, rectClient.left + 1, rectClient.top + cyTlb + 1, rectClient.Width() - 2, rectClient.Height() - cyTlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-BOOL CClassView::PreTranslateMessage(MSG* pMsg)
-{
-	return CDockablePane::PreTranslateMessage(pMsg);
-}
+// BOOL CClassView::PreTranslateMessage(MSG* pMsg)
+// {
+// 	return CDockablePane::PreTranslateMessage(pMsg);
+// }
 
 void CClassView::OnSort(UINT id)
 {
@@ -239,14 +244,14 @@ void CClassView::OnSort(UINT id)
 
 	m_nCurrSort = id;
 
-	CClassViewMenuButton* pButton =  DYNAMIC_DOWNCAST(CClassViewMenuButton, m_wndToolBar.GetButton(0));
-
-	if (pButton != NULL)
-	{
-		pButton->SetImage(GetCmdMgr()->GetCmdImage(id));
-		m_wndToolBar.Invalidate();
-		m_wndToolBar.UpdateWindow();
-	}
+// 	CClassViewMenuButton* pButton =  DYNAMIC_DOWNCAST(CClassViewMenuButton, m_wndToolBar.GetButton(0));
+// 
+// 	if (pButton != NULL)
+// 	{
+// 		pButton->SetImage(GetCmdMgr()->GetCmdImage(id));
+// 		m_wndToolBar.Invalidate();
+// 		m_wndToolBar.UpdateWindow();
+// 	}
 }
 
 void CClassView::OnUpdateSort(CCmdUI* pCmdUI)
