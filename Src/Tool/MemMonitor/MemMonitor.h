@@ -24,6 +24,7 @@ public:
 // 재정의입니다.
 public:
 	virtual BOOL InitInstance();
+	BOOL OpenConfigScript(const std::string &configFileName);
 
 // 구현입니다.
 	UINT  m_nAppLook;

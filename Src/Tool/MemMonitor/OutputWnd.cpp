@@ -47,17 +47,19 @@ int COutputWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// 출력 창을 만듭니다.
 	const DWORD dwStyle = LBS_NOINTEGRALHEIGHT | WS_CHILD | WS_VISIBLE | WS_HSCROLL | WS_VSCROLL;
 
-	if (!m_wndOutputBuild.Create(dwStyle, rectDummy, &m_wndTabs, 2) ||
-		!m_wndOutputDebug.Create(dwStyle, rectDummy, &m_wndTabs, 3) ||
-		!m_wndOutputFind.Create(dwStyle, rectDummy, &m_wndTabs, 4))
+	if (!m_wndOutputBuild.Create(dwStyle, rectDummy, &m_wndTabs, 2) 
+//		||
+//		!m_wndOutputDebug.Create(dwStyle, rectDummy, &m_wndTabs, 3) ||
+//		!m_wndOutputFind.Create(dwStyle, rectDummy, &m_wndTabs, 4)
+	)
 	{
 		TRACE0("출력 창을 만들지 못했습니다.\n");
 		return -1;      // 만들지 못했습니다.
 	}
 
 	m_wndOutputBuild.SetFont(&m_Font);
-	m_wndOutputDebug.SetFont(&m_Font);
-	m_wndOutputFind.SetFont(&m_Font);
+// 	m_wndOutputDebug.SetFont(&m_Font);
+// 	m_wndOutputFind.SetFont(&m_Font);
 
 	CString strTabName;
 	BOOL bNameValid;
@@ -65,13 +67,13 @@ int COutputWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// 탭에 목록 창을 연결합니다.
 	bNameValid = strTabName.LoadString(IDS_BUILD_TAB);
 	ASSERT(bNameValid);
-	m_wndTabs.AddTab(&m_wndOutputBuild, strTabName, (UINT)0);
-	bNameValid = strTabName.LoadString(IDS_DEBUG_TAB);
-	ASSERT(bNameValid);
-	m_wndTabs.AddTab(&m_wndOutputDebug, strTabName, (UINT)1);
-	bNameValid = strTabName.LoadString(IDS_FIND_TAB);
-	ASSERT(bNameValid);
-	m_wndTabs.AddTab(&m_wndOutputFind, strTabName, (UINT)2);
+	m_wndTabs.AddTab(&m_wndOutputBuild, L"Output", (UINT)0);
+// 	bNameValid = strTabName.LoadString(IDS_DEBUG_TAB);
+// 	ASSERT(bNameValid);
+//	m_wndTabs.AddTab(&m_wndOutputDebug, strTabName, (UINT)1);
+//	bNameValid = strTabName.LoadString(IDS_FIND_TAB);
+//	ASSERT(bNameValid);
+//	m_wndTabs.AddTab(&m_wndOutputFind, strTabName, (UINT)2);
 
 	// 출력 탭을 더미 텍스트로 채웁니다.
 // 	FillDebugWindow();
@@ -113,6 +115,9 @@ void COutputWnd::AdjustHorzScroll(CListBox& wndListBox)
 void COutputWnd::AddString(const CString &str)
 {
 	m_wndOutputBuild.AddString( str );
+	const int cnt = m_wndOutputBuild.GetCount();
+	m_wndOutputBuild.SetCurSel(cnt-1);
+
 }
 
 

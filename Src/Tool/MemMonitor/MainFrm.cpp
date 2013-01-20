@@ -4,12 +4,17 @@
 
 #include "stdafx.h"
 #include "MemMonitor.h"
-
 #include "MainFrm.h"
+#include "MemMonitorDoc.h"
+#include "MemMonitorView.h"
+#include "Lib/DiaWrapper.h"
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
 
 // CMainFrame
 
@@ -25,6 +30,9 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_REGISTERED_MESSAGE(AFX_WM_CREATETOOLBAR, &CMainFrame::OnToolbarCreateNew)
 	ON_COMMAND_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_OFF_2007_AQUA, &CMainFrame::OnApplicationLook)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_OFF_2007_AQUA, &CMainFrame::OnUpdateApplicationLook)
+	ON_COMMAND(ID_MEMORYTREE_WINDOW, &CMainFrame::OnMemorytreeWindow)
+	ON_COMMAND(ID_OUTPUT_WINDOW, &CMainFrame::OnOutputWindow)
+	ON_COMMAND(ID_PROPERTY_WINDOW, &CMainFrame::OnPropertyWindow)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -45,6 +53,12 @@ CMainFrame::CMainFrame()
 
 CMainFrame::~CMainFrame()
 {
+	BOOST_FOREACH(CPropertiesWnd *pWnd, m_PropertyList)
+	{
+		pWnd->DestroyWindow();
+		SAFE_DELETE(pWnd);
+	}
+	m_PropertyList.clear();
 }
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -52,7 +66,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CFrameWndEx::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	BOOL bNameValid;
+//	BOOL bNameValid;
 	// 보관된 값에 따라 비주얼 관리자 및 스타일을 설정합니다.
 	OnApplicationLook(theApp.m_nAppLook);
 
@@ -67,40 +81,39 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// 메뉴 모음을 활성화해도 포커스가 이동하지 않게 합니다.
 	CMFCPopupMenu::SetForceMenuFocus(FALSE);
 
-	if (!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC) ||
-		!m_wndToolBar.LoadToolBar(theApp.m_bHiColorIcons ? IDR_MAINFRAME_256 : IDR_MAINFRAME))
-	{
-		TRACE0("도구 모음을 만들지 못했습니다.\n");
-		return -1;      // 만들지 못했습니다.
-	}
+// 	if (!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC) ||
+// 		!m_wndToolBar.LoadToolBar(theApp.m_bHiColorIcons ? IDR_MAINFRAME_256 : IDR_MAINFRAME))
+// 	{
+// 		TRACE0("도구 모음을 만들지 못했습니다.\n");
+// 		return -1;      // 만들지 못했습니다.
+// 	}
 
-	CString strToolBarName;
-	bNameValid = strToolBarName.LoadString(IDS_TOOLBAR_STANDARD);
-	ASSERT(bNameValid);
-	m_wndToolBar.SetWindowText(strToolBarName);
+// 	CString strToolBarName;
+// 	bNameValid = strToolBarName.LoadString(IDS_TOOLBAR_STANDARD);
+// 	ASSERT(bNameValid);
+// 	m_wndToolBar.SetWindowText(strToolBarName);
 
-	CString strCustomize;
-	bNameValid = strCustomize.LoadString(IDS_TOOLBAR_CUSTOMIZE);
-	ASSERT(bNameValid);
-	m_wndToolBar.EnableCustomizeButton(TRUE, ID_VIEW_CUSTOMIZE, strCustomize);
+// 	CString strCustomize;
+// 	bNameValid = strCustomize.LoadString(IDS_TOOLBAR_CUSTOMIZE);
+// 	ASSERT(bNameValid);
+//	m_wndToolBar.EnableCustomizeButton(TRUE, ID_VIEW_CUSTOMIZE, strCustomize);
 
 	// 사용자 정의 도구 모음 작업을 허용합니다.
 	InitUserToolbars(NULL, uiFirstUserToolBarId, uiLastUserToolBarId);
 
-	if (!m_wndStatusBar.Create(this))
-	{
-		TRACE0("상태 표시줄을 만들지 못했습니다.\n");
-		return -1;      // 만들지 못했습니다.
-	}
-	m_wndStatusBar.SetIndicators(indicators, sizeof(indicators)/sizeof(UINT));
+// 	if (!m_wndStatusBar.Create(this))
+// 	{
+// 		TRACE0("상태 표시줄을 만들지 못했습니다.\n");
+// 		return -1;      // 만들지 못했습니다.
+// 	}
+// 	m_wndStatusBar.SetIndicators(indicators, sizeof(indicators)/sizeof(UINT));
 
 	// TODO: 도구 모음 및 메뉴 모음을 도킹할 수 없게 하려면 이 다섯 줄을 삭제하십시오.
 	m_wndMenuBar.EnableDocking(CBRS_ALIGN_ANY);
-	m_wndToolBar.EnableDocking(CBRS_ALIGN_ANY);
+//	m_wndToolBar.EnableDocking(CBRS_ALIGN_ANY);
 	EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_wndMenuBar);
-	DockPane(&m_wndToolBar);
-
+//	DockPane(&m_wndToolBar);
 
 	// Visual Studio 2005 스타일 도킹 창 동작을 활성화합니다.
 	CDockingManager::SetDockingMode(DT_SMART);
@@ -117,19 +130,19 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 	}
 
-	m_wndFileView.EnableDocking(CBRS_ALIGN_ANY);
+//	m_wndFileView.EnableDocking(CBRS_ALIGN_ANY);
 	m_wndClassView.EnableDocking(CBRS_ALIGN_ANY);
-	DockPane(&m_wndFileView);
+//	DockPane(&m_wndFileView);
 	CDockablePane* pTabbedBar = NULL;
-	m_wndClassView.AttachToTabWnd(&m_wndFileView, DM_SHOW, TRUE, &pTabbedBar);
+	DockPane(&m_wndClassView);
+//	m_wndClassView.AttachToTabWnd(&m_wndFileView, DM_SHOW, TRUE, &pTabbedBar);
 	m_wndOutput.EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_wndOutput);
 	m_wndProperties.EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_wndProperties);
 
-
 	// 도구 모음 및 도킹 창 메뉴 바꾸기를 활성화합니다.
-	EnablePaneMenu(TRUE, ID_VIEW_CUSTOMIZE, strCustomize, ID_VIEW_TOOLBAR);
+//	EnablePaneMenu(TRUE, ID_VIEW_CUSTOMIZE, strCustomize, ID_VIEW_TOOLBAR);
 
 	// 빠른(<Alt> 키를 누른 채 끌기) 도구 모음 사용자 지정을 활성화합니다.
 	CMFCToolBar::EnableQuickCustomization();
@@ -172,8 +185,56 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CMFCToolBar::SetBasicCommands(lstBasicCommands);
 
+
 	return 0;
 }
+
+
+//------------------------------------------------------------------------
+// Property 창을 띄운다.
+//------------------------------------------------------------------------
+bool	CMainFrame::OpenScript( const std::string &openScriptFileName )
+{
+	try
+	{
+		// boost property tree
+		using boost::property_tree::ptree;
+		using std::string;
+		ptree props;
+		boost::property_tree::read_json(openScriptFileName.c_str(), props);
+		ptree &childs = props.get_child("Property");
+		BOOST_FOREACH(ptree::value_type &vt, childs)
+		{
+			string name = vt.second.get<string>("symbolName");
+			CString symbolName = common::string2wstring(name).c_str();
+
+			int val[ 4] = {0,};
+			int cnt =0;
+			ptree::assoc_iterator it = vt.second.find("rect");
+			if (vt.second.not_found() != it)
+			{
+				ptree &rect = vt.second.get_child("rect");
+				BOOST_FOREACH(ptree::value_type &vt, rect)
+				{
+					val[ cnt++] = atoi(vt.second.data().c_str());
+				}
+			}
+		
+			CRect propertyRect(val[0], val[1], val[2], val[3]);
+			AddPropertyWnd( symbolName );
+		}
+	}
+	catch (std::exception &)
+	{
+		::AfxMessageBox( 
+			common::formatw( "%s json script를 읽는데 실패했습니다.",
+					openScriptFileName.c_str()).c_str() );
+	}
+
+	m_wndClassView.UpdateMemoryView();
+	return true;
+}
+
 
 BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
@@ -190,24 +251,25 @@ BOOL CMainFrame::CreateDockingWindows()
 	BOOL bNameValid;
 
 	// 클래스 뷰를 만듭니다.
-	CString strClassView;
-	bNameValid = strClassView.LoadString(IDS_CLASS_VIEW);
-	ASSERT(bNameValid);
-	if (!m_wndClassView.Create(strClassView, this, CRect(0, 0, 200, 200), TRUE, ID_VIEW_CLASSVIEW, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI))
+// 	CString strClassView;
+// 	bNameValid = strClassView.LoadString(IDS_CLASS_VIEW);
+//	ASSERT(bNameValid);
+	if (!m_wndClassView.Create(L"Memory View", this, CRect(0, 0, 200, 200), TRUE, ID_VIEW_CLASSVIEW, 
+		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI))
 	{
 		TRACE0("클래스 뷰 창을 만들지 못했습니다.\n");
 		return FALSE; // 만들지 못했습니다.
 	}
 
 	// 파일 뷰를 만듭니다.
-	CString strFileView;
-	bNameValid = strFileView.LoadString(IDS_FILE_VIEW);
-	ASSERT(bNameValid);
-	if (!m_wndFileView.Create(strFileView, this, CRect(0, 0, 200, 200), TRUE, ID_VIEW_FILEVIEW, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT| CBRS_FLOAT_MULTI))
-	{
-		TRACE0("파일 뷰 창을 만들지 못했습니다.\n");
-		return FALSE; // 만들지 못했습니다.
-	}
+// 	CString strFileView;
+// 	bNameValid = strFileView.LoadString(IDS_FILE_VIEW);
+// 	ASSERT(bNameValid);
+// 	if (!m_wndFileView.Create(strFileView, this, CRect(0, 0, 200, 200), TRUE, ID_VIEW_FILEVIEW, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT| CBRS_FLOAT_MULTI))
+// 	{
+// 		TRACE0("파일 뷰 창을 만들지 못했습니다.\n");
+// 		return FALSE; // 만들지 못했습니다.
+// 	}
 
 	// 출력 창을 만듭니다.
 	CString strOutputWnd;
@@ -223,7 +285,7 @@ BOOL CMainFrame::CreateDockingWindows()
 	CString strPropertiesWnd;
 	bNameValid = strPropertiesWnd.LoadString(IDS_PROPERTIES_WND);
 	ASSERT(bNameValid);
-	if (!m_wndProperties.Create(strPropertiesWnd, this, CRect(0, 0, 200, 200), TRUE, ID_VIEW_PROPERTIESWND, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_RIGHT | CBRS_FLOAT_MULTI))
+	if (!m_wndProperties.Create(L"Shared Memory", this, CRect(0, 0, 200, 200), TRUE, ID_VIEW_PROPERTIESWND, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_RIGHT | CBRS_FLOAT_MULTI))
 	{
 		TRACE0("속성 창을 만들지 못했습니다.\n");
 		return FALSE; // 만들지 못했습니다.
@@ -235,8 +297,8 @@ BOOL CMainFrame::CreateDockingWindows()
 
 void CMainFrame::SetDockingWindowIcons(BOOL bHiColorIcons)
 {
-	HICON hFileViewIcon = (HICON) ::LoadImage(::AfxGetResourceHandle(), MAKEINTRESOURCE(bHiColorIcons ? IDI_FILE_VIEW_HC : IDI_FILE_VIEW), IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), 0);
-	m_wndFileView.SetIcon(hFileViewIcon, FALSE);
+// 	HICON hFileViewIcon = (HICON) ::LoadImage(::AfxGetResourceHandle(), MAKEINTRESOURCE(bHiColorIcons ? IDI_FILE_VIEW_HC : IDI_FILE_VIEW), IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), 0);
+// 	m_wndFileView.SetIcon(hFileViewIcon, FALSE);
 
 	HICON hClassViewIcon = (HICON) ::LoadImage(::AfxGetResourceHandle(), MAKEINTRESOURCE(bHiColorIcons ? IDI_CLASS_VIEW_HC : IDI_CLASS_VIEW), IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), 0);
 	m_wndClassView.SetIcon(hClassViewIcon, FALSE);
@@ -361,12 +423,10 @@ void CMainFrame::OnUpdateApplicationLook(CCmdUI* pCmdUI)
 BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParentWnd, CCreateContext* pContext) 
 {
 	// 기본 클래스가 실제 작업을 수행합니다.
-
 	if (!CFrameWndEx::LoadFrame(nIDResource, dwDefaultStyle, pParentWnd, pContext))
 	{
 		return FALSE;
 	}
-
 
 	// 모든 사용자 도구 모음에 사용자 지정 단추를 활성화합니다.
 	BOOL bNameValid;
@@ -387,16 +447,60 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 }
 
 
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
 BOOL CMainFrame::PreTranslateMessage(MSG* pMsg)
 {
 	if ( WM_KEYDOWN == pMsg->message)
 	{
 		if (pMsg->wParam == VK_ESCAPE)
-		{
-			// 종료
-			PostMessage(WM_CLOSE,0,0);
-		}
+			PostMessage(WM_CLOSE,0,0); // 종료
 	}
 
 	return CFrameWndEx::PreTranslateMessage(pMsg);
 }
+
+
+//------------------------------------------------------------------------
+//  프로퍼티 창을 띄운다.
+//------------------------------------------------------------------------
+bool	CMainFrame::AddPropertyWnd( const CString &symbolTypeName, CRect rect ) // rect = CRect(0, 0, 200, 200)
+{
+	static int id_cnt = 1000;
+	CPropertiesWnd *pNewWnd = new CPropertiesWnd();
+	if (!pNewWnd->Create(symbolTypeName, this, rect, TRUE, id_cnt++, 
+		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_RIGHT | CBRS_FLOAT_MULTI))
+	{
+		TRACE0("속성 창을 만들지 못했습니다.\n");
+		return false;
+	}
+	HICON hPropertiesBarIcon = (HICON) ::LoadImage(::AfxGetResourceHandle(), 
+		MAKEINTRESOURCE(theApp.m_bHiColorIcons ? IDI_PROPERTIES_WND_HC : IDI_PROPERTIES_WND), 
+		IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), 0);
+	pNewWnd->SetIcon(hPropertiesBarIcon, FALSE);
+
+ 	CDockablePane* pTabbedBar = NULL;
+  	pNewWnd->EnableDocking(CBRS_ALIGN_ANY  );
+ 	pNewWnd->AttachToTabWnd(&m_wndProperties, DM_SHOW, TRUE, &pTabbedBar);
+	pNewWnd->UpdateProperty(symbolTypeName);
+
+	m_PropertyList.push_back(pNewWnd);
+	return true;
+}
+
+void CMainFrame::OnMemorytreeWindow()
+{
+	m_wndClassView.ShowPane(TRUE, TRUE,TRUE);
+}
+
+void CMainFrame::OnOutputWindow()
+{
+	m_wndOutput.ShowPane(TRUE, TRUE,TRUE);
+}
+
+void CMainFrame::OnPropertyWindow()
+{
+	m_wndProperties.ShowPane(TRUE, TRUE,TRUE);
+}
+

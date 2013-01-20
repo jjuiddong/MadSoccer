@@ -19,7 +19,7 @@ namespace common
 	std::string variant2string(const _variant_t &var);
 
 	std::string format(const char* fmt, ...);
-
+	std::wstring formatw(const char* fmt, ...);
 
 }
 

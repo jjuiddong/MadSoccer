@@ -9,6 +9,7 @@ class CViewTree : public CTreeCtrl
 // 생성입니다.
 public:
 	CViewTree();
+	virtual ~CViewTree();
 
 // 재정의입니다.
 protected:
@@ -16,7 +17,8 @@ protected:
 
 // 구현입니다.
 public:
-	virtual ~CViewTree();
+	HTREEITEM GetSymbolTreeItem(HTREEITEM hItem);
+	HTREEITEM GetSelectSymbolTreeItem();
 
 protected:
 	DECLARE_MESSAGE_MAP()

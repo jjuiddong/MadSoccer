@@ -11,16 +11,14 @@
 #include "MemMonitorView.h"
 #include "Lib/DiaWrapper.h"
 #include <typeinfo.h>
-
-
-
-
-
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
+const std::string g_configFileName("config.json");
 
 // CMemMonitorApp
 
@@ -89,26 +87,16 @@ BOOL CMemMonitorApp::InitInstance()
 	// 적절한 내용으로 수정해야 합니다.
 	SetRegistryKey(_T("로컬 응용 프로그램 마법사에서 생성된 응용 프로그램"));
 	LoadStdProfileSettings(4);  // MRU를 포함하여 표준 INI 파일 옵션을 로드합니다.
+// 	InitContextMenuManager();
+// 	InitKeyboardManager();
+// 	InitTooltipManager();
+// 	CMFCToolTipInfo ttParams;
+// 	ttParams.m_bVislManagerTheme = TRUE;
+// 	theApp.GetTooltipManager()->SetTooltipParams(AFX_TOOLTIP_TYPE_ALL,
+// 		RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
 
-	InitContextMenuManager();
-
-	InitKeyboardManager();
-
-	InitTooltipManager();
-	CMFCToolTipInfo ttParams;
-	ttParams.m_bVislManagerTheme = TRUE;
-	theApp.GetTooltipManager()->SetTooltipParams(AFX_TOOLTIP_TYPE_ALL,
-		RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
-
-	// Pdb Load
-	if (!dia::CDiaWrapper::Get()->Init("SharememLibrary.pdb"))
-	{
-		::AfxMessageBox( _T("Pdb 파일이 없습니다.") );
-	}
-	if (!sharedmemory::Init("MySharedMemory", sharedmemory::SHARED_CLIENT))
-	{
-		::AfxMessageBox( _T("MySharedMemory 이름의 공유메모리가 없습니다.") );
-	}
+	if (!OpenConfigScript(g_configFileName))
+		return FALSE;
 
 	// 응용 프로그램의 문서 템플릿을 등록합니다. 문서 템플릿은
 	//  문서, 프레임 창 및 뷰 사이의 연결 역할을 합니다.
@@ -138,7 +126,53 @@ BOOL CMemMonitorApp::InitInstance()
 	// 접미사가 있을 경우에만 DragAcceptFiles를 호출합니다.
 	//  SDI 응용 프로그램에서는 ProcessShellCommand 후에 이러한 호출이 발생해야 합니다.
 
+	((CMainFrame*)AfxGetMainWnd())->OpenScript(  g_configFileName );
 
+	return TRUE;
+}
+
+
+//------------------------------------------------------------------------
+// Config 스크립트를 열어서 기본환경을 갖춘다.
+// pdb  파일을 열고, shared memory 에 접근한다.
+//------------------------------------------------------------------------
+BOOL CMemMonitorApp::OpenConfigScript(const std::string &configFileName)
+{
+	try
+	{
+		// boost property tree
+		using boost::property_tree::ptree;
+		using std::string;
+		ptree props;
+		boost::property_tree::read_json(configFileName.c_str(), props);
+		string pdbPath = props.get<string>("pdbPath");
+		string shareMemoryName = props.get<string>("sharedmemoryname");
+
+		// Pdb Load
+		if (!dia::CDiaWrapper::Get()->Init(pdbPath))
+		{
+			CString msg;
+			msg.Format( L"%s Pdb 파일이 없습니다.", 
+				common::string2wstring(pdbPath).c_str() );
+			::AfxMessageBox( msg );
+			return FALSE;
+		}
+		if (!sharedmemory::Init(shareMemoryName, sharedmemory::SHARED_CLIENT))
+		{
+			CString msg;
+			msg.Format( L"%s  이름의 공유메모리가 없습니다.", 
+				common::string2wstring(shareMemoryName).c_str() );
+			::AfxMessageBox( msg );
+			return FALSE;
+		}
+	}
+	catch (std::exception &e)
+	{
+		CString msg = common::formatw("\"%s\" json script Err!! [%s]",  
+			configFileName.c_str(), e.what()).c_str();
+		::AfxMessageBox( msg );
+		return FALSE;
+	}
 	return TRUE;
 }
 

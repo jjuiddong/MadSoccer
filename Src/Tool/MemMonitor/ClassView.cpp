@@ -4,6 +4,8 @@
 #include "ClassView.h"
 #include "Resource.h"
 #include "MemMonitor.h"
+#include "OutputWnd.h"
+
 
 class CClassViewMenuButton : public CMFCToolBarMenuButton
 {
@@ -49,15 +51,17 @@ BEGIN_MESSAGE_MAP(CClassView, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_WM_CONTEXTMENU()
-	ON_COMMAND(ID_CLASS_ADD_MEMBER_FUNCTION, OnClassAddMemberFunction)
-	ON_COMMAND(ID_CLASS_ADD_MEMBER_VARIABLE, OnClassAddMemberVariable)
-	ON_COMMAND(ID_CLASS_DEFINITION, OnClassDefinition)
-	ON_COMMAND(ID_CLASS_PROPERTIES, OnClassProperties)
-	ON_COMMAND(ID_NEW_FOLDER, OnNewFolder)
+// 	ON_COMMAND(ID_CLASS_ADD_MEMBER_FUNCTION, OnClassAddMemberFunction)
+// 	ON_COMMAND(ID_CLASS_ADD_MEMBER_VARIABLE, OnClassAddMemberVariable)
+// 	ON_COMMAND(ID_CLASS_DEFINITION, OnClassDefinition)
+// 	ON_COMMAND(ID_CLASS_PROPERTIES, OnClassProperties)
+//	ON_COMMAND(ID_NEW_FOLDER, OnNewFolder)
 	ON_WM_PAINT()
 	ON_WM_SETFOCUS()
-	ON_COMMAND_RANGE(ID_SORTING_GROUPBYTYPE, ID_SORTING_SORTBYACCESS, OnSort)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_SORTING_GROUPBYTYPE, ID_SORTING_SORTBYACCESS, OnUpdateSort)
+//	ON_COMMAND_RANGE(ID_SORTING_GROUPBYTYPE, ID_SORTING_SORTBYACCESS, OnSort)
+//	ON_UPDATE_COMMAND_UI_RANGE(ID_SORTING_GROUPBYTYPE, ID_SORTING_SORTBYACCESS, OnUpdateSort)
+	ON_COMMAND(ID_MEMORY_OPENWINDOW, &CClassView::OnMemoryOpenWindow)
+	ON_COMMAND(ID_BUTTON_REFRESH, &CClassView::OnButtonRefresh )
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -72,7 +76,8 @@ int CClassView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	rectDummy.SetRectEmpty();
 
 	// 뷰를 만듭니다.
-	const DWORD dwViewStyle = WS_CHILD | WS_VISIBLE | TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
+	const DWORD dwViewStyle = WS_CHILD | WS_VISIBLE | TVS_HASLINES | TVS_LINESATROOT 
+		| TVS_HASBUTTONS | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
 
 	if (!m_wndClassView.Create(dwViewStyle, rectDummy, this, 2))
 	{
@@ -81,26 +86,25 @@ int CClassView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	// 이미지를 로드합니다.
-// 	m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_SORT);
-// 	m_wndToolBar.LoadToolBar(IDR_SORT, 0, 0, TRUE );
-// 
-// 	OnChangeVisualStyle();
-// 
-// 	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() | CBRS_TOOLTIPS | CBRS_FLYBY);
-// 	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() & ~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM | CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
-// 
-// 	m_wndToolBar.SetOwner(this);
-// 
-// 	// 모든 명령은 부모 프레임이 아닌 이 컨트롤을 통해 라우팅됩니다.
-// 	m_wndToolBar.SetRouteCommandsViaFrame(FALSE);
-// 
+	m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_SORT);
+	m_wndToolBar.LoadToolBar(IDR_SORT, 0, 0, TRUE );
+ 
+ 	OnChangeVisualStyle();
+
+ 	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() | CBRS_TOOLTIPS | CBRS_FLYBY);
+ 	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() & 
+		~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM 
+		| CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
+ 
+	m_wndToolBar.SetOwner(this);
+
+	// 모든 명령은 부모 프레임이 아닌 이 컨트롤을 통해 라우팅됩니다.
+	m_wndToolBar.SetRouteCommandsViaFrame(FALSE);
+
 // 	CMenu menuSort;
 // 	menuSort.LoadMenu(IDR_POPUP_SORT);
-// 
 // 	m_wndToolBar.ReplaceButton(ID_SORT_MENU, CClassViewMenuButton(menuSort.GetSubMenu(0)->GetSafeHmenu()));
-// 
 // 	CClassViewMenuButton* pButton =  DYNAMIC_DOWNCAST(CClassViewMenuButton, m_wndToolBar.GetButton(0));
-// 
 // 	if (pButton != NULL)
 // 	{
 // 		pButton->m_bText = FALSE;
@@ -110,7 +114,7 @@ int CClassView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 // 	}
 
 	// 정적 트리 뷰 데이터를 더미 코드로 채웁니다.
-	FillClassView();
+	//void InitMemoryView();();
 
 	return 0;
 }
@@ -121,54 +125,33 @@ void CClassView::OnSize(UINT nType, int cx, int cy)
 	AdjustLayout();
 }
 
-void CClassView::FillClassView()
+
+//------------------------------------------------------------------------
+// 공유메모리 정보를 트리로 출력한다.
+//------------------------------------------------------------------------
+void CClassView::UpdateMemoryView()
 {
+	CMainFrame *pFrm = (CMainFrame*)::AfxGetMainWnd();
+	pFrm->GetOutputWnd().AddString( L"UpdateMemoryView" );
+
+	m_wndClassView.DeleteAllItems();
+
 	sharedmemory::MemoryList memList;
 	sharedmemory::EnumerateMemoryInfo(memList);
 	BOOST_FOREACH(sharedmemory::SMemoryInfo &info, memList)
 	{
 		std::wstring wstr = common::string2wstring( info.name );
-		m_wndClassView.InsertItem( wstr.c_str(), 0, 0);
+		HTREEITEM hItem = m_wndClassView.InsertItem( wstr.c_str(), 0, 0);
+
+		m_wndClassView.InsertItem(common::formatw("size: %d", info.size).c_str(), hItem);
+		m_wndClassView.InsertItem(common::formatw("ptr: 0x%x", (DWORD)info.ptr).c_str(),hItem);
 	}
-
-
-
-// 	HTREEITEM hRoot = m_wndClassView.InsertItem(_T("FakeApp 클래스"), 0, 0);
-// 	m_wndClassView.SetItemState(hRoot, TVIS_BOLD, TVIS_BOLD);
-// 
-// 	HTREEITEM hClass = m_wndClassView.InsertItem(_T("CFakeAboutDlg"), 1, 1, hRoot);
-// 	m_wndClassView.InsertItem(_T("CFakeAboutDlg()"), 3, 3, hClass);
-// 
-// 	m_wndClassView.Expand(hRoot, TVE_EXPAND);
-// 
-// 	hClass = m_wndClassView.InsertItem(_T("CFakeApp"), 1, 1, hRoot);
-// 	m_wndClassView.InsertItem(_T("CFakeApp()"), 3, 3, hClass);
-// 	m_wndClassView.InsertItem(_T("InitInstance()"), 3, 3, hClass);
-// 	m_wndClassView.InsertItem(_T("OnAppAbout()"), 3, 3, hClass);
-// 
-// 	hClass = m_wndClassView.InsertItem(_T("CFakeAppDoc"), 1, 1, hRoot);
-// 	m_wndClassView.InsertItem(_T("CFakeAppDoc()"), 4, 4, hClass);
-// 	m_wndClassView.InsertItem(_T("~CFakeAppDoc()"), 3, 3, hClass);
-// 	m_wndClassView.InsertItem(_T("OnNewDocument()"), 3, 3, hClass);
-// 
-// 	hClass = m_wndClassView.InsertItem(_T("CFakeAppView"), 1, 1, hRoot);
-// 	m_wndClassView.InsertItem(_T("CFakeAppView()"), 4, 4, hClass);
-// 	m_wndClassView.InsertItem(_T("~CFakeAppView()"), 3, 3, hClass);
-// 	m_wndClassView.InsertItem(_T("GetDocument()"), 3, 3, hClass);
-// 	m_wndClassView.Expand(hClass, TVE_EXPAND);
-// 
-// 	hClass = m_wndClassView.InsertItem(_T("CFakeAppFrame"), 1, 1, hRoot);
-// 	m_wndClassView.InsertItem(_T("CFakeAppFrame()"), 3, 3, hClass);
-// 	m_wndClassView.InsertItem(_T("~CFakeAppFrame()"), 3, 3, hClass);
-// 	m_wndClassView.InsertItem(_T("m_wndMenuBar"), 6, 6, hClass);
-// 	m_wndClassView.InsertItem(_T("m_wndToolBar"), 6, 6, hClass);
-// 	m_wndClassView.InsertItem(_T("m_wndStatusBar"), 6, 6, hClass);
-// 
-// 	hClass = m_wndClassView.InsertItem(_T("Globals"), 2, 2, hRoot);
-// 	m_wndClassView.InsertItem(_T("theFakeApp"), 5, 5, hClass);
-// 	m_wndClassView.Expand(hClass, TVE_EXPAND);
 }
 
+
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
 void CClassView::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	CTreeCtrl* pWndTree = (CTreeCtrl*)&m_wndClassView;
@@ -196,20 +179,9 @@ void CClassView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 	pWndTree->SetFocus();
 	CMenu menu;
-	menu.LoadMenu(IDR_POPUP_SORT);
-
+	menu.LoadMenu(IDR_POPUP_MEMORY);
 	CMenu* pSumMenu = menu.GetSubMenu(0);
-
-	if (AfxGetMainWnd()->IsKindOf(RUNTIME_CLASS(CMDIFrameWndEx)))
-	{
-		CMFCPopupMenu* pPopupMenu = new CMFCPopupMenu;
-
-		if (!pPopupMenu->Create(this, point.x, point.y, (HMENU)pSumMenu->m_hMenu, FALSE, TRUE))
-			return;
-
-		((CMDIFrameWndEx*)AfxGetMainWnd())->OnShowPopupMenu(pPopupMenu);
-		UpdateDialogControls(this, FALSE);
-	}
+	theApp.GetContextMenuManager()->ShowPopupMenu((HMENU)pSumMenu->m_hMenu, point.x, point.y, this, TRUE);
 }
 
 void CClassView::AdjustLayout()
@@ -222,28 +194,21 @@ void CClassView::AdjustLayout()
 	CRect rectClient;
 	GetClientRect(rectClient);
 
-	int cyTlb = 0;
-// 	int cyTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
-// 
-// 	m_wndToolBar.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), cyTlb, SWP_NOACTIVATE | SWP_NOZORDER);
-// 	m_wndClassView.SetWindowPos(NULL, rectClient.left + 1, rectClient.top + cyTlb + 1, rectClient.Width() - 2, rectClient.Height() - cyTlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wndClassView.SetWindowPos(NULL, rectClient.left + 1, rectClient.top + cyTlb + 1, rectClient.Width() - 2, rectClient.Height() - cyTlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
+ 	int cyTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
+ 
+ 	m_wndToolBar.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), cyTlb, SWP_NOACTIVATE | SWP_NOZORDER);
+ 	m_wndClassView.SetWindowPos(NULL, rectClient.left + 1, rectClient.top + cyTlb + 1, rectClient.Width() - 2, rectClient.Height() - cyTlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-// BOOL CClassView::PreTranslateMessage(MSG* pMsg)
+// void CClassView::OnSort(UINT id)
 // {
-// 	return CDockablePane::PreTranslateMessage(pMsg);
-// }
-
-void CClassView::OnSort(UINT id)
-{
-	if (m_nCurrSort == id)
-	{
-		return;
-	}
-
-	m_nCurrSort = id;
-
+// 	if (m_nCurrSort == id)
+// 	{
+// 		return;
+// 	}
+// 
+// 	m_nCurrSort = id;
+// 
 // 	CClassViewMenuButton* pButton =  DYNAMIC_DOWNCAST(CClassViewMenuButton, m_wndToolBar.GetButton(0));
 // 
 // 	if (pButton != NULL)
@@ -252,37 +217,37 @@ void CClassView::OnSort(UINT id)
 // 		m_wndToolBar.Invalidate();
 // 		m_wndToolBar.UpdateWindow();
 // 	}
-}
+//}
 
-void CClassView::OnUpdateSort(CCmdUI* pCmdUI)
-{
-	pCmdUI->SetCheck(pCmdUI->m_nID == m_nCurrSort);
-}
+// void CClassView::OnUpdateSort(CCmdUI* pCmdUI)
+// {
+// 	pCmdUI->SetCheck(pCmdUI->m_nID == m_nCurrSort);
+// }
 
-void CClassView::OnClassAddMemberFunction()
-{
-	AfxMessageBox(_T("멤버 함수 추가..."));
-}
+// void CClassView::OnClassAddMemberFunction()
+// {
+// 	AfxMessageBox(_T("멤버 함수 추가..."));
+// }
+// 
+// void CClassView::OnClassAddMemberVariable()
+// {
+// 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+// }
+// 
+// void CClassView::OnClassDefinition()
+// {
+// 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+// }
+// 
+// void CClassView::OnClassProperties()
+// {
+// 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+// }
 
-void CClassView::OnClassAddMemberVariable()
-{
-	// TODO: 여기에 명령 처리기 코드를 추가합니다.
-}
-
-void CClassView::OnClassDefinition()
-{
-	// TODO: 여기에 명령 처리기 코드를 추가합니다.
-}
-
-void CClassView::OnClassProperties()
-{
-	// TODO: 여기에 명령 처리기 코드를 추가합니다.
-}
-
-void CClassView::OnNewFolder()
-{
-	AfxMessageBox(_T("새 폴더..."));
-}
+// void CClassView::OnNewFolder()
+// {
+// 	AfxMessageBox(_T("새 폴더..."));
+// }
 
 void CClassView::OnPaint()
 {
@@ -324,12 +289,37 @@ void CClassView::OnChangeVisualStyle()
 
 	nFlags |= (theApp.m_bHiColorIcons) ? ILC_COLOR24 : ILC_COLOR4;
 
-	m_ClassViewImages.Create(16, bmpObj.bmHeight, nFlags, 0, 0);
-	m_ClassViewImages.Add(&bmp, RGB(255, 0, 0));
-
-	m_wndClassView.SetImageList(&m_ClassViewImages, TVSIL_NORMAL);
+// 	m_ClassViewImages.Create(16, bmpObj.bmHeight, nFlags, 0, 0);
+// 	m_ClassViewImages.Add(&bmp, RGB(255, 0, 0));
+// 
+// 	m_wndClassView.SetImageList(&m_ClassViewImages, TVSIL_NORMAL);
 
 	m_wndToolBar.CleanUpLockedImages();
 	m_wndToolBar.LoadBitmap(theApp.m_bHiColorIcons ? IDB_SORT_24 : IDR_SORT, 0, 0, TRUE /* 잠금 */);
 }
 
+
+//------------------------------------------------------------------------
+// Clicked Open Window Menu
+//------------------------------------------------------------------------
+void CClassView::OnMemoryOpenWindow()
+{
+	HTREEITEM hItem = m_wndClassView.GetSelectSymbolTreeItem();
+	CString itemName = m_wndClassView.GetItemText(hItem);
+	CMainFrame *pFrm = (CMainFrame*)::AfxGetMainWnd();	
+	pFrm->AddPropertyWnd(itemName);
+}
+
+
+//------------------------------------------------------------------------
+// Clicked Refresh Button
+//------------------------------------------------------------------------
+void CClassView::OnButtonRefresh()
+{
+	UpdateMemoryView();
+
+	// Output창에 출력
+	CMainFrame *pFrm = (CMainFrame*)::AfxGetMainWnd();
+	pFrm->GetOutputWnd().AddString( L"MemoryView Refresh" );
+	//	
+}

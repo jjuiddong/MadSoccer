@@ -21,10 +21,12 @@ namespace sharedmemory
 
 	typedef struct _complex_data
 	{
-		//void *ptr;
-		size_t size;
 		// 공유메모리 주소는 프로세스에 따라 달라지므로 handle을 공유해야 한다.
 		managed_shared_memory::handle_t handle;
+		void *srcPtr;	// 메모리를 생성한 프로세스에서의 주소 
+								// (다른 프로세스에서 검색할 때 쓰인다.)
+		size_t size;
+
 		_complex_data() {}
 		_complex_data(size_t s, managed_shared_memory::handle_t h) : size(s),handle(h) {}
 	} complex_data;
@@ -232,3 +234,25 @@ bool sharedmemory::FindMemoryInfo(const std::string &name, OUT SMemoryInfo &info
 	return true;
 }
 
+
+//------------------------------------------------------------------------
+// 메모리를 생성한 프로세의 주소 srcPtr을 타겟 프로세스의
+// 메모리 주소로 매핑시켜 리턴한다.
+//------------------------------------------------------------------------
+void* sharedmemory::MemoryMapping(const void *srcPtr )
+{
+	RETV(!n_pSegment, NULL);
+	RETV(!n_pMap, NULL);
+
+	shm_complex_map::iterator it = n_pMap->begin();
+	while (n_pMap->end() != it)
+	{
+		if (it->second.srcPtr == srcPtr)
+		{
+			void *ptr = n_pSegment->get_address_from_handle(it->second.handle);
+			return ptr;
+		}
+		++it;
+	}
+	return NULL;
+}

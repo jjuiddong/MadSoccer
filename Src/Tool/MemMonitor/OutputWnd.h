@@ -35,8 +35,8 @@ protected:
 	CFont m_Font;
 	CMFCTabCtrl	m_wndTabs;
 	COutputList m_wndOutputBuild;
-	COutputList m_wndOutputDebug;
-	COutputList m_wndOutputFind;
+// 	COutputList m_wndOutputDebug;
+// 	COutputList m_wndOutputFind;
 
 public:
 	void AddString(const CString &str);

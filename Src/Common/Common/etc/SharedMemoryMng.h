@@ -36,6 +36,7 @@ namespace sharedmemory
 	void		EnumerateMemoryInfo(OUT MemoryList &memList);
 	std::string ParseObjectName(const std::string &objectName);
 	bool		FindMemoryInfo(const std::string &name, OUT SMemoryInfo &info);
+	void*	MemoryMapping(const void *srcPtr );
 
 }
 

@@ -115,3 +115,17 @@ std::string common::format(const char* fmt, ...)
 	va_end ( args );
 	return textString;
 }
+
+
+//------------------------------------------------------------------------
+// 스트링포맷 wstring 용
+//------------------------------------------------------------------------
+std::wstring common::formatw(const char* fmt, ...)
+{
+	char textString[ 256] = {'\0'};
+	va_list args;
+	va_start ( args, fmt );
+	vsnprintf_s( textString, sizeof(textString), _TRUNCATE, fmt, args );
+	va_end ( args );
+	return string2wstring(textString);
+}
