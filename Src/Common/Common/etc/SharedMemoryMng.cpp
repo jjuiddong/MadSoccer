@@ -28,7 +28,7 @@ namespace sharedmemory
 		size_t size;
 
 		_complex_data() {}
-		_complex_data(size_t s, managed_shared_memory::handle_t h) : size(s),handle(h) {}
+		_complex_data(size_t s, managed_shared_memory::handle_t h, void *ptr) : size(s),handle(h),srcPtr(ptr) {}
 	} complex_data;
 
 	typedef std::pair<const shm_string, complex_data>					shm_map_value_type;
@@ -141,7 +141,7 @@ void* sharedmemory::Allocate(const std::string &name, size_t size)
 	// 공유메모리 주소는 프로세스에 따라 달라지므로 handle을 공유해야 한다.
 	managed_shared_memory::handle_t handle = n_pSegment->get_handle_from_address(ptr);
 
-	n_pMap->insert( shm_map_value_type(str,complex_data(size,handle)) );
+	n_pMap->insert( shm_map_value_type(str,complex_data(size,handle,ptr)) );
 	return ptr;
 }
 

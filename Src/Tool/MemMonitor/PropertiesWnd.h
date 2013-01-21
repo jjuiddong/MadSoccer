@@ -70,6 +70,9 @@ protected:
 	void		MakeProperty_UDT(CMFCPropertyGridProperty *pParentProp, 
 		IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo);
 
+	void		MakeProperty_BaseClass(CMFCPropertyGridProperty *pParentProp, 
+		IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo);
+
 	void		MakeProperty_Pointer(CMFCPropertyGridProperty *pParentProp, 
 		IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo);
 
@@ -79,7 +82,10 @@ protected:
 	void		MakeProperty_Array(CMFCPropertyGridProperty *pParentProp, 
 		IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo);
 
-	CMFCPropertyGridProperty* MakeProperty_Final(
+	void		MakeProperty_Enum(CMFCPropertyGridProperty *pParentProp, 
+		IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo);
+
+	CMFCPropertyGridProperty* MakeProperty_BaseType(
 		CMFCPropertyGridProperty *pParentProp, 
 		const std::string valueName, IDiaSymbol *pSymbol, 
 		const sharedmemory::SMemoryInfo &memInfo );
@@ -97,6 +103,7 @@ protected:
 	void		InitComboBox();
 	void		ChangeComboBoxFocus(const CString &symbolName);
 	void		SetPropListFont();
+	int		FindOption( CMFCPropertyGridProperty *pProp, const CString &findStr );
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

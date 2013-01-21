@@ -205,6 +205,7 @@ std::string	dia::GetSymbolTypeName(IDiaSymbol *pSymbol)
 		}
 		break;
 
+	case SymTagEnum:
 	case SymTagUDT:
 		typeName = GetSymbolName(pSymbol);
 		break;
@@ -447,20 +448,21 @@ std::string dia::GetSymbolName(IDiaSymbol *pSymbol)
 //------------------------------------------------------------------------
 // offset 값을 리턴한다.
 //------------------------------------------------------------------------
-LONG dia::GetSymbolLocation(IDiaSymbol *pSymbol)
+LONG dia::GetSymbolLocation(IDiaSymbol *pSymbol, OUT LocationType *pLocType) // pLocType=NULL
 {
-	DWORD dwLocType;
 	// 	DWORD dwRVA, dwSect, dwOff, dwReg, dwBitPos, dwSlot;
 	LONG lOffset = 0;
 	ULONGLONG ulLen = 0;
 	VARIANT vt = { VT_EMPTY };
 
-//	info.offset = 0;
-	if (pSymbol->get_locationType(&dwLocType) != S_OK) {
-		return 0;
-	}
+	if (pLocType)
+		*pLocType = LocIsNull;
 
-	switch (dwLocType) 
+	// 타입에 따라 실패할 수 있다. 예를들면 BaseClass Type
+	LocationType locType;
+	HRESULT hr = pSymbol->get_locationType((DWORD*)&locType); 
+
+	switch (locType) 
 	{
 	case LocIsStatic:
 		// 		if ((pSymbol->get_relativeVirtualAddress(&dwRVA) == S_OK) &&
@@ -540,6 +542,9 @@ LONG dia::GetSymbolLocation(IDiaSymbol *pSymbol)
 		return false;
 		break;
 	}
+
+	if (pLocType)
+		*pLocType = locType;
 
 	return lOffset;
 }
