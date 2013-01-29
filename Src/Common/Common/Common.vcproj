@@ -273,11 +273,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\etc\SharedMemoryContainer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\etc\SharedMemoryList.h"
+				>
+			</File>
+			<File
 				RelativePath=".\etc\SharedMemoryMng.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\etc\SharedMemoryMng.h"
+				>
+			</File>
+			<File
+				RelativePath=".\etc\SharedMemoryString.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\etc\SharedMemoryString.h"
 				>
 			</File>
 			<File

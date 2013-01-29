@@ -35,7 +35,6 @@ namespace dia
 
 	protected:
 		ULONGLONG		GetSymbolLength(IDiaSymbol *pSymbol);
-		//BasicType				GetSymbolBasicType(IDiaSymbol *pSymbol);
 	};
 
 	// dia Global Functions

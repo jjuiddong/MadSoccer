@@ -104,27 +104,6 @@ IDiaSymbol* CDiaWrapper::FindType(const std::string &typeName)
 
 
 //------------------------------------------------------------------------
-// BasicType을 리턴한다.
-//------------------------------------------------------------------------
-// BasicType CDiaWrapper::GetSymbolBasicType(IDiaSymbol *pSymbol)
-// {
-// 	BasicType reval = btNoType;
-// 	CComPtr<IDiaSymbol> pBaseType;
-// 	if (pSymbol->get_type( &pBaseType ) == S_OK)
-// 	{
-// 		HRESULT hr = pBaseType->get_baseType((DWORD *)&reval);
-// 		//assert(S_OK == hr);
-// 	}
-// 	else
-// 	{
-// 		HRESULT hr = pSymbol->get_baseType((DWORD *)&reval);
-// 		//assert(S_OK == hr);
-// 	}
-// 	return reval;
-// }
-
-
-//------------------------------------------------------------------------
 // pSymbol의 데이타 길이를 리턴한다.
 //------------------------------------------------------------------------
 ULONGLONG CDiaWrapper::GetSymbolLength(IDiaSymbol *pSymbol)
@@ -447,6 +426,7 @@ std::string dia::GetSymbolName(IDiaSymbol *pSymbol)
 
 //------------------------------------------------------------------------
 // offset 값을 리턴한다.
+// SymTagData 타입의 심볼만 제대로 작동한다.
 //------------------------------------------------------------------------
 LONG dia::GetSymbolLocation(IDiaSymbol *pSymbol, OUT LocationType *pLocType) // pLocType=NULL
 {

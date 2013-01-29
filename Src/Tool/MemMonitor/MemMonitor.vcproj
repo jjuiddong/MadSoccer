@@ -98,8 +98,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(BIN)"
+			IntermediateDirectory="$(OUT)"
 			ConfigurationType="1"
 			InheritedPropertySheets="..\..\CommonPropertySheet.vsprops"
 			UseOfMFC="2"
@@ -423,6 +423,34 @@
 			</File>
 			<File
 				RelativePath=".\Lib\DiaWrapper.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Visualizer"
+			>
+			<File
+				RelativePath=".\visualizer\VisualizerDefine.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\visualizer\VisualizerDefine.h"
+				>
+			</File>
+			<File
+				RelativePath=".\visualizer\VisualizerParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\visualizer\VisualizerParser.h"
+				>
+			</File>
+			<File
+				RelativePath=".\visualizer\VisualizerScanner.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\visualizer\VisualizerScanner.h"
 				>
 			</File>
 		</Filter>

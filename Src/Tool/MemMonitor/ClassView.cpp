@@ -140,8 +140,8 @@ void CClassView::UpdateMemoryView()
 	sharedmemory::EnumerateMemoryInfo(memList);
 	BOOST_FOREACH(sharedmemory::SMemoryInfo &info, memList)
 	{
-		std::wstring wstr = common::string2wstring( info.name );
-		HTREEITEM hItem = m_wndClassView.InsertItem( wstr.c_str(), 0, 0);
+		const std::wstring wstr = common::string2wstring( info.name );
+		const HTREEITEM hItem = m_wndClassView.InsertItem( wstr.c_str(), 0, 0);
 
 		m_wndClassView.InsertItem(common::formatw("size: %d", info.size).c_str(), hItem);
 		m_wndClassView.InsertItem(common::formatw("ptr: 0x%x", (DWORD)info.ptr).c_str(),hItem);
