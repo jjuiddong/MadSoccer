@@ -33,6 +33,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_MEMORYTREE_WINDOW, &CMainFrame::OnMemorytreeWindow)
 	ON_COMMAND(ID_OUTPUT_WINDOW, &CMainFrame::OnOutputWindow)
 	ON_COMMAND(ID_PROPERTY_WINDOW, &CMainFrame::OnPropertyWindow)
+	ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -184,7 +185,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_SORTING_GROUPBYTYPE);
 
 	CMFCToolBar::SetBasicCommands(lstBasicCommands);
-
 
 	return 0;
 }
@@ -465,7 +465,7 @@ BOOL CMainFrame::PreTranslateMessage(MSG* pMsg)
 //------------------------------------------------------------------------
 //  프로퍼티 창을 띄운다.
 //------------------------------------------------------------------------
-bool	CMainFrame::AddPropertyWnd( const CString &symbolTypeName, CRect rect ) // rect = CRect(0, 0, 200, 200)
+bool CMainFrame::AddPropertyWnd( const CString &symbolTypeName, CRect rect ) // rect = CRect(0, 0, 200, 200)
 {
 	static int id_cnt = 1000;
 	CPropertiesWnd *pNewWnd = new CPropertiesWnd();
@@ -504,3 +504,10 @@ void CMainFrame::OnPropertyWindow()
 	m_wndProperties.ShowPane(TRUE, TRUE,TRUE);
 }
 
+
+void CMainFrame::OnClose()
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+
+	CFrameWndEx::OnClose();
+}

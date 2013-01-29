@@ -131,6 +131,8 @@ void CClassView::OnSize(UINT nType, int cx, int cy)
 //------------------------------------------------------------------------
 void CClassView::UpdateMemoryView()
 {
+	if (!m_hWnd) return;
+
 	CMainFrame *pFrm = (CMainFrame*)::AfxGetMainWnd();
 	pFrm->GetOutputWnd().AddString( L"UpdateMemoryView" );
 

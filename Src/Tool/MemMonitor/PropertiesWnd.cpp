@@ -30,12 +30,6 @@ CPropertiesWnd::CPropertiesWnd() :
 
 CPropertiesWnd::~CPropertiesWnd()
 {
-	KillTimer(ID_TIMER);
-	BOOST_FOREACH(SPropItem *item, m_PropList)
-	{
-		SAFE_DELETE(item);
-	}
-	m_PropList.clear();
 }
 
 BEGIN_MESSAGE_MAP(CPropertiesWnd, CDockablePane)
@@ -57,6 +51,7 @@ BEGIN_MESSAGE_MAP(CPropertiesWnd, CDockablePane)
 	// 	ON_COMMAND(ID_PROPERTIES2, OnProperties2)
 	// 	ON_UPDATE_COMMAND_UI(ID_PROPERTIES2, OnUpdateProperties2)
 
+	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1155,4 +1150,21 @@ int CPropertiesWnd::FindOption( CMFCPropertyGridProperty *pProp, const CString &
 			return i;		
 	}
 	return -1;
+}
+
+
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
+void CPropertiesWnd::OnDestroy()
+{
+	CDockablePane::OnDestroy();
+
+	KillTimer(ID_TIMER);
+	BOOST_FOREACH(SPropItem *item, m_PropList)
+	{
+		SAFE_DELETE(item);
+	}
+	m_PropList.clear();
+
 }

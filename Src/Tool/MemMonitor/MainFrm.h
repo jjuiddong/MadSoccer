@@ -74,4 +74,5 @@ public:
 	afx_msg void OnMemorytreeWindow();
 	afx_msg void OnOutputWindow();
 	afx_msg void OnPropertyWindow();
+	afx_msg void OnClose();
 };

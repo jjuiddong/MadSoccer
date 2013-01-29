@@ -114,6 +114,8 @@ void COutputWnd::AdjustHorzScroll(CListBox& wndListBox)
 //------------------------------------------------------------------------
 void COutputWnd::AddString(const CString &str)
 {
+	if (!m_hWnd) return;
+
 	m_wndOutputBuild.AddString( str );
 	const int cnt = m_wndOutputBuild.GetCount();
 	m_wndOutputBuild.SetCurSel(cnt-1);

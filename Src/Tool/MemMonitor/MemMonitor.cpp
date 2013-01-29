@@ -78,7 +78,7 @@ BOOL CMemMonitorApp::InitInstance()
 		return FALSE;
 	}
 	AfxEnableControlContainer();
-	// 표준 초기화
+	// 표준 초기화	
 	// 이들 기능을 사용하지 않고 최종 실행 파일의 크기를 줄이려면
 	// 아래에서 필요 없는 특정 초기화
 	// 루틴을 제거해야 합니다.

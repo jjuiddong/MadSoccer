@@ -1,5 +1,5 @@
 {
-	"pdbPath" : "C:\\Project\\GitHub\\BoostIPC\\Debug\\SharememLibrary.pdb" ,
+	"pdbPath" : "C:\\GitHub\\BoostIPC\\Debug\\SharememLibrary.pdb" ,
 	"sharedmemoryname" : "MySharedMemory",
 
 	"Property" :  [ 
