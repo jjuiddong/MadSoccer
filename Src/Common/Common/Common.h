@@ -67,6 +67,17 @@ typedef unsigned short u_short;
 	#define SAFE_RELEASE(p) {if (p) { p->Release(); p=NULL;} }
 #endif
 
+#ifndef IN
+	#define IN
+#endif
+
+#ifndef OUT
+	#define OUT
+#endif
+
+#ifndef INOUT
+	#define INOUT
+#endif
 
 #define RET(exp)		{if((exp)) return; }			// exp가 true이면 리턴
 #define RETV(exp,val)	{if((exp)) return val; }

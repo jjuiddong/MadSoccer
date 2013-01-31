@@ -165,5 +165,4 @@ pip-log.txt
 #log file
 *.log
 *.ncb
-
-
+config.json

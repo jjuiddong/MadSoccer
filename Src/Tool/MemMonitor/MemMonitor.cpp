@@ -13,6 +13,8 @@
 #include <typeinfo.h>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include "visualizer/PropertyMaker.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -47,6 +49,7 @@ CMemMonitorApp::~CMemMonitorApp()
 {
 	dia::CDiaWrapper::Get()->Release();
 	sharedmemory::Release();
+	visualizer::Release();
 }
 
 
@@ -97,6 +100,8 @@ BOOL CMemMonitorApp::InitInstance()
 
 	if (!OpenConfigScript(g_configFileName))
 		return FALSE;
+
+	visualizer::OpenVisualizerScript( "autoexp.txt" );
 
 	// 응용 프로그램의 문서 템플릿을 등록합니다. 문서 템플릿은
 	//  문서, 프레임 창 및 뷰 사이의 연결 역할을 합니다.
@@ -177,9 +182,7 @@ BOOL CMemMonitorApp::OpenConfigScript(const std::string &configFileName)
 }
 
 
-
 // 응용 프로그램 정보에 사용되는 CAboutDlg 대화 상자입니다.
-
 class CAboutDlg : public CDialog
 {
 public:

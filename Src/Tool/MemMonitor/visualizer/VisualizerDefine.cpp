@@ -80,7 +80,7 @@ void RemoveExpression( SExpression*p )
 	delete p;
 }
 
-void RemoveType_Stmt( SType_Stmt *p)
+void visualizer_parser::RemoveType_Stmt( SType_Stmt *p)
 {
 	if (!p) return;
 	if (p->templateArgs)
@@ -94,9 +94,10 @@ void RemoveType_Stmt( SType_Stmt *p)
 			tp = next;
 		}
 	}
+	delete p;
 }
 
-void RemoveType_Stmts( SType_Stmts *p )
+void visualizer_parser::RemoveType_Stmts( SType_Stmts *p )
 {
 	if (!p) return;
 	RemoveType_Stmt(p->type);
@@ -111,9 +112,6 @@ void RemoveStatements( SStatements *p)
 	switch(p->kind)
 	{
 	case Stmt_StringLiteral: break;
-	case Stmt_Preview:
-	case Stmt_StringView:
-	case Stmt_Children:
 	case Stmt_Expression: 
 		RemoveExpression(p->exp); 
 		break;

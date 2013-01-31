@@ -430,6 +430,30 @@
 			Name="Visualizer"
 			>
 			<File
+				RelativePath=".\visualizer\DefaultPropertyMaker.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\visualizer\DefaultPropertyMaker.h"
+				>
+			</File>
+			<File
+				RelativePath=".\visualizer\PropertyMaker.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\visualizer\PropertyMaker.h"
+				>
+			</File>
+			<File
+				RelativePath=".\visualizer\Variant.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\visualizer\Variant.h"
+				>
+			</File>
+			<File
 				RelativePath=".\visualizer\VisualizerDefine.cpp"
 				>
 			</File>

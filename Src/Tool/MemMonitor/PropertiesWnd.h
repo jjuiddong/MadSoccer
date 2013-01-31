@@ -14,6 +14,15 @@ public:
 	virtual BOOL AllowShowOnList() const { return FALSE; }
 };
 
+struct STypeData
+{
+	enum SymTagEnum symtag;
+	VARTYPE vt;
+	void *ptr;
+	STypeData( enum SymTagEnum _symtag,  VARTYPE _vt, void *_ptr) : 
+	symtag(_symtag), vt(_vt), ptr(_ptr) { }
+	STypeData() {}
+};
 
 
 class CPropertiesWnd : public CDockablePane
@@ -30,16 +39,6 @@ protected:
 		ID_COMBOBOX = 100,
 		ID_TIMER,
 	};
-
-	typedef struct _STypeData
-	{
-		enum SymTagEnum symtag;
-		VARTYPE vt;
-		void *ptr;
-		_STypeData( enum SymTagEnum _symtag,  VARTYPE _vt, void *_ptr) : 
-			symtag(_symtag), vt(_vt), ptr(_ptr) { }
-		_STypeData() {}
-	} STypeData;
 
 	typedef struct _SPropItem
 	{
@@ -63,40 +62,10 @@ public:
 	void	SetVSDotNetLook(BOOL bSet);
 	void Refresh();
 
-protected:
-	void		MakeProperty(CMFCPropertyGridProperty *pParentProp, 
-		IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo);
-
-	void		MakeProperty_UDT(CMFCPropertyGridProperty *pParentProp, 
-		IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo);
-
-	void		MakeProperty_BaseClass(CMFCPropertyGridProperty *pParentProp, 
-		IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo);
-
-	void		MakeProperty_Pointer(CMFCPropertyGridProperty *pParentProp, 
-		IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo);
-
-	void		MakeProperty_Data(CMFCPropertyGridProperty *pParentProp, 
-		IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo);
-
-	void		MakeProperty_Array(CMFCPropertyGridProperty *pParentProp, 
-		IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo);
-
-	void		MakeProperty_Enum(CMFCPropertyGridProperty *pParentProp, 
-		IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo);
-
-	CMFCPropertyGridProperty* MakeProperty_BaseType(
-		CMFCPropertyGridProperty *pParentProp, 
-		const std::string valueName, IDiaSymbol *pSymbol, 
-		const sharedmemory::SMemoryInfo &memInfo );
-
 	void		AddProperty(CMFCPropertyGridProperty *pParentProp, 
-		CMFCPropertyGridProperty *prop, const STypeData &typeData);
+		CMFCPropertyGridProperty *prop, STypeData *pTypeData);
 
-	_variant_t GetValue(IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo);
-
-	bool		SetPropertyValue(CMFCPropertyGridProperty *pProp, _variant_t value);
-
+protected:
 	void		Refresh_Property(CMFCPropertyGridProperty *pProp );
 
 	void		InitPropList();

@@ -86,7 +86,6 @@ namespace visualizer_parser
 		SType_Stmts *next;
 	};
 
-
 	enum Display_Format
 	{
 		Disp_D,
@@ -170,9 +169,6 @@ namespace visualizer_parser
 		Stmt_StringLiteral,
 		Stmt_Expression,
 		Stmt_SimpleExpression,
-		Stmt_Preview,
-		Stmt_StringView,
-		Stmt_Children,
 		Stmt_If,
 		Stmt_Bracket_Iterator,
 	};
@@ -180,7 +176,6 @@ namespace visualizer_parser
 	struct SStatements
 	{
 		StatementKind kind;
-		std::string str_literal;
 		union {
 			SExpression *exp;
 			SSimpleExp *simple_exp;
@@ -220,6 +215,8 @@ namespace visualizer_parser
 	// Functions
 	void PrintToken( Tokentype token, char *szTokenString );
 	void RemoveVisualizerScript(SVisualizerScript*p);
+	void RemoveType_Stmt( SType_Stmt *p);
+	void RemoveType_Stmts( SType_Stmts *p );
 
 }
 

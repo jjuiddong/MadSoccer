@@ -1,16 +1,6 @@
 {
-	"pdbPath" : "C:\\GitHub\\BoostIPC\\Debug\\SharememLibrary.pdb" ,
-	"sharedmemoryname" : "MySharedMemory",
+	"pdbPath" : "C:\\Project\\GitHub\\BoostIPC\\Debug\\SharememLibrary.pdb" ,
+	"sharedmemoryname" : "MySharedMemory"
 
-	"Property" :  [ 
-		{ 
-			"symbolName" : "SCustomStruct#1" 
-		},
-		{ 
-			"symbolName" : "SCustomStruct#2" 
-		},
-		{ 
-			"symbolName" : "SCustomStruct#3" 
-		}
-	]
+
 }

@@ -9,6 +9,7 @@
 #define __DIAWRAPPER_H__
 
 #include <cvconst.h>
+#include "dia2.h"
 
 struct IDiaDataSource;
 struct IDiaSession;
@@ -38,13 +39,17 @@ namespace dia
 	};
 
 	// dia Global Functions
+	IDiaSymbol*		GetChildSymbol( const std::string &symbolName, IDiaSymbol *pSymbol );
+
 	std::string			GetSymbolName(IDiaSymbol *pSymbol);
 	LONG					GetSymbolLocation(IDiaSymbol *pSymbol, OUT LocationType *pLocType=NULL);
 	std::string			GetSymbolTypeName(IDiaSymbol *pSymbol);
 	std::string			GetBasicTypeName(BasicType btype, ULONGLONG length);
 	_variant_t			GetValueFromAddress(void *srcPtr, const BasicType btype, const ULONGLONG length );
+	_variant_t			GetValueFromSymbol(void *srcPtr,  IDiaSymbol *pSymbol);
 	_variant_t			GetValue(void *srctPtr, VARTYPE varType);
 	void						SetValue(void *destPtr, _variant_t value);
+
 
 }
 

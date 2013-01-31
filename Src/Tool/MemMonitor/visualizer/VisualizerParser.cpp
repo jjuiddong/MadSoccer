@@ -5,6 +5,11 @@
 using namespace visualizer_parser;
 using namespace std;
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+
+
 visualizer_parser::CParser::CParser() 
 {
 	m_pScan = new CScanner();
@@ -77,12 +82,16 @@ SVisualizerScript* visualizer_parser::CParser::visualizerscript()
 		SVisualizer *pVis = visualizer();
 		if (pVis)
 		{
-			pVisScr = new SVisualizerScript();
+			pVisScr = new SVisualizerScript;
 			pVisScr->next = NULL;
 
 			pVis->matchType = pMatchType;
 			pVisScr->vis = pVis;
 			pVisScr->kind = VisualizerScript_Visualizer;
+		}
+		else
+		{
+			visualizer_parser::RemoveType_Stmts(pMatchType);
 		}
 	}
 	if (pVisScr)
@@ -553,10 +562,12 @@ SDisp_Format* visualizer_parser::CParser::disp_format()
 // types -> type { | type }
 SType_Stmts* visualizer_parser::CParser::types()
 {
-	SType_Stmts *p = new SType_Stmts;
-	p->next = NULL;
+	SType_Stmt *pt = type();
+	if (!pt) return NULL;
 
-	p->type = type();
+	SType_Stmts *p = new SType_Stmts;
+	p->type = pt;
+	p->next = NULL;
 	if (LOGIC_OR == m_Token)
 	{
 		Match(LOGIC_OR);
