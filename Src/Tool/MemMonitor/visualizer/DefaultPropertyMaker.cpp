@@ -8,34 +8,37 @@
 
 namespace visualizer
 {
+	using namespace sharedmemory;
+	using namespace visualizer_parser;
+
 	CPropertiesWnd *n_pProperty = NULL;
 
 	// make property
 	void		MakeProperty_Root(CMFCPropertyGridProperty *pParentProp, 
-		IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo);
+		IDiaSymbol *pSymbol, const SMemoryInfo &memInfo);
 
 	void		MakeProperty_UDT(CMFCPropertyGridProperty *pParentProp, 
-		IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo);
+		IDiaSymbol *pSymbol, const SMemoryInfo &memInfo);
 
 	void		MakeProperty_BaseClass(CMFCPropertyGridProperty *pParentProp, 
-		IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo);
+		IDiaSymbol *pSymbol, const SMemoryInfo &memInfo);
 
 	void		MakeProperty_Pointer(CMFCPropertyGridProperty *pParentProp, 
-		IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo);
+		IDiaSymbol *pSymbol, const SMemoryInfo &memInfo);
 
 	void		MakeProperty_Data(CMFCPropertyGridProperty *pParentProp, 
-		IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo);
+		IDiaSymbol *pSymbol, const SMemoryInfo &memInfo);
 
 	void		MakeProperty_Array(CMFCPropertyGridProperty *pParentProp, 
-		IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo);
+		IDiaSymbol *pSymbol, const SMemoryInfo &memInfo);
 
 	void		MakeProperty_Enum(CMFCPropertyGridProperty *pParentProp, 
-		IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo);
+		IDiaSymbol *pSymbol, const SMemoryInfo &memInfo);
 
 	CMFCPropertyGridProperty* MakeProperty_BaseType(
 		CMFCPropertyGridProperty *pParentProp, 
 		const std::string valueName, IDiaSymbol *pSymbol, 
-		const sharedmemory::SMemoryInfo &memInfo );
+		const SMemoryInfo &memInfo );
 
 	void		AddProperty(CMFCPropertyGridProperty *pParentProp, 
 		CMFCPropertyGridProperty *prop,  STypeData *pTypeData);
@@ -46,8 +49,6 @@ namespace visualizer
 
 using namespace dia;
 using namespace std;
-using namespace sharedmemory;
-using namespace visualizer_parser;
 using namespace visualizer;
 
 
@@ -55,7 +56,7 @@ using namespace visualizer;
 // 기본형식으로 property창에 심볼을 출력한다.
 // symbolName : 공유메모리에 저장된 심볼이름
 //------------------------------------------------------------------------
-bool visualizer::MakeProperty( CPropertiesWnd *pProperties,  const string &symbolName )
+bool visualizer::MakeProperty_DefaultForm( CPropertiesWnd *pProperties,  const string &symbolName )
 {
 	const std::string str = sharedmemory::ParseObjectName(symbolName);
 
@@ -69,7 +70,7 @@ bool visualizer::MakeProperty( CPropertiesWnd *pProperties,  const string &symbo
 		return false;
 	}
 
-	MakeProperty(pProperties, NULL, pSymbol, memInfo);
+	MakeProperty_DefaultForm(pProperties, NULL, pSymbol, memInfo);
 	pSymbol->Release();
 	return true;
 }
@@ -78,7 +79,7 @@ bool visualizer::MakeProperty( CPropertiesWnd *pProperties,  const string &symbo
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-bool visualizer::MakeProperty(  CPropertiesWnd *pProperties, 
+bool visualizer::MakeProperty_DefaultForm(  CPropertiesWnd *pProperties, 
 								 CMFCPropertyGridProperty *pParentProp,  const string &symbolName )
 {
 
@@ -89,7 +90,7 @@ bool visualizer::MakeProperty(  CPropertiesWnd *pProperties,
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-bool visualizer::MakeProperty(  CPropertiesWnd *pProperties,
+bool visualizer::MakeProperty_DefaultForm(  CPropertiesWnd *pProperties,
 				CMFCPropertyGridProperty *pParentProp,  
 				 IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo )
 {
@@ -230,7 +231,7 @@ void visualizer ::MakeProperty_UDT(CMFCPropertyGridProperty *pParentProp,
 	const bool isVisualizerType = visualizer::MakeVisualizerProperty( n_pProperty, pParentProp, memInfo, name);
 	if (isVisualizerType)
 	{
-
+		// 아직 하는일 없음 
 	}
 	else
 	{

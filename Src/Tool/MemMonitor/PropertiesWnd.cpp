@@ -354,7 +354,7 @@ void CPropertiesWnd::UpdateProperty(const CString &symbolName)
 	std::string tmpStr = common::wstring2string((LPCWSTR)symbolName);
 	std::string str = sharedmemory::ParseObjectName(tmpStr);
 
-	visualizer::MakeProperty(this, tmpStr);
+	visualizer::MakeProperty_DefaultForm(this, tmpStr);
 
 	IDiaSymbol *pSymbol = CDiaWrapper::Get()->FindType(str);
 	if (!pSymbol)

@@ -143,7 +143,7 @@ Tokentype CScanner::GetToken()
 Tokentype CScanner::GetTokenQ( int nIdx )
 {
 	if (!m_pFileMem) return ENDFILE;
-
+	if (m_TokQ.size() <= (size_t)nIdx) return ENDFILE;
 	return m_TokQ[ nIdx].tok;
 }
 

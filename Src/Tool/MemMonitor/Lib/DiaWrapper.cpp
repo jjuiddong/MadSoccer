@@ -550,12 +550,18 @@ LONG dia::GetSymbolLocation(IDiaSymbol *pSymbol, OUT LocationType *pLocType) // 
 //------------------------------------------------------------------------
 // pSymbol 타입의 정보를 pMemPtr 주소에서 가져온다.
 // pSymbol 은 SymTagData 타입이어야 한다.
+// isApplyOffset : false 이면 변수의 offset을 적용하지 않는다.
+//                         이미 계산된 상태라면 할필요 없음
+// srcPtr : 데이타가 저장된 주소인데, pSymbol 의 offset 이
+//    적용되기 때문에 이 srcPtr주소는 pSymbol을 소유하고 
+//    있는 구조체나, 클래스의 주소를 가르키고 있어야 한다.
 //------------------------------------------------------------------------
-_variant_t dia::GetValueFromSymbol(void *srcPtr, IDiaSymbol *pSymbol)
+_variant_t dia::GetValueFromSymbol(void *srcPtr, IDiaSymbol *pSymbol, bool isApplyOffset) // isApplyOffset=true
 {
 	_variant_t value;
 
 	LONG offset = dia::GetSymbolLocation(pSymbol);
+	if (!isApplyOffset) offset = 0;
 	void *ptr = (BYTE*)srcPtr + offset;
 
 	CComPtr<IDiaSymbol> pBaseType;
@@ -593,63 +599,109 @@ _variant_t dia::GetValueFromSymbol(void *srcPtr, IDiaSymbol *pSymbol)
 
 //------------------------------------------------------------------------
 // pSymbol 에서 자식중에 symbolName 인 심볼을 리턴한다.
+// 찾은 심볼의 Offset값을 리턴한다.
 //------------------------------------------------------------------------
-IDiaSymbol* dia::GetChildSymbol( const std::string &symbolName, IDiaSymbol *pSymbol )
+IDiaSymbol* dia::FindChildSymbol( const std::string &symbolName, IDiaSymbol *pSymbol, OUT LONG &offset )
 {
 	RETV( !pSymbol, NULL );
 
 	const string name = GetSymbolName(pSymbol); //debug용
 	const wstring searchSymbolName = common::string2wstring(symbolName).c_str();
 
-	IDiaEnumSymbols *pEnumSymbols;
-	if (FAILED(pSymbol->findChildren(SymTagNull, searchSymbolName.c_str(), 
-		nsRegularExpression, &pEnumSymbols)))
-		return NULL;
+	// 데이타 심볼이면, 타입 심볼로 교체한다.
+	enum SymTagEnum symTag;
+	HRESULT hr = pSymbol->get_symTag((DWORD*)&symTag);
 
-	IDiaSymbol *pChildSymbol;
-	ULONG celt = 0;
-	// 첫번째로 발견되는 정보만 찾아서 리턴한다.
-	while (SUCCEEDED(pEnumSymbols->Next(1, &pChildSymbol, &celt)) && (celt == 1)) 
+	bool isNewTypeSymbol = false;
+	IDiaSymbol* pTypeSymbol;
+	if (SymTagData == symTag) 
 	{
-		pEnumSymbols->Release();
-		return pChildSymbol;
+		isNewTypeSymbol = true;
+		hr = pSymbol->get_type(&pTypeSymbol);
 	}
-	pEnumSymbols->Release();
-
-	if (0 == celt)
+	else
 	{
-		//자식 중에 해당 심볼이 없다면 enum 중에서 찾아본다.
-		CComPtr<IDiaEnumSymbols> pEnumSymbols;
-		if (SUCCEEDED(pSymbol->findChildren(SymTagNull, NULL, nsNone, &pEnumSymbols))) 
-		{
-			IDiaSymbol* pChildSymbol;
-			ULONG celt = 0;
-			while (SUCCEEDED(pEnumSymbols->Next(1, &pChildSymbol, &celt)) && (celt == 1)) 
-			{
-				enum SymTagEnum symTag;
-				pChildSymbol->get_symTag((DWORD*)&symTag);
-				if (SymTagEnum == symTag)
-				{
-					CComPtr<IDiaEnumSymbols> pSubEnumSymbols;
-					if (SUCCEEDED(pChildSymbol->findChildren(SymTagNull, searchSymbolName.c_str(), 
-						nsRegularExpression, &pSubEnumSymbols)))
-					{
-						IDiaSymbol *pChildSubSymbol;
-						ULONG celt = 0;
-						// 첫번째로 발견되는 정보만 찾아서 리턴한다.
-						while (SUCCEEDED(pSubEnumSymbols->Next(1, &pChildSubSymbol, &celt)) && (celt == 1)) 
-						{
-							string name = GetSymbolName(pChildSubSymbol); //debug용
-							pChildSymbol->Release();
-							return pChildSubSymbol;
-						}
-					}
-				}
+		pTypeSymbol = pSymbol;
+	}
 
-				pChildSymbol->Release();
+	// Enumeration
+	CComPtr<IDiaEnumSymbols> pEnumSymbols;
+	if (FAILED(pTypeSymbol->findChildren(SymTagNull, searchSymbolName.c_str(), 
+		nsRegularExpression, &pEnumSymbols)))
+	{
+		if (isNewTypeSymbol)
+			pTypeSymbol->Release();
+		return NULL;
+	}
+
+	IDiaSymbol *pFindSymbol;
+	ULONG celt = 0;
+	pEnumSymbols->Next(1, &pFindSymbol, &celt);
+	// 찾았다면 리턴 
+	if (1 == celt)
+	{
+		if (isNewTypeSymbol)
+			pTypeSymbol->Release();
+		hr = pFindSymbol->get_offset(&offset);
+		return pFindSymbol;
+	}
+
+	// 못찾았다면, 자식 중에서 찾아본다. enum  으로 선언된 값은 이렇게 찾아야함
+	CComPtr<IDiaEnumSymbols> pAnotherEnumSymbols;
+	if (FAILED(pTypeSymbol->findChildren(SymTagNull, NULL, nsNone, &pAnotherEnumSymbols)))
+	{
+		if (isNewTypeSymbol)
+			pTypeSymbol->Release();
+		return NULL;
+	}
+
+	pFindSymbol = NULL;
+	IDiaSymbol* pChildSymbol;
+	celt = 0;
+	while (SUCCEEDED(pAnotherEnumSymbols->Next(1, &pChildSymbol, &celt)) && (celt == 1)) 
+	{
+		enum SymTagEnum symTag;
+		pChildSymbol->get_symTag((DWORD*)&symTag);
+
+		if (SymTagBaseClass == symTag)
+		{
+			LONG childOffset = 0;
+			pFindSymbol = FindChildSymbol( symbolName, pChildSymbol, childOffset );
+			if (pFindSymbol)
+			{
+				LONG baseClassOffset = 0;
+				hr = pChildSymbol->get_offset(&baseClassOffset);
+				offset = baseClassOffset + childOffset;
+				break;
 			}
+		}
+
+		if (SymTagEnum != symTag) 
+		{ 
+			pChildSymbol->Release(); 
+			continue; 
+		}
+
+		CComPtr<IDiaEnumSymbols> pSubEnumSymbols;
+		if (FAILED(pChildSymbol->findChildren(SymTagNull, searchSymbolName.c_str(), 
+			nsRegularExpression, &pSubEnumSymbols)))
+		{
+			pChildSymbol->Release(); 
+			continue; 
+		}
+
+		celt = 0;
+		pSubEnumSymbols->Next( 1, &pFindSymbol, &celt );
+		if (1 == celt)
+		{
+			pChildSymbol->Release();
+			const string name = GetSymbolName(pFindSymbol); //debug용
+			offset = 0; // 상수값은 offset이 없다.
+			break; // 찾았으니 종료
 		}
 	}
 
-	return NULL;
+	if (isNewTypeSymbol)
+		pTypeSymbol->Release();
+	return pFindSymbol;
 }

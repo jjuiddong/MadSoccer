@@ -69,7 +69,8 @@ void RemoveExpression( SExpression*p )
 	case IndirectK:
 		RemoveExpression( p->lhs );
 		break;
-
+	
+	case DispFormatK:
 	case VariableK:
 	case NumberK:
 	case StringK:

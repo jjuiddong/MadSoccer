@@ -1,4 +1,10 @@
 
+boost::container::basic_string<char,*>{
+
+	preview		( #if( $e.members_.m_repr.s.h.is_short != 0 ) ( [$e.members_.m_repr.s.data , s]) )
+
+}
+
 std::list<*>{
 	children
 	(

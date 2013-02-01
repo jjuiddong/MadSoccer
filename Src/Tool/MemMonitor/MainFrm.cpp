@@ -226,7 +226,10 @@ bool	CMainFrame::OpenScript( const std::string &openScriptFileName )
 	}
 	catch (std::exception &)
 	{
-		::AfxMessageBox( 
+// 		::AfxMessageBox( 
+// 			common::formatw( "%s json script를 읽는데 실패했습니다.",
+// 					openScriptFileName.c_str()).c_str() );
+		m_wndOutput.AddString( 
 			common::formatw( "%s json script를 읽는데 실패했습니다.",
 					openScriptFileName.c_str()).c_str() );
 	}

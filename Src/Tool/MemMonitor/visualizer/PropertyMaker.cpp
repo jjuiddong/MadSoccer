@@ -8,65 +8,84 @@
 
 namespace visualizer
 {
-	visualizer_parser::SVisualizerScript *m_pVisScr = NULL;
-	std::string m_SymbolName;
-	sharedmemory::SMemoryInfo m_MemInfo;
+	using namespace visualizer_parser;
+	using namespace sharedmemory;
 
 	visualizer_parser::SVisualizerScript* FindVisualizer( const std::string &typeName );
 
 	// search visualizer
-	visualizer_parser::SVisualizerScript* SearchVisualizerScript(visualizer_parser::SType_Stmt *psymT);
-	bool CompareTypes( visualizer_parser::SType_Stmt *psymT, visualizer_parser::SType_Stmts *pvisT);
-	bool CompareType( visualizer_parser::SType_Stmt *psymT, visualizer_parser::SType_Stmt *pvisT,
-		OUT bool &isAstrisk );
+	visualizer_parser::SVisualizerScript* SearchVisualizerScript(SType_Stmt *psymT);
+	bool CompareTypes( SType_Stmt *psymT, SType_Stmts *pvisT);
+	bool CompareType( SType_Stmt *psymT, SType_Stmt *pvisT,OUT bool &isAstrisk );
 	bool CompareTemplateTypes( visualizer_parser::SType_TemplateArgs *psymT, 
-		visualizer_parser::SType_TemplateArgs *pvisT );
-	visualizer_parser::SType_Stmt* ParseType( INOUT std::string &typeName );
-	visualizer_parser::SType_TemplateArgs* ParseTemplateType( INOUT std::string &typeName );
+		SType_TemplateArgs *pvisT );
+	SType_Stmt* ParseType( INOUT std::string &typeName );
+	SType_TemplateArgs* ParseTemplateType( INOUT std::string &typeName );
 
 
 	// parse visualizer
-	void MakeProperty_Visualizer( visualizer_parser::SVisualizer *pvis, 
-		IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo );
+	void MakeProperty_Visualizer( SVisualizer *pvis, 
+		IDiaSymbol *pSymbol, const SMemoryInfo &memInfo );
 
-	void MakeProperty_AutoExpand( visualizer_parser::SAutoExp *pautoexp, 
-		IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo  );
+	void MakeProperty_AutoExpand( SAutoExp *pautoexp, 
+		IDiaSymbol *pSymbol, const SMemoryInfo &memInfo  );
 
-	void MakePropertyStatements( visualizer_parser::SStatements *pstmt,
-		IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo );
+	void MakePropertyStatements( SStatements *pstmt,
+		IDiaSymbol *pSymbol, const SMemoryInfo &memInfo );
 
-	void MakePropertyExpression( visualizer_parser::SExpression *pexp,
-		IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo );
+	void MakePropertyExpression( SExpression *pexp,
+		IDiaSymbol *pSymbol, const SMemoryInfo &memInfo );
 
-	void MakePropertyIfStmt( visualizer_parser::SIf_Stmt *pif_stmt,
-		IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo );
+	void MakePropertyIfStmt( SIf_Stmt *pif_stmt,
+		IDiaSymbol *pSymbol, const SMemoryInfo &memInfo );
 
-	bool MakePropertyElifStmt( visualizer_parser::SElif_Stmt *pelif_stmt, 
-		IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo );
+	void MakePropertyIteratorStmt( SVisBracketIterator_Stmt *pItor_stmt,
+		IDiaSymbol *pSymbol, const SMemoryInfo &memInfo );
+
+	bool MakePropertyElifStmt( SElif_Stmt *pelif_stmt, 
+		IDiaSymbol *pSymbol, const SMemoryInfo &memInfo );
 
 
 	// evaluate
-	CComVariant Eval_Expression( visualizer_parser::SExpression *pexp);
+	CComVariant Eval_Expression( SExpression *pexp);
 
-	CComVariant Eval_Variable( visualizer_parser::SExpression *pexp,
-		IDiaSymbol *pSymbol=NULL, const sharedmemory::SMemoryInfo *pMemInfo=NULL);
+	CComVariant Eval_Variable( SExpression *pexp,
+		IDiaSymbol *pSymbol=NULL, const SMemoryInfo *pMemInfo=NULL);
 
-	CComVariant Get_Variable( const std::string &varId, IDiaSymbol *pSymbol, 
-		const sharedmemory::SMemoryInfo *pMemInfo);
+	CComVariant Eval_Variable_FromId( const std::string &varId, IDiaSymbol *pSymbol, 
+		const SMemoryInfo *pMemInfo);
 
-	IDiaSymbol* GetChildSymbol( const std::string &symbolName, IDiaSymbol *pSymbol ); 
 
-	void Disp_Expression( visualizer_parser::SExpression *pexp );
-	char GetAsciiFromTokentype(visualizer_parser::Tokentype tok);
+	// Find
+	IDiaSymbol* Find_Variable( SExpression *pexp, IDiaSymbol *pSymbol, 
+		OUT LONG &offset );
+
+	IDiaSymbol* Find_Variable_FromId( const std::string &varId, IDiaSymbol *pSymbol, 
+		OUT LONG &offset );
+
+	void Disp_Expression( SExpression *pexp );
+	char GetAsciiFromTokentype(Tokentype tok);
+	void CheckError( bool condition, const std::string &msg="error" );
 
 }
 
 using namespace dia;
 using namespace std;
-using namespace sharedmemory;
-using namespace visualizer_parser;
 using namespace visualizer;
 
+visualizer_parser::SVisualizerScript *m_pVisScr = NULL;
+std::string m_SymbolName;
+sharedmemory::SMemoryInfo m_MemInfo;
+CPropertiesWnd *m_pPropertiesWnd= NULL;
+CMFCPropertyGridProperty *m_pParentProperty = NULL;
+
+
+class VisualizerScriptError
+{
+public:
+	VisualizerScriptError(const string &msg) : m_Msg(msg) {}
+	string m_Msg;
+};
 
 
 //------------------------------------------------------------------------
@@ -99,34 +118,27 @@ bool	visualizer::MakeVisualizerProperty( CPropertiesWnd *pPropertiesWnd,
 	const std::string str = sharedmemory::ParseObjectName(symbolName);
 	m_SymbolName = str;
 	m_MemInfo = memInfo;
+	m_pPropertiesWnd = pPropertiesWnd;
+	m_pParentProperty = pParentProp;
 
 	SVisualizerScript *pVisScript = FindVisualizer(str);
 	if (pVisScript)
 	{
 		IDiaSymbol *pSymbol = CDiaWrapper::Get()->FindType(str);
-
 		if (!pSymbol)
-		{
-// 			::AfxMessageBox(
-// 				common::formatw("\"%s\" 해당하는 심볼은 Pdb파일에 없습니다.", 
-// 				symbolName.c_str()).c_str() );
 			return false;
+
+		try
+		{
+			if (VisualizerScript_Visualizer == pVisScript->kind)
+				MakeProperty_Visualizer(pVisScript->vis, pSymbol, memInfo);
+			else 
+				MakeProperty_AutoExpand(pVisScript->autoexp, pSymbol, memInfo);
 		}
+		catch (VisualizerScriptError &)
+		{
 
-// 		sharedmemory::SMemoryInfo memInfo;
-// 		if (!sharedmemory::FindMemoryInfo(symbolName, memInfo))
-// 		{
-// 			::AfxMessageBox( 
-// 				common::formatw("공유메모리에 %s 타입의 정보가 없습니다.",
-// 				symbolName.c_str()).c_str() );
-// 			pSymbol->Release();
-// 			return false;
-// 		}
-
-		if (VisualizerScript_Visualizer == pVisScript->kind)
-			MakeProperty_Visualizer(pVisScript->vis, pSymbol, memInfo);
-		else 
-			MakeProperty_AutoExpand(pVisScript->autoexp, pSymbol, memInfo);
+		}
 
 		if (pSymbol)
 			pSymbol->Release();
@@ -149,7 +161,7 @@ void visualizer::MakeProperty_Visualizer( SVisualizer *pvis,
 													  IDiaSymbol *pSymbol, const SMemoryInfo &memInfo  )
 {
 	RET(!pvis);
-
+	// 일단 preview만 출력 
 	MakePropertyStatements( pvis->preview, pSymbol, memInfo );
 }
 
@@ -157,8 +169,8 @@ void visualizer::MakeProperty_Visualizer( SVisualizer *pvis,
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-void visualizer::MakeProperty_AutoExpand( SAutoExp *pautoexp, 
-													  IDiaSymbol *pSymbol, const SMemoryInfo &memInfo )
+void visualizer::MakeProperty_AutoExpand( SAutoExp *pautoexp, IDiaSymbol *pSymbol, 
+										 const SMemoryInfo &memInfo )
 {
 	RET(!pautoexp);
 
@@ -168,8 +180,8 @@ void visualizer::MakeProperty_AutoExpand( SAutoExp *pautoexp,
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-void visualizer::MakePropertyStatements( SStatements *pstmt,
-													  IDiaSymbol *pSymbol, const SMemoryInfo &memInfo)
+void visualizer::MakePropertyStatements( SStatements *pstmt, IDiaSymbol *pSymbol, 
+										const SMemoryInfo &memInfo)
 {
 	RET(!pstmt);
 	SStatements *node = pstmt;
@@ -180,8 +192,7 @@ void visualizer::MakePropertyStatements( SStatements *pstmt,
 		case Stmt_Expression: MakePropertyExpression(node->exp, pSymbol, memInfo); break;
 		case Stmt_SimpleExpression: break;
 		case Stmt_If: MakePropertyIfStmt(node->if_stmt, pSymbol, memInfo); break;
-		case Stmt_Bracket_Iterator: break;
-			break;
+		case Stmt_Bracket_Iterator: MakePropertyIteratorStmt(node->itor_stmt, pSymbol, memInfo); break;
 		}	
 		node = node->next;
 	}
@@ -203,12 +214,83 @@ void visualizer::MakePropertyIfStmt( SIf_Stmt *pif_stmt,
 	{
 		if (MakePropertyElifStmt( pif_stmt->elif_stmt, pSymbol, memInfo ))
 		{
-
+			// 아무일 없음
 		}
 		else
 		{
 			MakePropertyStatements( pif_stmt->else_stmts, pSymbol, memInfo );			
 		}
+	}
+}
+
+
+//------------------------------------------------------------------------
+// 반복 명령문 처리
+//------------------------------------------------------------------------
+void visualizer::MakePropertyIteratorStmt( SVisBracketIterator_Stmt *pitor_stmt,
+							  IDiaSymbol *pSymbol, const SMemoryInfo &memInfo )
+{
+	RET(!pitor_stmt);
+	RET(!pitor_stmt->stmts);
+
+	switch (pitor_stmt->kind)
+	{
+	case Iter_Array: break;
+
+	case Iter_List:
+		{
+			CheckError( pitor_stmt->stmts->head && pitor_stmt->stmts->next, "#list head, next not setting" );
+			CheckError( pitor_stmt->stmts->expr || pitor_stmt->disp_stmt , "#list expr, disp_stmt not setting" );
+
+			// 
+//  			IDiaSymbol *pEachSymbol = CDiaWrapper::Get()->FindType(m_SymbolName);
+//  			CheckError( !pEachSymbol, "$e not found" );
+
+			// $e = current object
+
+			// $e 설정, IDiaSymbol
+			CComVariant node = Eval_Variable(pitor_stmt->stmts->head, pSymbol, &memInfo);
+			CheckError( node.vt != VT_EMPTY, "#list head expression error" );
+
+			CComVariant size;
+			if (pitor_stmt->stmts->size)
+			{
+				size = Eval_Variable(pitor_stmt->stmts->size, pSymbol, &memInfo);
+				CheckError( size.vt != VT_EMPTY, "#list size expression error" );
+			}
+
+			CComVariant skip;
+			if (pitor_stmt->stmts->skip)
+			{
+				skip = Eval_Variable(pitor_stmt->stmts->skip, pSymbol, &memInfo);
+				CheckError( skip.vt != VT_EMPTY, "#list skip expression error" );
+			}
+
+			LONG offset=0;
+			IDiaSymbol *pEachSymbol = Find_Variable(pitor_stmt->stmts->head, pSymbol, offset);
+			CheckError( !pEachSymbol, "#list head expression error, $e not found" );
+			BYTE *eachPtr = (BYTE*)memInfo.ptr + offset;
+			SMemoryInfo eachMemInfo( "$e",  eachPtr, 0);
+
+			int count = 0;
+//			while (node)
+			{
+				MakePropertyExpression( pitor_stmt->stmts->expr, pEachSymbol,  eachMemInfo );
+
+				++count;
+
+// 				CComVariant node = Eval_Variable(pitor_stmt->stmts->head, pSymbol, &memInfo);
+// 				CheckError( node.vt != VT_EMPTY, "#list head expression error" );
+			}
+
+			
+	
+
+			pEachSymbol->Release();			
+		}
+		break;
+
+	case Iter_Tree: break;
 	}
 }
 
@@ -239,7 +321,7 @@ void visualizer::MakePropertyExpression( SExpression *pexp,
 													  IDiaSymbol *pSymbol, const SMemoryInfo &memInfo )
 {
 	RET(!pexp);
-	
+
 	switch (pexp->kind)
 	{
 	case CondExprK:
@@ -247,9 +329,30 @@ void visualizer::MakePropertyExpression( SExpression *pexp,
 	case MulTermK:
 		break;
 
+	case DispFormatK:
+			MakePropertyExpression(pexp->rhs, pSymbol, memInfo);
+		break;
+
 	case VariableK:
 		{
-			CComVariant var = Eval_Variable(pexp, pSymbol, (SMemoryInfo*)&memInfo);
+			LONG offset = 0;
+			IDiaSymbol *pVarSymbol = Find_Variable(pexp, pSymbol, offset);
+			if (pVarSymbol)
+			{
+				const string name = dia::GetSymbolName(pVarSymbol);
+				ULONGLONG length = 0;
+				HRESULT hr = pVarSymbol->get_length(&length);
+				LONG symbolOffset=0;
+				hr = pVarSymbol->get_offset(&symbolOffset);
+				offset -= symbolOffset; // MakeProperty_DefaultForm 은 마지막에 symbol 의 offset이
+													  // 적용되기 때문에, 함수를 호출하기 전에 미리 symbol offset
+													  // 값을 빼야 한다.
+				BYTE *ptr = (BYTE*)memInfo.ptr + offset;
+
+ 				visualizer::MakeProperty_DefaultForm( m_pPropertiesWnd, m_pParentProperty, 
+ 					pVarSymbol, SMemoryInfo(name.c_str(), ptr, (size_t)length) );
+				pVarSymbol->Release();
+			}
 		}
 		break;
 
@@ -531,7 +634,8 @@ CComVariant visualizer::Eval_Variable( SExpression *pexp,
 
 	if (pexp->str == "$e")
 	{
-		IDiaSymbol *pEachSymbol = CDiaWrapper::Get()->FindType(m_SymbolName);
+//		IDiaSymbol *pEachSymbol = CDiaWrapper::Get()->FindType(m_SymbolName);
+		IDiaSymbol *pEachSymbol = pSymbol;
 		if (!pEachSymbol)
 			return reval;
 
@@ -543,7 +647,7 @@ CComVariant visualizer::Eval_Variable( SExpression *pexp,
 		{
 			reval = dia::GetValueFromSymbol(m_MemInfo.ptr, pEachSymbol);
 		}
-		pEachSymbol->Release();
+//		pEachSymbol->Release();
 	}
 	else if (pexp->str == "$r")
 	{
@@ -559,16 +663,15 @@ CComVariant visualizer::Eval_Variable( SExpression *pexp,
 
 		if (pexp->rhs)
 		{
-			IDiaSymbol *pChild = dia::GetChildSymbol(pexp->str, pSymbol);
+			LONG offset=0;
+			IDiaSymbol *pChild = dia::FindChildSymbol(pexp->str, pSymbol, offset);
 			RETV(!pChild, reval);
 
 			// next variable 설정 
-			LONG offset=0;
-			HRESULT hr = pChild->get_offset(&offset);
 			BYTE *ptr = (BYTE*)pMemInfo->ptr + offset;
 			const string typeName = dia::GetSymbolTypeName(pChild);
 			ULONGLONG length = 0;
-			hr = pChild->get_length(&length);
+			HRESULT hr = pChild->get_length(&length);
 
 			reval = Eval_Variable(pexp->rhs, pChild, &SMemoryInfo(pexp->str.c_str(), ptr, (size_t)length) );
 
@@ -576,7 +679,7 @@ CComVariant visualizer::Eval_Variable( SExpression *pexp,
 		}
 		else
 		{
-			reval = Get_Variable(pexp->str, pSymbol, pMemInfo);
+			reval = Eval_Variable_FromId(pexp->str, pSymbol, pMemInfo);
 		}
 	}
 
@@ -602,13 +705,14 @@ CComVariant visualizer::Eval_Variable( SExpression *pexp,
 //------------------------------------------------------------------------
 //  pSymbol 에서 varId 를 가진 변수의 데이타를 리턴한다.
 //------------------------------------------------------------------------
-CComVariant visualizer::Get_Variable( const string &varId, 
+CComVariant visualizer::Eval_Variable_FromId( const string &varId, 
 												   IDiaSymbol *pSymbol, const SMemoryInfo *pMemInfo )
 {
 	CComVariant reval;
 	RETV( !pSymbol || !pMemInfo, reval );
 
-	IDiaSymbol *pChildSymbol = dia::GetChildSymbol(varId, pSymbol);
+	LONG offset = 0;
+	IDiaSymbol *pChildSymbol = dia::FindChildSymbol(varId, pSymbol, offset);
 	RETV( !pChildSymbol, reval);
 
 	enum SymTagEnum symTag;
@@ -626,14 +730,87 @@ CComVariant visualizer::Get_Variable( const string &varId,
 
 	if (reval.vt == VT_EMPTY)
 	{
-		LONG offset=0;
-		hr = pChildSymbol->get_offset(&offset);
 		BYTE *ptr = (BYTE*)pMemInfo->ptr + offset;
-		reval = dia::GetValueFromSymbol( ptr, pChildSymbol);
+		reval = dia::GetValueFromSymbol( ptr, pChildSymbol, false);
 		pChildSymbol->Release();
 	}
 
 	return reval;
+}
+
+
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
+IDiaSymbol* visualizer::Find_Variable( SExpression *pexp, IDiaSymbol *pSymbol, 
+						  OUT LONG &offset )
+{
+	IDiaSymbol *reval = NULL;
+	RETV(!pexp, reval);
+	RETV(pexp->kind != VariableK, reval);
+
+	if (pexp->str == "$e")
+	{
+		IDiaSymbol *pEachSymbol = CDiaWrapper::Get()->FindType(m_SymbolName);
+		if (!pEachSymbol)
+			return reval;
+
+		if (pexp->rhs)
+		{
+			reval = Find_Variable(pexp->rhs, pEachSymbol, offset);
+		}
+		else
+		{
+			reval = pEachSymbol;
+			offset = 0;
+		}
+	}
+	else if (pexp->str == "$r")
+	{
+
+	}
+	else if (pexp->str == "$i")
+	{
+
+	}
+	else
+	{
+		RETV(!pSymbol, reval);
+
+		if (pexp->rhs)
+		{
+			LONG childOffset=0;
+			IDiaSymbol *pChild = dia::FindChildSymbol(pexp->str, pSymbol, childOffset);
+			RETV(!pChild, reval);
+
+			const string typeName = dia::GetSymbolTypeName(pChild); // debug 용
+			LONG nextOffset=0;
+			reval = Find_Variable(pexp->rhs, pChild, nextOffset);
+			offset = childOffset + nextOffset;
+
+			pChild->Release();
+		}
+		else
+		{
+			reval = Find_Variable_FromId(pexp->str, pSymbol, offset);
+		}
+	}
+
+	return reval;
+}
+
+//------------------------------------------------------------------------
+// pSymbol 안에서 varId 를 가진 심볼을 리턴한다.
+//------------------------------------------------------------------------
+IDiaSymbol* visualizer::Find_Variable_FromId( const std::string &varId, 
+											 IDiaSymbol *pSymbol, OUT LONG &offset )
+{
+	RETV( !pSymbol, NULL);
+
+	LONG childOffset = 0;
+	IDiaSymbol *pChildSymbol = dia::FindChildSymbol(varId, pSymbol, offset);
+	RETV( !pChildSymbol, NULL);
+	return pChildSymbol;
 }
 
 
@@ -653,3 +830,16 @@ char visualizer::GetAsciiFromTokentype(Tokentype tok)
 	return c;
 }
 
+
+//------------------------------------------------------------------------
+// 에러 체크
+// condition 이 true 이면 문제 없음
+//------------------------------------------------------------------------
+void visualizer::CheckError( bool condition, const string &msg ) // msg="error"
+{
+	if (condition) // success
+		return;
+
+	// error occur
+	throw VisualizerScriptError( m_SymbolName + " " + msg);
+}

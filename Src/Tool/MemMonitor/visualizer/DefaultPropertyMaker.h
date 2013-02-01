@@ -15,12 +15,12 @@ class CPropertiesWnd;
 struct STypeData;
 namespace visualizer
 {
-	bool		MakeProperty( CPropertiesWnd *pProperties,  const std::string &symbolName );
+	bool		MakeProperty_DefaultForm( CPropertiesWnd *pProperties,  const std::string &symbolName );
 
-	bool		MakeProperty(  CPropertiesWnd *pProperties, CMFCPropertyGridProperty *pParentProp,  
+	bool		MakeProperty_DefaultForm(  CPropertiesWnd *pProperties, CMFCPropertyGridProperty *pParentProp,  
 		const std::string &symbolName );
 
-	bool		MakeProperty(  CPropertiesWnd *pProperties, CMFCPropertyGridProperty *pParentProp,  
+	bool		MakeProperty_DefaultForm(  CPropertiesWnd *pProperties, CMFCPropertyGridProperty *pParentProp,  
 		IDiaSymbol *pSymbol, const sharedmemory::SMemoryInfo &memInfo );
 
 	bool		SetPropertyValue(CMFCPropertyGridProperty *pProp, _variant_t value);

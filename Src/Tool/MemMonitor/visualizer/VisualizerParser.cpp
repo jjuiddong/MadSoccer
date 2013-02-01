@@ -116,14 +116,15 @@ SVisualizer* visualizer_parser::CParser::visualizer()
 		p->stringview = NULL;
 		p->children = NULL;
 
-		while (RBRACE != m_Token)
+		bool loop = true;
+		while (RBRACE != m_Token && loop)
 		{
 			switch (m_Token)
 			{
 			case PREVIEW: p->preview = preview(); break;
 			case STRINGVIEW: p->stringview = stringview(); break;
 			case CHILDREN: p->children = children(); break;
-			default: break;
+			default: loop = false; break;
 			}
 		}
 		Match(RBRACE);
@@ -206,7 +207,45 @@ SStatements* visualizer_parser::CParser::statements()
 	}
 	else
 	{
-		SExpression *text = expression();
+		bool isSimplExp = false;
+		if (LBRACKET == m_Token)
+		{
+			int i=1;
+			for (; i < 7; ++i)
+			{
+				const Tokentype tok = m_pScan->GetTokenQ(i);
+				char *pp = m_pScan->GetTokenStringQ(i);
+				if (RBRACKET == tok)
+				{
+					const Tokentype nextTok = m_pScan->GetTokenQ(i+1);
+					if (COLON == nextTok)
+					{
+						isSimplExp = true;
+						break;
+					}					
+				}
+			}			
+		}
+
+		SExpression *text = NULL;
+		if (isSimplExp)
+		{
+			text = NewExpression(StringK);
+			Match(LBRACKET);
+			int cnt = 0; // 오류처리를 위한 코드
+			while (RBRACKET != m_Token && cnt < 10)
+			{
+				text->str += m_pScan->GetTokenStringQ(0);
+				Match(m_Token);
+				++cnt;
+			}
+			Match(RBRACKET);
+		}
+		else
+		{
+			text = expression();
+		}		
+
 		if (COLON == m_Token)
 		{
 			SSimpleExp *sim_exp = simple_exp();
@@ -269,7 +308,7 @@ Display_Format visualizer_parser::CParser::display_format()
 	}
 	else
 	{
-		Match(STRING);
+		Match(ID);
 	}
 	return reval;
 }
@@ -292,6 +331,7 @@ bool visualizer_parser::CParser::IsVisCommand(Tokentype tok)
 
 
 // 		simple_exp ->	text ':' '[' expression [,format] ']'
+//							| '[' expression [,format] ']'
 // 			;
 SSimpleExp* visualizer_parser::CParser::simple_exp()
 { 
@@ -871,14 +911,14 @@ SExpression* visualizer_parser::CParser::primary_expression()
 
 	case LBRACKET:
 		{
-			p = NewExpression(StringK);
 			Match(LBRACKET);
-			int cnt = 0; // 오류처리를 위한 코드
-			while (RBRACKET != m_Token && cnt < 10)
+			p = expression();
+			if (COMMA == m_Token) // display format
 			{
-				p->str += m_pScan->GetTokenStringQ(0);
-				Match(m_Token);
-				++cnt;
+				SExpression *pnew = NewExpression(DispFormatK);
+				pnew->dispFormat = display_format();
+				pnew->rhs = p;
+				p = pnew;
 			}
 			Match(RBRACKET);
 		}
