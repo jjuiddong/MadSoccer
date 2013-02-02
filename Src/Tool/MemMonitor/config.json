@@ -1,6 +1,17 @@
 {
-	"pdbPath" : "C:\\Project\\GitHub\\BoostIPC\\Debug\\SharememLibrary.pdb" ,
-	"sharedmemoryname" : "MySharedMemory"
+	"pdbpath" : "C:\\Project\\GitHub\\BounceBall\\Debug\\MFCBounceBall.pdb" ,
+	"sharedmemoryname" : "BounceBall",
+	"property" : [
+		{
+			"symbolname" : "CBall#1"
+		},
+		{
+			"symbolname" : "CBall#2"
+		},
+		{
+			"symbolname" : "CBall#3"
+		}
 
+	]
 
 }

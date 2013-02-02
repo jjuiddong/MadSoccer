@@ -150,7 +150,7 @@ BOOL CMemMonitorApp::OpenConfigScript(const std::string &configFileName)
 		using std::string;
 		ptree props;
 		boost::property_tree::read_json(configFileName.c_str(), props);
-		string pdbPath = props.get<string>("pdbPath");
+		string pdbPath = props.get<string>("pdbpath");
 		string shareMemoryName = props.get<string>("sharedmemoryname");
 
 		// Pdb Load

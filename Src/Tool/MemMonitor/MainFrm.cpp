@@ -202,10 +202,10 @@ bool	CMainFrame::OpenScript( const std::string &openScriptFileName )
 		using std::string;
 		ptree props;
 		boost::property_tree::read_json(openScriptFileName.c_str(), props);
-		ptree &childs = props.get_child("Property");
+		ptree &childs = props.get_child("property");
 		BOOST_FOREACH(ptree::value_type &vt, childs)
 		{
-			string name = vt.second.get<string>("symbolName");
+			string name = vt.second.get<string>("symbolname");
 			CString symbolName = common::string2wstring(name).c_str();
 
 			int val[ 4] = {0,};
