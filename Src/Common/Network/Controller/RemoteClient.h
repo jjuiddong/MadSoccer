@@ -9,7 +9,9 @@
 
 namespace network
 {
-	class CRemoteClient
+	DECLARE_TYPE_NAME_SCOPE(network, CRemoteClient)
+	class CRemoteClient 
+		: public sharedmemory::CSharedMem<CRemoteClient, TYPE_NAME(network::CRemoteClient)>
 	{
 	public:
 		CRemoteClient() : m_Socket(0),	m_NetId(common::GenerateId()) { }

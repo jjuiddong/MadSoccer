@@ -7,7 +7,9 @@
 //------------------------------------------------------------------------
 #pragma once
 
+DECLARE_TYPE_NAME(CUserLobby)
 class CUserLobby : public network::CUser
+			, public sharedmemory::CSharedMem<CUserLobby, TYPE_NAME(CUserLobby)>
 {
 public:
 	CUserLobby() {}

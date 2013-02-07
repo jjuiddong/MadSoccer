@@ -19,8 +19,8 @@
 #include "Lib/ServerLauncher.h"
 #include "Lib/LobbyServer.h"
 
-CChatServer g_Server;
-CLobbyServer g_LobbyServer;
+CChatServer *g_pChatServer;
+CLobbyServer *g_pLobbyServer;
 
 
 // 전역 변수:
@@ -59,11 +59,15 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		return FALSE;
 	}
 
+	sharedmemory::Init("MadSoccerServer", sharedmemory::SHARED_SERVER, 20480 );
 	CServerLauncher::Get()->Launcher( "script/serverstartconfig.txt" );
-
 	network::Init(1);
-	network::StartServer( 2333, &g_Server );
-	network::StartServer( 2334, &g_LobbyServer );
+
+	g_pChatServer = new CChatServer();
+	g_pLobbyServer = new CLobbyServer();
+
+	network::StartServer( 2333, g_pChatServer );
+	network::StartServer( 2334, g_pLobbyServer );
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_SERVERAPP));
 
@@ -95,6 +99,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	}
 
 	network::Clear();
+	delete g_pLobbyServer;
+	delete g_pChatServer;
+	sharedmemory::Release();
 	return (int) msg.wParam;
 }
 
@@ -186,10 +193,13 @@ int PrintString(HDC hdc, int x, int y, const std::string &str)
 }
 void Paint(HDC hdc)
 {
-	std::string str1 = g_LobbyServer.ToString();
-	std::string str2 = network::ToString();
-	int y = PrintString(hdc, 10, 0, str1);
-	y += PrintString(hdc, 10, y+16, str2);
+	if (g_pLobbyServer)
+	{
+		std::string str1 = g_pLobbyServer->ToString();
+		std::string str2 = network::ToString();
+		int y = PrintString(hdc, 10, 0, str1);
+		y += PrintString(hdc, 10, y+16, str2);
+	}
 }
 
 

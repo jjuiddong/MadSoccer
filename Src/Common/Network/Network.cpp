@@ -32,9 +32,7 @@ bool network::Init(int logicThreadCount)
 void network::Clear()
 {
 	dbg::Print( "Network Clear" );
-
 	CNetController::Release();
-
 }
 
 

@@ -15,7 +15,9 @@
 
 namespace network
 {
+	DECLARE_TYPE_NAME_SCOPE(network, CTaskLogic)
 	class CTaskLogic : public common::CTask
+		, public sharedmemory::CSharedMem<CTaskLogic, TYPE_NAME(network::CTaskLogic)>
 	{
 	public:
 		CTaskLogic() : CTask(0,"TaskLogic") {}

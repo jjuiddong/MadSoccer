@@ -11,7 +11,9 @@
 
 namespace network
 {
+	DECLARE_TYPE_NAME_SCOPE(network, CTaskAccept)
 	class CTaskAccept : public common::CTask
+		, public sharedmemory::CSharedMem<CTaskAccept, TYPE_NAME(network::CTaskAccept)>
 	{
 	public:
 		CTaskAccept() : CTask(0,"TaskAccept") {}

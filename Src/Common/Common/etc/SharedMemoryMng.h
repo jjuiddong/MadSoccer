@@ -33,14 +33,14 @@ namespace sharedmemory
 
 
 	// Memory Info
-	typedef struct _SMemoryInfo
+	struct SMemoryInfo
 	{
 		std::string name;
 		void *ptr;
 		size_t size;
-		_SMemoryInfo() {}
-		_SMemoryInfo(const char *n, void *p, size_t s):name(n), ptr(p), size(s) {}
-	} SMemoryInfo;
+		SMemoryInfo() {}
+		SMemoryInfo(const char *n, void *p, size_t s):name(n), ptr(p), size(s) {}
+	};
 	typedef std::list<SMemoryInfo> MemoryList;
 
 	void		EnumerateMemoryInfo(OUT MemoryList &memList);

@@ -9,11 +9,14 @@
 
 #pragma once
 
+#include "../etc/SharedMemory.h"
 
 namespace common
 {
 	class CTask;
+	DECLARE_TYPE_NAME_SCOPE(common, CThread)
 	class CThread
+		: public sharedmemory::CSharedMem<CThread, TYPE_NAME(CThread)>
 	{
 	public:
 		CThread(const std::string &name="");

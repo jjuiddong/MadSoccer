@@ -12,8 +12,9 @@
 #include "NetCommon/basic_Protocol.h"
 #include "NetCommon/basic_ProtocolListener.h"
 
-
-class CChatServer : public network::CServer
+DECLARE_TYPE_NAME(CChatServer)
+class CChatServer : public network::CServer, 
+								public sharedmemory::CSharedMem<CChatServer, TYPE_NAME(CChatServer)>
 {
 public:
 	CChatServer()

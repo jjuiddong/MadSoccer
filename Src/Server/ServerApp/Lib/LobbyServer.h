@@ -13,9 +13,12 @@
 #include "NetCommon/basic_ProtocolListener.h"
 
 class CLogInListener;
+
+DECLARE_TYPE_NAME(CLobbyServer)
 class CLobbyServer : public network::CServer
 					, public login::c2s_ProtocolListener
 					, public basic::c2s_ProtocolListener
+					, public sharedmemory::CSharedMem<CLobbyServer, TYPE_NAME(CLobbyServer)>
 {
 public:
 	CLobbyServer();
@@ -23,7 +26,7 @@ public:
 
 protected:
 	UserMap				m_Users;
-	RoomMap				m_Rooms;
+	RoomMap			m_Rooms;
 
 	// Protocol
 	login::s2c_Protocol	m_LoginProtocol;

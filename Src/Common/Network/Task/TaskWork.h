@@ -11,7 +11,9 @@
 
 namespace network
 {
+	DECLARE_TYPE_NAME_SCOPE(network, CTaskWork)
 	class CTaskWork : public common::CTask
+		, public sharedmemory::CSharedMem<CTaskWork, TYPE_NAME(network::CTaskWork)>
 	{
 	public:
 		CTaskWork(ServerPtr psvr):CTask(1,"TaskWork"), m_pServer(psvr) {}
