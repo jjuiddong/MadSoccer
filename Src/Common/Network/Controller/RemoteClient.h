@@ -3,7 +3,7 @@
 // Author:  jjuiddong
 // Date:    12/25/2012
 // 
-// 
+// 서버에 접속된 클라이언트 정보를 가진다.
 //------------------------------------------------------------------------
 #pragma once
 
@@ -22,7 +22,7 @@ namespace network
 
 	protected:
 		netid		m_NetId;
-		SOCKET		m_Socket;
+		SOCKET	m_Socket;
 
 	public:
 		netid		GetNetId() const { return m_NetId; }

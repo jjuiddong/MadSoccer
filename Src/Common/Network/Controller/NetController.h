@@ -4,6 +4,7 @@
 // Date:    12/24/2012
 // 
 // 네트워크에 필요한 쓰레드와 서버,클라이언트 객체를 관리한다.
+// Dipatcher 를 관리한다.
 //------------------------------------------------------------------------
 #pragma once
 
@@ -27,7 +28,7 @@ namespace network
 		typedef ThreadList::iterator ThreadItor;
 
 		ServerMap			m_Servers;
-		ClientMap			m_Clients;
+		ClientMap				m_Clients;
 		DispatcherMap		m_Dipatchers;
 		common::CThread		m_AcceptThread;
 		ThreadList			m_WorkThreads;

@@ -30,8 +30,6 @@ CDlgProperty::~CDlgProperty()
 		SAFE_DELETE(item);
 	}
 	m_PropList.clear();
-
-
 }
 
 void CDlgProperty::DoDataExchange(CDataExchange* pDX)
@@ -180,57 +178,11 @@ void CDlgProperty::MakePropertyItem(sArg *arg)
 
 	CString str;
 	str = common::string2wstring(arg->var->type + " " + arg->var->var).c_str();
-	CMFCPropertyGridProperty *pProp = new CMFCPropertyGridProperty(str, 
-		GetTypeStr2Type(arg->var->type), _T("Description") );
+	CMFCPropertyGridProperty *pProp = 
+		new CMFCPropertyGridProperty(str, GetTypeStr2Type(arg->var->type), _T("Description") );
+
+
 	AddProperty(pProp);
-
-/*
-	CMFCPropertyGridProperty* pGroup1 = new CMFCPropertyGridProperty(_T("Appearance"));
-	// construct a COleVariant object. 
-	COleVariant var3DLook((short)VARIANT_FALSE, VT_BOOL);
-
-	pGroup1->AddSubItem(new CMFCPropertyGridProperty(_T("3D Look"), var3DLook, 
-		_T("Specifies the dialog's font will be nonbold and controls will have a 3D border")));
-
-	CMFCPropertyGridProperty* pProp = new CMFCPropertyGridProperty(_T("Border"),
-		_T("Dialog Frame"), _T("One of: None, Thin, Resizable, or Dialog Frame"));
-	pProp->AddOption(_T("None"));
-	pProp->AddOption(_T("Thin"));
-	pProp->AddOption(_T("Resizable"));
-	pProp->AddOption(_T("Dialog Frame"));
-	pProp->AllowEdit(FALSE);
-
-	pGroup1->AddSubItem(pProp);
-	pGroup1->AddSubItem(new CMFCPropertyGridProperty(_T("Caption"), (COleVariant) _T("About NewControlsDemo"), _T("Specifies the text that will be displayed in the dialog's title bar")));
-	pGroup1->AdjustButtonRect();
-	pGroup1->AllowEdit();
-	pGroup1->Enable();
-	pGroup1->Show();
-	pGroup1->Redraw();
-	AddProperty(pGroup1);
-/**/
-
-
-/*
-	CMFCPropertyGridProperty* pMDITabsProp = new CMFCPropertyGridProperty (_T("Enable MDI Tabs"), 
-		lpszMDITabsStyles [1],
-		_T("Enable or disable either the standard MDI Tabs feature, or MDI Tabbed Groups feature"), 
-		TRUE);
-
-	pMDITabsProp->AddOption (_T ("None"));
-	pMDITabsProp->AddOption (_T ("MDI Tabs (Standard)"));
-	pMDITabsProp->AddOption (_T ("MDI Tabbed Groups"));
-	pMDITabsProp->AllowEdit (FALSE);
-
-	//m_wndPropList.AddProperty (pMDITabsProp);
-	AddProperty(pMDITabsProp);
-
-	CMFCPropertyGridProperty *pMax = new CMFCPropertyGridProperty (_T("Maximize child"), 
-		(_variant_t)(nBorderSize==1),
-		_T("Always maximize MDI child windows"), 1);	
-
-	AddProperty(pMax);
-/**/
 	MakePropertyItem(arg->next);
 }
 

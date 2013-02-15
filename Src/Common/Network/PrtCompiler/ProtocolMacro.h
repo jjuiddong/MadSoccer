@@ -10,12 +10,11 @@
 
 
 // Dispatcher::Dispatch 에서 사용되는 매크로
-#define SEND_LISTENER(listenerType, listeners, func)											\
+#define SEND_LISTENER(listenerType, listeners, func)												\
 	BOOST_FOREACH(ProtocolListenerPtr p, listeners)												\
-	{																							\
-		listenerType *lstr = dynamic_cast<listenerType*>((IProtocolListener*)p);				\
-		if (lstr)																				\
-			lstr->func;																			\
-	}																							\
-
+	{																																\
+		listenerType *lstr = dynamic_cast<listenerType*>((IProtocolListener*)p);		\
+		if (lstr)																													\
+			lstr->func;																										\
+	}																																\
 

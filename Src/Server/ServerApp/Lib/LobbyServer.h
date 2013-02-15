@@ -36,12 +36,12 @@ public:
 	bool			AddUser(network::CUser *pUser);
 	bool			RemoveUser(network::CUser *pUser);
 	bool			RemoveUser(netid netId);
-	UserPtr			GetUser(netid netId);
+	UserPtr		GetUser(netid netId);
 	
 	bool			AddRoom(network::CRoom *pRoom);
 	bool			RemoveRoom(network::CRoom *pRoom);
 	bool			RemoveRoom(int roomId);
-	RoomPtr			GetRoom(int roomId);
+	RoomPtr	GetRoom(int roomId);
 
 	// 패킷 보내기
 	void			SendRooms(network::CUser *pUser);

@@ -18,7 +18,7 @@ namespace network
 	protected:
 		int					m_Id;
 		int					m_Number;	// ¹æ¹øÈ£
-		std::string			m_Name;
+		std::string		m_Name;
 		GroupList			m_Groups;
 
 	public:

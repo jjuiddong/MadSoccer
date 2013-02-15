@@ -17,7 +17,7 @@ namespace network
 
 	protected:
 		int					m_Id;		// Character 고유아이디
-		std::string			m_Name;
+		std::string		m_Name;
 
 	public:
 		int					GetId() const { return m_Id; }

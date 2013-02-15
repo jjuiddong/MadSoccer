@@ -12,7 +12,7 @@
 
 namespace network
 {
-	class cProtocolParser;
+	class CProtocolParser;
 }
 
 class CDlgProperty;
@@ -38,7 +38,7 @@ protected:
 
 	} SItemInfo;
 
-	typedef std::list<network::cProtocolParser*> ParserList; // rmi메모리 제거를 나중으로 미루기 위해서 만들어졌다.
+	typedef std::list<network::CProtocolParser*> ParserList; // rmi메모리 제거를 나중으로 미루기 위해서 만들어졌다.
 	typedef ParserList::iterator ParserItor;
 	typedef std::map<int,SItemInfo*> ItemInfoSubMap;		// key = packetID
 	typedef ItemInfoSubMap::iterator ItemInfoSubMapItor;

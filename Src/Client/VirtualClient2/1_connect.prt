@@ -1,7 +1,0 @@
-
-
-protocol c2s 0
-{
-	Connect( std::string ip, int port, float a );	
-}
-

@@ -11,15 +11,15 @@
 
 namespace network
 {
-	class cProtocolScanner;
-	class cProtocolParser
+	class CProtocolScanner;
+	class CProtocolParser
 	{
 	public:
-		cProtocolParser();
-		virtual ~cProtocolParser();
+		CProtocolParser();
+		virtual ~CProtocolParser();
 
 	protected:
-		cProtocolScanner *m_pScan;
+		CProtocolScanner *m_pScan;
 		sRmi			*m_pRmiList;
 
 		char m_FileName[ MAX_PATH];
@@ -47,8 +47,6 @@ namespace network
 		void WriteArg(FILE *fp, sArg*p, bool isComma);
 		void WriteFirstArgVar(FILE *fp, sArg*p);
 		void WriteArgVar(FILE *fp, sArg*p, bool isComma);
-
-
 
 
 		// expr -> rmi_list

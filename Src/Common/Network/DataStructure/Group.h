@@ -20,7 +20,7 @@ namespace network
 		NetIdList			m_Users;
 
 	public:
-		int					GetId() const { return m_Id; }
+		int				GetId() const { return m_Id; }
 
 		bool				AddUser(netid id);
 		bool				RemoveUser(netid id);

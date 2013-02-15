@@ -42,14 +42,14 @@ static Tokentype reservedLookup( char *s )
 
 
 
-cProtocolScanner::cProtocolScanner() :
+CProtocolScanner::CProtocolScanner() :
 	m_pFileMem(NULL)
 {
 
 }
 
 
-cProtocolScanner::~cProtocolScanner()
+CProtocolScanner::~CProtocolScanner()
 {
 	Clear();
 }
@@ -58,7 +58,7 @@ cProtocolScanner::~cProtocolScanner()
 //----------------------------------------------------------------------------
 // 
 //----------------------------------------------------------------------------
-BOOL cProtocolScanner::LoadFile( const char *szFileName, BOOL bTrace ) // bTrace=FALSE
+BOOL CProtocolScanner::LoadFile( const char *szFileName, BOOL bTrace ) // bTrace=FALSE
 {
 	OFSTRUCT of;
 
@@ -91,7 +91,7 @@ BOOL cProtocolScanner::LoadFile( const char *szFileName, BOOL bTrace ) // bTrace
 //----------------------------------------------------------------------------
 // 패키지 파일을 읽어서 복사해서 사용한다.
 //----------------------------------------------------------------------------
-BOOL cProtocolScanner::LoadPackageFile( BYTE *pFileMem, int nFileSize )
+BOOL CProtocolScanner::LoadPackageFile( BYTE *pFileMem, int nFileSize )
 {
 	if (m_pFileMem)
 		delete[] m_pFileMem;
@@ -109,7 +109,7 @@ BOOL cProtocolScanner::LoadPackageFile( BYTE *pFileMem, int nFileSize )
 //----------------------------------------------------------------------------
 // 메모리의 끝을 가르키거나, 로드되지 않았다면 true를 리턴한다.
 //----------------------------------------------------------------------------
-BOOL cProtocolScanner::IsEnd()
+BOOL CProtocolScanner::IsEnd()
 {
 	if (!m_pFileMem) return TRUE;
 	if (m_pCurrentMemPoint >= m_nMemSize) return TRUE;
@@ -118,7 +118,7 @@ BOOL cProtocolScanner::IsEnd()
 }
 
 
-Tokentype cProtocolScanner::GetToken()
+Tokentype CProtocolScanner::GetToken()
 {
 	if (!m_pFileMem) return ENDFILE;
 
@@ -147,7 +147,7 @@ Tokentype cProtocolScanner::GetToken()
 }
 
 
-Tokentype cProtocolScanner::GetTokenQ( int nIdx )
+Tokentype CProtocolScanner::GetTokenQ( int nIdx )
 {
 	if (!m_pFileMem) return ENDFILE;
 
@@ -155,14 +155,14 @@ Tokentype cProtocolScanner::GetTokenQ( int nIdx )
 }
 
 
-char* cProtocolScanner::GetTokenStringQ( int nIdx )
+char* CProtocolScanner::GetTokenStringQ( int nIdx )
 {
 	if (!m_pFileMem) return NULL;
 	return 	(char*)m_TokQ[ nIdx].str.c_str();
 }
 
 
-char* cProtocolScanner::CopyTokenStringQ( int nIdx )
+char* CProtocolScanner::CopyTokenStringQ( int nIdx )
 {
 	if (!m_pFileMem) return NULL;
 
@@ -173,7 +173,7 @@ char* cProtocolScanner::CopyTokenStringQ( int nIdx )
 }
 
 
-char cProtocolScanner::GetNextChar()
+char CProtocolScanner::GetNextChar()
 {
 	if( m_nLinePos >= m_nBufSize )
 	{
@@ -200,7 +200,7 @@ char cProtocolScanner::GetNextChar()
 // fgets() 함수와 비슷한 일을 한다. 파일에 있는 데이타가 아니라, 메모리에
 // 있는 데이타를 가져온다는 것이 다르다.
 //----------------------------------------------------------------------------
-BOOL cProtocolScanner::GetString(char *receiveBuffer, int maxBufferLength)
+BOOL CProtocolScanner::GetString(char *receiveBuffer, int maxBufferLength)
 {
 	if (m_pCurrentMemPoint >= m_nMemSize)
 		return FALSE;
@@ -235,13 +235,13 @@ BOOL cProtocolScanner::GetString(char *receiveBuffer, int maxBufferLength)
 }
 
 
-void cProtocolScanner::UngetNextChar()
+void CProtocolScanner::UngetNextChar()
 {
 	--m_nLinePos;
 }
 
 
-Tokentype cProtocolScanner::_GetToken( char *pToken )
+Tokentype CProtocolScanner::_GetToken( char *pToken )
 {
 	BOOL bFloat = FALSE;
 	Tokentype currentToken;
@@ -599,7 +599,7 @@ Tokentype cProtocolScanner::_GetToken( char *pToken )
 }
 
 
-void cProtocolScanner::Init()
+void CProtocolScanner::Init()
 {
 	m_nLineNo = 0;
 	m_nLinePos = 0;
@@ -608,7 +608,7 @@ void cProtocolScanner::Init()
 
 }
 
-void cProtocolScanner::Clear()
+void CProtocolScanner::Clear()
 {
 
 	if (m_pFileMem)

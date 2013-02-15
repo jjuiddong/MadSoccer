@@ -50,9 +50,8 @@ bool CProtocolTree::Init()
 	std::list<std::string> fileList = common::FindFileList( "C:\\Project\\GitHub\\MadSoccer\\Src\\Common\\NetCommon\\*.prt" );
 	BOOST_FOREACH(std::string &str, fileList)
 	{
-		cProtocolParser *pParser = new cProtocolParser();
+		CProtocolParser *pParser = new CProtocolParser();
 		sRmi *rmiList = pParser->Parse( str.c_str() );
-		m_ParserList.push_back( pParser );
 		if (rmiList)
 		{
 			HTREEITEM hItem = InsertTree(NULL, 
@@ -60,9 +59,14 @@ bool CProtocolTree::Init()
 				, NewItemInfo(NONE,NULL,NULL));
 			MakeTreeRmi(hItem, rmiList);
 			Expand(hItem, TVE_EXPAND);
+
+			m_ParserList.push_back( pParser );
+		}
+		else
+		{
+			delete pParser;
 		}
 	}
-
 	return true;
 }
 
@@ -213,7 +217,7 @@ void CProtocolTree::OnDestroy()
 {
 	CTreeCtrlBase::OnDestroy();
 
-	BOOST_FOREACH(cProtocolParser *parser, m_ParserList)
+	BOOST_FOREACH(CProtocolParser *parser, m_ParserList)
 	{
 		SAFE_DELETE(parser);
 	}

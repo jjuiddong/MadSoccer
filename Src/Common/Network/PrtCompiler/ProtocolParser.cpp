@@ -4,17 +4,16 @@
 
 using namespace network;
 
-cProtocolParser::cProtocolParser() 
+CProtocolParser::CProtocolParser() 
 {
-	m_pScan = new cProtocolScanner();
+	m_pScan = new CProtocolScanner();
 	m_pRmiList = NULL;
 	m_bTrace = FALSE;
 	m_bError = FALSE;
 
 }
 
-
-cProtocolParser::~cProtocolParser()
+CProtocolParser::~CProtocolParser()
 {
 	SAFE_DELETE(m_pScan);
 	ReleaseRmi(m_pRmiList);
@@ -25,7 +24,7 @@ cProtocolParser::~cProtocolParser()
 //---------------------------------------------------------------------
 // 튜토리얼 스크립트를 파싱한다.
 //---------------------------------------------------------------------
-sRmi* cProtocolParser::Parse( const char *szFileName, BOOL bTrace )
+sRmi* CProtocolParser::Parse( const char *szFileName, BOOL bTrace )
 {
 	if( !m_pScan->LoadFile(szFileName, bTrace) )
 		return NULL;
@@ -50,16 +49,12 @@ sRmi* cProtocolParser::Parse( const char *szFileName, BOOL bTrace )
 		return NULL;
 	}
 
-	//WritePIDLMacro(m_FileName, rmiList);
-// 	const bool result = compiler::WriteProtocolCode(szFileName, rmiList);
-// 	ReleaseRmi(rmiList);
-
 	return m_pRmiList;
 }
 
 
 // rmi_list -> (rmi)*
-sRmi* cProtocolParser::rmi_list()
+sRmi* CProtocolParser::rmi_list()
 {
 	sRmi *p = rmi();
 	sRmi *first = p;
@@ -71,7 +66,7 @@ sRmi* cProtocolParser::rmi_list()
 }
 
 // rmi -> global id number '{' stmt_list '}'
-sRmi* cProtocolParser::rmi()
+sRmi* CProtocolParser::rmi()
 {
 	sRmi *p = NULL;
 	
@@ -90,7 +85,7 @@ sRmi* cProtocolParser::rmi()
 }
 
 // stmt_list -> (stmt)*
-sProtocol* cProtocolParser::stmt_list()
+sProtocol* CProtocolParser::stmt_list()
 {
 	sProtocol *p = stmt();
 	sProtocol *first = p;
@@ -102,7 +97,7 @@ sProtocol* cProtocolParser::stmt_list()
 }
 
 // stmt -> protocol semicolon
-sProtocol* cProtocolParser::stmt()
+sProtocol* CProtocolParser::stmt()
 {
 	sProtocol *p = protocol();
 	if (p)
@@ -111,7 +106,7 @@ sProtocol* cProtocolParser::stmt()
 }
 
 // protocol -> id '(' arg_list ')'
-sProtocol* cProtocolParser::protocol()
+sProtocol* CProtocolParser::protocol()
 {
 	sProtocol*p=NULL;
 	if (ID == m_Token)
@@ -128,7 +123,7 @@ sProtocol* cProtocolParser::protocol()
 
 
 // arg_list -> [arg (',' arg)*]
-sArg* cProtocolParser::arg_list()
+sArg* CProtocolParser::arg_list()
 {
 	sArg *p = arg();
 	if (!p)
@@ -146,7 +141,7 @@ sArg* cProtocolParser::arg_list()
 }
 
 // arg -> type
-sArg* cProtocolParser::arg()
+sArg* CProtocolParser::arg()
 {
 	sArg *p = NULL;
 	if (ID == m_Token)
@@ -159,7 +154,7 @@ sArg* cProtocolParser::arg()
 }
 
 // type -> type_sub (var)?
-sTypeVar* cProtocolParser::type()
+sTypeVar* CProtocolParser::type()
 {
 	sTypeVar *p=NULL;
 	if (ID != m_Token)
@@ -176,7 +171,7 @@ sTypeVar* cProtocolParser::type()
 // type_sub -> id '<' type_sub '>'
 //			| id::id
 //			| id
-std::string cProtocolParser::type_sub()
+std::string CProtocolParser::type_sub()
 {
 	std::string str = "";
 
@@ -213,7 +208,7 @@ std::string cProtocolParser::type_sub()
 //		| id (index)?
 //	    | '*'
 //		| '&'
-std::string cProtocolParser::var()
+std::string CProtocolParser::var()
 {
 	std::string str = "";
 	Tokentype nextTok = m_pScan->GetTokenQ(1);
@@ -251,7 +246,7 @@ std::string cProtocolParser::var()
 	return str;
 }
 
-std::string cProtocolParser::index()
+std::string CProtocolParser::index()
 {
 	std::string str = "";
 	if (LBRACKET == m_Token)
@@ -265,7 +260,7 @@ std::string cProtocolParser::index()
 	return str;
 }
 
-std::string cProtocolParser::number()
+std::string CProtocolParser::number()
 {
 	std::string str = "";
 	str = m_pScan->GetTokenStringQ(0);
@@ -273,21 +268,21 @@ std::string cProtocolParser::number()
 	return str;
 }
 
-int cProtocolParser::num()
+int CProtocolParser::num()
 {
 	int n = atoi(m_pScan->GetTokenStringQ(0));
 	Match(NUM);
 	return n;
 }
 
-std::string cProtocolParser::id()
+std::string CProtocolParser::id()
 {
 	std::string str = m_pScan->GetTokenStringQ(0);
 	Match( ID );
 	return str;
 }
 
-BOOL cProtocolParser::Match( Tokentype t )
+BOOL CProtocolParser::Match( Tokentype t )
 {
 	if( m_Token == t )
 	{
@@ -303,7 +298,7 @@ BOOL cProtocolParser::Match( Tokentype t )
 }
 
 
-void cProtocolParser::SyntaxError( char *szMsg, ... )
+void CProtocolParser::SyntaxError( char *szMsg, ... )
 {
 	m_bError = TRUE;
 	char buf[ 256];
@@ -315,7 +310,7 @@ void cProtocolParser::SyntaxError( char *szMsg, ... )
  	printf( "Syntax error at line %s %d: %s", m_FileName, m_pScan->GetLineNo(), buf );
 }
 
-void cProtocolParser::ReleaseRmi(sRmi *p)
+void CProtocolParser::ReleaseRmi(sRmi *p)
 {
 	if (!p) return;
 	ReleaseProtocol(p->protocol);
@@ -323,7 +318,7 @@ void cProtocolParser::ReleaseRmi(sRmi *p)
 	delete p;
 }
 
-void cProtocolParser::ReleaseProtocol(sProtocol *p)
+void CProtocolParser::ReleaseProtocol(sProtocol *p)
 {
 	if (!p) return;
 	ReleaseArg(p->argList);
@@ -331,7 +326,7 @@ void cProtocolParser::ReleaseProtocol(sProtocol *p)
 	delete p;
 }
 
-void cProtocolParser::ReleaseArg(sArg *p)
+void CProtocolParser::ReleaseArg(sArg *p)
 {
 	if (!p) return;
 	if (p->var) delete p->var;
@@ -339,7 +334,7 @@ void cProtocolParser::ReleaseArg(sArg *p)
 	delete p;
 }
 
-void cProtocolParser::WritePIDLMacro(std::string PIDLFileName, sRmi *rmi)
+void CProtocolParser::WritePIDLMacro(std::string PIDLFileName, sRmi *rmi)
 {
 // 	string fileName = PIDLFileName;
 // 	fileName += "_procstub";
@@ -369,7 +364,7 @@ void cProtocolParser::WritePIDLMacro(std::string PIDLFileName, sRmi *rmi)
 	fclose(fp);
 }
 
-void cProtocolParser::WriteRmi(FILE *fp, sRmi *p)
+void CProtocolParser::WriteRmi(FILE *fp, sRmi *p)
 {
 	if (!p) return;
 	
@@ -388,7 +383,7 @@ void cProtocolParser::WriteRmi(FILE *fp, sRmi *p)
 	WriteRmi(fp, p->next);
 }
 
-void cProtocolParser::WriteProtocol(FILE *fp, sRmi *rmi, sProtocol *p)
+void CProtocolParser::WriteProtocol(FILE *fp, sRmi *rmi, sProtocol *p)
 {
 	if (!p) return;
 	
@@ -442,14 +437,14 @@ void cProtocolParser::WriteProtocol(FILE *fp, sRmi *rmi, sProtocol *p)
 
 // 인자값 처음 출력 
 // Proud::HostID remote,Proud::RmiContext &rmiContext 를 넣어줘야 한다.
-void cProtocolParser::WriteFirstArg(FILE *fp, sArg*p)
+void CProtocolParser::WriteFirstArg(FILE *fp, sArg*p)
 {
 	fprintf( fp, "Proud::HostID remote, Proud::RmiContext &rmiContext" );
 	WriteArg(fp, p, true);
 }
 
 // 변수의 타입과 이름을 출력한다.
-void cProtocolParser::WriteArg(FILE *fp, sArg*p, bool isComma)
+void CProtocolParser::WriteArg(FILE *fp, sArg*p, bool isComma)
 {
 	if (!p) return;
 	if (isComma)
@@ -460,14 +455,14 @@ void cProtocolParser::WriteArg(FILE *fp, sArg*p, bool isComma)
 
 // 변수이름 출력 처음
 // Proud::HostID remote,Proud::RmiContext &rmiContext 를 넣어줘야 한다.
-void cProtocolParser::WriteFirstArgVar(FILE *fp, sArg*p)
+void CProtocolParser::WriteFirstArgVar(FILE *fp, sArg*p)
 {
 	fprintf( fp, "remote, rmiContext" );
 	WriteArgVar(fp, p, true);
 }
 
 // 변수 이름만 출력한다.
-void cProtocolParser::WriteArgVar(FILE *fp, sArg*p, bool isComma)
+void CProtocolParser::WriteArgVar(FILE *fp, sArg*p, bool isComma)
 {
 	if (!p) return;
 	if (isComma)

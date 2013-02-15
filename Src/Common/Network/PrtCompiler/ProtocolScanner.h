@@ -13,11 +13,11 @@
 
 namespace network
 {
-	class cProtocolScanner
+	class CProtocolScanner
 	{
 	public:
-		cProtocolScanner();
-		virtual ~cProtocolScanner();
+		CProtocolScanner();
+		virtual ~CProtocolScanner();
 
 	protected:
 		enum { MAX_QSIZE=5, MAX_BUFF=256, MAX_TOKENLEN=256 };

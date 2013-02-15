@@ -15,16 +15,15 @@ namespace network
 	public:
 		CNetConnector();
 		virtual ~CNetConnector();
-		friend class CNetLauncher;
 
 	protected:
-		netid				m_NetId;				// 고유ID (자동생성)
-		SOCKET				m_Socket;
+		netid						m_NetId;				// 고유ID (자동생성)
+		SOCKET					m_Socket;
 		ProtocolListenerList m_ProtocolListeners;
 
 	public:
 		netid				GetNetId() const { return m_NetId; }
-		SOCKET				GetSocket() const { return m_Socket; }
+		SOCKET			GetSocket() const { return m_Socket; }
 
 		bool				RegisterProtocol(ProtocolPtr protocol);
 		bool				AddListener(ProtocolListenerPtr pListener);
