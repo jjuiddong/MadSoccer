@@ -70,8 +70,8 @@ BOOL CVirtualClient2App::InitInstance()
 	common::dump::InstallSelfMiniDump();
 
 	CVirtualClient2Dlg *pdlg = new CVirtualClient2Dlg();
-	pdlg->Create(CVirtualClient2Dlg::IDD, NULL);
 	m_pMainWnd = pdlg;
+	pdlg->Create(CVirtualClient2Dlg::IDD, NULL);
 	pdlg->ShowWindow(SW_SHOW);
 
 	bool bDoingBackgroundProcessing = true;

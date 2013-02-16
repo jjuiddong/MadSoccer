@@ -105,3 +105,19 @@ std::string network::ToString()
 {
 	return CNetController::Get()->ToString();
 }
+
+
+//------------------------------------------------------------------------
+// Log와 출력창에 동시에 출력한다.
+//------------------------------------------------------------------------
+void	network::LogNPrint( const char* fmt, ... )
+{
+	char textString[ 256] = {'\0'};
+	va_list args;
+	va_start ( args, fmt );
+	vsnprintf_s( textString, sizeof(textString), _TRUNCATE, fmt, args );
+	va_end ( args );
+
+	clog::Log( textString );
+	dbg::Print( textString );
+}

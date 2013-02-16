@@ -29,7 +29,8 @@ namespace network
 	void		Clear();
 
 	// Debug
-	std::string ToString();
+	std::string	ToString();
+	void				LogNPrint( const char* fmt, ... );
 
 };
 

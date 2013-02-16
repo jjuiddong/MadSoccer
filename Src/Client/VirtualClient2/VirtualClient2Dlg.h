@@ -16,10 +16,13 @@ class CVirtualClient2Dlg : public CDialog
 public:
 	CVirtualClient2Dlg(CWnd* pParent = NULL);	// 표준 생성자입니다.
 	virtual ~CVirtualClient2Dlg();
-	enum { IDD = IDD_VIRTUALCLIENT2_DIALOG };
+	enum { 
+		IDD = IDD_VIRTUALCLIENT2_DIALOG ,
+		ID_PROTOCOL_TREE,
+	};
 
 protected:
-	CDlgConsole			*m_pDlgConsole;
+	CDlgConsole		*m_pDlgConsole;
 	CProtocolTree		m_ProtocolTree;	
 
 public:

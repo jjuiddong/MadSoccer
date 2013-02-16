@@ -10,7 +10,7 @@ using namespace common;
 //------------------------------------------------------------------------
 // 유니코드를 멀티바이트 문자로 변환
 //------------------------------------------------------------------------
-std::string common::wstring2string(const std::wstring &wstr)
+std::string common::wstr2str(const std::wstring &wstr)
 {
 // 	std::locale const& loc = std::locale();
 // 	typedef std::codecvt<wchar_t, char, std::mbstate_t> codecvt_t;
@@ -37,7 +37,7 @@ std::string common::wstring2string(const std::wstring &wstr)
 //------------------------------------------------------------------------
 // 멀티바이트 문자를 유니코드로 변환
 //------------------------------------------------------------------------
-std::wstring common::string2wstring(const std::string &str)
+std::wstring common::str2wstr(const std::string &str)
 {
 // 	std::locale const& loc = std::locale();
 // 	typedef std::codecvt<wchar_t, char, std::mbstate_t> codecvt_t;
@@ -65,7 +65,7 @@ std::wstring common::string2wstring(const std::string &str)
 //------------------------------------------------------------------------
 // _variant_t 타입을 스트링으로 변환시킨다. 데이타 출력용을 만들어졌다.
 //------------------------------------------------------------------------
-std::string common::variant2string(const _variant_t &var)
+std::string common::variant2str(const _variant_t &var)
 {
 	std::stringstream ss;
 	switch (var.vt)
@@ -79,7 +79,7 @@ std::string common::variant2string(const _variant_t &var)
 		{
 			tstring str = (LPCTSTR) (_bstr_t)var.bstrVal;
 #ifdef _UNICODE
-			ss << common::wstring2string(str);
+			ss << common::wstr2str(str);
 #else
 			ss << str;
 #endif
@@ -100,6 +100,45 @@ std::string common::variant2string(const _variant_t &var)
 	}
 
 	return ss.str();
+}
+
+
+//------------------------------------------------------------------------
+// string을 varType 형태로 변환해서 리턴한다.
+//------------------------------------------------------------------------
+_variant_t common::str2variant(const _variant_t &varType, const std::string &value)
+{
+	_variant_t var = varType;
+	switch (varType.vt)
+	{
+	case VT_I2: var.iVal = (short)atoi(value.c_str()); break;
+	case VT_I4: var.lVal = (long)atoi(value.c_str()); break;
+	case VT_R4: var.fltVal = (float)atof(value.c_str()); break;
+	case VT_R8: var.dblVal = atof(value.c_str()); break;
+
+	case VT_BSTR:
+		{
+#ifdef _UNICODE
+			var.bstrVal = (_bstr_t)common::str2wstr(value).c_str();
+#else
+			var.bstrVal = (_bstr_t)value.c_str();
+#endif
+		}
+		break;
+
+	case VT_DECIMAL:
+	case VT_I1:
+	case VT_UI1:
+	case VT_UI2:
+	case VT_UI4:
+		break;
+
+	case VT_INT: var.intVal = (int)atoi(value.c_str()); break;
+	case VT_UINT: var.uintVal = strtoul(value.c_str(),NULL,0); break;
+	default:
+		break;
+	}
+	return var;
 }
 
 
@@ -127,5 +166,5 @@ std::wstring common::formatw(const char* fmt, ...)
 	va_start ( args, fmt );
 	vsnprintf_s( textString, sizeof(textString), _TRUNCATE, fmt, args );
 	va_end ( args );
-	return string2wstring(textString);
+	return str2wstr(textString);
 }

@@ -11,7 +11,6 @@
 #include "afxwin.h"
 #include "ProtocolPropertyCtrl.h"
 
-
 class CDlgProperty : public CDialog
 {
 	DECLARE_DYNAMIC(CDlgProperty)
@@ -30,21 +29,22 @@ protected:
 	typedef std::list<SPropItem*> PropList;
 	typedef PropList::iterator PropItor;
 
-	PropList				m_PropList;
-	network::sProtocol		*m_pProtocol;
-	network::sRmi			*m_pRmi;
+	PropList									m_PropList;
+	network::sProtocol					*m_pProtocol;
+	network::sRmi							*m_pRmi;
 
-	CButton					m_BtnSend;
+	CButton						m_BtnSend;
 	CProtocolPropertyCtrl	m_wndPropList;
 
 public:
-	void					UpdateProperty(network::sRmi *rmi, network::sProtocol *protocol);
+	void					UpdateProperty(network::sRmi *rmi, network::sProtocol *protocol,
+													const std::string &scope );
 
 protected:
 	void					AddProperty(CMFCPropertyGridProperty *prop);
 	void					DeleteAllProperty();
-	void					MakeProperty(network::sProtocol *protocol);
-	void					MakePropertyItem(network::sArg *arg);
+	void					MakeProperty(network::sProtocol *protocol, const std::string &scope );
+	void					MakePropertyItem(network::sArg *arg, const std::string &scope );
 	void					MakePacket( network::CPacket &packet, network::sRmi *rmi, network::sProtocol *protocol );
 	void					MakePacketProperty( network::CPacket &packet, PropItor it, network::sArg *arg);
 	

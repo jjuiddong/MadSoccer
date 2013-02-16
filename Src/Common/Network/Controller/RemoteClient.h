@@ -26,9 +26,9 @@ namespace network
 
 	public:
 		netid		GetNetId() const { return m_NetId; }
-		SOCKET		GetSocket() const { return m_Socket; }
-		void		SetNetId(netid id) { m_NetId = id; }
-		void		SetSocket(SOCKET sock) { m_Socket = sock; }
+		SOCKET	GetSocket() const { return m_Socket; }
+		void			SetNetId(netid id) { m_NetId = id; }
+		void			SetSocket(SOCKET sock) { m_Socket = sock; }
 
 	};
 }

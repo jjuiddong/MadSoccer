@@ -45,18 +45,24 @@ protected:
 	typedef std::map<int,ItemInfoSubMap> ItemInfoMap;		// key = ProtocolID
 	typedef ItemInfoMap::iterator ItemInfoMapItor;
 
-	ItemInfoMap			m_ItemInfoList;
-	ParserList			m_ParserList;	// rmi메모리 제거를 나중으로 미루기 위해서 만들어졌다.
+	ItemInfoMap								m_ItemInfoList;
+	ParserList										m_ParserList;	// rmi메모리 제거를 나중으로 미루기 위해서 만들어졌다.
 
 public:
 	bool Init();
 	network::sProtocol* GetProtocol(const int protocolID, const int packetID);
 
 protected:
-	void MakeTreeRmi(HTREEITEM hParentItem, network::sRmi *rmi);
-	void MakeTreeProtocol(HTREEITEM hParentItem, network::sRmi *rmi, network::sProtocol *protocol);
+	void MakeTreeProtocol(HTREEITEM hParentItem, network::sRmi *rmi, 
+		const std::string &scope );
+
+	void MakeTreePacket(HTREEITEM hParentItem, network::sRmi *rmi, network::sProtocol *protocol, 
+		const std::string &scope );
+
+	SItemInfo* NewItemInfo(ITEM_TYPE _type, network::sRmi *_rmi, network::sProtocol *_protocol,
+		const std::string &scope );
+
 	std::string MakeArgString(network::sArg *arg);
-	SItemInfo* NewItemInfo(ITEM_TYPE _type, network::sRmi *_rmi, network::sProtocol *_protocol);
 
 	DECLARE_MESSAGE_MAP()
 public:

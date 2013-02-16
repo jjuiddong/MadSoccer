@@ -6,71 +6,51 @@
 
 namespace config
 {
-	using namespace boost;
-	using namespace boost::property_tree;
 	using boost::property_tree::ptree;
 
 	ptree n_Props;
-	ptree *n_pProtocolTree = NULL;
+	std::string n_ErrorMsg;
 }
 
+std::string config::GetErrorMsg()
+{
+	return n_ErrorMsg;
+}
 
 
 //------------------------------------------------------------------------
 // config 파일을 읽는다.
 //------------------------------------------------------------------------
-bool	 config::Init( const std::string &configFileName )
+bool	 config::OpenConfigFile()
 {
+	std::string configFileName("virtualclient2_config.json");
+
 	try
 	{
 		boost::property_tree::read_json(configFileName.c_str(), n_Props);
-		n_pProtocolTree = &n_Props.get_child("protocol");
 	}
 	catch (std::exception &e)
 	{
-		CString msg = common::formatw("\"%s\" json script Err!! [%s]",  
-			configFileName.c_str(), e.what()).c_str();
-//		::AfxMessageBox( msg );
+		n_ErrorMsg = common::format("\"%s\" json script Err!! [%s]",  
+			configFileName.c_str(), e.what());
 		return false;
 	}
-
 	return true;
 }
 
 
 //------------------------------------------------------------------------
-// 
+// scope 키값을 가진 데이타를 리턴한다.
 //------------------------------------------------------------------------
-void config::Release()
+std::string config::FindReservedString( const std::string &scope )
 {
-	
-}
-
-
-//------------------------------------------------------------------------
-// 
-//------------------------------------------------------------------------
-config::AttrType config::FindProtocol( const std::string &protocolName )
-{
-	RETV(!n_pProtocolTree, NULL);
 	try
 	{
-		using std::string;
-
-		ptree &childs = n_pProtocolTree->get_child( protocolName );
-		BOOST_FOREACH(ptree::value_type &vt, childs)
-		{
-			const string name = vt.second.get<string>("name");
-			if (name == protocolName )
-			{
-				ptree &packets = vt.second.get_child("packet");
-				return &packets;
-			}
-		}
+		return n_Props.get<std::string>(scope);
 	}
-	catch (...)
+	catch (std::exception &e)
 	{
-
+		std::string msg = e.what(); // debug용
 	}
-	return NULL;
+	return "";
 }

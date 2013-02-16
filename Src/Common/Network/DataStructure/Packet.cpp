@@ -126,7 +126,7 @@ CPacket& CPacket::operator<<(const _variant_t &rhs)
 		{
 			tstring str = (LPCTSTR) (_bstr_t)rhs.bstrVal;
 #ifdef _UNICODE
-			std::string s = common::wstring2string(str);
+			std::string s = common::wstr2str(str);
 			operator<<(s);
 #else
 			operator<<(str);
@@ -286,7 +286,7 @@ _variant_t CPacket::GetVariant(const _variant_t &varType)
 			std::string str;
 			operator>>(str);
  #ifdef _UNICODE
- 			var.bstrVal = (_bstr_t)common::string2wstring(str).c_str();
+ 			var.bstrVal = (_bstr_t)common::str2wstr(str).c_str();
  #else
  			var.bstrVal = (_bstr_t)str.c_str();
  #endif

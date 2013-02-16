@@ -7,16 +7,16 @@
 #include "Network/PrtCompiler/ProtocolDefine.h"
 #include "Network/PrtCompiler/ProtocolParser.h"
 #include "DlgProperty.h"
+#include "ConfigParser.h"
+#include "DlgConsole.h"
 
 using namespace network;
 
 // CProtocolTree
-
 IMPLEMENT_DYNAMIC(CProtocolTree, CTreeCtrlBase)
 
 CProtocolTree::CProtocolTree() : CTreeCtrlBase(TREE_ITEM)
 {
-
 }
 
 CProtocolTree::~CProtocolTree()
@@ -47,6 +47,11 @@ END_MESSAGE_MAP()
 //------------------------------------------------------------------------
 bool CProtocolTree::Init()
 {
+	if (!config::OpenConfigFile())
+	{
+		GetConsole()->AddString( config::GetErrorMsg() );
+	}
+
 	std::list<std::string> fileList = common::FindFileList( "C:\\Project\\GitHub\\MadSoccer\\Src\\Common\\NetCommon\\*.prt" );
 	BOOST_FOREACH(std::string &str, fileList)
 	{
@@ -54,10 +59,11 @@ bool CProtocolTree::Init()
 		sRmi *rmiList = pParser->Parse( str.c_str() );
 		if (rmiList)
 		{
-			HTREEITEM hItem = InsertTree(NULL, 
-				common::string2wstring(common::GetFileNameExceptExt(str)).c_str()
-				, NewItemInfo(NONE,NULL,NULL));
-			MakeTreeRmi(hItem, rmiList);
+			const std::string protocolName = common::GetFileNameExceptExt(str);
+			const HTREEITEM hItem = InsertTree(NULL, 
+				common::str2wstr(protocolName).c_str(),
+					NewItemInfo(NONE,NULL,NULL,str));
+			MakeTreeProtocol(hItem, rmiList, protocolName);
 			Expand(hItem, TVE_EXPAND);
 
 			m_ParserList.push_back( pParser );
@@ -74,21 +80,24 @@ bool CProtocolTree::Init()
 //------------------------------------------------------------------------
 // Rmi 프로토콜 이름 추가
 //------------------------------------------------------------------------
-void CProtocolTree::MakeTreeRmi(HTREEITEM hParentItem, sRmi *rmi)
+void CProtocolTree::MakeTreeProtocol(HTREEITEM hParentItem, sRmi *rmi,
+									 const std::string &scope  )
 {
 	if (!rmi) return;
-	HTREEITEM hItem = InsertTree(hParentItem, common::string2wstring(rmi->name).c_str(), 
-		NewItemInfo(RMI,rmi,NULL) );
-	MakeTreeProtocol(hItem, rmi, rmi->protocol);
+	HTREEITEM hItem = InsertTree(hParentItem, common::str2wstr(rmi->name).c_str(), 
+		NewItemInfo(RMI,rmi,NULL,scope) );
+
+	MakeTreePacket(hItem, rmi, rmi->protocol, scope + "::" + rmi->name );
 	Expand(hItem, TVE_EXPAND);
-	MakeTreeRmi(hParentItem, rmi->next);
+	MakeTreeProtocol(hParentItem, rmi->next, scope );
 }
 
 
 //------------------------------------------------------------------------
 // 프로토콜 추가
 //------------------------------------------------------------------------
-void CProtocolTree::MakeTreeProtocol(HTREEITEM hParentItem, sRmi *rmi, sProtocol *protocol)
+void CProtocolTree::MakeTreePacket(HTREEITEM hParentItem, sRmi *rmi, sProtocol *protocol,
+								   const std::string &scope )
 {
 	if (!protocol) return;
 
@@ -97,11 +106,11 @@ void CProtocolTree::MakeTreeProtocol(HTREEITEM hParentItem, sRmi *rmi, sProtocol
 	name += MakeArgString(protocol->argList);
 	name += ")";
 
-	HTREEITEM hItem = InsertTree(hParentItem, common::string2wstring(name).c_str(), 
-		NewItemInfo(PROTOCOL,rmi,protocol));
+	HTREEITEM hItem = InsertTree(hParentItem, common::str2wstr(name).c_str(), 
+		NewItemInfo(PROTOCOL,rmi,protocol, scope + "::" + protocol->name) );
 	Expand(hItem, TVE_EXPAND);
 
-	MakeTreeProtocol(hParentItem, rmi, protocol->next);
+	MakeTreePacket(hParentItem, rmi, protocol->next, scope);
 }
 
 
@@ -122,7 +131,8 @@ std::string CProtocolTree::MakeArgString(sArg *arg)
 //------------------------------------------------------------------------
 // SItemInfo구조체를 생성해서 리턴한다.
 //------------------------------------------------------------------------
-CProtocolTree::SItemInfo* CProtocolTree::NewItemInfo(ITEM_TYPE type, sRmi *rmi, sProtocol *protocol)
+CProtocolTree::SItemInfo* CProtocolTree::NewItemInfo(ITEM_TYPE type, sRmi *rmi, sProtocol *protocol,
+													 const std::string &scope )
 {
 	if (!rmi && !protocol)
 		return NULL;
@@ -133,7 +143,7 @@ CProtocolTree::SItemInfo* CProtocolTree::NewItemInfo(ITEM_TYPE type, sRmi *rmi, 
 	CDlgProperty *pDlg = new CDlgProperty(GetParent());
 	pDlg->Create( CDlgProperty::IDD, GetParent());
 	pDlg->ShowWindow(SW_HIDE);
-	pDlg->UpdateProperty(rmi, protocol);
+	pDlg->UpdateProperty(rmi, protocol, scope );
 	//
 
 	SItemInfo*p = new SItemInfo(type, rmi, protocol, pDlg);

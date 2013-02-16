@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "LobbyServer.h"
 #include <boost/smart_ptr.hpp>
+#include "../DataStructure/UserLobby.h"
 
 using namespace network;
 
@@ -155,7 +156,13 @@ void CLobbyServer::SendUsers(netid userId)
 //------------------------------------------------------------------------
 void CLobbyServer::OnClientJoin(netid netId)
 {
-
+	CUserLobby *pUser = new CUserLobby();
+	pUser->SetNetId(netId);
+	if (!AddUser( pUser ))
+	{
+		LogNPrint( "AddUser() Faile!! id = %d", netId);
+		delete pUser;
+	}
 }
 
 
@@ -164,17 +171,19 @@ void CLobbyServer::OnClientJoin(netid netId)
 //------------------------------------------------------------------------
 void CLobbyServer::OnClientLeave(netid netId)
 {
-
+	if (!RemoveUser(netId))
+	{
+		LogNPrint( "RemoveUser() Faile!! id = %d", netId);
+	}
 }
 
 
 //------------------------------------------------------------------------
 // 스트링으로 변환, 주로 디버깅에 관련된 정보를 스트링으로 보낸다.
 //------------------------------------------------------------------------
-std::string	CLobbyServer::ToString()
+std::string CLobbyServer::ToString()
 {
 	std::stringstream ss;
-
 	EnterSync();
 	{
 		ss << "RemoteClient: " << m_RemoteClients.size() << std::endl;
@@ -184,6 +193,5 @@ std::string	CLobbyServer::ToString()
 		}
 	}
 	LeaveSync();
-
 	return ss.str();
 }

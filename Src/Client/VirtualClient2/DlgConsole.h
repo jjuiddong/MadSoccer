@@ -7,7 +7,6 @@
 //------------------------------------------------------------------------
 #pragma once
 
-
 class CDlgConsole : public CDialog
 {
 	DECLARE_DYNAMIC(CDlgConsole)
@@ -15,10 +14,14 @@ class CDlgConsole : public CDialog
 public:
 	CDlgConsole(CWnd* pParent = NULL);   // 표준 생성자입니다.
 	virtual ~CDlgConsole();
-	enum { IDD = IDD_DLG_CONSOLE };
+	enum { 
+		IDD = IDD_DLG_CONSOLE,
+		ID_LISTBOX,
+	};
 
 protected:
-	CListBox		m_ListBox;
+	CListBox	m_ListBox;
+	CBrush		m_brush;
 
 public:
 	void			AddString(const std::string &str);
@@ -33,4 +36,5 @@ public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnBnClickedCancel();
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 };

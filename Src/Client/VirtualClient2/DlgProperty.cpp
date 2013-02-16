@@ -5,7 +5,7 @@
 #include "VirtualClient2.h"
 #include "DlgProperty.h"
 #include "DlgConsole.h"
-
+#include "ConfigParser.h"
 
 using namespace network;
 
@@ -124,12 +124,12 @@ void CDlgProperty::OnSize(UINT nType, int cx, int cy)
 // 프로토콜 정보를 받아서 화면을 업데이트 시킨다.
 // 프로토콜의 인자를 PropertyGridCtrl에 추가한다.
 //------------------------------------------------------------------------
-void CDlgProperty::UpdateProperty(sRmi *rmi, sProtocol *protocol)
+void CDlgProperty::UpdateProperty(sRmi *rmi, sProtocol *protocol, const std::string &scope )
 {
 	DeleteAllProperty();
 	m_pProtocol = protocol;
 	m_pRmi = rmi;
-	MakeProperty(protocol);
+	MakeProperty(protocol, scope);
 }
 
 
@@ -162,28 +162,40 @@ void CDlgProperty::AddProperty(CMFCPropertyGridProperty *prop)
 //------------------------------------------------------------------------
 // Property 생성
 //------------------------------------------------------------------------
-void CDlgProperty::MakeProperty(sProtocol *protocol)
+void CDlgProperty::MakeProperty(sProtocol *protocol, const std::string &scope)
 {
 	if (!protocol) return;
-	MakePropertyItem(protocol->argList);
+	MakePropertyItem(protocol->argList, scope);
 }
 
 
 //------------------------------------------------------------------------
 // Property 생성
 //------------------------------------------------------------------------
-void CDlgProperty::MakePropertyItem(sArg *arg)
+void CDlgProperty::MakePropertyItem(sArg *arg, const std::string &scope)
 {
 	if (!arg) return;
 
 	CString str;
-	str = common::string2wstring(arg->var->type + " " + arg->var->var).c_str();
+	str = common::str2wstr(arg->var->type + " " + arg->var->var).c_str();
 	CMFCPropertyGridProperty *pProp = 
 		new CMFCPropertyGridProperty(str, GetTypeStr2Type(arg->var->type), _T("Description") );
 
+	// 예약된 스트링을 Property에 설정한다.
+	// config.json 에 예약할 스트링을 설정한다.
+	std::string value = config::FindReservedString(scope + "::" + arg->var->var);
+	if (!value.empty())
+	{
+		const _variant_t varType = GetTypeStr2Type(arg->var->type);
+		const _variant_t representValue = common::str2variant(varType, value);
+		pProp->SetValue(representValue);	
+
+		GetConsole()->AddString( scope + "::" + arg->var->var + " = " + value + " 예약어 적용" );
+	}
+	//
 
 	AddProperty(pProp);
-	MakePropertyItem(arg->next);
+	MakePropertyItem(arg->next, scope);
 }
 
 

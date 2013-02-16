@@ -19,10 +19,10 @@ namespace network
 		friend class CNetLauncher;
 
 	protected:
-		int					m_ServerPort;
-		bool				m_IsServerOn;			// 서버가 정상적으로 실행이 되었다면 true
+		int								m_ServerPort;
+		bool								m_IsServerOn;			// 서버가 정상적으로 실행이 되었다면 true
 		RemoteClientMap		m_RemoteClients;		// 서버와 연결된 클라이언트 정보리스트
-		CRITICAL_SECTION	m_CriticalSection;
+		CRITICAL_SECTION		m_CriticalSection;
 
 	public:
 		bool				Stop();

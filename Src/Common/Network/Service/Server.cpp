@@ -60,7 +60,7 @@ bool CServer::AddClient(SOCKET sock)
 	clog::Log( "AddClient netid: %d, socket: %d", pNewRemoteClient->GetNetId(), sock );
 	dbg::Print( "AddClient netid: %d, socket: %d", pNewRemoteClient->GetNetId(), sock);
 
-	OnClientJoin(sock);
+	OnClientJoin(pNewRemoteClient->GetNetId());
 	return true;
 }
 

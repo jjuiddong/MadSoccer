@@ -177,7 +177,7 @@ std::string network::Packet2String(const CPacket &packet, sProtocol *protocol)
 		const _variant_t var = tempPacket.GetVariant(varType);
 
 		ss << arg->var->var + " = ";
-		ss << common::variant2string(var);
+		ss << common::variant2str(var);
 		ss << ", ";
 
 		arg = arg->next;

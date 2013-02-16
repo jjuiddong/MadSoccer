@@ -96,7 +96,8 @@ int CVirtualClient2Dlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_ProtocolTree.Create(WS_VISIBLE | WS_CHILD |
 		TVS_FULLROWSELECT | TVS_HASLINES | TVS_HASBUTTONS | TVS_LINESATROOT | TVS_SHOWSELALWAYS 
-		, CRect(0,0,100,100), this, 0);
+		, CRect(0,0,100,100), this, ID_PROTOCOL_TREE);
+	m_ProtocolTree.SetBkColor(RGB(140,140,140));
 	m_ProtocolTree.Init();
 
 	network::Init(0);

@@ -19,7 +19,7 @@ namespace network
 	protected:
 		netid				m_NetId;
 		int					m_Id;			// 유저 고유 아이디
-		std::string			m_Name;
+		std::string		m_Name;
 
 		typedef std::map<int,CCharacter*> CharacterMap;
 		typedef CharacterMap::iterator CharacterItor;
