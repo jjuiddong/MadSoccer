@@ -17,6 +17,7 @@ namespace network
 		virtual ~IProtocolDispatcher() {}
 		friend class CTaskLogic;
 		friend class CClient;
+		friend class CCoreClient;
 	protected:
 		int m_Id; // 대응하는 protocol ID 와 동일한 값이다.
 	public:

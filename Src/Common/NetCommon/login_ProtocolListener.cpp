@@ -28,7 +28,17 @@ void login::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 			packet >> id;
 			int result;
 			packet >> result;
-			SEND_LISTENER(s2c_ProtocolListener, listeners, AckLogin(packet.GetSenderId(), id, result) );
+			SEND_LISTENER(s2c_ProtocolListener, listeners, AckLogIn(packet.GetSenderId(), id, result) );
+		}
+		break;
+
+	case 102:
+		{
+			std::string id;
+			packet >> id;
+			int result;
+			packet >> result;
+			SEND_LISTENER(s2c_ProtocolListener, listeners, AckLogOut(packet.GetSenderId(), id, result) );
 		}
 		break;
 
@@ -63,7 +73,15 @@ void login::c2s_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 			packet >> id;
 			std::string password;
 			packet >> password;
-			SEND_LISTENER(c2s_ProtocolListener, listeners, ReqLogin(packet.GetSenderId(), id, password) );
+			SEND_LISTENER(c2s_ProtocolListener, listeners, ReqLogIn(packet.GetSenderId(), id, password) );
+		}
+		break;
+
+	case 202:
+		{
+			std::string id;
+			packet >> id;
+			SEND_LISTENER(c2s_ProtocolListener, listeners, ReqLogOut(packet.GetSenderId(), id) );
 		}
 		break;
 

@@ -4,16 +4,17 @@
 #include "NetLauncher.h"
 #include "../Service/Server.h"
 #include "../Service/Client.h"
+#include "CoreClient.h"
 #include "../Task/TaskLogic.h"
 #include "../task/TaskAccept.h"
 #include "../task/TaskWork.h"
 
-
 using namespace network;
-
 
 CNetController::CNetController() :
 	m_AcceptThread("AcceptThread")
+,	m_Servers(VECTOR_RESERVED_SIZE)
+,	m_Clients(VECTOR_RESERVED_SIZE)
 {
 	InitializeCriticalSection(&m_CriticalSection);
 }
@@ -54,11 +55,10 @@ bool CNetController::Init(int logicThreadCount)
 //------------------------------------------------------------------------
 void CNetController::Proc()
 {
-	ClientItor cit = m_Clients.begin();
-	while (m_Clients.end() != cit)
+	BOOST_FOREACH(ClientPtr &ptr, m_Clients.m_Seq)
 	{
-		CClient *pclt = cit++->second;
-		pclt->Proc();
+		if (!ptr) break;
+		ptr->Proc();
 	}
 }
 
@@ -71,7 +71,14 @@ bool CNetController::StartServer(int port, ServerPtr pSvr)
 	if (!pSvr)
 		return false;
 
-	ServerItor it = m_Servers.find(pSvr->GetSocket());
+// 	ServerItor it = m_Servers.find(pSvr->GetSocket());
+// 	if (m_Servers.end() != it)
+// 	{
+// 		error::ErrorLog("이미 실행되고 있는 서버를 다시 실행시켰음");
+// 		return false;
+// 	}
+
+	Servers::iterator it = m_Servers.find(pSvr->GetNetId());
 	if (m_Servers.end() != it)
 	{
 		error::ErrorLog("이미 실행되고 있는 서버를 다시 실행시켰음");
@@ -82,9 +89,9 @@ bool CNetController::StartServer(int port, ServerPtr pSvr)
 		return false;
 
 	// 서버 시작에 관련된 코드 추가
-	clog::Log( "%d Server Start", pSvr->GetNetId() );
-	dbg::Print( "%d Server Start", pSvr->GetNetId() );
-	m_Servers.insert( ServerMap::value_type(pSvr->GetSocket(), pSvr) );
+	LogNPrint( "%d Server Start", pSvr->GetNetId() );
+	m_Servers.insert( Servers::value_type(pSvr->GetNetId(), pSvr) );
+	m_ServerSockets.insert( ServerSockets::value_type(pSvr->GetSocket(), pSvr) );
 
 	// Work쓰레드 생성
 	common::CThread *pWorkTread = new common::CThread("WorkThread");
@@ -104,11 +111,17 @@ bool CNetController::StopServer(CServer *pSvr)
 	if (!pSvr)
 		return false;
 
-	ServerItor it = m_Servers.find(pSvr->GetSocket());
-	if (m_Servers.end() == it)
+// 	ServerItor it = m_Servers.find(pSvr->GetSocket());
+// 	if (m_Servers.end() == it)
+// 		return false;
+//		m_Servers.erase(it);
+
+	if (!m_Servers.remove(pSvr->GetNetId()))
 		return false;
 
-	m_Servers.erase(it);
+	ServerItor it = m_ServerSockets.find(pSvr->GetSocket());
+	if (m_ServerSockets.end() != it)
+		m_ServerSockets.erase(it);
 
 	// 서버 종료 코드 추가
 	return pSvr->Stop();
@@ -116,12 +129,24 @@ bool CNetController::StopServer(CServer *pSvr)
 
 
 //------------------------------------------------------------------------
-// serverid 에 해당하는 서버를 리턴한다.
+// netId 에 해당하는 서버를 리턴한다.
 //------------------------------------------------------------------------
-ServerPtr CNetController::GetServer(SOCKET sock)
+ServerPtr CNetController::GetServer(netid netId)
 {
-	ServerItor it = m_Servers.find(sock);
+	Servers::iterator it = m_Servers.find(netId);
 	if (m_Servers.end() == it)
+		return NULL;
+	return it->second;
+}
+
+
+//------------------------------------------------------------------------
+// SOCKET 에 해당하는 서버를 리턴한다.
+//------------------------------------------------------------------------
+ServerPtr CNetController::GetServerFromSocket(SOCKET sock)
+{
+	ServerItor it = m_ServerSockets.find(sock);
+	if (m_ServerSockets.end() == it)
 		return NULL;
 	return it->second;
 }
@@ -139,17 +164,19 @@ bool CNetController::StartClient(const std::string &ip, int port, ClientPtr pClt
 		pClt->Stop(); // 연결을 끊고
 
 	// 서버 시작에 관련된 코드 추가
-	clog::Log( "%d Client Start", pClt->GetNetId() );
-	dbg::Print( "%d Client Start", pClt->GetNetId() );
+	LogNPrint( "%d Client Start", pClt->GetNetId() );
 	if (!CNetLauncher::Get()->LaunchClient(pClt, ip, port))
-		return false;
-
-	ClientItor it = m_Clients.find(pClt->GetSocket());
-	if (m_Clients.end() == it)
 	{
-		m_Clients.insert( ClientMap::value_type(pClt->GetSocket(), pClt) );
+		LogNPrint( "StartClient Error!! Launch Fail ip: %s, port: %d",ip.c_str(), port);
+		return false;
 	}
 
+	Clients::iterator it = m_Clients.find( pClt->GetNetId());
+	if (m_Clients.end() != it)
+	{
+		m_Clients.insert( Clients::value_type(pClt->GetNetId(), pClt) );
+		m_ClientSockets.insert( ClientSockets::value_type(pClt->GetSocket(), pClt) );
+	}
 	return true;
 }
 
@@ -162,11 +189,14 @@ bool CNetController::StopClient(CClient *pClt)
 	if (!pClt)
 		return false;
 
-	ClientItor it = m_Clients.find(pClt->GetSocket());
-	if (m_Clients.end() == it)
+	if (!m_Clients.remove(pClt->GetNetId()))
+		LogNPrint( "StopClient Error!! netid: %d client", pClt->GetNetId());
+		
+	ClientItor it = m_ClientSockets.find(pClt->GetSocket());
+	if (m_ClientSockets.end() == it)
 		return false;
 
-	m_Clients.erase(it);
+	m_ClientSockets.erase(it);
 
 	// 클라이언트 종료 코드 추가
 	return pClt->Stop();
@@ -176,10 +206,78 @@ bool CNetController::StopClient(CClient *pClt)
 //------------------------------------------------------------------------
 // clientId에 해당하는 클라이언트를 리턴한다.
 //------------------------------------------------------------------------
-ClientPtr CNetController::GetClient(SOCKET sock)
+ClientPtr CNetController::GetClientFromSocket(SOCKET sock)
 {
-	ClientItor it = m_Clients.find(sock);
+	ClientItor it = m_ClientSockets.find(sock);
+	if (m_ClientSockets.end() == it)
+		return NULL;
+	return it->second;
+}
+
+
+//------------------------------------------------------------------------
+// clientId에 해당하는 클라이언트를 리턴한다.
+//------------------------------------------------------------------------
+ClientPtr CNetController::GetClient(netid netId)
+{
+	Clients::iterator it = m_Clients.find(netId);
 	if (m_Clients.end() == it)
+		return NULL;
+	return it->second;
+}
+
+
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
+bool CNetController::StartCoreClient(const std::string &ip, int port, CoreClientPtr pClt)
+{
+	if (!pClt)
+		return false;
+
+	if (pClt->IsConnect())
+		pClt->Stop(); // 연결을 끊고
+
+	// 서버 시작에 관련된 코드 추가
+	LogNPrint( "%d Client Start", pClt->GetNetId() );
+// 	if (!CNetLauncher::Get()->LaunchClient(pClt, ip, port))
+// 	{
+// 		LogNPrint( "StartClient Error!! Launch Fail ip: %s, port: %d",ip.c_str(), port);
+// 		return false;
+// 	}
+
+	CoreClients::iterator it = m_CoreClients.find( pClt->GetNetId());
+	if (m_CoreClients.end() != it)
+	{
+		m_CoreClients.insert( CoreClients::value_type(pClt->GetNetId(), pClt) );
+	}
+	return true;
+}
+
+
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
+bool CNetController::StopCoreClient(CCoreClient *pClt)
+{
+	if (!pClt)
+		return false;
+
+	if (!m_CoreClients.remove(pClt->GetNetId()))
+		LogNPrint( "StopClient Error!! netid: %d client", pClt->GetNetId());
+
+	// 클라이언트 종료 코드 추가
+	return pClt->Stop();
+}
+
+
+//------------------------------------------------------------------------
+// clientId에 해당하는 클라이언트를 리턴한다.
+//------------------------------------------------------------------------
+CoreClientPtr CNetController::GetCoreClient(netid netId)
+{
+	CoreClients::iterator it = m_CoreClients.find(netId);
+	if (m_CoreClients.end() == it)
 		return NULL;
 	return it->second;
 }
@@ -221,7 +319,7 @@ void CNetController::MakeServersFDSET( fd_set *pfdset )
 	EnterSync();
 	{
 		FD_ZERO(pfdset);
-		BOOST_FOREACH(ServerMap::value_type &kv, m_Servers)
+		BOOST_FOREACH(ServerSockets::value_type &kv, m_ServerSockets)
 		{
 			pfdset->fd_array[ pfdset->fd_count] = kv.second->GetSocket();
 			++pfdset->fd_count;
@@ -299,7 +397,7 @@ std::string CNetController::ToString()
 
 	// 서버 갯수
 	ss << std::endl;
-	ss << "Server Cnt: " << m_Servers.size() << std::endl;
+	ss << "Server Cnt: " << m_ServerSockets.size() << std::endl;
 
 	// 디스패쳐갯수
 	ss << "Dispatcher Cnt: " << m_Dipatchers.size() << std::endl;

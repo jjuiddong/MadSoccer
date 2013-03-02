@@ -39,7 +39,7 @@ namespace network
 						return RR_CONTINUE;
 					}
 
-					CServer *pSvr = CNetController::Get()->GetServer(readSockets.fd_array[ i]);
+					CServer *pSvr = CNetController::Get()->GetServerFromSocket(readSockets.fd_array[ i]);
 					if (!pSvr)
 					{
 						error::ErrorLog( 

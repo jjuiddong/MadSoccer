@@ -1,0 +1,209 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Lib">
+      <UniqueIdentifier>{7f8c7ce2-44f8-4caa-9a34-fe5decf2d9f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Algorithm">
+      <UniqueIdentifier>{afdf5d49-bced-4026-ace5-ca41bc2a23a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\DataStructure">
+      <UniqueIdentifier>{c3b5f69e-3282-4ef2-a7ea-bb121be452d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\ErrReport">
+      <UniqueIdentifier>{1277187a-a491-476e-a703-7a0500169015}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Interface">
+      <UniqueIdentifier>{3fd68fa9-b147-451b-b420-892a3d990e26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Task">
+      <UniqueIdentifier>{3d79bede-b4a9-4f29-b6f8-4c0562f39dd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Controller">
+      <UniqueIdentifier>{b95e0e89-7636-4f0f-a07c-eef1720ec3c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\PrtCompiler">
+      <UniqueIdentifier>{6955fb2d-87e1-47ca-913e-314199802dcb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Service">
+      <UniqueIdentifier>{55f95af7-b0a2-45d0-ae5d-bf4436480343}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Network.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DataStructure\Character.cpp">
+      <Filter>Lib\DataStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="DataStructure\Group.cpp">
+      <Filter>Lib\DataStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="DataStructure\Packet.cpp">
+      <Filter>Lib\DataStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="DataStructure\Room.cpp">
+      <Filter>Lib\DataStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="DataStructure\User.cpp">
+      <Filter>Lib\DataStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="ErrReport\Error.cpp">
+      <Filter>Lib\ErrReport</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller\CoreClient.cpp">
+      <Filter>Lib\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller\NetConnector.cpp">
+      <Filter>Lib\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller\NetController.cpp">
+      <Filter>Lib\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller\NetLauncher.cpp">
+      <Filter>Lib\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller\P2PClient.cpp">
+      <Filter>Lib\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller\RemoteClient.cpp">
+      <Filter>Lib\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="PrtCompiler\ProtocolDefine.cpp">
+      <Filter>Lib\PrtCompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="PrtCompiler\ProtocolParser.cpp">
+      <Filter>Lib\PrtCompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="PrtCompiler\ProtocolScanner.cpp">
+      <Filter>Lib\PrtCompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="Service\AllProtocol.cpp">
+      <Filter>Lib\Service</Filter>
+    </ClCompile>
+    <ClCompile Include="Service\AllProtocolListener.cpp">
+      <Filter>Lib\Service</Filter>
+    </ClCompile>
+    <ClCompile Include="Service\Client.cpp">
+      <Filter>Lib\Service</Filter>
+    </ClCompile>
+    <ClCompile Include="Service\Server.cpp">
+      <Filter>Lib\Service</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Network.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkDef.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkUtility.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\BindCore.h">
+      <Filter>Lib\Algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="DataStructure\Character.h">
+      <Filter>Lib\DataStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="DataStructure\Group.h">
+      <Filter>Lib\DataStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="DataStructure\Packet.h">
+      <Filter>Lib\DataStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="DataStructure\PacketQueue.h">
+      <Filter>Lib\DataStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="DataStructure\Room.h">
+      <Filter>Lib\DataStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="DataStructure\User.h">
+      <Filter>Lib\DataStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="ErrReport\Error.h">
+      <Filter>Lib\ErrReport</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Protocol.h">
+      <Filter>Lib\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\ProtocolDispatcher.h">
+      <Filter>Lib\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\ProtocolListener.h">
+      <Filter>Lib\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Task\TaskAccept.h">
+      <Filter>Lib\Task</Filter>
+    </ClInclude>
+    <ClInclude Include="Task\TaskLogic.h">
+      <Filter>Lib\Task</Filter>
+    </ClInclude>
+    <ClInclude Include="Task\TaskWork.h">
+      <Filter>Lib\Task</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\CoreClient.h">
+      <Filter>Lib\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\NetConnector.h">
+      <Filter>Lib\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\NetController.h">
+      <Filter>Lib\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\NetLauncher.h">
+      <Filter>Lib\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\P2PClient.h">
+      <Filter>Lib\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\RemoteClient.h">
+      <Filter>Lib\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="PrtCompiler\ProtocolDefine.h">
+      <Filter>Lib\PrtCompiler</Filter>
+    </ClInclude>
+    <ClInclude Include="PrtCompiler\ProtocolMacro.h">
+      <Filter>Lib\PrtCompiler</Filter>
+    </ClInclude>
+    <ClInclude Include="PrtCompiler\ProtocolParser.h">
+      <Filter>Lib\PrtCompiler</Filter>
+    </ClInclude>
+    <ClInclude Include="PrtCompiler\ProtocolScanner.h">
+      <Filter>Lib\PrtCompiler</Filter>
+    </ClInclude>
+    <ClInclude Include="Service\AllProtocol.h">
+      <Filter>Lib\Service</Filter>
+    </ClInclude>
+    <ClInclude Include="Service\AllProtocolListener.h">
+      <Filter>Lib\Service</Filter>
+    </ClInclude>
+    <ClInclude Include="Service\Client.h">
+      <Filter>Lib\Service</Filter>
+    </ClInclude>
+    <ClInclude Include="Service\Server.h">
+      <Filter>Lib\Service</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+</Project>

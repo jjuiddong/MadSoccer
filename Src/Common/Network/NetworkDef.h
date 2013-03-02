@@ -19,6 +19,7 @@ namespace network
 {
 	class CServer;
 	class CClient;
+	class CCoreClient;
 	class CNetConnector;
 	class IProtocol;
 	class IProtocolListener;
@@ -29,6 +30,7 @@ namespace network
 }
 typedef common::ReferencePtr<network::CServer> ServerPtr;
 typedef common::ReferencePtr<network::CClient> ClientPtr;
+typedef common::ReferencePtr<network::CCoreClient> CoreClientPtr;
 typedef common::ReferencePtr<network::CNetConnector> NetConnectorPtr;
 typedef common::ReferencePtr<network::CCharacter> CharacterPtr;
 
@@ -85,6 +87,7 @@ typedef ProtocolMap::iterator ProtocolItor;
 #include "DataStructure/User.h"
 #include "Service/AllProtocol.h"
 #include "Service/AllProtocolListener.h"
+#include "NetworkUtility.h"
 
 
 

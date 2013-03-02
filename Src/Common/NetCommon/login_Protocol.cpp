@@ -3,9 +3,9 @@ using namespace network;
 using namespace login;
 
 //------------------------------------------------------------------------
-// Protocol: AckLogin
+// Protocol: AckLogIn
 //------------------------------------------------------------------------
-void login::s2c_Protocol::AckLogin(netid targetId, const std::string &id, const int &result)
+void login::s2c_Protocol::AckLogIn(netid targetId, const std::string &id, const int &result)
 {
 	CPacket packet;
 	packet << GetId();
@@ -15,18 +15,43 @@ void login::s2c_Protocol::AckLogin(netid targetId, const std::string &id, const 
 	GetNetConnector()->Send(targetId, packet);
 }
 
+//------------------------------------------------------------------------
+// Protocol: AckLogOut
+//------------------------------------------------------------------------
+void login::s2c_Protocol::AckLogOut(netid targetId, const std::string &id, const int &result)
+{
+	CPacket packet;
+	packet << GetId();
+	packet << 102;
+	packet << id;
+	packet << result;
+	GetNetConnector()->Send(targetId, packet);
+}
+
 
 
 //------------------------------------------------------------------------
-// Protocol: ReqLogin
+// Protocol: ReqLogIn
 //------------------------------------------------------------------------
-void login::c2s_Protocol::ReqLogin(netid targetId, const std::string &id, const std::string &password)
+void login::c2s_Protocol::ReqLogIn(netid targetId, const std::string &id, const std::string &password)
 {
 	CPacket packet;
 	packet << GetId();
 	packet << 201;
 	packet << id;
 	packet << password;
+	GetNetConnector()->Send(targetId, packet);
+}
+
+//------------------------------------------------------------------------
+// Protocol: ReqLogOut
+//------------------------------------------------------------------------
+void login::c2s_Protocol::ReqLogOut(netid targetId, const std::string &id)
+{
+	CPacket packet;
+	packet << GetId();
+	packet << 202;
+	packet << id;
 	GetNetConnector()->Send(targetId, packet);
 }
 

@@ -18,37 +18,59 @@ namespace network
 		friend class CTaskAccept;
 
 	protected:
-		typedef std::map<SOCKET, ServerPtr> ServerMap;
-		typedef std::map<SOCKET, ClientPtr> ClientMap;
+		enum {
+			VECTOR_RESERVED_SIZE = 128,
+		};
+
+		typedef std::map<SOCKET, ServerPtr> ServerSockets;
+		typedef common::VectorMap<netid, ServerPtr> Servers;
+
+		typedef std::map<SOCKET, ClientPtr> ClientSockets;
+		typedef common::VectorMap<netid, ClientPtr> Clients;
+		typedef common::VectorMap<netid, CoreClientPtr> CoreClients;
+
 		typedef std::map<int,IProtocolDispatcher*> DispatcherMap;
-		typedef ServerMap::iterator ServerItor;
-		typedef ClientMap::iterator ClientItor;
+		typedef ServerSockets::iterator ServerItor;
+		typedef ClientSockets::iterator ClientItor;
 		typedef DispatcherMap::iterator DispatcherItor;
 		typedef std::list<common::CThread*> ThreadList;
 		typedef ThreadList::iterator ThreadItor;
 
-		ServerMap			m_Servers;
-		ClientMap				m_Clients;
-		DispatcherMap		m_Dipatchers;
+		Servers							m_Servers;
+		ServerSockets				m_ServerSockets;
+
+		Clients							m_Clients;
+		ClientSockets				m_ClientSockets;
+
+		CoreClients					m_CoreClients;
+
+		DispatcherMap				m_Dipatchers;
 		common::CThread		m_AcceptThread;
-		ThreadList			m_WorkThreads;
-		ThreadList			m_LogicThreads;
-		CRITICAL_SECTION	m_CriticalSection;
+		ThreadList					m_WorkThreads;
+		ThreadList					m_LogicThreads;
+		CRITICAL_SECTION		m_CriticalSection;
 
 	public:
 		bool		Init(int logicThreadCount);
 		void		Proc();
 		void		Clear();
 
-		// server
+		// Server
 		bool		StartServer(int port, ServerPtr pSvr);
 		bool		StopServer(CServer *pSvr);
-		ServerPtr	GetServer(SOCKET sock);
+		ServerPtr	GetServer(netid netId);
+		ServerPtr	GetServerFromSocket(SOCKET sock);
 
-		// client
+		// Client
 		bool		StartClient(const std::string &ip, int port, ClientPtr pClt);
 		bool		StopClient(CClient *pClt);
-		ClientPtr	GetClient(SOCKET sock);
+		ClientPtr	GetClient(netid netId);
+		ClientPtr	GetClientFromSocket(SOCKET sock);
+
+		// CoreClient
+		bool		StartCoreClient(const std::string &ip, int port, CoreClientPtr pClt);
+		bool		StopCoreClient(CCoreClient *pClt);
+		CoreClientPtr	GetCoreClient(netid netId);
 
 		// protocol
 		void		AddDispatcher(IProtocolDispatcher *pDispatcher);

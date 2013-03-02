@@ -21,7 +21,6 @@
 			OutputDirectory="$(BIN)"
 			IntermediateDirectory="$(OUT)"
 			ConfigurationType="1"
-			InheritedPropertySheets="..\..\CommonPropertySheet.vsprops"
 			UseOfMFC="2"
 			CharacterSet="1"
 			>

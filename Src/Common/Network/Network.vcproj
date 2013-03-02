@@ -21,7 +21,6 @@
 			OutputDirectory="$(LIBOUT)"
 			IntermediateDirectory="$(OUT)"
 			ConfigurationType="4"
-			InheritedPropertySheets="..\..\CommonPropertySheet.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -85,7 +84,6 @@
 			OutputDirectory="$(LIBOUT)"
 			IntermediateDirectory="$(OUT)"
 			ConfigurationType="4"
-			InheritedPropertySheets="..\..\CommonPropertySheet.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -189,6 +187,10 @@
 			</File>
 			<File
 				RelativePath=".\NetworkDef.h"
+				>
+			</File>
+			<File
+				RelativePath=".\NetworkUtility.h"
 				>
 			</File>
 			<File
@@ -307,6 +309,14 @@
 				Name="Controller"
 				>
 				<File
+					RelativePath=".\Controller\CoreClient.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Controller\CoreClient.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Controller\NetConnector.cpp"
 					>
 				</File>
@@ -328,6 +338,14 @@
 				</File>
 				<File
 					RelativePath=".\Controller\NetLauncher.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Controller\P2PClient.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Controller\P2PClient.h"
 					>
 				</File>
 				<File

@@ -57,7 +57,7 @@ bool network::StopServer(CServer *pSvr)
 //------------------------------------------------------------------------
 // serverid 에 해당하는 서버를 리턴한다.
 //------------------------------------------------------------------------
-CServer* network::GetServer(int serverId)
+CServer* network::GetServer(netid serverId)
 {
 	return CNetController::Get()->GetServer(serverId);
 }
@@ -84,10 +84,11 @@ bool network::StopClient(CClient *pClt)
 //------------------------------------------------------------------------
 // clientId에 해당하는 클라이언트를 리턴한다.
 //------------------------------------------------------------------------
-CClient* network::GetClient(int clientId)
+CClient* network::GetClient(netid clientId)
 {
 	return CNetController::Get()->GetClient(clientId);
 }
+
 
 //------------------------------------------------------------------------
 // 

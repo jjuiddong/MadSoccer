@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------
-// Name:    c:\Project\GitHub\MadSoccer\Src\Common\NetCommon\login_ProtocolListener.h
+// Name:    D:\Project\GitHub\MadSoccer\Src\Common\NetCommon\login_ProtocolListener.h
 // Author:  ProtocolCompiler (by jjuiddong)
 // Date:    
 //------------------------------------------------------------------------
@@ -22,7 +22,8 @@ protected:
 class s2c_ProtocolListener : virtual public network::IProtocolListener
 {
 	friend class s2c_Dispatcher;
-	virtual void AckLogin(netid senderId, const std::string &id, const int &result){}
+	virtual void AckLogIn(netid senderId, const std::string &id, const int &result){}
+	virtual void AckLogOut(netid senderId, const std::string &id, const int &result){}
 };
 
 
@@ -42,7 +43,8 @@ protected:
 class c2s_ProtocolListener : virtual public network::IProtocolListener
 {
 	friend class c2s_Dispatcher;
-	virtual void ReqLogin(netid senderId, const std::string &id, const std::string &password){}
+	virtual void ReqLogIn(netid senderId, const std::string &id, const std::string &password){}
+	virtual void ReqLogOut(netid senderId, const std::string &id){}
 };
 
 

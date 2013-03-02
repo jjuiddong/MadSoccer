@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
 // 	delete ptr;
 	if (argc >= 2)
 	{
-		network::cProtocolParser parser;
+		network::CProtocolParser parser;
 		sRmi *rmiList = parser.Parse( argv[1] );
 		if (rmiList)
 		{

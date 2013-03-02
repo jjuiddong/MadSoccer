@@ -110,6 +110,7 @@ typedef unsigned short u_short;
 #include "etc/SharedMemoryMng.h"
 #include "etc/SharedMemory.h"
 #include "CodeGen.h"
+#include "container/VectorMap.h"
 
 
 

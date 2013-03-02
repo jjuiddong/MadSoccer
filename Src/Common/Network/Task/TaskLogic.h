@@ -29,12 +29,12 @@ namespace network
 			if (!CPacketQueue::Get()->PopPacket(packetData))
 				return RR_CONTINUE;
 
-			CServer *pSvr = GetServer(packetData.rcvServerSock);
+			CServer *pSvr = GetServer(packetData.rcvNetId);
 			if (!pSvr)
 			{
 				error::ErrorLog( 
-					common::format("CTaskLogic:: %d 에 해당하는 서버가 없습니다.", 
-						packetData.rcvServerSock) );
+					common::format("CTaskLogic:: netid: %d 에 해당하는 서버가 없습니다.", 
+						packetData.rcvNetId) );
 				return RR_CONTINUE;
 			}
 

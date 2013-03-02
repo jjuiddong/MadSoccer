@@ -21,7 +21,6 @@
 			OutputDirectory="$(LIBOUT)"
 			IntermediateDirectory="$(OUT)"
 			ConfigurationType="4"
-			InheritedPropertySheets="..\..\CommonPropertySheet.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -84,7 +83,6 @@
 			OutputDirectory="$(LIBOUT)"
 			IntermediateDirectory="$(OUT)"
 			ConfigurationType="4"
-			InheritedPropertySheets="..\..\CommonPropertySheet.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>

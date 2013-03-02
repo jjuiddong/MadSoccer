@@ -21,7 +21,6 @@
 			OutputDirectory="$(OUT)"
 			IntermediateDirectory="$(OUT)"
 			ConfigurationType="1"
-			InheritedPropertySheets="..\..\CommonPropertySheet.vsprops"
 			UseOfMFC="2"
 			CharacterSet="1"
 			>
@@ -101,7 +100,6 @@
 			OutputDirectory="$(OUT)"
 			IntermediateDirectory="$(OUT)"
 			ConfigurationType="1"
-			InheritedPropertySheets="..\..\CommonPropertySheet.vsprops"
 			UseOfMFC="2"
 			CharacterSet="1"
 			WholeProgramOptimization="1"

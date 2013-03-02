@@ -48,9 +48,9 @@ namespace network
 					}
 					else
 					{
-						const netid netId = m_pServer->GetNetIdFromSocket(readSockets.fd_array[ i]);
+						const netid senderId = m_pServer->GetNetIdFromSocket(readSockets.fd_array[ i]);
 						CPacketQueue::Get()->PushPacket( 
-							CPacketQueue::SPacketData(m_pServer->GetSocket(),CPacket(netId, buf)) );
+							CPacketQueue::SPacketData(m_pServer->GetNetId(),CPacket(senderId, buf)) );
 					}
 				}
 			}

@@ -21,7 +21,6 @@
 			OutputDirectory="$(BIN)"
 			IntermediateDirectory="$(OUT)"
 			ConfigurationType="1"
-			InheritedPropertySheets="..\..\CommonPropertySheet.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -95,7 +94,6 @@
 			OutputDirectory="$(BIN)"
 			IntermediateDirectory="$(OUT)"
 			ConfigurationType="1"
-			InheritedPropertySheets="..\..\CommonPropertySheet.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>

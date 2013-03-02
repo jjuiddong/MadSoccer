@@ -18,17 +18,18 @@ namespace network
 
 	protected:
 		netid						m_NetId;				// 고유ID (자동생성)
-		SOCKET					m_Socket;
+		SOCKET					m_Socket; 
 		ProtocolListenerList m_ProtocolListeners;
 
 	public:
-		netid				GetNetId() const { return m_NetId; }
-		SOCKET			GetSocket() const { return m_Socket; }
+		netid			GetNetId() const { return m_NetId; }
+		SOCKET		GetSocket() const { return m_Socket; }
 
 		bool				RegisterProtocol(ProtocolPtr protocol);
 		bool				AddListener(ProtocolListenerPtr pListener);
 		bool				RemoveListener(ProtocolListenerPtr pListener);
 		const ProtocolListenerList&	GetListeners() { return m_ProtocolListeners; }
+		void				ClearConnection();
 
 		// child implementes
 		virtual bool		Send(netid netId, const CPacket &packet) = 0;

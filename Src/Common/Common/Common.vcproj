@@ -21,7 +21,6 @@
 			OutputDirectory="$(LIBOUT)"
 			IntermediateDirectory="$(OUT)"
 			ConfigurationType="4"
-			InheritedPropertySheets="..\..\CommonPropertySheet.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -406,6 +405,14 @@
 			</File>
 			<File
 				RelativePath=".\thread\Thread.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Container"
+			>
+			<File
+				RelativePath=".\container\VectorMap.h"
 				>
 			</File>
 		</Filter>

@@ -30,7 +30,7 @@ protected:
 		//		printf( "recv %s\n", rcvPacket.GetData() );
 	}
 
-	virtual void AckLogin(netid senderId, const std::string &id, const int &result) override
+	virtual void AckLogIn(netid senderId, const std::string &id, const int &result) override
 	{
 		printf( "id: %s, result: %d\n", id.c_str(), result );
 	}
@@ -115,7 +115,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			static bool flag = true;
 
 			if (flag)
-				login_protocol.ReqLogin(SERVER_NETID, "testLogin", "pass1234" );
+				login_protocol.ReqLogIn(SERVER_NETID, "testLogin", "pass1234" );
 			else
 				protocol.func2(SERVER_NETID, "client send func2" );
 			flag = !flag;

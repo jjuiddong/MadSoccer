@@ -49,7 +49,6 @@ namespace network
 		void				SetPort(int port) { m_ServerPort = port; }
 		RemoteClientItor	RemoveClientProcess(RemoteClientItor it);
 		RemoteClientItor	FindRemoteClientBySocket(SOCKET sock);
-		
 
 		// Overriding
 		virtual void		OnListen();

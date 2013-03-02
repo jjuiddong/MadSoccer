@@ -18,13 +18,13 @@ namespace network
 		friend class CTaskLogic;
 		friend class CTaskWork;
 
-		typedef struct _SPacketData
+		struct SPacketData
 		{
-			SOCKET rcvServerSock;	// 패킷을 받은 서버의 SOCKET
+			netid rcvNetId;	// 패킷을 받은 서버의 netid
 			CPacket packet;
-			_SPacketData() {}
-			_SPacketData(SOCKET server, const CPacket &p) : rcvServerSock(server), packet(p) {}
-		} SPacketData;
+			SPacketData() {}
+			SPacketData(netid netId, const CPacket &p) : rcvNetId(netId), packet(p) {}
+		};
 
 	protected:
 		typedef std::list<SPacketData> PacketQueue;

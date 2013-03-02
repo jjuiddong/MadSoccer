@@ -64,9 +64,9 @@ protected:
 	//------------------------------------------------------------------------
 	// 로그인 요청
 	//------------------------------------------------------------------------
-	virtual void ReqLogin(netid senderId, const std::string &id, const std::string &password) override
+	virtual void ReqLogIn(netid senderId, const std::string &id, const std::string &password) override
 	{
-		m_LoginProtocol.AckLogin(senderId, id, 1 );
+		m_LoginProtocol.AckLogIn(senderId, id, 1 );
 	}
 
 	virtual void func2(netid senderId, const std::string &str) override

@@ -51,3 +51,14 @@ bool CNetConnector::RemoveListener(ProtocolListenerPtr pListener)
 	m_ProtocolListeners.erase(it);
 	return true;
 }
+
+
+//------------------------------------------------------------------------
+// Ä¿³Ø¼Ç Á¦°Å
+//------------------------------------------------------------------------
+void	CNetConnector::ClearConnection()
+{
+	closesocket(m_Socket);
+	WSACleanup();
+
+}

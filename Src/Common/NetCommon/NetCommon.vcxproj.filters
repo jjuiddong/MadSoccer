@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Protocol">
+      <UniqueIdentifier>{f1bdaa68-e89b-49bf-833d-e925df99e3a7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="basic.prt">
+      <Filter>Protocol</Filter>
+    </CustomBuild>
+    <CustomBuild Include="login.prt">
+      <Filter>Protocol</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>
