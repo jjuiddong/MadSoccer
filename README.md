@@ -1,4 +1,4 @@
 MadSoccer
 =========
 
-MadSoccer project
+MadSoccer project (IDE: vs2010)
