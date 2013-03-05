@@ -14,22 +14,24 @@ namespace network
 	class CServer : public CNetConnector
 	{
 	public:
-		CServer();
-		virtual ~CServer();
 		friend class CNetLauncher;
+		friend class CNetController;
 
 	protected:
+		PROCESS_TYPE			m_ProcessType;
 		int								m_ServerPort;
 		bool								m_IsServerOn;			// 서버가 정상적으로 실행이 되었다면 true
 		RemoteClientMap		m_RemoteClients;		// 서버와 연결된 클라이언트 정보리스트
 		CRITICAL_SECTION		m_CriticalSection;
 
 	public:
-		bool				Stop();
+		CServer(PROCESS_TYPE procType);
+		virtual ~CServer();
 
 		bool				IsServerOn() const { return m_IsServerOn; }
+		PROCESS_TYPE	GetProcessType() const { return m_ProcessType; }
 		bool				IsExist(netid netId);
-		void				MakeFDSET( fd_set *pfdset);
+		void				MakeFDSET( SFd_Set *pfdset);
 		void				EnterSync();
 		void				LeaveSync();
 
@@ -39,11 +41,14 @@ namespace network
 		bool				RemoveClient(netid netId);
 		bool				RemoveClientBySocket(SOCKET sock);
 		RemoteClientItor	RemoveClientInLoop(netid netId);
-		netid				GetNetIdFromSocket(SOCKET sock);
+		netid			GetNetIdFromSocket(SOCKET sock);
 		void				Clear();
 
-		virtual bool		Send(netid netId, const CPacket &packet) override;
-		virtual bool		SendAll(const CPacket &packet) override;
+		bool				Stop();
+		void				Disconnect();
+
+		virtual bool	Send(netid netId, const CPacket &packet) override;
+		virtual bool	SendAll(const CPacket &packet) override;
 
 	protected:
 		void				SetPort(int port) { m_ServerPort = port; }

@@ -9,11 +9,9 @@
 
 namespace network
 {
-
 	struct SFd_Set : fd_set
 	{
 		netid netid_array[ FD_SETSIZE];		// fd_array[] 소켓에 해당하는 netid 값
 	};
-
 	
 }

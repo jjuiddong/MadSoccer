@@ -11,6 +11,16 @@
 using namespace network;
 
 
+// Disconnect 패킷을 리턴한다.
+CPacket network::DisconnectPacket()
+{
+	CPacket packet;
+	packet << 0;
+	packet << (int)PACKETID_DISCONNECT;
+	return packet;
+}
+
+
 CPacket::CPacket():
 	m_WriteIdx(0)
 ,	m_ReadIdx(0)

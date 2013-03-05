@@ -123,6 +123,7 @@
     <ClInclude Include="Interface\ProtocolDispatcher.h" />
     <ClInclude Include="Interface\ProtocolListener.h" />
     <ClInclude Include="Task\TaskAccept.h" />
+    <ClInclude Include="Task\TaskWorkClient.h" />
     <ClInclude Include="Task\TaskLogic.h" />
     <ClInclude Include="Task\TaskWork.h" />
     <ClInclude Include="Controller\CoreClient.h" />
@@ -139,6 +140,7 @@
     <ClInclude Include="Service\AllProtocolListener.h" />
     <ClInclude Include="Service\Client.h" />
     <ClInclude Include="Service\Server.h" />
+    <ClInclude Include="Task\TaskWorkServer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />

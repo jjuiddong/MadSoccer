@@ -13,26 +13,46 @@ namespace network
 {
 	class CServer;
 	class CCoreClient;
+	DECLARE_TYPE_NAME(CP2PClient)
 	class CP2PClient : public CNetConnector
+								, public sharedmemory::CSharedMem<CP2PClient, TYPE_NAME(CP2PClient)>
 	{
+		friend class CNetController;
+		friend class CClient;
+
 	public:
-		CP2PClient();
-		virtual ~CP2PClient();
+		enum STATE
+		{
+			Host,		// P2P Host
+			Client,		// P2P Client
+		};
 
 	protected:
+		STATE			m_State;
+		PROCESS_TYPE m_ProcessType;
 		CCoreClient	*m_pP2pClient;
 		CServer		*m_pP2pHost;
 
 	public:
-		bool				Stop();
-		bool				Proc();
-		void				Clear();
+		CP2PClient(PROCESS_TYPE procType);
+		virtual ~CP2PClient();
 
+		PROCESS_TYPE GetProcessType() const { return m_ProcessType; }
+		bool				Connect( STATE state, const int port, const std::string &ip="" );
 		bool				IsConnect() const { return true; }
 
+		bool				Stop();
+
 		// child implementes
-		virtual bool		Send(netid netId, const CPacket &packet);
-		virtual bool		SendAll(const CPacket &packet);
+		virtual bool	Send(netid netId, const CPacket &packet);
+		virtual bool	SendAll(const CPacket &packet);
+
+	protected:
+		bool				Proc();
+		void				Disconnect();
+		void				Clear();
+		bool				CreateP2PHost(const int port);
+		bool				CreateP2PClient(const std::string &ip, const int port);
 
 	};
 }

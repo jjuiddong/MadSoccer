@@ -16,12 +16,12 @@ namespace network
 	// Server
 	bool		StartServer(int port, CServer *pSvr);
 	bool		StopServer(CServer *pSvr);
-	CServer*	GetServer(netid serverId);
+	ServerPtr	GetServer(netid serverId);
 
 	// Client
 	bool		StartClient(const std::string &ip, int port, CClient *pClt);
 	bool		StopClient(CClient *pClt);
-	CClient*	GetClient(netid clientId);
+	ClientPtr	GetClient(netid clientId);
 
 	// Common
 	bool		Init(int logicThreadCount);

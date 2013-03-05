@@ -36,7 +36,7 @@ namespace common
 		};
 
 	protected:
-		STATE				m_State;
+		STATE					m_State;
 		HANDLE				m_hThread;
 		std::string			m_Name;
 

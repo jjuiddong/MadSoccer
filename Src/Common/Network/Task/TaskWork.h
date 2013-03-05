@@ -1,9 +1,9 @@
 //------------------------------------------------------------------------
-// Name:    RecvWork.h
+// Name:    TaskWork.h
 // Author:  jjuiddong
 // Date:    12/22/2012
 // 
-// 클라이언트로부터 패킷을 받아서CPacketQueue에 저장한다.
+// 하나의 소켓과 통신하는 기능을 한다.
 //------------------------------------------------------------------------
 #pragma once
 
@@ -16,42 +16,36 @@ namespace network
 		, public sharedmemory::CSharedMem<CTaskWork, TYPE_NAME(network::CTaskWork)>
 	{
 	public:
-		CTaskWork(ServerPtr psvr):CTask(1,"TaskWork"), m_pServer(psvr) {}
+		CTaskWork(netid netId, SOCKET sock):CTask(2,"TaskWork"), m_NetId(netId), m_Socket(sock) {}
 		virtual ~CTaskWork() {}
 
 	protected:
-		ServerPtr	m_pServer;
+		netid	m_NetId;
+		SOCKET m_Socket;
 
 	public:
 		virtual RUN_RESULT	Run() override
 		{
-			if (!m_pServer) return RR_CONTINUE; 
-			const timeval t = {0, 10}; // 10 millisecond
+			const timeval t = {0, 0}; // 0 millisecond
 			fd_set readSockets;
+			FD_ZERO(&readSockets);
+			FD_SET(m_Socket, &readSockets);
 
-			m_pServer->EnterSync();
-			m_pServer->MakeFDSET(&readSockets);
-			m_pServer->LeaveSync();
-
-			const int ret = select( readSockets.fd_count, &readSockets, NULL, NULL, &t);
+			const int ret = select( readSockets.fd_count, &readSockets, NULL, NULL, &t );
 			if (ret != 0 && ret != SOCKET_ERROR)
 			{
-				for (u_int i=0; i < readSockets.fd_count; ++i)
+				char buf[ CPacket::MAX_PACKETSIZE];
+				const int result = recv( m_Socket, buf, sizeof(buf), 0);
+				if (result == SOCKET_ERROR || result == 0) // 받은 패킷사이즈가 0이면 서버와 끊겼다는 의미다.
 				{
-// 					if (!FD_ISSET(i, &readSockets)) continue;
-					char buf[ 256];
-					memset( buf, 0, sizeof(buf) );
-					const int result = recv(readSockets.fd_array[ i], buf, sizeof(buf), 0);
-					if (result == INVALID_SOCKET || 0 == result)
-					{
-						m_pServer->RemoveClientBySocket(readSockets.fd_array[ i]);
-					}
-					else
-					{
-						const netid senderId = m_pServer->GetNetIdFromSocket(readSockets.fd_array[ i]);
-						CPacketQueue::Get()->PushPacket( 
-							CPacketQueue::SPacketData(m_pServer->GetNetId(),CPacket(senderId, buf)) );
-					}
+					CPacketQueue::Get()->PushPacket( 
+						CPacketQueue::SPacketData(m_NetId, DisconnectPacket() ));
+					return RR_END;
+				}
+				else
+				{
+					CPacketQueue::Get()->PushPacket( 
+						CPacketQueue::SPacketData(m_NetId, CPacket(SERVER_NETID,buf)) );
 				}
 			}
 

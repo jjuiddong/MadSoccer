@@ -12,16 +12,15 @@ namespace network
 {
 	class CNetConnector
 	{
-	public:
-		CNetConnector();
-		virtual ~CNetConnector();
-
 	protected:
 		netid						m_NetId;				// 고유ID (자동생성)
 		SOCKET					m_Socket; 
 		ProtocolListenerList m_ProtocolListeners;
 
 	public:
+		CNetConnector();
+		virtual ~CNetConnector();
+
 		netid			GetNetId() const { return m_NetId; }
 		SOCKET		GetSocket() const { return m_Socket; }
 

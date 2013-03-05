@@ -24,7 +24,6 @@ namespace common
 	typedef std::list<CTask*> TaskList;
 	typedef TaskList::iterator TaskItor;
 
-
 	// 쓰레드와 로직간의 주고 받는 메세지 정의
 	typedef struct _SExternalMsg
 	{
@@ -43,8 +42,6 @@ namespace common
 
 	typedef std::list<SExternalMsg> ExternalMsgList;
 	typedef ExternalMsgList::iterator ExternalMsgItor;
-
-
 }
 
 typedef unsigned short u_short;
@@ -112,6 +109,10 @@ typedef unsigned short u_short;
 #include "CodeGen.h"
 #include "container/VectorMap.h"
 
+
+
+
+typedef common::ReferencePtr<common::CThread> ThreadPtr;
 
 
 #endif // __COMMON_H__

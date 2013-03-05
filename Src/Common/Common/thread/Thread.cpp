@@ -40,9 +40,11 @@ CThread::~CThread()
 //------------------------------------------------------------------------
 void CThread::Start()
 {
-	// 쓰레드 실행
-	m_State = RUN;
-	m_hThread = (HANDLE)_beginthreadex(NULL, 0, ThreadProcess, this, 0, NULL);
+	if (RUN != m_State)
+	{
+		m_State = RUN;
+		m_hThread = (HANDLE)_beginthreadex(NULL, 0, ThreadProcess, this, 0, NULL);
+	}
 }
 
 

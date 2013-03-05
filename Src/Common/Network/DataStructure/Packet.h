@@ -4,6 +4,10 @@
 // Date:    2012-11-28
 // 
 // 네트워크 통신에 쓰이는 패킷을 정의한다.
+//
+// 정해진 PacketId
+// 0 : Connect
+// 1 : Disconnect
 //------------------------------------------------------------------------
 #pragma once
 
@@ -12,6 +16,13 @@
 
 namespace network
 {
+	enum RESERVED_PACKETID
+	{
+		PACKETID_CONNECT = 0,
+		PACKETID_DISCONNECT,
+	};
+
+
 	class CPacket
 	{
 	public:
@@ -26,7 +37,7 @@ namespace network
 
 	protected:
 		netid		m_SenderId;
-		char		m_Data[ MAX_PACKETSIZE];
+		char			m_Data[ MAX_PACKETSIZE];
 		int			m_ReadIdx;
 		int			m_WriteIdx;
 
@@ -121,4 +132,8 @@ namespace network
 		}
 		_variant_t GetVariant(const _variant_t &varType);
 	};
+
+	// Global Functions
+	CPacket DisconnectPacket();
+
 }

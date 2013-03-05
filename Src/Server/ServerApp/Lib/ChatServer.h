@@ -17,7 +17,7 @@ class CChatServer : public network::CServer,
 								public sharedmemory::CSharedMem<CChatServer, TYPE_NAME(CChatServer)>
 {
 public:
-	CChatServer()
+	CChatServer() : CServer(network::SERVICE_EXCLUSIVE_THREAD)
 	{
 		RegisterProtocol(&m_S2CProtocol);
 		//AddListener( this );

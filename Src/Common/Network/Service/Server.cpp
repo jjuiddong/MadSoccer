@@ -4,19 +4,18 @@
 #include <winsock.h>
 #include <process.h> 
 #include <boost/bind.hpp>
-
+#include "../Controller/NetController.h"
 
 using namespace network;
 
 
-CServer::CServer() :
+CServer::CServer(PROCESS_TYPE procType) :
 	m_IsServerOn(true)
+,	m_ProcessType(procType)
 {
 	m_ServerPort = 2333;
 	InitializeCriticalSection( &m_CriticalSection );
-
 }
-
 
 CServer::~CServer()
 {
@@ -25,11 +24,12 @@ CServer::~CServer()
 
 
 //------------------------------------------------------------------------
-// 
+// 저장된 remoteClient를 모두 제거한다.
 //------------------------------------------------------------------------
 bool CServer::Stop()
 {
-
+	CNetController::Get()->StopServer(this);
+	Disconnect();
 	return true;
 }
 
@@ -48,19 +48,23 @@ void CServer::OnListen()
 //------------------------------------------------------------------------
 bool CServer::AddClient(SOCKET sock)
 {
- 	RemoteClientItor it = FindRemoteClientBySocket(sock);
-	if (m_RemoteClients.end() != it)
-		return false; // 이미존재한다면 실패
+	EnterSync();
+	{
+ 		RemoteClientItor it = FindRemoteClientBySocket(sock);
+		if (m_RemoteClients.end() != it)
+			return false; // 이미존재한다면 실패
 
-	CRemoteClient *pNewRemoteClient = new CRemoteClient();
-	pNewRemoteClient->SetSocket(sock);
-	m_RemoteClients.insert( 
-		RemoteClientMap::value_type(pNewRemoteClient->GetNetId(), pNewRemoteClient) );
+		CRemoteClient *pNewRemoteClient = new CRemoteClient();
+		pNewRemoteClient->SetSocket(sock);
+		m_RemoteClients.insert( 
+			RemoteClientMap::value_type(pNewRemoteClient->GetNetId(), pNewRemoteClient) );
 
-	clog::Log( "AddClient netid: %d, socket: %d", pNewRemoteClient->GetNetId(), sock );
-	dbg::Print( "AddClient netid: %d, socket: %d", pNewRemoteClient->GetNetId(), sock);
+		clog::Log( "AddClient netid: %d, socket: %d", pNewRemoteClient->GetNetId(), sock );
+		dbg::Print( "AddClient netid: %d, socket: %d", pNewRemoteClient->GetNetId(), sock);
 
-	OnClientJoin(pNewRemoteClient->GetNetId());
+		OnClientJoin(pNewRemoteClient->GetNetId());
+	}
+	LeaveSync();
 	return true;
 }
 
@@ -106,11 +110,14 @@ netid CServer::GetNetIdFromSocket(SOCKET sock)
 //------------------------------------------------------------------------
 bool CServer::RemoveClient(netid netId)
 {
-	RemoteClientItor it = m_RemoteClients.find(netId);
-	if (m_RemoteClients.end() == it)
-		return false; //없다면 실패
-
-	RemoveClientProcess(it);
+	EnterSync();
+	{
+		RemoteClientItor it = m_RemoteClients.find(netId);
+		if (m_RemoteClients.end() == it)
+			return false; //없다면 실패
+		RemoveClientProcess(it);
+	}
+	LeaveSync();
 	return true;
 }
 
@@ -120,11 +127,14 @@ bool CServer::RemoveClient(netid netId)
 //------------------------------------------------------------------------
 bool CServer::RemoveClientBySocket(SOCKET sock)
 {
-	RemoteClientItor it = FindRemoteClientBySocket(sock);
- 	if (m_RemoteClients.end() == it)
- 		return false; //없다면 실패
- 
- 	RemoveClientProcess(it);
+	EnterSync();
+	{
+		RemoteClientItor it = FindRemoteClientBySocket(sock);
+ 		if (m_RemoteClients.end() == it)
+ 			return false; //없다면 실패
+  		RemoveClientProcess(it);
+	}
+	LeaveSync();
 	return true;
 }
 
@@ -198,17 +208,23 @@ void CServer::Clear()
 //------------------------------------------------------------------------
 // m_RemoteClients에 저장된 socket으로 fd_set을 생성한다. 
 //------------------------------------------------------------------------
-void CServer::MakeFDSET( fd_set *pfdset)
+void CServer::MakeFDSET( SFd_Set *pfdset)
 {
 	if (!pfdset)
 		return;
 
-	FD_ZERO(pfdset);
-	BOOST_FOREACH(RemoteClientMap::value_type &kv, m_RemoteClients)
+	EnterSync();
 	{
-		pfdset->fd_array[ pfdset->fd_count] = kv.second->GetSocket();
-		pfdset->fd_count++;
+		FD_ZERO(pfdset);
+		BOOST_FOREACH(RemoteClientMap::value_type &kv, m_RemoteClients)
+		{
+			//pfdset->fd_array[ pfdset->fd_count] = kv.second->GetSocket();
+			//pfdset->fd_count++;
+			FD_SET(kv.second->GetSocket(), (fd_set*)pfdset);
+			pfdset->netid_array[ pfdset->fd_count-1] = kv.second->GetNetId();
+		}
 	}
+	LeaveSync();
 }
 
 
@@ -281,4 +297,13 @@ bool CServer::SendAll(const CPacket &packet)
 	}
 
 	return true;
+}
+
+
+//------------------------------------------------------------------------
+// 연결된 모든 클라이언트와 연결을 끊고, 서버 소켓도 닫는다.
+//------------------------------------------------------------------------
+void	CServer::Disconnect()
+{
+	// 아직 구현하지 않음 
 }

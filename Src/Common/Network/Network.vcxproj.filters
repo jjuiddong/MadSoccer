@@ -202,6 +202,12 @@
     <ClInclude Include="Service\Server.h">
       <Filter>Lib\Service</Filter>
     </ClInclude>
+    <ClInclude Include="Task\TaskWorkServer.h">
+      <Filter>Lib\Task</Filter>
+    </ClInclude>
+    <ClInclude Include="Task\TaskWorkClient.h">
+      <Filter>Lib\Task</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />

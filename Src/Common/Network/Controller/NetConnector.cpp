@@ -60,5 +60,4 @@ void	CNetConnector::ClearConnection()
 {
 	closesocket(m_Socket);
 	WSACleanup();
-
 }

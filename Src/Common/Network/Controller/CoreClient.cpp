@@ -7,7 +7,8 @@
 
 using namespace network;
 
-CCoreClient::CCoreClient()
+CCoreClient::CCoreClient(PROCESS_TYPE serviceType) :
+	m_ServiceType(serviceType)
 {
 	m_ServerIP = "127.0.0.1";
 	m_ServerPort = 2333;
@@ -25,6 +26,7 @@ CCoreClient::~CCoreClient()
 //------------------------------------------------------------------------
 bool CCoreClient::Stop()
 {
+	CNetController::Get()->StopCoreClient(this);
 	Disconnect();
 	return true;
 }
@@ -46,7 +48,7 @@ bool CCoreClient::Proc()
 	const int ret = select( readSockets.fd_count, &readSockets, NULL, NULL, &t);
 	if (ret != 0 && ret != SOCKET_ERROR)
 	{
-		char buf[ 256];
+		char buf[ CPacket::MAX_PACKETSIZE];
 		const int result = recv( readSockets.fd_array[ 0], buf, sizeof(buf), 0);
 		if (result == SOCKET_ERROR || result == 0) // 받은 패킷사이즈가 0이면 서버와 끊겼다는 의미다.
 		{
@@ -95,7 +97,6 @@ void CCoreClient::Disconnect()
 {
 	m_IsConnect = false;
 	ClearConnection();
-
 	OnDisconnect();
 }
 

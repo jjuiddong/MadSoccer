@@ -17,13 +17,15 @@ namespace network
 		virtual ~CPacketQueue() { Clear(); }
 		friend class CTaskLogic;
 		friend class CTaskWork;
+		friend class CTaskWorkClient;
+		friend class CTaskWorkServer;
 
 		struct SPacketData
 		{
 			netid rcvNetId;	// 패킷을 받은 서버의 netid
 			CPacket packet;
 			SPacketData() {}
-			SPacketData(netid netId, const CPacket &p) : rcvNetId(netId), packet(p) {}
+			SPacketData(netid _rcvNetId, const CPacket &p) : rcvNetId(_rcvNetId), packet(p) {}
 		};
 
 	protected:

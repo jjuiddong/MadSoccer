@@ -12,35 +12,36 @@
 
 namespace network
 {
+	class CP2PClient;
+	class CCoreClient;
 	class CClient : public CNetConnector
 	{
-	public:
-		CClient();
-		virtual ~CClient();
 		friend class CNetLauncher;
+		friend class CNetController;
 
 	protected:
-		std::string	m_ServerIP;
-		int				m_ServerPort;
-		bool				m_IsConnect;
-// 		CClientCore	*m_pP2pOnly;
-// 		CServer		*m_pP2p
-//		CClientCore	*m_pSvrConnectOnly;
+		PROCESS_TYPE m_ProcessType;		// m_pConnectSvr 와 값이 같다.
+
+		CCoreClient	*m_pConnectSvr;			// p2p Server와 연결되는 CoreClient
+		CP2PClient	*m_pP2p;
 
 	public:
-		bool				Stop();
-		bool				Proc();
-		void				Clear();
+		CClient(PROCESS_TYPE procType);
+		virtual ~CClient();
 
-		bool					IsConnect() const { return m_IsConnect; }
+		PROCESS_TYPE	GetProcessType() const { return m_ProcessType; }
+		CoreClientPtr	GetConnectSvrClient() const { return CoreClientPtr(m_pConnectSvr); }
+		bool					IsConnect() const;
+
+		bool					Stop();
+		void					Disconnect();
+
 		virtual bool		Send(netid netId, const CPacket &packet) override;
 		virtual bool		SendAll(const CPacket &packet) override;
 
 	protected:
-		void				SetConnect(bool isConnect) { m_IsConnect = isConnect; }
-		void				SetServerIp(const std::string &ip) { m_ServerIP = ip; }
-		void				SetServerPort(int port) { m_ServerPort = port; }
-		void				Disconnect();
+		bool				Proc();
+		void				Clear();
 
 		// oeverriding
 		virtual void		OnConnect() {}

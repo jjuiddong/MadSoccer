@@ -6,7 +6,7 @@
 
 using namespace network;
 
-CLobbyServer::CLobbyServer()
+CLobbyServer::CLobbyServer() : CServer(SERVICE_EXCLUSIVE_THREAD)
 {
 	RegisterProtocol(&m_LoginProtocol);
 	RegisterProtocol(&m_BasicProtocol);

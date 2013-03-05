@@ -50,14 +50,16 @@ bool network::StartServer(int port, CServer *pSvr)
 //------------------------------------------------------------------------
 bool network::StopServer(CServer *pSvr)
 {
+	if (!pSvr) return false;
 	dbg::Print( "StopServer netid: %d", pSvr->GetNetId() );
-	return CNetController::Get()->StopServer(pSvr);
+	return pSvr->Stop();
+//	return CNetController::Get()->StopServer(pSvr);
 }
 
 //------------------------------------------------------------------------
 // serverid 에 해당하는 서버를 리턴한다.
 //------------------------------------------------------------------------
-CServer* network::GetServer(netid serverId)
+ServerPtr network::GetServer(netid serverId)
 {
 	return CNetController::Get()->GetServer(serverId);
 }
@@ -76,15 +78,17 @@ bool network::StartClient(const std::string &ip, int port, CClient *pClt)
 //------------------------------------------------------------------------
 bool network::StopClient(CClient *pClt)
 {
+	if (!pClt) return false;
 	dbg::Print( "StopClient netid: %d", pClt->GetNetId() );
-	return CNetController::Get()->StopClient(pClt);
+	return pClt->Stop();
+//	return CNetController::Get()->StopClient(pClt);
 }
 
 
 //------------------------------------------------------------------------
 // clientId에 해당하는 클라이언트를 리턴한다.
 //------------------------------------------------------------------------
-CClient* network::GetClient(netid clientId)
+ClientPtr network::GetClient(netid clientId)
 {
 	return CNetController::Get()->GetClient(clientId);
 }

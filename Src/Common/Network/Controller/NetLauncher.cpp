@@ -1,6 +1,7 @@
 
 #include "stdafx.h"
 #include "NetLauncher.h"
+#include "CoreClient.h"
 
 using namespace network;
 
@@ -8,7 +9,7 @@ using namespace network;
 //------------------------------------------------------------------------
 // 서버 시작
 //------------------------------------------------------------------------
-bool CNetLauncher::LaunchServer(CServer *pSvr, int port)
+bool CNetLauncher::LaunchServer(ServerPtr pSvr, int port)
 {
 	if (!pSvr)
 		return false;
@@ -78,7 +79,23 @@ bool CNetLauncher::LaunchServer(CServer *pSvr, int port)
 //------------------------------------------------------------------------
 // 클라이언트 시작
 //------------------------------------------------------------------------
-bool CNetLauncher::LaunchClient(CClient *pClient, const std::string &ip, int port)
+bool CNetLauncher::LaunchClient(ClientPtr pClient, const std::string &ip, int port)
+{
+	if (!pClient)
+		return false;
+
+	if (!LaunchCoreClient(pClient->GetConnectSvrClient(), ip, port))
+		return false;
+
+	pClient->OnConnect();
+	return true;
+}
+
+
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
+bool	CNetLauncher::LaunchCoreClient(CoreClientPtr pClient, const std::string &ip, int port)
 {
 	if (!pClient)
 		return false;
@@ -132,7 +149,7 @@ bool CNetLauncher::LaunchClient(CClient *pClient, const std::string &ip, int por
 	pClient->SetServerPort(port);
 	pClient->SetSocket(clientSocket);
 	pClient->SetConnect(true);
- 	pClient->OnConnect();
+	pClient->OnConnect();
 
 	return true;
 }

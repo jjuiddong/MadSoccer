@@ -11,8 +11,9 @@
 
 
 typedef int netid;
-#define INVALID_NETID		(-1)	// 잘못된 NetId를 뜻한다. 오류값으로 쓰임
-#define SERVER_NETID		(0)		// 클라이언트 일경우 현재 연결된 Server의 NetId를 뜻함
+#define INVALID_NETID		(-1)		// 잘못된 NetId를 뜻한다. 오류값으로 쓰임
+#define SERVER_NETID		(0)		// 클라이언트 일 경우 현재 연결된 Server의 NetId를 뜻함
+#define P2P_NETID				(1)		// 클라이언트 일 경우 현재 연결된 P2P 네트워크 NetId를 뜻함
 
 
 namespace network
@@ -27,6 +28,20 @@ namespace network
 	class CGroup;
 	class CRoom;
 	class CUser;
+
+	enum SERVICE_TYPE
+	{
+		CLIENT,
+		SERVER,
+	};
+
+	enum PROCESS_TYPE
+	{
+		USER_LOOP,									// 유저의 쓰레드에서 처리
+		SERVICE_SEPERATE_THREAD,		// 통합 쓰레드에서 처리 (통합처리를 위해 따로 분리해둔 쓰레드를 뜻한다)
+		SERVICE_EXCLUSIVE_THREAD,		// 별도의 쓰레드를 생성해서 처리
+	};
+
 }
 typedef common::ReferencePtr<network::CServer> ServerPtr;
 typedef common::ReferencePtr<network::CClient> ClientPtr;

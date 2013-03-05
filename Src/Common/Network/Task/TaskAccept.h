@@ -26,7 +26,7 @@ namespace network
 			fd_set readSockets;
 			CNetController::Get()->MakeServersFDSET(&readSockets);
 
-			const int ret = select( readSockets.fd_count, &readSockets, NULL, NULL, &t);
+			const int ret = select( readSockets.fd_count, &readSockets, NULL, NULL, &t );
 			if (ret != 0 && ret != SOCKET_ERROR)
 			{
 				for (u_int i=0; i < readSockets.fd_count; ++i)
@@ -48,9 +48,7 @@ namespace network
 						return RR_CONTINUE;
 					}
 
- 					pSvr->EnterSync();
  					pSvr->AddClient( remoteSocket );
- 					pSvr->LeaveSync();
 				}
 			}
 

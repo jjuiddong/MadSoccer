@@ -20,7 +20,7 @@ namespace network
 		, public sharedmemory::CSharedMem<CTaskLogic, TYPE_NAME(network::CTaskLogic)>
 	{
 	public:
-		CTaskLogic() : CTask(0,"TaskLogic") {}
+		CTaskLogic() : CTask(1,"TaskLogic") {}
 
 	public:
 		virtual RUN_RESULT	Run() override
