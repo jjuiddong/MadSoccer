@@ -12,11 +12,6 @@ namespace network
 {
 	class CNetConnector
 	{
-	protected:
-		netid						m_NetId;				// 고유ID (자동생성)
-		SOCKET					m_Socket; 
-		ProtocolListenerList m_ProtocolListeners;
-
 	public:
 		CNetConnector();
 		virtual ~CNetConnector();
@@ -25,9 +20,9 @@ namespace network
 		SOCKET		GetSocket() const { return m_Socket; }
 
 		bool				RegisterProtocol(ProtocolPtr protocol);
-		bool				AddListener(ProtocolListenerPtr pListener);
-		bool				RemoveListener(ProtocolListenerPtr pListener);
 		const ProtocolListenerList&	GetListeners() { return m_ProtocolListeners; }
+		virtual bool	AddListener(ProtocolListenerPtr pListener);
+		virtual bool	RemoveListener(ProtocolListenerPtr pListener);
 		void				ClearConnection();
 
 		// child implementes
@@ -37,5 +32,9 @@ namespace network
 	protected:
 		void				SetSocket(SOCKET sock) { m_Socket = sock; }
 
+	protected:
+		netid						m_NetId;				// 고유ID (자동생성)
+		SOCKET					m_Socket; 
+		ProtocolListenerList m_ProtocolListeners;
 	};
 }

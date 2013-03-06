@@ -25,8 +25,6 @@ CVirtualClient2Dlg::CVirtualClient2Dlg(CWnd* pParent /*=NULL*/)
 CVirtualClient2Dlg::~CVirtualClient2Dlg()
 {
 	SAFE_DELETE(m_pDlgConsole);
-	network::Clear();
-	CVClient::Release();
 }
 
 void CVirtualClient2Dlg::DoDataExchange(CDataExchange* pDX)

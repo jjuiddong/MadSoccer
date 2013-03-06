@@ -8,21 +8,17 @@
 #pragma once
 
 #include "Controller/NetConnector.h"
+#include "../interface/ServerEventListener.h"
 
 namespace network
 {
+	class IServerEventListener;
 	class CServer : public CNetConnector
 	{
-	public:
 		friend class CNetLauncher;
 		friend class CNetController;
 
-	protected:
-		PROCESS_TYPE			m_ProcessType;
-		int								m_ServerPort;
-		bool								m_IsServerOn;			// 서버가 정상적으로 실행이 되었다면 true
-		RemoteClientMap		m_RemoteClients;		// 서버와 연결된 클라이언트 정보리스트
-		CRITICAL_SECTION		m_CriticalSection;
+		typedef common::ReferencePtr<IServerEventListener> ServerEventListenerPtr;
 
 	public:
 		CServer(PROCESS_TYPE procType);
@@ -31,13 +27,14 @@ namespace network
 		bool				IsServerOn() const { return m_IsServerOn; }
 		PROCESS_TYPE	GetProcessType() const { return m_ProcessType; }
 		bool				IsExist(netid netId);
+		void				SetEventListener(ServerEventListenerPtr ptr) { m_pEventListener = ptr; }
 		void				MakeFDSET( SFd_Set *pfdset);
 		void				EnterSync();
 		void				LeaveSync();
 
 		bool				AddClient(SOCKET sock);
-		CRemoteClient*		GetRemoteClient(netid netId);
-		CRemoteClient*		GetRemoteClientFromSocket(SOCKET sock);
+		CRemoteClient* GetRemoteClient(netid netId);
+		CRemoteClient* GetRemoteClientFromSocket(SOCKET sock);
 		bool				RemoveClient(netid netId);
 		bool				RemoveClientBySocket(SOCKET sock);
 		RemoteClientItor	RemoveClientInLoop(netid netId);
@@ -55,10 +52,18 @@ namespace network
 		RemoteClientItor	RemoveClientProcess(RemoteClientItor it);
 		RemoteClientItor	FindRemoteClientBySocket(SOCKET sock);
 
-		// Overriding
-		virtual void		OnListen();
-		virtual void		OnClientJoin(netid netId) {}
-		virtual void		OnClientLeave(netid netId) {}
+		// event
+		void				OnListen();
+		void				OnClientJoin(netid netId);
+		void				OnClientLeave(netid netId);
+
+	protected:
+		PROCESS_TYPE			m_ProcessType;
+		int								m_ServerPort;
+		bool								m_IsServerOn;			// 서버가 정상적으로 실행이 되었다면 true
+		RemoteClientMap		m_RemoteClients;		// 서버와 연결된 클라이언트 정보리스트
+		CRITICAL_SECTION		m_CriticalSection;
+		ServerEventListenerPtr m_pEventListener;
 
 	};
 

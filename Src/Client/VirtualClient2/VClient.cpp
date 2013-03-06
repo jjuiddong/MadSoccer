@@ -7,10 +7,16 @@
 
 using namespace network;
 
-CVClient::CVClient()
+CVClient::CVClient() : CClient(network::USER_LOOP)
 {
 	RegisterProtocol(&m_Protocol);
 	AddListener(this);
+	SetEventListener(this);
+
+}
+
+CVClient::~CVClient()
+{
 
 }
 
@@ -18,7 +24,7 @@ CVClient::CVClient()
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-void CVClient::OnConnect()
+void CVClient::OnClientConnect(ClientPtr client)
 {
 	GetConsole()->AddString( "Connect" );
 }
@@ -27,7 +33,7 @@ void CVClient::OnConnect()
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-void CVClient::OnDisconnect()
+void CVClient::OnClientDisconnect(ClientPtr client)
 {
 	GetConsole()->AddString( "DisConnect" );
 }

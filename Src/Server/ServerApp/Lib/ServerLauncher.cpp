@@ -9,15 +9,15 @@
 bool CServerLauncher::Launcher( std::string configFileName )
 {
 	CFastMemLoader mem( "script/dataStructure.txt" );
-	SServerLaunchInfo *pInfo = (SServerLaunchInfo*)mem.ReadScript( configFileName.c_str(), 
-																	"ServerLaunchInfo" );
-	if (!pInfo)
-		return false;
+	//SServerLaunchInfo *pInfo = (SServerLaunchInfo*)mem.ReadScript( configFileName.c_str(), 
+	//																"ServerLaunchInfo" );
+	//if (!pInfo)
+	//	return false;
 
 
 
-	delete[] pInfo->gameSvrs;
-	delete[] pInfo->lobbySvrs;
-	delete[] pInfo;
+	//delete[] pInfo->gameSvrs;
+	//delete[] pInfo->lobbySvrs;
+	//delete[] pInfo;
 	return true;
 }

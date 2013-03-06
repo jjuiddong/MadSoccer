@@ -8,12 +8,14 @@
 #pragma once
 
 
-class CVClient : public network::CClient, public common::CSingleton<CVClient>
-				, public all::ProtocolListener
+class CVClient : public network::CClient
+						,public network::IClientEventListener
+						,public all::ProtocolListener
+						,public common::CSingleton<CVClient>
 {
 public:
 	CVClient();
-	virtual ~CVClient() {}
+	virtual ~CVClient();
 
 protected:
 	all::Protocol		m_Protocol;
@@ -21,8 +23,11 @@ protected:
 public:
 	all::Protocol&		GetProtocol() { return m_Protocol; }
 
-	virtual void OnConnect() override;
-	virtual void OnDisconnect() override;
+	//virtual void OnConnect() override;
+	//virtual void OnDisconnect() override;
+	virtual void			OnClientConnect(ClientPtr client) override;
+	virtual void			OnClientDisconnect(ClientPtr client) override;
+
 
 	// network
 	// all::protocol

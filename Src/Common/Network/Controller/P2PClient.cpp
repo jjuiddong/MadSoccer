@@ -128,3 +128,24 @@ void	CP2PClient::Disconnect()
 	if (m_pP2pHost)
 		m_pP2pHost->Disconnect();
 }
+
+
+//------------------------------------------------------------------------
+// Event MemberJoin
+//------------------------------------------------------------------------
+void	CP2PClient::OnMemberJoin()
+{
+	//RET(!m_pEventListener);
+	//m_pEventListener->OnMemberJoin(this);
+}
+
+
+//------------------------------------------------------------------------
+// Event MemberLeave
+//------------------------------------------------------------------------
+void	CP2PClient::OnMemberLeave()
+{
+	//RET(!m_pEventListener);
+	//m_pEventListener->OnMemberLeave(this);
+}
+

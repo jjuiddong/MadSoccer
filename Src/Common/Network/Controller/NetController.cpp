@@ -48,12 +48,12 @@ bool CNetController::Init(int logicThreadCount)
 	{
   		m_AcceptThread.AddTask( new CTaskAccept() );
   		m_AcceptThread.Start();
-	}
 
-	// CoreClient용 통합 WorkThread 생성
-	ThreadPtr pWorkThread = GetWorkThread( CLIENT, SERVICE_SEPERATE_THREAD );
-	if (pWorkThread)
-		pWorkThread->Start();
+		// CoreClient용 통합 WorkThread 생성
+		ThreadPtr pWorkThread = GetWorkThread( CLIENT, SERVICE_SEPERATE_THREAD );
+		if (pWorkThread)
+			pWorkThread->Start();
+	}
 
 	return true;
 }

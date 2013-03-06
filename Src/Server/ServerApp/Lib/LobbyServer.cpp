@@ -11,6 +11,7 @@ CLobbyServer::CLobbyServer() : CServer(SERVICE_EXCLUSIVE_THREAD)
 	RegisterProtocol(&m_LoginProtocol);
 	RegisterProtocol(&m_BasicProtocol);
 	AddListener( this );
+	SetEventListener(this);
 
 }
 
@@ -154,7 +155,7 @@ void CLobbyServer::SendUsers(netid userId)
 //------------------------------------------------------------------------
 // 클라이언트가 서버에 붙었을 때 호출된다.
 //------------------------------------------------------------------------
-void CLobbyServer::OnClientJoin(netid netId)
+void CLobbyServer::OnClientJoin(ServerPtr svr, netid netId)
 {
 	CUserLobby *pUser = new CUserLobby();
 	pUser->SetNetId(netId);
@@ -169,7 +170,7 @@ void CLobbyServer::OnClientJoin(netid netId)
 //------------------------------------------------------------------------
 // 클라이언트가 서버로 부터 떨어져 나갔을 때 호출된다.
 //------------------------------------------------------------------------
-void CLobbyServer::OnClientLeave(netid netId)
+void CLobbyServer::OnClientLeave(ServerPtr svr, netid netId)
 {
 	if (!RemoveUser(netId))
 	{
@@ -194,4 +195,19 @@ std::string CLobbyServer::ToString()
 	}
 	LeaveSync();
 	return ss.str();
+}
+
+
+
+//------------------------------------------------------------------------
+//  Test Packet
+//------------------------------------------------------------------------
+void CLobbyServer::ReqLogIn(netid senderId, const std::string &id, const std::string &password)
+{
+	m_LoginProtocol.AckLogIn(senderId, id, 1 );
+}
+
+void CLobbyServer::func2(netid senderId, const std::string &str)
+{
+	m_BasicProtocol.func1(senderId);
 }

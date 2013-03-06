@@ -3,7 +3,7 @@
 #include "Server.h"
 #include <winsock.h>
 #include <process.h> 
-#include <boost/bind.hpp>
+//#include <boost/bind.hpp>
 #include "../Controller/NetController.h"
 
 using namespace network;
@@ -31,15 +31,6 @@ bool CServer::Stop()
 	CNetController::Get()->StopServer(this);
 	Disconnect();
 	return true;
-}
-
-
-//------------------------------------------------------------------------
-// 
-//------------------------------------------------------------------------
-void CServer::OnListen()
-{
-
 }
 
 
@@ -307,3 +298,32 @@ void	CServer::Disconnect()
 {
 	// 아직 구현하지 않음 
 }
+
+
+//------------------------------------------------------------------------
+// Event Listen
+//------------------------------------------------------------------------
+void	CServer::OnListen()
+{
+	RET(!m_pEventListener);
+	m_pEventListener->OnListen(this);
+}
+
+//------------------------------------------------------------------------
+// Event Client Join
+//------------------------------------------------------------------------
+void	CServer::OnClientJoin(netid netId)
+{
+	RET(!m_pEventListener);
+	m_pEventListener->OnClientJoin(this, netId);
+}
+
+//------------------------------------------------------------------------
+// Event ClientLeave
+//------------------------------------------------------------------------
+void	CServer::OnClientLeave(netid netId)
+{
+	RET(!m_pEventListener);
+	m_pEventListener->OnClientLeave(this, netId);
+}
+

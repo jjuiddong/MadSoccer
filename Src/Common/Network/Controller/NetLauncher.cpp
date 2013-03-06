@@ -87,7 +87,6 @@ bool CNetLauncher::LaunchClient(ClientPtr pClient, const std::string &ip, int po
 	if (!LaunchCoreClient(pClient->GetConnectSvrClient(), ip, port))
 		return false;
 
-	pClient->OnConnect();
 	return true;
 }
 

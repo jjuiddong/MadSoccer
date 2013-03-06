@@ -208,6 +208,18 @@
     <ClInclude Include="Task\TaskWorkClient.h">
       <Filter>Lib\Task</Filter>
     </ClInclude>
+    <ClInclude Include="Interface\CoreClientEventListener.h">
+      <Filter>Lib\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\ServerEventListener.h">
+      <Filter>Lib\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\P2PClientEventListener.h">
+      <Filter>Lib\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\ClientEventListener.h">
+      <Filter>Lib\Interface</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />

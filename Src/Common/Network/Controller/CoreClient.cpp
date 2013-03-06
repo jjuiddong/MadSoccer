@@ -2,13 +2,15 @@
 #include "stdafx.h"
 #include "CoreClient.h"
 #include "../Interface/Protocol.h"
-#include "NetController.h"
 #include "../Service/AllProtocolListener.h"
+#include "NetController.h"
+
 
 using namespace network;
 
-CCoreClient::CCoreClient(PROCESS_TYPE serviceType) :
-	m_ServiceType(serviceType)
+CCoreClient::CCoreClient(PROCESS_TYPE procType) :
+	m_ServiceType(procType)
+,	m_pEventListener(NULL)
 {
 	m_ServerIP = "127.0.0.1";
 	m_ServerPort = 2333;
@@ -137,3 +139,22 @@ bool CCoreClient::SendAll(const CPacket &packet)
 	return true;
 }
 
+
+//------------------------------------------------------------------------
+// Event Connect
+//------------------------------------------------------------------------
+void	CCoreClient::OnConnect()
+{
+	RET(!m_pEventListener);
+	m_pEventListener->OnCoreClientConnect(this);
+}
+
+
+//------------------------------------------------------------------------
+// Event Disconnect
+//------------------------------------------------------------------------
+void	CCoreClient::OnDisconnect()
+{
+	RET(!m_pEventListener);
+	m_pEventListener->OnClientDisconnect(this);
+}

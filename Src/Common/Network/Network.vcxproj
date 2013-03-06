@@ -106,6 +106,10 @@
     <ClCompile Include="Service\Server.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Interface\ClientEventListener.h" />
+    <ClInclude Include="Interface\CoreClientEventListener.h" />
+    <ClInclude Include="Interface\P2PClientEventListener.h" />
+    <ClInclude Include="Interface\ServerEventListener.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="NetworkDef.h" />
     <ClInclude Include="NetworkUtility.h" />

@@ -8,28 +8,26 @@
 #pragma once
 
 #include "NetConnector.h"
+#include "../interface/CoreClientEventListener.h"
 
 namespace network
 {
+	class ICoreClientEventListener;
 	class CCoreClient : public CNetConnector
 	{
-	public:
 		friend class CNetLauncher;
 		friend class CNetController;
 		friend class CClient;
 
-	protected:
-		PROCESS_TYPE m_ServiceType;
-		std::string	m_ServerIP;
-		int				m_ServerPort;
-		bool				m_IsConnect;
+		typedef common::ReferencePtr<ICoreClientEventListener> CoreClientEventListenerPtr;
 
 	public:
-		CCoreClient(PROCESS_TYPE serviceType);
+		CCoreClient(PROCESS_TYPE procType);
 		virtual ~CCoreClient();
 
 		PROCESS_TYPE GetProcessType() const { return m_ServiceType; }
 		bool					IsConnect() const { return m_IsConnect; }
+		void					SetEventListener(CoreClientEventListenerPtr ptr) { m_pEventListener = ptr; }
 
 		bool					Stop();
 		void					Disconnect();
@@ -44,11 +42,16 @@ namespace network
 		void				SetServerIp(const std::string &ip) { m_ServerIP = ip; }
 		void				SetServerPort(int port) { m_ServerPort = port; }
 
-		// oeverriding
-		virtual void		OnConnect() {}
-		virtual void		OnDisconnect() {}
-		virtual void		OnMemberJoin() {}
-		virtual void		OnMemberLeave() {}
+		// event
+		void				OnConnect();
+		void				OnDisconnect();
+
+	protected:
+		PROCESS_TYPE					m_ServiceType;
+		std::string							m_ServerIP;
+		int										m_ServerPort;
+		bool										m_IsConnect;
+		CoreClientEventListenerPtr	m_pEventListener;
 
 	};
 }

@@ -18,16 +18,13 @@ namespace common
 	class VectorMap
 	{
 	public:
-		VectorMap() {}
-		VectorMap(int reserved) : m_Seq(reserved) {}
-
 		typedef std::map<KeyType, Type> MapType;
 		typedef std::vector<Type> VectorType;
 		typedef typename MapType::iterator iterator;
 		typedef typename MapType::value_type value_type;
 
-		std::map<KeyType, Type>	m_RandomAccess;
-		std::vector<Type>				m_Seq;
+		VectorMap() {}
+		VectorMap(int reserved) : m_Seq(reserved) {}
 
 		bool insert(const value_type &vt)
 		{
@@ -87,6 +84,10 @@ namespace common
 				}
 			}
 		}
+
+	public:
+		std::map<KeyType, Type>	m_RandomAccess;
+		std::vector<Type>				m_Seq;
 
 	};
 

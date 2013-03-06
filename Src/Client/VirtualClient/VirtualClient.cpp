@@ -22,7 +22,7 @@ class CVirtualClient :	public network::CClient
 					 ,	public basic::s2c_ProtocolListener
 {
 public:
-	CVirtualClient() {}
+	CVirtualClient() : CClient(network::USER_LOOP) {}
 
 protected:
 	virtual void ProcessPacket( const CPacket &rcvPacket )

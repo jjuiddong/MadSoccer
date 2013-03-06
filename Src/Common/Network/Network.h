@@ -2,11 +2,9 @@
 #ifndef __NETWORK_H__
 #define __NETWORK_H__
 
-
 #include "NetworkDef.h"
 #include "Service/Server.h"
 #include "Service/Client.h"
-
 
 namespace network
 {

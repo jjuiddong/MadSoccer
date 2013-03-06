@@ -12,8 +12,8 @@
 
 typedef int netid;
 #define INVALID_NETID		(-1)		// 잘못된 NetId를 뜻한다. 오류값으로 쓰임
-#define SERVER_NETID		(0)		// 클라이언트 일 경우 현재 연결된 Server의 NetId를 뜻함
-#define P2P_NETID				(1)		// 클라이언트 일 경우 현재 연결된 P2P 네트워크 NetId를 뜻함
+#define SERVER_NETID		(0)		// 연결된 Server의 NetId를 뜻함 (클라이언트 일 때)
+#define P2P_NETID				(1)		// 연결된 P2P 네트워크 NetId를 뜻함 (클라이언트 일 때)
 
 
 namespace network
@@ -21,6 +21,7 @@ namespace network
 	class CServer;
 	class CClient;
 	class CCoreClient;
+	class CP2PClient;
 	class CNetConnector;
 	class IProtocol;
 	class IProtocolListener;
@@ -45,6 +46,7 @@ namespace network
 }
 typedef common::ReferencePtr<network::CServer> ServerPtr;
 typedef common::ReferencePtr<network::CClient> ClientPtr;
+typedef common::ReferencePtr<network::CP2PClient> P2PClientPtr;
 typedef common::ReferencePtr<network::CCoreClient> CoreClientPtr;
 typedef common::ReferencePtr<network::CNetConnector> NetConnectorPtr;
 typedef common::ReferencePtr<network::CCharacter> CharacterPtr;
@@ -107,22 +109,22 @@ typedef ProtocolMap::iterator ProtocolItor;
 
 
 // fastmemloader로 정보를 읽는다.
-#pragma pack(1)
-typedef struct _SServerInfo
-{
-	char	name[32];
-	char	s2sip[32];
-	int		s2sport;
-	int		s2cport;
-} SServerInfo;
-
-typedef struct _SServerLaunchInfo
-{
-	int lobbyServerCnt;
-	SServerInfo *lobbySvrs;
-	int gameServerCnt;
-	SServerInfo *gameSvrs;
-
-} SServerLaunchInfo;
-#pragma pack()
+//#pragma pack(1)
+//typedef struct _SServerInfo
+//{
+//	char	name[32];
+//	char	s2sip[32];
+//	int		s2sport;
+//	int		s2cport;
+//} SServerInfo;
+//
+//typedef struct _SServerLaunchInfo
+//{
+//	int lobbyServerCnt;
+//	SServerInfo *lobbySvrs;
+//	int gameServerCnt;
+//	SServerInfo *gameSvrs;
+//
+//} SServerLaunchInfo;
+//#pragma pack()
 

@@ -13,16 +13,16 @@ using namespace network;
 CClient::CClient(PROCESS_TYPE procType) :
 	m_ProcessType(procType)
 ,	m_pP2p(NULL)
+,	m_pConnectSvr(NULL)
+,	m_pEventListener(NULL)
 {
 	m_pConnectSvr = new CCoreClient(procType);
-
+	m_pConnectSvr->SetEventListener(this);
 }
-
 
 CClient::~CClient() 
 {
 	Clear();
-
 }
 
 
@@ -42,11 +42,15 @@ bool CClient::Stop()
 
 
 //------------------------------------------------------------------------
-// 매 프레임마다 호출되어야 하는 함수다.
+// PROCESS_TYPE이 USER_LOOP일 때, 매 프레임마다 호출되어야 하는 함수다.
 // 패킷이 서버로 부터 왔는지 검사한다.
 //------------------------------------------------------------------------
 bool CClient::Proc()
 {
+	if (m_pConnectSvr)	
+		m_pConnectSvr->Proc();
+	if (m_pP2p)
+		m_pP2p->Proc();
 	return true;
 }
 
@@ -73,6 +77,34 @@ void CClient::Clear()
 	Stop();
 	SAFE_DELETE(m_pConnectSvr);
 	SAFE_DELETE(m_pP2p);
+}
+
+
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
+bool	CClient::AddListener(ProtocolListenerPtr pListener)
+{
+	if (!CNetConnector::AddListener(pListener))
+		return false;
+	if (m_pConnectSvr)
+		m_pConnectSvr->AddListener(pListener);
+	if (m_pP2p)
+		m_pP2p->AddListener(pListener);
+}
+
+
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
+bool	CClient::RemoveListener(ProtocolListenerPtr pListener)
+{
+	if (!CNetConnector::RemoveListener(pListener))
+		return false;
+	if (m_pConnectSvr)
+		m_pConnectSvr->RemoveListener(pListener);
+	if (m_pP2p)
+		m_pP2p->RemoveListener(pListener);
 }
 
 
@@ -111,5 +143,25 @@ bool CClient::SendAll(const CPacket &packet)
 bool	CClient::IsConnect() const 
 {
 	return m_pConnectSvr && m_pConnectSvr->IsConnect();
+}
+
+
+//------------------------------------------------------------------------
+// Connect Event Handler
+//------------------------------------------------------------------------
+void	CClient::OnCoreClientConnect(CoreClientPtr client)
+{
+	RET(!m_pEventListener);
+	m_pEventListener->OnClientConnect(this);
+}
+
+
+//------------------------------------------------------------------------
+// Disconnect Event Handler
+//------------------------------------------------------------------------
+void	CClient::OnClientDisconnect(CoreClientPtr client)
+{
+	RET(!m_pEventListener);
+	m_pEventListener->OnClientDisconnect(this);
 }
 
