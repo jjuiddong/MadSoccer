@@ -49,8 +49,6 @@ namespace network
 		// Event Handler
 		virtual void		OnCoreClientConnect(CoreClientPtr client) override;
 		virtual void		OnClientDisconnect(CoreClientPtr client) override;
-		//virtual void		OnMemberJoin(CoreClientPtr client) override;
-		//virtual void		OnMemberLeave(CoreClientPtr client) override;
 
 	protected:
 		PROCESS_TYPE m_ProcessType;		// m_pConnectSvr 와 값이 같다.

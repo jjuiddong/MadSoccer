@@ -9,8 +9,8 @@
 
 #pragma once
 
-#include "NetCommon/basic_Protocol.h"
-#include "NetCommon/basic_ProtocolListener.h"
+#include "NetCommon/Src/basic_Protocol.h"
+#include "NetCommon/Src/basic_ProtocolListener.h"
 
 DECLARE_TYPE_NAME(CChatServer)
 class CChatServer : public network::CServer

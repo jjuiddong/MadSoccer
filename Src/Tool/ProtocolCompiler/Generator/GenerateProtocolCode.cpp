@@ -1,6 +1,8 @@
 
 #include "stdafx.h"
 #include "GenerateProtocolCode.h"
+#include <direct.h>
+
 // #include <shlwapi.h>
 // #pragma comment(lib, "shlwapi")
 
@@ -9,15 +11,6 @@ using namespace std;
 
 namespace compiler
 {
-	string n_className; // Protocol, ProtocolListener 공동으로 사용하고 있다.
-	string n_protocolId;
-	string n_fileName;
-	string n_protocolName;	// *.prt 파일의 확장자와 경로를 제외한 파일이름을 저장한다.
-	string n_OrigianlFileName;
-	string n_listenerClassName;
-	
-	
-
 	// Write Protocol Listener Code
 	bool WriteFirstListenerHeader(sRmi *rmi);
 	bool WriteListenerHeader(ofstream &fs, sRmi *rmi);
@@ -53,7 +46,13 @@ namespace compiler
 	string GetProtocolDispatcherClassName(const string &protocolName, const string &rmiName );
 
 
-
+	string n_className; // Protocol, ProtocolListener 공동으로 사용하고 있다.
+	string n_protocolId;
+	string n_fileName;
+	string n_protocolName;	// *.prt 파일의 확장자와 경로를 제외한 파일이름을 저장한다.
+	string n_OrigianlFileName;
+	string n_listenerClassName;
+	string n_SrcFolderName = "Src";
 }
 
 using namespace compiler;
@@ -67,7 +66,12 @@ bool compiler::WriteProtocolCode(string protocolFileName, sRmi *rmi)
 	if (!rmi)
 		return true;
 
-	n_OrigianlFileName = GetFileNameExceptExt(protocolFileName);
+	const std::string fileName = common::GetFileNameExceptExt(protocolFileName);
+	const std::string path = common::GetFilePathExceptFileName(protocolFileName);
+	const std::string folder = (path.empty())? n_SrcFolderName : path + "\\" + n_SrcFolderName;
+	_mkdir(folder.c_str());
+	n_OrigianlFileName = folder+ "\\" + fileName;
+
 	n_protocolName = GetProtocolName(protocolFileName);
 
 	WriteFirstProtocolClassHeader(rmi);
@@ -80,17 +84,17 @@ bool compiler::WriteProtocolCode(string protocolFileName, sRmi *rmi)
 }
 
 
-//------------------------------------------------------------------------
-// 인자로 넘어온 fileName의 확장자를 제외한 스트링을 리턴한다.
-//------------------------------------------------------------------------
-string compiler::GetFileNameExceptExt(const string &fileName)
-{
-	char srcFileName[ MAX_PATH];
-	strcpy_s(srcFileName, MAX_PATH, fileName.c_str() );
-	char *tmp;
-	char *name = strtok_s(srcFileName, ".", &tmp);
-	return name;
-}
+////------------------------------------------------------------------------
+//// 인자로 넘어온 fileName의 확장자를 제외한 스트링을 리턴한다.
+////------------------------------------------------------------------------
+//string compiler::GetFileNameExceptExt(const string &fileName)
+//{
+//	char srcFileName[ MAX_PATH];
+//	strcpy_s(srcFileName, MAX_PATH, fileName.c_str() );
+//	char *tmp;
+//	char *name = strtok_s(srcFileName, ".", &tmp);
+//	return name;
+//}
 
 
 //------------------------------------------------------------------------
@@ -281,6 +285,7 @@ bool compiler::WriteFirstListenerCpp(sRmi *rmi, bool IsAddStdafxHeader)
 	fs << "#include \"network/PrtCompiler/ProtocolMacro.h\"\n";
 	fs << endl;
 	fs << "using namespace network;\n";
+	fs << "using namespace marshalling;\n";
 	fs << "using namespace " << n_protocolName << ";\n";
 	fs << endl;
 
@@ -442,6 +447,7 @@ bool compiler::WriteFirstProtocolCpp(sRmi *rmi, bool IsAddStdafxHeader)
 		fs << "#include \"stdafx.h\"\n";
 	fs << "#include \"" << headerFileName << "\"\n";
 	fs << "using namespace network;\n";
+	fs << "using namespace marshalling;\n";
 	fs << "using namespace " << n_protocolName << ";\n";
 	fs << endl;
 

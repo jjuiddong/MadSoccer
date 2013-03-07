@@ -80,6 +80,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DataStructure\Marshalling.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -106,6 +107,7 @@
     <ClCompile Include="Service\Server.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DataStructure\Marshalling.h" />
     <ClInclude Include="Interface\ClientEventListener.h" />
     <ClInclude Include="Interface\CoreClientEventListener.h" />
     <ClInclude Include="Interface\P2PClientEventListener.h" />

@@ -25,23 +25,21 @@ namespace network
 		friend class CClient;
 
 	public:
-		enum STATE
-		{
-			Host,		// P2P Host
-			Client,		// P2P Client
-		};
-
 		CP2PClient(PROCESS_TYPE procType);
 		virtual ~CP2PClient();
 		PROCESS_TYPE GetProcessType() const { return m_ProcessType; }
-		bool				Connect( STATE state, const int port, const std::string &ip="" );
+		bool				Connect( P2P_STATE state, const int port, const std::string &ip="" );
 		bool				IsConnect() const { return true; }
 
 		bool				Proc();
 		bool				Stop();
 		void				Disconnect();
 
-		// child implementes
+		// Overriding
+		virtual bool		AddListener(ProtocolListenerPtr pListener) override;
+		virtual bool		RemoveListener(ProtocolListenerPtr pListener) override;
+
+		// Child Implementes
 		virtual bool	Send(netid netId, const CPacket &packet);
 		virtual bool	SendAll(const CPacket &packet);
 
@@ -55,7 +53,7 @@ namespace network
 		void				OnMemberLeave();
 
 	protected:
-		STATE			m_State;
+		P2P_STATE		m_State;
 		PROCESS_TYPE m_ProcessType;
 		CCoreClient	*m_pP2pClient;
 		CServer		*m_pP2pHost;

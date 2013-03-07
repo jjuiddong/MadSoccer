@@ -2,14 +2,8 @@
 #include "stdafx.h"
 #include "Packet.h"
 
-// #ifdef _UNICODE
-// 	#pragma comment(lib, "comsuppw.lib")
-// #else
-// 	#pragma comment(lib, "comsupp.lib")
-// #endif
 
 using namespace network;
-
 
 // Disconnect 패킷을 리턴한다.
 CPacket network::DisconnectPacket()
@@ -57,112 +51,47 @@ int	CPacket::GetPacketId() const
 }
 
 
-//------------------------------------------------------------------------
-// 데이타 할당
-//------------------------------------------------------------------------
-CPacket& CPacket::operator<<(const bool &rhs)
-{
-	Append(rhs);
-	return *this;
-}
-CPacket& CPacket::operator<<(const long &rhs)
-{
-	Append(rhs);
-	return *this;
-}
-CPacket& CPacket::operator<<(const int &rhs)
-{
-	Append(rhs);
-	return *this;
-}
-CPacket& CPacket::operator<<(const unsigned int &rhs)
-{
-	Append(rhs);
-	return *this;
-}
-CPacket& CPacket::operator<<(const char &rhs)
-{
-	Append(rhs);
-	return *this;
-}
-CPacket& CPacket::operator<<(const unsigned char &rhs)
-{
-	Append(rhs);
-	return *this;
-}
-CPacket& CPacket::operator<<(const float &rhs)
-{
-	Append(rhs);
-	return *this;
-}
-CPacket& CPacket::operator<<(const double &rhs)
-{
-	Append(rhs);
-	return *this;
-}
-CPacket& CPacket::operator<<(const short &rhs)
-{
-	Append(rhs);
-	return *this;
-}
-CPacket& CPacket::operator<<(const unsigned short &rhs)
-{
-	Append(rhs);
-	return *this;
-}
-CPacket& CPacket::operator<<(const std::string &rhs)
-{
-	const int length = rhs.size();
-	if (m_WriteIdx+length+1 >= MAX_PACKETSIZE)
-		return *this;
-
-	memcpy_s(m_Data+m_WriteIdx, MAX_PACKETSIZE-m_WriteIdx, rhs.c_str(), length);
-	m_WriteIdx += length;
-	m_Data[ m_WriteIdx] = NULL;
-	++m_WriteIdx;
-	return *this;
-}
-CPacket& CPacket::operator<<(const _variant_t &rhs)
-{
-	const int type = rhs.vt;
-	switch (type)
-	{
-	case VT_I2: Append(rhs.iVal); break;
-	case VT_I4: Append(rhs.lVal); break;
-	case VT_R4: Append(rhs.fltVal); break;
-	case VT_R8: Append(rhs.dblVal); break;
-
-	case VT_BSTR:
-		{
-			tstring str = (LPCTSTR) (_bstr_t)rhs.bstrVal;
-#ifdef _UNICODE
-			std::string s = common::wstr2str(str);
-			operator<<(s);
-#else
-			operator<<(str);
-#endif
-		}
-		break;
-
-	case VT_DECIMAL:
-	case VT_I1:
-	case VT_UI1:
-	case VT_UI2:
-	case VT_UI4:
-		break;
-
-	case VT_INT: Append(rhs.intVal); break;
-	case VT_UINT: Append(rhs.uintVal); break;
-	default:
-		{
-			error::ErrorLog( 
-				common::format("CPacket::operator<< %d 에 해당하는 타입의 Append는 없다.", type) );
-			assert(0);
-		}
-		break;
-	}
-	return *this;
-}
+//CPacket& CPacket::operator<<(const _variant_t &rhs)
+//{
+//	const int type = rhs.vt;
+//	switch (type)
+//	{
+//	case VT_I2: Append(rhs.iVal); break;
+//	case VT_I4: Append(rhs.lVal); break;
+//	case VT_R4: Append(rhs.fltVal); break;
+//	case VT_R8: Append(rhs.dblVal); break;
+//
+//	case VT_BSTR:
+//		{
+//			tstring str = (LPCTSTR) (_bstr_t)rhs.bstrVal;
+//#ifdef _UNICODE
+//			std::string s = common::wstr2str(str);
+//			operator<<(s);
+//#else
+//			operator<<(str);
+//#endif
+//		}
+//		break;
+//
+//	case VT_DECIMAL:
+//	case VT_I1:
+//	case VT_UI1:
+//	case VT_UI2:
+//	case VT_UI4:
+//		break;
+//
+//	case VT_INT: Append(rhs.intVal); break;
+//	case VT_UINT: Append(rhs.uintVal); break;
+//	default:
+//		{
+//			error::ErrorLog( 
+//				common::format("CPacket::operator<< %d 에 해당하는 타입의 Append는 없다.", type) );
+//			assert(0);
+//		}
+//		break;
+//	}
+//	return *this;
+//}
 
 
 //		VT_EMPTY	= 0,
@@ -210,110 +139,42 @@ CPacket& CPacket::operator<<(const _variant_t &rhs)
 // 			VT_TYPEMASK	= 0xfff
 
 
-
-//------------------------------------------------------------------------
-// 데이타 읽기
-//------------------------------------------------------------------------
-CPacket& CPacket::operator>>(bool &rhs)
-{
-	GetData(rhs);
-	return *this;
-}
-CPacket& CPacket::operator>>(long &rhs)
-{
-	GetData(rhs);
-	return *this;
-}
-CPacket& CPacket::operator>>(int &rhs)
-{
-	GetData(rhs);
-	return *this;
-}
-CPacket& CPacket::operator>>(unsigned int &rhs)
-{
-	GetData(rhs);
-	return *this;
-}
-CPacket& CPacket::operator>>(char &rhs)
-{
-	GetData(rhs);
-	return *this;
-}
-CPacket& CPacket::operator>>(unsigned char &rhs)
-{
-	GetData(rhs);
-	return *this;
-}
-CPacket& CPacket::operator>>(float &rhs)
-{
-	GetData(rhs);
-	return *this;
-}
-CPacket& CPacket::operator>>(double &rhs)
-{
-	GetData(rhs);
-	return *this;
-}
-CPacket& CPacket::operator>>(short &rhs)
-{
-	GetData(rhs);
-	return *this;
-}
-CPacket& CPacket::operator>>(unsigned short &rhs)
-{
-	GetData(rhs);
-	return *this;
-}
-CPacket& CPacket::operator>>(std::string &rhs)
-{
-	char buf[ MAX_STRINGSIZE] = {NULL,};
-	for (int i=0; i < MAX_STRINGSIZE-1 && (m_ReadIdx < MAX_PACKETSIZE); ++i)
-	{
-		buf[ i] = m_Data[ m_ReadIdx++];
-		if (NULL == m_Data[ m_ReadIdx-1])
-			break;
-	}
-	rhs = buf;
-	return *this;
-}
-
-
-//------------------------------------------------------------------------
-// 인자로 넘어온 varType 타입으로 패킷에 있는 데이타를 가져와 리턴한다.
-//------------------------------------------------------------------------
-_variant_t CPacket::GetVariant(const _variant_t &varType)
-{
-	_variant_t var = varType;
-	switch (varType.vt)
-	{
-	case VT_I2: operator>>(var.iVal); break;
-	case VT_I4: operator>>(var.lVal); break;
-	case VT_R4: operator>>(var.fltVal); break;
-	case VT_R8: operator>>(var.dblVal); break;
-
-	case VT_BSTR:
-		{
-			std::string str;
-			operator>>(str);
- #ifdef _UNICODE
- 			var.bstrVal = (_bstr_t)common::str2wstr(str).c_str();
- #else
- 			var.bstrVal = (_bstr_t)str.c_str();
- #endif
-		}
-		break;
-
-	case VT_DECIMAL:
-	case VT_I1:
-	case VT_UI1:
-	case VT_UI2:
-	case VT_UI4:
-		break;
-
-	case VT_INT: operator>>(var.intVal); break;
-	case VT_UINT: operator>>(var.uintVal); break;
-	default:
-		break;
-	}
-	return var;
-}
+////------------------------------------------------------------------------
+//// 인자로 넘어온 varType 타입으로 패킷에 있는 데이타를 가져와 리턴한다.
+////------------------------------------------------------------------------
+//_variant_t CPacket::GetVariant(const _variant_t &varType)
+//{
+//	_variant_t var = varType;
+//	switch (varType.vt)
+//	{
+//	case VT_I2: *this >>(var.iVal); break;
+//	case VT_I4: *this  >>(var.lVal); break;
+//	case VT_R4: *this  >>(var.fltVal); break;
+//	case VT_R8: *this  >>(var.dblVal); break;
+//
+//	case VT_BSTR:
+//		{
+//			std::string str;
+//			*this  >>(str);
+// #ifdef _UNICODE
+// 			var.bstrVal = (_bstr_t)common::str2wstr(str).c_str();
+// #else
+// 			var.bstrVal = (_bstr_t)str.c_str();
+// #endif
+//		}
+//		break;
+//
+//	case VT_DECIMAL:
+//	case VT_I1:
+//	case VT_UI1:
+//	case VT_UI2:
+//	case VT_UI4:
+//		break;
+//
+//	case VT_INT: *this  >>(var.intVal); break;
+//	case VT_UINT: *this >>(var.uintVal); break;
+//	default:
+//		break;
+//	}
+//	return var;
+//}

@@ -8,6 +8,8 @@
 
 namespace network
 {
+	using namespace marshalling;
+
 	class CServer;
 	class CClient;
 

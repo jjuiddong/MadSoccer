@@ -3,7 +3,7 @@
 #include "ProtocolDefine.h"
 
 using namespace network;
-
+using namespace marshalling;
 
 //------------------------------------------------------------------------
 // 
@@ -173,8 +173,10 @@ std::string network::Packet2String(const CPacket &packet, sProtocol *protocol)
 	sArg *arg = protocol->argList;
 	while (arg)
 	{
-		const _variant_t varType = GetTypeStr2Type(arg->var->type);
-		const _variant_t var = tempPacket.GetVariant(varType);
+		//const _variant_t varType = GetTypeStr2Type(arg->var->type);
+		//const _variant_t var = tempPacket.GetVariant(varType);
+		_variant_t var = GetTypeStr2Type(arg->var->type);
+		tempPacket >> var;
 
 		ss << arg->var->var + " = ";
 		ss << common::variant2str(var);

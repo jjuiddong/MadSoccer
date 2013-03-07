@@ -81,7 +81,7 @@ void CClient::Clear()
 
 
 //------------------------------------------------------------------------
-// 
+// P2p와 Server에 접속하는 coreClient에게도 Protocol을 설정한다.
 //------------------------------------------------------------------------
 bool	CClient::AddListener(ProtocolListenerPtr pListener)
 {
@@ -91,6 +91,7 @@ bool	CClient::AddListener(ProtocolListenerPtr pListener)
 		m_pConnectSvr->AddListener(pListener);
 	if (m_pP2p)
 		m_pP2p->AddListener(pListener);
+	return true;
 }
 
 
@@ -105,6 +106,7 @@ bool	CClient::RemoveListener(ProtocolListenerPtr pListener)
 		m_pConnectSvr->RemoveListener(pListener);
 	if (m_pP2p)
 		m_pP2p->RemoveListener(pListener);
+	return true;
 }
 
 

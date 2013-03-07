@@ -101,6 +101,9 @@
     <ClCompile Include="Service\Server.cpp">
       <Filter>Lib\Service</Filter>
     </ClCompile>
+    <ClCompile Include="DataStructure\Marshalling.cpp">
+      <Filter>Lib\DataStructure</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Network.h">
@@ -219,6 +222,9 @@
     </ClInclude>
     <ClInclude Include="Interface\ClientEventListener.h">
       <Filter>Lib\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="DataStructure\Marshalling.h">
+      <Filter>Lib\DataStructure</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

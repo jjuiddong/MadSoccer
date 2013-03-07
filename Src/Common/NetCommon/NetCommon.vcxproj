@@ -42,7 +42,11 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(LIBOUT)</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OUT)</IntDir>
   </PropertyGroup>
-  <ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <CustomBuild>
+      <Command>$(BIN)\ProtocolCompiler.exe %(FullPath)</Command>
+      <Outputs>%(Filename)_Protocol.h;%(Filename)_Protocol.cpp;%(Filename)_ProtocolListener.h;%(Filename)_ProtocolListener.cpp;</Outputs>
+    </CustomBuild>
   </ItemDefinitionGroup>
   <ItemGroup>
     <CustomBuild Include="basic.prt">
@@ -50,14 +54,14 @@
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename) protocol Compile...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(BIN)\ProtocolCompiler.exe %(FullPath)
 </Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename)_Protocol.h;%(Filename)_Protocol.cpp;%(Filename)_ProtocolListener.h;%(Filename)_ProtocolListener.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Src\%(Filename)_Protocol.h;Src\%(Filename)_Protocol.cpp;Src\%(Filename)_ProtocolListener.h;Src\%(Filename)_ProtocolListener.cpp;</Outputs>
     </CustomBuild>
     <CustomBuild Include="login.prt">
       <FileType>Document</FileType>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename) protocol Compile...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(BIN)\ProtocolCompiler.exe %(FullPath)
 </Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename)_Protocol.h;%(Filename)_Protocol.cpp;%(Filename)_ProtocolListener.h;%(Filename)_ProtocolListener.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Src\%(Filename)_Protocol.h;Src\%(Filename)_Protocol.cpp;Src\%(Filename)_ProtocolListener.h;Src\%(Filename)_ProtocolListener.cpp;</Outputs>
     </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

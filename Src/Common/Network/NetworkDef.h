@@ -43,6 +43,12 @@ namespace network
 		SERVICE_EXCLUSIVE_THREAD,		// 별도의 쓰레드를 생성해서 처리
 	};
 
+	enum P2P_STATE
+	{
+		P2P_HOST,
+		P2P_CLIENT,
+	};
+
 }
 typedef common::ReferencePtr<network::CServer> ServerPtr;
 typedef common::ReferencePtr<network::CClient> ClientPtr;
@@ -104,6 +110,7 @@ typedef ProtocolMap::iterator ProtocolItor;
 #include "DataStructure/User.h"
 #include "Service/AllProtocol.h"
 #include "Service/AllProtocolListener.h"
+#include "DataStructure/Marshalling.h"
 #include "NetworkUtility.h"
 
 
