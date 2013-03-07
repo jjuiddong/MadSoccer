@@ -190,7 +190,7 @@ std::string CLobbyServer::ToString()
 		ss << "RemoteClient: " << m_RemoteClients.size() << std::endl;
 		BOOST_FOREACH(RemoteClientMap::value_type &kv, m_RemoteClients)
 		{
-			ss << "netid: " << kv.second->GetNetId() << ", sock: " << kv.second->GetSocket() << std::endl;			
+			ss << "netid: " << kv.second->GetId() << ", sock: " << kv.second->GetSocket() << std::endl;			
 		}
 	}
 	LeaveSync();

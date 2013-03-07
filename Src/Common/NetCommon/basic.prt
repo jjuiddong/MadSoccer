@@ -1,6 +1,9 @@
 
 protocol s2c 500
 {
+	AckGroupList();
+	AckGroupJoin( int result );
+
 	AckP2PConnect( int result, network::P2P_STATE state, std::string ip, int port );
 
 	func1( );
@@ -13,6 +16,9 @@ protocol s2c 500
 
 protocol c2s 600
 {
+	ReqGroupList();
+	ReqGroupJoin( netid groupid );
+
 	ReqP2PConnect( );
 
 	func2( std::string str );

@@ -14,21 +14,27 @@ namespace network
 		: public sharedmemory::CSharedMem<CRemoteClient, TYPE_NAME(network::CRemoteClient)>
 	{
 	public:
-		CRemoteClient() : m_Socket(0),	m_NetId(common::GenerateId()) { }
-		virtual ~CRemoteClient() 
-		{
-			closesocket(m_Socket);
-		}
+		CRemoteClient();
+		virtual ~CRemoteClient();
+
+		netid		GetId() const;
+		SOCKET	GetSocket() const;
+		netid		GetGroupId() const;
+		void			SetNetId(netid id) ;
+		void			SetSocket(SOCKET sock);
+		void			SetGroupId(netid groupid);
 
 	protected:
-		netid		m_NetId;
+		netid		m_Id;
 		SOCKET	m_Socket;
-
-	public:
-		netid		GetNetId() const { return m_NetId; }
-		SOCKET	GetSocket() const { return m_Socket; }
-		void			SetNetId(netid id) { m_NetId = id; }
-		void			SetSocket(SOCKET sock) { m_Socket = sock; }
-
+		netid		m_GroupId;			//  join group
 	};
+
+	inline netid		CRemoteClient::GetId() const { return m_Id; }
+	inline SOCKET	CRemoteClient::GetSocket() const { return m_Socket; }
+	inline netid		CRemoteClient::GetGroupId() const { return m_GroupId; }
+	inline void			CRemoteClient::SetNetId(netid id) { m_Id = id; }
+	inline void			CRemoteClient::SetSocket(SOCKET sock) { m_Socket = sock; }
+	inline void			CRemoteClient::SetGroupId(netid groupid) { m_GroupId = groupid; }
+
 }

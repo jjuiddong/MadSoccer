@@ -15,16 +15,18 @@ namespace network
 	public:
 		CGroup(GroupPtr parent=NULL, const std::string &name="");
 		virtual ~CGroup();
-		netid	GetNetId() const;
+		netid	GetId() const;
 		const std::string& GetName() const;
-		void SetName(const std::string &name);
+		void SetName(const std::string &name);		
+		DWORD GetTag() const;
+		void SetTag(DWORD tag);
 		CGroup* GetParent() const;
 		void SetParent(GroupPtr parent);
 
 		// Group
 		bool				AddChild( CGroup *pGroup );
 		bool				RemoveChild( netid groupId );
-		GroupPtr		GetChild(netid groupId );
+		GroupPtr		GetChild( netid groupId );
 		const GroupVector&	GetChildren() const { return m_Children.m_Seq; }
 
 		// User
@@ -35,7 +37,7 @@ namespace network
 		const NetIdList&	GetUsers() const { return m_Users; }
 		void				Clear();
 
-		bool operator==(const CGroup &rhs) const { return m_NetId==rhs.GetNetId(); }
+		bool operator==(const CGroup &rhs) const { return m_NetId==rhs.GetId(); }
 
 	protected:
 		bool				AddUser(netid userId);
@@ -47,14 +49,17 @@ namespace network
 		netid			m_NetId;
 		std::string	m_Name;
 		NetIdList		m_Users;
+		DWORD		m_Tag;
 		CGroup			*m_pParent;
 		Groups			m_Children;
 	};
 
-	inline netid CGroup::GetNetId() const { return m_NetId; }
+	inline netid CGroup::GetId() const { return m_NetId; }
 	inline const std::string& CGroup::GetName() const { return m_Name; }
 	inline void CGroup::SetName(const std::string &name) { m_Name = name; }
 	inline CGroup* CGroup::GetParent() const { return m_pParent; }
 	inline void CGroup::SetParent(GroupPtr parent) { m_pParent = parent; }
+	inline DWORD CGroup::GetTag() const { return m_Tag; }
+	inline void CGroup::SetTag(DWORD tag) { m_Tag = tag; }
 
 }

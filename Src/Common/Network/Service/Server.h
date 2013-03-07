@@ -33,9 +33,9 @@ namespace network
 
 		bool				AddClient(SOCKET sock);
 		CRemoteClient* GetRemoteClient(netid netId);
-		CRemoteClient* GetRemoteClientFromSocket(SOCKET sock);
+		//CRemoteClient* GetRemoteClientFromSocket(SOCKET sock);
 		bool				RemoveClient(netid netId);
-		bool				RemoveClientBySocket(SOCKET sock);
+		//bool				RemoveClientBySocket(SOCKET sock);
 		RemoteClientItor	RemoveClientInLoop(netid netId);
 		netid			GetNetIdFromSocket(SOCKET sock);
 		void				Clear();
@@ -51,7 +51,7 @@ namespace network
 		RemoteClientItor	RemoveClientProcess(RemoteClientItor it);
 		RemoteClientItor	FindRemoteClientBySocket(SOCKET sock);
 
-		// event
+		// Event Handler
 		void				OnListen();
 		void				OnClientJoin(netid netId);
 		void				OnClientLeave(netid netId);
@@ -63,6 +63,9 @@ namespace network
 		RemoteClientMap		m_RemoteClients;		// 서버와 연결된 클라이언트 정보리스트
 		CRITICAL_SECTION		m_CriticalSection;
 		ServerEventListenerPtr m_pEventListener;
+
+		CGroup							m_RootGroup;
+		netid							m_WaitGroupId;				// waiting place before join concrete group
 
 	};
 

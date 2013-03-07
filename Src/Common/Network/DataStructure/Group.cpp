@@ -26,11 +26,11 @@ bool	CGroup::AddChild( CGroup *pGroup )
 {
 	RETV(!pGroup,false);
 
-	GroupPtr ptr = GetChild(pGroup->GetNetId());
+	GroupPtr ptr = GetChild(pGroup->GetId());
 	if (ptr) return false; // already exist
 
 	pGroup->SetParent(this);
-	m_Children.insert(Groups::value_type(pGroup->GetNetId(), pGroup));
+	m_Children.insert(Groups::value_type(pGroup->GetId(), pGroup));
 	
 	// add group member
 	BOOST_FOREACH(auto userid, pGroup->GetUsers())

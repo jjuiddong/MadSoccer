@@ -12,9 +12,14 @@ using namespace network;
 CServer::CServer(PROCESS_TYPE procType) :
 	m_IsServerOn(true)
 ,	m_ProcessType(procType)
+,	m_RootGroup(NULL, "root")
 {
 	m_ServerPort = 2333;
 	InitializeCriticalSection( &m_CriticalSection );
+
+	CGroup *pWaitGroup = new CGroup(NULL,"Waiting Group");
+	m_WaitGroupId = pWaitGroup->GetId();
+	m_RootGroup.AddChild( pWaitGroup );
 }
 
 CServer::~CServer()
@@ -47,13 +52,21 @@ bool CServer::AddClient(SOCKET sock)
 
 		CRemoteClient *pNewRemoteClient = new CRemoteClient();
 		pNewRemoteClient->SetSocket(sock);
-		m_RemoteClients.insert( 
-			RemoteClientMap::value_type(pNewRemoteClient->GetNetId(), pNewRemoteClient) );
 
-		clog::Log( "AddClient netid: %d, socket: %d", pNewRemoteClient->GetNetId(), sock );
-		dbg::Print( "AddClient netid: %d, socket: %d", pNewRemoteClient->GetNetId(), sock);
+		pNewRemoteClient->SetGroupId(m_WaitGroupId);
+		if (!m_RootGroup.AddUser(m_WaitGroupId, pNewRemoteClient->GetId()))
+		{
+			LogNPrint( "CServer::AddClient Error!! netid: %d", pNewRemoteClient->GetId());
+			SAFE_DELETE(pNewRemoteClient);
+		}
+		else
+		{
+			m_RemoteClients.insert( 
+				RemoteClientMap::value_type(pNewRemoteClient->GetId(), pNewRemoteClient) );
 
-		OnClientJoin(pNewRemoteClient->GetNetId());
+			LogNPrint( "AddClient netid: %d, socket: %d", pNewRemoteClient->GetId(), sock );
+			OnClientJoin(pNewRemoteClient->GetId());
+		}
 	}
 	LeaveSync();
 	return true;
@@ -75,13 +88,13 @@ CRemoteClient* CServer::GetRemoteClient(netid netId)
 //------------------------------------------------------------------------
 // 리모트 클라이언트 얻기
 //------------------------------------------------------------------------
-CRemoteClient* CServer::GetRemoteClientFromSocket(SOCKET sock)
-{
-	RemoteClientItor it = FindRemoteClientBySocket(sock);
-	if (m_RemoteClients.end() == it)
-		return NULL; //없다면 실패
- 	return it->second;
-}
+//CRemoteClient* CServer::GetRemoteClientFromSocket(SOCKET sock)
+//{
+//	RemoteClientItor it = FindRemoteClientBySocket(sock);
+//	if (m_RemoteClients.end() == it)
+//		return NULL; //없다면 실패
+// 	return it->second;
+//}
 
 
 //------------------------------------------------------------------------
@@ -92,7 +105,7 @@ netid CServer::GetNetIdFromSocket(SOCKET sock)
 	RemoteClientItor it = FindRemoteClientBySocket(sock);
  	if (m_RemoteClients.end() == it)
  		return INVALID_NETID; //없다면 실패
- 	return it->second->GetNetId();
+ 	return it->second->GetId();
 }
 
 
@@ -116,18 +129,18 @@ bool CServer::RemoveClient(netid netId)
 //------------------------------------------------------------------------
 // 클라이언트 제거
 //------------------------------------------------------------------------
-bool CServer::RemoveClientBySocket(SOCKET sock)
-{
-	EnterSync();
-	{
-		RemoteClientItor it = FindRemoteClientBySocket(sock);
- 		if (m_RemoteClients.end() == it)
- 			return false; //없다면 실패
-  		RemoveClientProcess(it);
-	}
-	LeaveSync();
-	return true;
-}
+//bool CServer::RemoveClientBySocket(SOCKET sock)
+//{
+//	EnterSync();
+//	{
+//		RemoteClientItor it = FindRemoteClientBySocket(sock);
+// 		if (m_RemoteClients.end() == it)
+// 			return false; //없다면 실패
+//  		RemoveClientProcess(it);
+//	}
+//	LeaveSync();
+//	return true;
+//}
 
 
 //------------------------------------------------------------------------
@@ -166,12 +179,18 @@ RemoteClientItor CServer::RemoveClientInLoop(netid netId)
 //------------------------------------------------------------------------
 RemoteClientItor CServer::RemoveClientProcess(RemoteClientItor it)
 {
-	const netid netId = it->second->GetNetId();
+	const netid userId = it->second->GetId();
+	if (!m_RootGroup.RemoveUser(it->second->GetGroupId(), userId))
+	{
+		LogNPrint( "CServer::RemoveClientProcess() Error!! not remove user groupid: %d, userid: %d",
+			it->second->GetGroupId(), userId);
+	}
+
 	delete it->second;
 	RemoteClientItor r = m_RemoteClients.erase(it);
 
-	dbg::Print( "Leave Client %d", netId );
-	OnClientLeave(netId);
+	dbg::Print( "Leave Client %d", userId );
+	OnClientLeave(userId);
 	return r;
 }
 
@@ -212,7 +231,7 @@ void CServer::MakeFDSET( SFd_Set *pfdset)
 			//pfdset->fd_array[ pfdset->fd_count] = kv.second->GetSocket();
 			//pfdset->fd_count++;
 			FD_SET(kv.second->GetSocket(), (fd_set*)pfdset);
-			pfdset->netid_array[ pfdset->fd_count-1] = kv.second->GetNetId();
+			pfdset->netid_array[ pfdset->fd_count-1] = kv.second->GetId();
 		}
 	}
 	LeaveSync();
@@ -259,8 +278,8 @@ bool CServer::Send(netid netId, const CPacket &packet)
 	const int result = send(it->second->GetSocket(), packet.GetData(), packet.GetPacketSize(), 0);
 	if (result == INVALID_SOCKET)
 	{
-		error::ErrorLog( common::format("CServer::Send() Socket Error id=%d", it->second->GetNetId()) );
-		dbg::Print( "CServer::Send() Socket Error id=%d", it->second->GetNetId() );
+		error::ErrorLog( common::format("CServer::Send() Socket Error id=%d", it->second->GetId()) );
+		dbg::Print( "CServer::Send() Socket Error id=%d", it->second->GetId() );
 		RemoveClient(packet.GetSenderId());
 		return false;
 	}
@@ -279,7 +298,7 @@ bool CServer::SendAll(const CPacket &packet)
 		const int result = send(it->second->GetSocket(), packet.GetData(), packet.GetPacketSize(), 0);
 		if (result == INVALID_SOCKET)
 		{
-			it = RemoveClientInLoop(it->second->GetNetId());
+			it = RemoveClientInLoop(it->second->GetId());
 		}
 		else
 		{
