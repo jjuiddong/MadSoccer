@@ -22,6 +22,7 @@ namespace common
 		typedef std::vector<Type> VectorType;
 		typedef typename MapType::iterator iterator;
 		typedef typename MapType::value_type value_type;
+		typedef typename VectorType::iterator viterator;
 
 		VectorMap() {}
 		VectorMap(int reserved) : m_Seq(reserved) {}
@@ -64,6 +65,12 @@ namespace common
 				}
 			}
 			return false; // ¸øÃ£À½
+		}
+
+		void clear()
+		{
+			m_RandomAccess.clear();
+			m_Seq.clear();
 		}
 
 		iterator find(const KeyType &key) { return m_RandomAccess.find(key); }

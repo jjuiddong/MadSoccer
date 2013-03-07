@@ -83,6 +83,9 @@ typedef PacketList::const_iterator PacketCItor;
 typedef std::list<network::CGroup*> GroupList;
 typedef GroupList::iterator GroupItor;
 typedef common::ReferencePtr<network::CGroup> GroupPtr;
+typedef common::VectorMap<netid, network::CGroup*> Groups;
+typedef Groups::VectorType GroupVector;
+
 
 typedef std::map<netid,network::CUser*> UserMap;
 typedef UserMap::iterator UserItor;

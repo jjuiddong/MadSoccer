@@ -6,7 +6,8 @@
 using namespace network; 
 
 
-CRoom::CRoom()
+CRoom::CRoom() : 
+	m_RootGroup(NULL, "root")
 {
 
 }
@@ -14,31 +15,28 @@ CRoom::CRoom()
 CRoom::~CRoom()
 {
 	Clear();
-
 }
 
 
 //------------------------------------------------------------------------
 // 유저 추가
 //------------------------------------------------------------------------
-bool CRoom::AddUser(int groupId, netid userId)
+bool CRoom::AddUser(netid groupId, netid userId)
 {
-	GroupItor it = find_if(m_Groups.begin(), m_Groups.end(), bind(IsSameId<CGroup>,_1,groupId));
-	if (m_Groups.end() == it)
-		return false; // 해당하는 Group이 없음
-	return (*it)->AddUser(userId);
+	const bool result = m_RootGroup.AddUser(groupId, userId);
+
+	return result;
 }
 
 
 //------------------------------------------------------------------------
 // 유저 제거
 //------------------------------------------------------------------------
-bool CRoom::RemoveUser(int groupId, netid userId)
+bool CRoom::RemoveUser(netid groupId, netid userId)
 {
-	GroupItor it = find_if(m_Groups.begin(), m_Groups.end(), bind(IsSameId<CGroup>,_1,groupId));
-	if (m_Groups.end() == it)
-		return false; // 해당하는 Group이 없음
-	return (*it)->RemoveUser(userId);
+	const bool result = m_RootGroup.RemoveUser(groupId, userId);
+
+	return result;
 }
 
 
@@ -47,11 +45,7 @@ bool CRoom::RemoveUser(int groupId, netid userId)
 //------------------------------------------------------------------------
 void CRoom::Clear()
 {
-	BOOST_FOREACH(CGroup *p, m_Groups)
-	{
-		delete p;
-	}
-	m_Groups.clear();
+	m_RootGroup.Clear();
 }
 
 
@@ -61,12 +55,14 @@ void CRoom::Clear()
 //------------------------------------------------------------------------
 bool CRoom::AddGroup( CGroup *pGroup )
 {
-	GroupItor it = find_if(m_Groups.begin(), m_Groups.end(), 
-		bind(IsSameId<CGroup>,_1,pGroup->GetId()));
-	if (m_Groups.end() != it)
-		return false; // 이미 존재한다면 실패
-	m_Groups.push_back( pGroup );
-	return true;
+	RETV(!pGroup, false);
+	const bool result = m_RootGroup.AddChild(pGroup);
+	//if (!result)
+	//{
+	//	LogNPrint( "CRoom::AddGroup() Error!! groupName: %s, id: %d", 
+	//		pGroup->GetName().c_str(), pGroup->GetNetId());
+	//}
+	return result;
 }
 
 
@@ -74,26 +70,24 @@ bool CRoom::AddGroup( CGroup *pGroup )
 // 그룹 제거
 // 메모리도 제거된다.
 //------------------------------------------------------------------------
-bool CRoom::RemoveGroup( int groupId )
+bool CRoom::RemoveGroup( netid groupId )
 {
-	GroupItor it = find_if(m_Groups.begin(), m_Groups.end(), bind(IsSameId<CGroup>,_1,groupId));
-	if (m_Groups.end() == it)
-		return false; // 없다면 실패
-	delete *it;
-	m_Groups.erase(it);
-	return true;
+	const bool result = m_RootGroup.RemoveChild(groupId);
+	//if (!result)
+	//{
+	//	LogNPrint( "CRoom::RemoveGroup() Error!! id: %d", groupId);			
+	//}
+	return result;
 }
 
 
 //------------------------------------------------------------------------
 // 그룹 얻기
 //------------------------------------------------------------------------
-GroupPtr CRoom::GetGroup(int groupId )
+GroupPtr CRoom::GetGroup(netid groupId )
 {
-	GroupItor it = find_if(m_Groups.begin(), m_Groups.end(), bind(IsSameId<CGroup>,_1,groupId));
-	if (m_Groups.end() == it)
-		return NULL; // 없다면 실패
-	return *it;
+	GroupPtr ptr = m_RootGroup.GetChild(groupId);
+	return ptr;
 }
 
 
@@ -102,10 +96,5 @@ GroupPtr CRoom::GetGroup(int groupId )
 //------------------------------------------------------------------------
 bool CRoom::IsUserExist(netid userId)
 {
-	BOOST_FOREACH(CGroup *p, m_Groups)
-	{
-		if (p->IsExistUser(userId))
-			return true;
-	}
-	return false;
+	return m_RootGroup.IsExistUser(userId);
 }

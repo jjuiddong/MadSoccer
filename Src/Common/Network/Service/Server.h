@@ -17,7 +17,6 @@ namespace network
 	{
 		friend class CNetLauncher;
 		friend class CNetController;
-
 		typedef common::ReferencePtr<IServerEventListener> ServerEventListenerPtr;
 
 	public:

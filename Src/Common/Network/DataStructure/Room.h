@@ -15,28 +15,34 @@ namespace network
 		CRoom();
 		virtual ~CRoom();
 
-	protected:
-		int					m_Id;
-		int					m_Number;	// 방번호
-		std::string		m_Name;
-		GroupList			m_Groups;
-
-	public:
-		void				SetNumber(int number) { m_Number = number; }
-		void				SetName(const std::string &name ) { m_Name = name; }
-		void				SetId(int id) { m_Id = id; }
-		int					GetId() const { return m_Id; }
-		const std::string&	GetName() const { return m_Name; }
+		netid 			GetId() const;
+		const std::string& GetName() const;
+		void				SetNumber(int number);
+		void				SetName(const std::string &name );
+		void				SetId(netid id);
 
 		bool				AddGroup( CGroup *pGroup );
-		bool				RemoveGroup( int groupId );
-		const GroupList&	GetGroups() const { return m_Groups; }
-		GroupPtr			GetGroup(int groupId );
+		bool				RemoveGroup( netid groupId );
+		const CGroup& GetRootGroup() const;
+		GroupPtr		GetGroup(netid groupId );
 
-		bool				AddUser(int groupId, netid userId);
-		bool				RemoveUser(int groupId, netid userId);
+		bool				AddUser(netid groupId, netid userId);
+		bool				RemoveUser(netid groupId, netid userId);
 		bool				IsUserExist(netid userId);
 		void				Clear();
 
+	protected:
+		netid 			m_Id;
+		int				m_Number;	// 방번호
+		std::string	m_Name;
+		CGroup			m_RootGroup;
 	};
+
+	inline void	CRoom::SetNumber(int number) { m_Number = number; }
+	inline void	CRoom::SetName(const std::string &name ) { m_Name = name; }
+	inline void	CRoom::SetId(netid id) { m_Id = id; }
+	inline netid CRoom::GetId() const { return m_Id; }
+	inline const std::string& CRoom::GetName() const { return m_Name; }
+	inline const CGroup& CRoom::GetRootGroup() const { return m_RootGroup; }
+
 }
