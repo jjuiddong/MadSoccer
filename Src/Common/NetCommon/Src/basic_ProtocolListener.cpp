@@ -25,6 +25,20 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 	{
 	case 501:
 		{
+			SEND_LISTENER(s2c_ProtocolListener, listeners, AckGroupList(packet.GetSenderId()) );
+		}
+		break;
+
+	case 502:
+		{
+			int result;
+			packet >> result;
+			SEND_LISTENER(s2c_ProtocolListener, listeners, AckGroupJoin(packet.GetSenderId(), result) );
+		}
+		break;
+
+	case 503:
+		{
 			int result;
 			packet >> result;
 			network::P2P_STATE state;
@@ -37,13 +51,13 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		}
 		break;
 
-	case 502:
+	case 504:
 		{
 			SEND_LISTENER(s2c_ProtocolListener, listeners, func1(packet.GetSenderId()) );
 		}
 		break;
 
-	case 503:
+	case 505:
 		{
 			std::string str;
 			packet >> str;
@@ -51,7 +65,7 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		}
 		break;
 
-	case 504:
+	case 506:
 		{
 			float value;
 			packet >> value;
@@ -59,13 +73,13 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		}
 		break;
 
-	case 505:
+	case 507:
 		{
 			SEND_LISTENER(s2c_ProtocolListener, listeners, func4(packet.GetSenderId()) );
 		}
 		break;
 
-	case 506:
+	case 508:
 		{
 			std::string ok;
 			packet >> ok;
@@ -104,11 +118,25 @@ void basic::c2s_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 	{
 	case 601:
 		{
-			SEND_LISTENER(c2s_ProtocolListener, listeners, ReqP2PConnect(packet.GetSenderId()) );
+			SEND_LISTENER(c2s_ProtocolListener, listeners, ReqGroupList(packet.GetSenderId()) );
 		}
 		break;
 
 	case 602:
+		{
+			netid groupid;
+			packet >> groupid;
+			SEND_LISTENER(c2s_ProtocolListener, listeners, ReqGroupJoin(packet.GetSenderId(), groupid) );
+		}
+		break;
+
+	case 603:
+		{
+			SEND_LISTENER(c2s_ProtocolListener, listeners, ReqP2PConnect(packet.GetSenderId()) );
+		}
+		break;
+
+	case 604:
 		{
 			std::string str;
 			packet >> str;
@@ -116,7 +144,7 @@ void basic::c2s_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		}
 		break;
 
-	case 603:
+	case 605:
 		{
 			float value;
 			packet >> value;

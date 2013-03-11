@@ -19,11 +19,6 @@ namespace network
 		friend class CTaskWorkClient;
 		friend class CTaskWorkServer;
 
-	protected:
-		enum {
-			VECTOR_RESERVED_SIZE = 128,
-		};
-
 		typedef std::map<SOCKET, ServerPtr> ServerSockets;
 		typedef common::VectorMap<netid, ServerPtr> Servers;
 
@@ -38,30 +33,8 @@ namespace network
 		typedef std::list<common::CThread*> ThreadList;
 		typedef ThreadList::iterator ThreadItor;
 
-		Servers							m_Servers;
-		ServerSockets				m_ServerSockets;
+		enum { VECTOR_RESERVED_SIZE = 128, };
 
-		Clients							m_Clients;
-		ClientSockets				m_ClientSockets;
-
-		CoreClients					m_CoreClients;
-
-		DispatcherMap				m_Dispatchers;
-		common::CThread		m_AcceptThread;
-
-		// CServer가 SERVICE_THREAD 타입일때 추가된다.
-		// Thread 인스턴스는 m_WorkThreads 에 저장된다.
-		ThreadPtr						m_pSeperateServerWorkThread;
-
-		// CCoreClient가 SERVICE_THREAD 타입일때 추가된다.
-		// Thread 인스턴스는 m_WorkThreads 에 저장된다.
-		ThreadPtr						m_pSeperateClientWorkThread;	
-
-		ThreadList					m_WorkThreads;
-		ThreadList					m_LogicThreads;
-		CRITICAL_SECTION		m_CriticalSection;
-
-	public:
 		bool		Init(int logicThreadCount);
 		void		Proc();
 		void		Clear();
@@ -91,11 +64,36 @@ namespace network
 		std::string ToString();
 
 	protected:
-		ThreadPtr GetWorkThread(SERVICE_TYPE serviceType, PROCESS_TYPE processType);
+		ThreadPtr CreateWorkThread(SERVICE_TYPE serviceType, PROCESS_TYPE processType);
+		ThreadPtr GetThread( const ThreadList &threads, HANDLE hThreadHandle );
 		void		MakeServersFDSET( fd_set *pfdset);
 		void		MakeCoreClientsFDSET( PROCESS_TYPE procType, SFd_Set *pfdset);
 		void		EnterSync();
 		void		LeaveSync();
+
+	protected:
+		Servers							m_Servers;
+		ServerSockets				m_ServerSockets;
+
+		Clients							m_Clients;
+		ClientSockets				m_ClientSockets;
+
+		CoreClients					m_CoreClients;
+
+		DispatcherMap				m_Dispatchers;
+		common::CThread		m_AcceptThread;
+
+		// CServer가 SERVICE_THREAD 타입일때 추가된다.
+		// Thread 인스턴스는 m_WorkThreads 에 저장된다.
+		ThreadPtr						m_pSeperateServerWorkThread;
+
+		// CCoreClient가 SERVICE_THREAD 타입일때 추가된다.
+		// Thread 인스턴스는 m_WorkThreads 에 저장된다.
+		ThreadPtr						m_pSeperateClientWorkThread;	
+
+		ThreadList					m_WorkThreads;
+		ThreadList					m_LogicThreads;
+		CRITICAL_SECTION		m_CriticalSection;
 
 	};
 }

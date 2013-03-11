@@ -13,6 +13,7 @@ CServer::CServer(PROCESS_TYPE procType) :
 	m_IsServerOn(true)
 ,	m_ProcessType(procType)
 ,	m_RootGroup(NULL, "root")
+,	m_hThread(NULL)
 {
 	m_ServerPort = 2333;
 	InitializeCriticalSection( &m_CriticalSection );

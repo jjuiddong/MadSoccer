@@ -10,6 +10,8 @@
 #include "../task/TaskWorkClient.h"
 #include "../task/TaskWorkServer.h"
 #include "../task/TaskWork.h"
+#include <boost/bind.hpp>
+
 
 using namespace network;
 
@@ -50,9 +52,9 @@ bool CNetController::Init(int logicThreadCount)
   		m_AcceptThread.Start();
 
 		// CoreClient용 통합 WorkThread 생성
-		ThreadPtr pWorkThread = GetWorkThread( CLIENT, SERVICE_SEPERATE_THREAD );
-		if (pWorkThread)
-			pWorkThread->Start();
+		//ThreadPtr pWorkThread = CreateWorkThread( CLIENT, SERVICE_SEPERATE_THREAD );
+		//if (pWorkThread)
+		//	pWorkThread->Start();
 	}
 
 	return true;
@@ -80,13 +82,6 @@ bool CNetController::StartServer(int port, ServerPtr pSvr)
 	if (!pSvr)
 		return false;
 
-// 	ServerItor it = m_Servers.find(pSvr->GetSocket());
-// 	if (m_Servers.end() != it)
-// 	{
-// 		error::ErrorLog("이미 실행되고 있는 서버를 다시 실행시켰음");
-// 		return false;
-// 	}
-
 	Servers::iterator it = m_Servers.find(pSvr->GetNetId());
 	if (m_Servers.end() != it)
 	{
@@ -106,11 +101,12 @@ bool CNetController::StartServer(int port, ServerPtr pSvr)
 	m_ServerSockets.insert( ServerSockets::value_type(pSvr->GetSocket(), pSvr) );
 
 	// Work 쓰레드 생성
-	common::CThread *pWorkTread = GetWorkThread(SERVER, pSvr->GetProcessType());
+	common::CThread *pWorkTread = CreateWorkThread(SERVER, pSvr->GetProcessType());
 	if (pWorkTread)
 	{
-		pWorkTread->AddTask( new CTaskWorkServer(pSvr->GetNetId()) );
+		pWorkTread->AddTask( new CTaskWorkServer((int)pSvr->GetSocket(), pSvr->GetNetId()) );
 		pWorkTread->Start();
+		pSvr->SetThreadHandle(pWorkTread->GetHandle()); // after Call Thread Start Function
 	}
 
 	return true;
@@ -118,7 +114,8 @@ bool CNetController::StartServer(int port, ServerPtr pSvr)
 
 
 //------------------------------------------------------------------------
-// 
+// remove server container
+// remove thread task
 //------------------------------------------------------------------------
 bool CNetController::StopServer(ServerPtr pSvr)
 {
@@ -132,8 +129,14 @@ bool CNetController::StopServer(ServerPtr pSvr)
 	if (m_ServerSockets.end() != it)
 		m_ServerSockets.erase(it);
 
-	// 서버 종료 코드 추가
-	return pSvr->Stop();
+	// Stop Server Work Thread
+	if (pSvr->GetProcessType() == SERVICE_EXCLUSIVE_THREAD)
+	{
+		ThreadPtr ptr = GetThread( m_WorkThreads, pSvr->GetThreadHandle() );
+		if (ptr)
+			ptr->Send2ThreadMessage( common::threadmsg::TERMINATE_TASK, pSvr->GetSocket(), 0 );
+	}
+	return true;
 }
 
 
@@ -256,12 +259,13 @@ bool CNetController::StartCoreClient(const std::string &ip, int port, CoreClient
 	}
 
 	// CoreClient 속성에 따라 Thread에서 패킷을 처리할지, 유저 루프에서 처리할지 결정한다.
-	common::CThread *pWorkTread = GetWorkThread(CLIENT, pClt->GetProcessType());
+	common::CThread *pWorkTread = CreateWorkThread(CLIENT, pClt->GetProcessType());
 	if (pWorkTread)
 	{
 		if (SERVICE_EXCLUSIVE_THREAD == pClt->GetProcessType())
-			pWorkTread->AddTask( new CTaskWork(pClt->GetNetId(), pClt->GetSocket()) );
+			pWorkTread->AddTask( new CTaskWork((int)pClt->GetSocket(), pClt->GetNetId(), pClt->GetSocket()) );
 		pWorkTread->Start();
+		pClt->SetThreadHandle(pWorkTread->GetHandle());
 	}
 
 	return true;
@@ -269,7 +273,8 @@ bool CNetController::StartCoreClient(const std::string &ip, int port, CoreClient
 
 
 //------------------------------------------------------------------------
-// 
+// remove coreclient list 
+// remove task if SERVICE_EXCLUSIVE_THREAD mode coreclient
 //------------------------------------------------------------------------
 bool CNetController::StopCoreClient(CoreClientPtr pClt)
 {
@@ -278,6 +283,14 @@ bool CNetController::StopCoreClient(CoreClientPtr pClt)
 
 	if (!m_CoreClients.remove(pClt->GetNetId()))
 		LogNPrint( "StopClient Error!! netid: %d client", pClt->GetNetId());
+
+	// Stop CoreClient Work Thread
+	if (pClt->GetProcessType() == SERVICE_EXCLUSIVE_THREAD)
+	{
+		ThreadPtr ptr = GetThread( m_WorkThreads, pClt->GetThreadHandle() );
+		if (ptr)
+			ptr->Send2ThreadMessage( common::threadmsg::TERMINATE_TASK, pClt->GetSocket(), 0 );
+	}
 
 	return true;
 }
@@ -451,7 +464,7 @@ std::string CNetController::ToString()
 //------------------------------------------------------------------------
 // 해당되는 타입의 WorkThread를 리턴한다.
 //------------------------------------------------------------------------
-ThreadPtr CNetController::GetWorkThread(SERVICE_TYPE serviceType, PROCESS_TYPE processType)
+ThreadPtr CNetController::CreateWorkThread(SERVICE_TYPE serviceType, PROCESS_TYPE processType)
 {
 	switch (serviceType)
 	{
@@ -507,4 +520,17 @@ ThreadPtr CNetController::GetWorkThread(SERVICE_TYPE serviceType, PROCESS_TYPE p
 	}
 
 	return NULL;
+}
+
+
+//------------------------------------------------------------------------
+// find WorkThread of hThreadHandle 
+//------------------------------------------------------------------------
+ThreadPtr CNetController::GetThread( const ThreadList &threads, HANDLE hThreadHandle )
+{
+	auto it = std::find_if( threads.begin(), threads.end(), 
+		boost::bind( &common::IsSameHandle<common::CThread>, _1, hThreadHandle) );
+	if (threads.end() == it)
+		return NULL;
+	return *it;
 }

@@ -15,19 +15,25 @@
 DECLARE_TYPE_NAME(CChatServer)
 class CChatServer : public network::CServer
 								,public network::IServerEventListener
+								,public basic::c2s_ProtocolListener
 								,public sharedmemory::CSharedMem<CChatServer, TYPE_NAME(CChatServer)>
 {
 public:
 	CChatServer() : CServer(network::SERVICE_EXCLUSIVE_THREAD)
 	{
 		RegisterProtocol(&m_S2CProtocol);
-		//AddListener( this );
+		AddListener( this );
 	}
 
 protected:
 	basic::s2c_Protocol m_S2CProtocol;
 
 public:
+	virtual void func2(netid senderId, const std::string &str) override
+	{
+		//Stop(); Test Code
+	}
+
 // 	virtual void func2(netid senderId, const std::string &str) override
 // 	{
 // 		std::string sndStr = "server send ";

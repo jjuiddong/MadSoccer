@@ -76,6 +76,18 @@ CPacket& marshalling::operator<<(CPacket& packet, const _variant_t &rhs)
 	case VT_R4: packet.Append(rhs.fltVal); break;
 	case VT_R8: packet.Append(rhs.dblVal); break;
 
+	case VT_BOOL: packet.Append(rhs.bVal); break;
+	case VT_DECIMAL: break;
+	case VT_I1: packet.Append(rhs.cVal); break;
+	case VT_UI1: packet.Append(rhs.bVal); break;
+	case VT_UI2: packet.Append(rhs.uiVal); break;
+	case VT_UI4: packet.Append(rhs.ulVal); break;
+	case VT_I8: packet.Append(rhs.llVal); break;
+	case VT_UI8: packet.Append(rhs.ullVal); break;
+
+	case VT_INT: packet.Append(rhs.intVal); break;
+	case VT_UINT: packet.Append(rhs.uintVal); break;
+
 	case VT_BSTR:
 		{
 			tstring str = (LPCTSTR) (_bstr_t)rhs.bstrVal;
@@ -88,15 +100,6 @@ CPacket& marshalling::operator<<(CPacket& packet, const _variant_t &rhs)
 		}
 		break;
 
-	case VT_DECIMAL:
-	case VT_I1:
-	case VT_UI1:
-	case VT_UI2:
-	case VT_UI4:
-		break;
-
-	case VT_INT: packet.Append(rhs.intVal); break;
-	case VT_UINT: packet.Append(rhs.uintVal); break;
 	default:
 		{
 			error::ErrorLog( 
@@ -186,10 +189,22 @@ CPacket& marshalling::operator>>(CPacket& packet, _variant_t &varType)
 {
 	switch (varType.vt)
 	{
-	case VT_I2: packet >>(varType.iVal); break;
-	case VT_I4: packet  >>(varType.lVal); break;
-	case VT_R4: packet  >>(varType.fltVal); break;
-	case VT_R8: packet  >>(varType.dblVal); break;
+	case VT_I2: packet >> varType.iVal; break;
+	case VT_I4: packet  >> varType.lVal; break;
+	case VT_R4: packet  >> varType.fltVal; break;
+	case VT_R8: packet  >> varType.dblVal; break;
+
+	case VT_BOOL: packet >> varType.bVal; break;
+	case VT_DECIMAL: break;
+	case VT_I1: packet >> varType.cVal; break;
+	case VT_UI1: packet >> varType.bVal; break;
+	case VT_UI2: packet >> varType.uiVal; break;
+	case VT_UI4: packet >> varType.ulVal; break;
+	case VT_I8: packet >> varType.llVal; break;
+	case VT_UI8: packet >> varType.ullVal; break;
+
+	case VT_INT: packet  >>(varType.intVal); break;
+	case VT_UINT: packet  >>(varType.uintVal); break;
 
 	case VT_BSTR:
 		{
@@ -203,15 +218,6 @@ CPacket& marshalling::operator>>(CPacket& packet, _variant_t &varType)
 		}
 		break;
 
-	case VT_DECIMAL:
-	case VT_I1:
-	case VT_UI1:
-	case VT_UI2:
-	case VT_UI4:
-		break;
-
-	case VT_INT: packet  >>(varType.intVal); break;
-	case VT_UINT: packet  >>(varType.uintVal); break;
 	default:
 		break;
 	}

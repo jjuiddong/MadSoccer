@@ -11,6 +11,7 @@ using namespace network;
 CCoreClient::CCoreClient(PROCESS_TYPE procType) :
 	m_ServiceType(procType)
 ,	m_pEventListener(NULL)
+,	m_hThread(NULL)
 {
 	m_ServerIP = "127.0.0.1";
 	m_ServerPort = 2333;

@@ -17,54 +17,62 @@ namespace network
 		, public sharedmemory::CSharedMem<CTaskWorkServer, TYPE_NAME(network::CTaskWorkServer)>
 	{
 	public:
-		CTaskWorkServer(netid netId):CTask(4,"TaskWorkServer"), m_NetId(netId) {}
-		virtual ~CTaskWorkServer() {}
+		CTaskWorkServer(int taskId, netid netId);
+		virtual ~CTaskWorkServer()
+		{
+			int a = 0;
+		}
+		virtual RUN_RESULT	Run() override;
 
 	protected:
-		netid		m_NetId;
+		netid m_ServerId;
+	};
 
-	public:
-		virtual RUN_RESULT	Run() override
+
+	inline CTaskWorkServer::CTaskWorkServer(int taskId, netid netId) :
+		CTask(taskId,"TaskWorkServer"), m_ServerId(netId) 
+	{
+	}
+
+	//------------------------------------------------------------------------
+	// Run
+	//------------------------------------------------------------------------
+	inline common::CTask::RUN_RESULT CTaskWorkServer::Run()
+	{
+		ServerPtr psvr = GetServer(m_ServerId);
+		if (!psvr) 
 		{
-			ServerPtr psvr = GetServer(m_NetId);
-			if (!psvr) 
-			{
-				LogNPrint( "CTaskWorkServer::Run() Error!! not found server netid: %d", m_NetId );
-				return RR_END;
-			}
+			LogNPrint( "CTaskWorkServer::Run() Error!! not found server netid: %d", m_ServerId );
+			return RR_END;
+		}
 
-			const timeval t = {0, 10}; // 10 millisecond
-			SFd_Set readSockets;
-			psvr->MakeFDSET(&readSockets);
-			const SFd_Set sockets = readSockets;
+		const timeval t = {0, 10}; // 10 millisecond
+		SFd_Set readSockets;
+		psvr->MakeFDSET(&readSockets);
+		const SFd_Set sockets = readSockets;
 
-			const int ret = select( readSockets.fd_count, &readSockets, NULL, NULL, &t);
-			if (ret != 0 && ret != SOCKET_ERROR)
+		const int ret = select( readSockets.fd_count, &readSockets, NULL, NULL, &t);
+		if (ret != 0 && ret != SOCKET_ERROR)
+		{
+			for (u_int i=0; i < sockets.fd_count; ++i)
 			{
-				//for (u_int i=0; i < readSockets.fd_count; ++i)
-				for (u_int i=0; i < sockets.fd_count; ++i)
+				if (!FD_ISSET(sockets.fd_array[ i], &readSockets)) continue;
+
+				char buf[ CPacket::MAX_PACKETSIZE];
+				const int result = recv(sockets.fd_array[ i], buf, sizeof(buf), 0);
+				if (result == INVALID_SOCKET || 0 == result)
 				{
-					if (!FD_ISSET(sockets.fd_array[ i], &readSockets)) continue;
-
-					char buf[ CPacket::MAX_PACKETSIZE];
-					const int result = recv(sockets.fd_array[ i], buf, sizeof(buf), 0);
-					if (result == INVALID_SOCKET || 0 == result)
-					{
-						//m_pServer->RemoveClientBySocket(sockets.fd_array[ i]);
-						psvr->RemoveClient(sockets.netid_array[ i]);
-					}
-					else
-					{
-						//const netid senderId = m_pServer->GetNetIdFromSocket(sockets.fd_array[ i]);
-						const netid senderId = sockets.netid_array[ i];
-						CPacketQueue::Get()->PushPacket( 
-							CPacketQueue::SPacketData(m_NetId, CPacket(senderId, buf)) );
-					}
+					psvr->RemoveClient(sockets.netid_array[ i]);
+				}
+				else
+				{
+					const netid senderId = sockets.netid_array[ i];
+					CPacketQueue::Get()->PushPacket( 
+						CPacketQueue::SPacketData(m_ServerId, CPacket(senderId, buf)) );
 				}
 			}
-
-			return RR_CONTINUE;
 		}
-	};
+		return RR_CONTINUE;
+	}
 
 }

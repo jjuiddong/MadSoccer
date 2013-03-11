@@ -18,16 +18,17 @@ namespace network
 		friend class CNetLauncher;
 		friend class CNetController;
 		friend class CClient;
-
 		typedef common::ReferencePtr<ICoreClientEventListener> CoreClientEventListenerPtr;
 
 	public:
 		CCoreClient(PROCESS_TYPE procType);
 		virtual ~CCoreClient();
 
-		PROCESS_TYPE GetProcessType() const { return m_ServiceType; }
-		bool					IsConnect() const { return m_IsConnect; }
-		void					SetEventListener(CoreClientEventListenerPtr ptr) { m_pEventListener = ptr; }
+		PROCESS_TYPE GetProcessType() const;
+		bool					IsConnect() const;
+		void					SetEventListener(CoreClientEventListenerPtr ptr);
+		void					SetThreadHandle(HANDLE handle);
+		HANDLE			GetThreadHandle() const;
 
 		bool					Stop();
 		void					Disconnect();
@@ -42,16 +43,24 @@ namespace network
 		void				SetServerIp(const std::string &ip) { m_ServerIP = ip; }
 		void				SetServerPort(int port) { m_ServerPort = port; }
 
-		// event
+		// Event Handler
 		void				OnConnect();
 		void				OnDisconnect();
 
 	protected:
-		PROCESS_TYPE					m_ServiceType;
 		std::string							m_ServerIP;
 		int										m_ServerPort;
 		bool										m_IsConnect;
 		CoreClientEventListenerPtr	m_pEventListener;
+		PROCESS_TYPE					m_ServiceType;
+		HANDLE								m_hThread;				// 소속된 스레드 핸들, 없다면 NULL
 
 	};
+
+	inline PROCESS_TYPE CCoreClient::GetProcessType() const { return m_ServiceType; }
+	inline bool CCoreClient::IsConnect() const { return m_IsConnect; }
+	inline void	 CCoreClient::SetEventListener(CoreClientEventListenerPtr ptr) { m_pEventListener = ptr; }
+	inline void	 CCoreClient::SetThreadHandle(HANDLE handle) { m_hThread = handle; }
+	inline HANDLE CCoreClient::GetThreadHandle() const { return m_hThread; }
+
 }

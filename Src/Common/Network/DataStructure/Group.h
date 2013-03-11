@@ -15,13 +15,14 @@ namespace network
 	public:
 		CGroup(GroupPtr parent=NULL, const std::string &name="");
 		virtual ~CGroup();
-		netid	GetId() const;
-		const std::string& GetName() const;
-		void SetName(const std::string &name);		
-		DWORD GetTag() const;
-		void SetTag(DWORD tag);
-		CGroup* GetParent() const;
-		void SetParent(GroupPtr parent);
+
+		netid						GetId() const;
+		const std::string&	GetName() const;
+		void							SetName(const std::string &name);		
+		DWORD					GetTag() const;
+		void							SetTag(DWORD tag);
+		CGroup*					GetParent() const;
+		void							SetParent(GroupPtr parent);
 
 		// Group
 		bool				AddChild( CGroup *pGroup );

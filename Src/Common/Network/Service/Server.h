@@ -23,8 +23,11 @@ namespace network
 		CServer(PROCESS_TYPE procType);
 		virtual ~CServer();
 
-		bool				IsServerOn() const { return m_IsServerOn; }
-		PROCESS_TYPE	GetProcessType() const { return m_ProcessType; }
+		bool				IsServerOn() const;
+		PROCESS_TYPE	GetProcessType() const;
+		void					SetThreadHandle(HANDLE handle);
+		HANDLE			GetThreadHandle() const;
+
 		bool				IsExist(netid netId);
 		void				SetEventListener(ServerEventListenerPtr ptr) { m_pEventListener = ptr; }
 		void				MakeFDSET( SFd_Set *pfdset);
@@ -63,10 +66,17 @@ namespace network
 		RemoteClientMap		m_RemoteClients;		// 서버와 연결된 클라이언트 정보리스트
 		CRITICAL_SECTION		m_CriticalSection;
 		ServerEventListenerPtr m_pEventListener;
+		HANDLE						m_hThread;				// 소속된 스레드 핸들, 없다면 NULL
 
 		CGroup							m_RootGroup;
-		netid							m_WaitGroupId;				// waiting place before join concrete group
+		netid							m_WaitGroupId;			// waiting place before join concrete group
 
 	};
+
+	inline bool CServer::IsServerOn() const { return m_IsServerOn; }
+	inline PROCESS_TYPE CServer::GetProcessType() const { return m_ProcessType; }
+	inline void	 CServer::SetThreadHandle(HANDLE handle) { m_hThread = handle; }
+	inline HANDLE CServer::GetThreadHandle() const { return m_hThread; }
+
 
 };
