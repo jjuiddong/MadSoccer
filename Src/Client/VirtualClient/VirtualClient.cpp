@@ -5,14 +5,14 @@
 #include <conio.h>
 #include <stdio.h>
 #include <iostream>
-#include "NetCommon/basic_Protocol.h"
-#include "NetCommon/basic_ProtocolListener.h"
-#include "NetCommon/basic_Protocol.cpp"
-#include "NetCommon/basic_ProtocolListener.cpp"
-#include "NetCommon/login_Protocol.h"
-#include "NetCommon/login_ProtocolListener.h"
-#include "NetCommon/login_Protocol.cpp"
-#include "NetCommon/login_ProtocolListener.cpp"
+#include "NetCommon/Src/basic_Protocol.h"
+#include "NetCommon/Src/basic_ProtocolListener.h"
+//#include "NetCommon/Src/basic_Protocol.cpp"
+//#include "NetCommon/Src/basic_ProtocolListener.cpp"
+#include "NetCommon/Src/login_Protocol.h"
+#include "NetCommon/Src/login_ProtocolListener.h"
+#include "NetCommon/Src/login_Protocol.cpp"
+#include "NetCommon/Src/login_ProtocolListener.cpp"
 
 
 using namespace network;

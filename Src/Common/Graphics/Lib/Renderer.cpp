@@ -104,15 +104,15 @@ void CRenderer::RenderDX(int elapsedTime)
 //------------------------------------------------------------------------
 // 렌더러로 온 메세지를 처리한다.
 //------------------------------------------------------------------------
-void CRenderer::MessageProc( int msg, WPARAM wParam, LPARAM lParam )
+void CRenderer::MessageProc( threadmsg::MSG msg, WPARAM wParam, LPARAM lParam, LPARAM added )
 {
-	switch (msg)
+	switch (lParam)
 	{
-	case MSG_RENDERER_SETSTATE: SetState((STATE)wParam); break;
-	case MSG_RENDERER_SETFPS: SetFPS((int)wParam); break;
-	case MSG_RENDERER_SETROOTWINDOW: SetRootWindow( (CWindow*)wParam ); break;
-	case MSG_RENDERER_RELEASE: ReleasePtr(wParam, lParam); break;
-	case MSG_RENDERER_SETHWND: SetHWnd((HWND)wParam); break;
+	case MSG_RENDERER_SETSTATE: SetState((STATE)added); break;
+	case MSG_RENDERER_SETFPS: SetFPS((int)added); break;
+	case MSG_RENDERER_SETROOTWINDOW: SetRootWindow( (CWindow*)added ); break;
+	case MSG_RENDERER_RELEASE: ReleasePtr(0, added); break;
+	case MSG_RENDERER_SETHWND: SetHWnd((HWND)added); break;
 	}
 }
 

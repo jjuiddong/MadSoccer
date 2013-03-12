@@ -31,10 +31,11 @@ namespace common
 		int msg;
 		WPARAM wParam;
 		LPARAM lParam;
+		LPARAM added;
 
 		_SExternalMsg() {}
-		_SExternalMsg( int rcvtaskId, int msgtype, WPARAM wparam, LPARAM lparam):
-			rcvTaskId(rcvtaskId), msg(msgtype), wParam(wparam), lParam(lparam)
+		_SExternalMsg( int rcvtaskId, int msgtype, WPARAM wparam, LPARAM lparam, LPARAM _added) :
+			rcvTaskId(rcvtaskId), msg(msgtype), wParam(wparam), lParam(lparam), added(_added)
 			{
 			}
 

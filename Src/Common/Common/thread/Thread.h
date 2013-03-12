@@ -53,8 +53,8 @@ namespace common
 		void			Start();				// 쓰레드 실행
 		void			Terminate();		// 쓰레드 종료
 
-		void			Send2ThreadMessage( threadmsg::MSG msg, WPARAM wParam, LPARAM lParam);
-		void			Send2ExternalMessage( int msg, WPARAM wParam, LPARAM lParam );
+		void			Send2ThreadMessage( threadmsg::MSG msg, WPARAM wParam, LPARAM lParam, LPARAM added=0);
+		void			Send2ExternalMessage( int msg, WPARAM wParam, LPARAM lParam, LPARAM added=0 );
 		bool			GetThreadMsg( OUT SExternalMsg *pMsg, MSG_OPT opt = MSG_REMOVE );
 		bool			GetExternalMsg( OUT SExternalMsg *pMsg, MSG_OPT opt = MSG_REMOVE );
 		
@@ -65,7 +65,7 @@ namespace common
 		void			Exit(); // call exit thread
 
 		// Overriding
-		virtual void	MessageProc( threadmsg::MSG msg, WPARAM wParam, LPARAM lParam );
+		virtual void	MessageProc( threadmsg::MSG msg, WPARAM wParam, LPARAM lParam, LPARAM added );
 
 	protected:
 		void			DispatchMessage();

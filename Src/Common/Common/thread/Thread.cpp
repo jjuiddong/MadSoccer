@@ -66,10 +66,10 @@ void CThread::Terminate()
 // rcvTaskId : 받을 태스크 아이디 ('0' 이라면 쓰레드가 받는다.)
 //			   -1 : 외부로 가는 메세지를 뜻함
 //------------------------------------------------------------------------
-void CThread::Send2ThreadMessage( threadmsg::MSG msg, WPARAM wParam, LPARAM lParam)
+void CThread::Send2ThreadMessage( threadmsg::MSG msg, WPARAM wParam, LPARAM lParam, LPARAM added)
 {
 	EnterMsgSync();
-	m_ThreadMsgs.push_back( SExternalMsg(-1, (int)msg, wParam, lParam) );
+	m_ThreadMsgs.push_back( SExternalMsg(-1, (int)msg, wParam, lParam, added) );
 	LeaveMsgSync();
 }
 
@@ -77,10 +77,10 @@ void CThread::Send2ThreadMessage( threadmsg::MSG msg, WPARAM wParam, LPARAM lPar
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-void CThread::Send2ExternalMessage( int msg, WPARAM wParam, LPARAM lParam )
+void CThread::Send2ExternalMessage( int msg, WPARAM wParam, LPARAM lParam, LPARAM added )
 {
 	EnterMsgSync();
-	m_ExternalMsgs.push_back( SExternalMsg(-1, msg, wParam, lParam) );
+	m_ExternalMsgs.push_back( SExternalMsg(-1, msg, wParam, lParam, added) );
 	LeaveMsgSync();
 }
 
@@ -313,7 +313,7 @@ void CThread::DispatchMessage()
 					boost::bind( &IsSameId<CTask>, _1, it->wParam) );
 				if (m_Tasks.end() != t)
 				{
-					(*t)->MessageProc(it->msg, it->wParam, it->lParam);
+					(*t)->MessageProc((threadmsg::MSG)it->msg, it->wParam, it->lParam, it->added);
 				}
 				else
 				{
@@ -322,7 +322,7 @@ void CThread::DispatchMessage()
 			}
 			else // Thread에게 온 메세지
 			{
-				MessageProc((threadmsg::MSG)it->msg, it->wParam, it->lParam);
+				MessageProc((threadmsg::MSG)it->msg, it->wParam, it->lParam, it->added);
 			}
 			++it;
 		}
@@ -335,7 +335,7 @@ void CThread::DispatchMessage()
 //------------------------------------------------------------------------
 // Message Process
 //------------------------------------------------------------------------
-void	CThread::MessageProc( threadmsg::MSG msg, WPARAM wParam, LPARAM lParam )
+void	CThread::MessageProc( threadmsg::MSG msg, WPARAM wParam, LPARAM lParam, LPARAM added )
 {
 	switch (msg)
 	{

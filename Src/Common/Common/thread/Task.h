@@ -27,7 +27,7 @@ namespace common
 
 		// overriding
 		virtual RUN_RESULT	Run() { return RR_END; }
-		virtual void MessageProc( int msg, WPARAM wParam, LPARAM lParam ) {}
+		virtual void MessageProc( threadmsg::MSG msg, WPARAM wParam, LPARAM lParam, LPARAM added ) {}
 
 	protected:
 		int				m_Id;

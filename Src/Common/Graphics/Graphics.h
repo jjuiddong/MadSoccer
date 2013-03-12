@@ -15,8 +15,6 @@
 #include "LIb/DisplayObject.h"
 #include "LIb/DummyDisplayObject.h"
 
-
-
 namespace graphics
 {
 	class CWindow;

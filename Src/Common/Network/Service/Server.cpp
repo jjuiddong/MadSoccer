@@ -5,6 +5,8 @@
 #include <process.h> 
 //#include <boost/bind.hpp>
 #include "../Controller/NetController.h"
+#include "NetCommon/Src/basic_ProtocolListener.cpp"
+#include "NetCommon/Src/basic_Protocol.cpp"
 
 using namespace network;
 

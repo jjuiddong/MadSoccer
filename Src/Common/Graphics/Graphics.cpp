@@ -42,8 +42,8 @@ void graphics::Init(HWND hWnd)
 	m_Thread.Start();
 
 	// ·»´õ·¯ ½ÇÇà
-	m_Thread.Send2ThreadMessage( TASK_RENDERER, MSG_RENDERER_SETSTATE, RENDER, 0 );
-	m_Thread.Send2ThreadMessage( TASK_RENDERER, MSG_RENDERER_SETHWND, (WPARAM)hWnd, 0 );
+	m_Thread.Send2ThreadMessage( common::threadmsg::TASK_MSG, TASK_RENDERER, MSG_RENDERER_SETSTATE, RENDER );
+	m_Thread.Send2ThreadMessage( common::threadmsg::TASK_MSG, TASK_RENDERER, MSG_RENDERER_SETHWND, (LPARAM)hWnd );
 
 }
 
@@ -54,7 +54,7 @@ void graphics::Init(HWND hWnd)
 void graphics::ShutDown()
 {
 	m_State = SHUTDOWN;
-	m_Thread.Send2ThreadMessage( TASK_RENDERER, MSG_RENDERER_SETSTATE, SHUTDOWN, 0 );
+	m_Thread.Send2ThreadMessage( common::threadmsg::TASK_MSG, TASK_RENDERER, MSG_RENDERER_SETSTATE, SHUTDOWN );
 	m_Thread.Terminate();
 }
 
@@ -95,7 +95,7 @@ void graphics::WindowMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 void graphics::SetRootWindow(CWindow *pWnd)
 {
 	m_pRootWindow = pWnd;
-	m_Thread.Send2ThreadMessage( TASK_RENDERER, MSG_RENDERER_SETROOTWINDOW, (WPARAM)pWnd, 0 );
+	m_Thread.Send2ThreadMessage( common::threadmsg::TASK_MSG, TASK_RENDERER, MSG_RENDERER_SETROOTWINDOW, (LPARAM)pWnd );
 }
 graphics::CWindow* graphics::GetRootWindow()
 {
@@ -109,7 +109,7 @@ graphics::CWindow* graphics::GetRootWindow()
 void graphics::SetFPS(int fps)
 {
 	m_Fps = fps;
-	m_Thread.Send2ThreadMessage( TASK_RENDERER, MSG_RENDERER_SETFPS, fps, 0 );
+	m_Thread.Send2ThreadMessage(common::threadmsg::TASK_MSG,  TASK_RENDERER, MSG_RENDERER_SETFPS, fps );
 }
 int	graphics::GetFPS()
 {
@@ -130,7 +130,7 @@ int graphics::GetCurTime()
 void graphics::SetState(STATE state)
 {
 	m_State = state;
-	m_Thread.Send2ThreadMessage( TASK_RENDERER, MSG_RENDERER_SETSTATE, state, 0 );
+	m_Thread.Send2ThreadMessage( common::threadmsg::TASK_MSG, TASK_RENDERER, MSG_RENDERER_SETSTATE, state);
 }
 STATE graphics::GetState()
 {
@@ -143,7 +143,7 @@ STATE graphics::GetState()
 //------------------------------------------------------------------------
 void graphics::ReleaseSyncInstance(CSyncNode *pNode)
 {
-	m_Thread.Send2ThreadMessage( TASK_RENDERER, MSG_RENDERER_RELEASE, 0, (WPARAM)pNode);
+	m_Thread.Send2ThreadMessage( common::threadmsg::TASK_MSG, TASK_RENDERER, MSG_RENDERER_RELEASE, (WPARAM)pNode);
 }
 
 
