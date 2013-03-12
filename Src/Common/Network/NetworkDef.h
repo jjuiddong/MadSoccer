@@ -19,7 +19,7 @@ typedef int netid;
 
 namespace network
 {
-	class CServer;
+	class CServerBasic;
 	class CClient;
 	class CCoreClient;
 	class CP2PClient;
@@ -51,7 +51,7 @@ namespace network
 	};
 
 }
-typedef common::ReferencePtr<network::CServer> ServerPtr;
+typedef common::ReferencePtr<network::CServerBasic> ServerBasicPtr;
 typedef common::ReferencePtr<network::CClient> ClientPtr;
 typedef common::ReferencePtr<network::CP2PClient> P2PClientPtr;
 typedef common::ReferencePtr<network::CCoreClient> CoreClientPtr;

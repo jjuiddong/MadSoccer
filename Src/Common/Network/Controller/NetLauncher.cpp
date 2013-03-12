@@ -9,7 +9,7 @@ using namespace network;
 //------------------------------------------------------------------------
 // 서버 시작
 //------------------------------------------------------------------------
-bool CNetLauncher::LaunchServer(ServerPtr pSvr, int port)
+bool CNetLauncher::LaunchServer(ServerBasicPtr pSvr, int port)
 {
 	if (!pSvr)
 		return false;

@@ -9,7 +9,7 @@
 
 namespace network
 {
-	class CServer;
+	class CServerBasic;
 	class CClient;
 	class CCoreClient;
 	class CNetLauncher : public common::CSingleton<CNetLauncher>
@@ -19,7 +19,7 @@ namespace network
 		virtual ~CNetLauncher() {}
 
 	public:
-		bool	LaunchServer(ServerPtr pSvr, int port);
+		bool	LaunchServer(ServerBasicPtr pSvr, int port);
 		bool	LaunchClient(ClientPtr pClient, const std::string &ip, int port);
 		bool	LaunchCoreClient(CoreClientPtr pClient, const std::string &ip, int port);
 	};

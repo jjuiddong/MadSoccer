@@ -63,7 +63,7 @@ using namespace marshalling;
 CPacket& marshalling::operator<<(CPacket& packet, const std::string &rhs)
 {
 	const int length = rhs.size();
-	packet.AppendPtr(rhs.c_str(), length);
+	packet.AppendPtr(rhs.c_str(), length+1);
 	return packet;
 }
 CPacket& marshalling::operator<<(CPacket& packet, const _variant_t &rhs)

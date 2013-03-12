@@ -11,9 +11,6 @@
 
 #include "NetCommon/Src/basic_Protocol.h"
 #include "NetCommon/Src/basic_ProtocolListener.h"
-//#include "NetCommon/Src/basic_Protocol.cpp"
-//#include "NetCommon/Src/basic_ProtocolListener.cpp"
-
 
 #include "Lib/ChatServer.h"
 #include "Lib/ServerLauncher.h"

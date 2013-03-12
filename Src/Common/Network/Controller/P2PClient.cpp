@@ -100,7 +100,7 @@ bool	CP2PClient::CreateP2PHost( const int port )
 	if (m_pP2pHost)
 		CNetController::Get()->StopServer(m_pP2pHost);
 	else
-		m_pP2pHost = new CServer(m_ProcessType);
+		m_pP2pHost = new CServerBasic(m_ProcessType);
 	return CNetController::Get()->StartServer(port, m_pP2pHost);;
 }
 

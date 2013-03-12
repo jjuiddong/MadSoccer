@@ -19,8 +19,8 @@ namespace network
 		friend class CTaskWorkClient;
 		friend class CTaskWorkServer;
 
-		typedef std::map<SOCKET, ServerPtr> ServerSockets;
-		typedef common::VectorMap<netid, ServerPtr> Servers;
+		typedef std::map<SOCKET, ServerBasicPtr> ServerSockets;
+		typedef common::VectorMap<netid, ServerBasicPtr> Servers;
 
 		typedef std::map<SOCKET, ClientPtr> ClientSockets;
 		typedef common::VectorMap<netid, ClientPtr> Clients;
@@ -40,10 +40,10 @@ namespace network
 		void		Clear();
 
 		// Server
-		bool		StartServer(int port, ServerPtr pSvr);
-		bool		StopServer(ServerPtr pSvr);
-		ServerPtr	GetServer(netid netId);
-		ServerPtr	GetServerFromSocket(SOCKET sock);
+		bool		StartServer(int port, ServerBasicPtr pSvr);
+		bool		StopServer(ServerBasicPtr pSvr);
+		ServerBasicPtr	GetServer(netid netId);
+		ServerBasicPtr	GetServerFromSocket(SOCKET sock);
 
 		// Client
 		bool		StartClient(const std::string &ip, int port, ClientPtr pClt);

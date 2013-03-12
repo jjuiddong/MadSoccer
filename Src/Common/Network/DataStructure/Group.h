@@ -28,19 +28,11 @@ namespace network
 		CGroup(GroupPtr parent=NULL, const std::string &name="");
 		virtual ~CGroup();
 
-		netid						GetId() const;
-		const std::string&	GetName() const;
-		void							SetName(const std::string &name);		
-		DWORD					GetTag() const;
-		void							SetTag(DWORD tag);
-		CGroup*					GetParent() const;
-		void							SetParent(GroupPtr parent);
-		netid						GetParentId() const;
-
 		// Group
 		bool				AddChild( CGroup *pGroup );
 		bool				RemoveChild( netid groupId );
 		GroupPtr		GetChild( netid groupId );
+		GroupPtr		GetChildFromUser( netid userId );
 		const Groups::VectorType&	GetChildren() const { return m_Children.m_Seq; }
 
 		// User
@@ -53,6 +45,15 @@ namespace network
 
 		bool operator==(const CGroup &rhs) const { return m_Id==rhs.GetId(); }
 
+		netid						GetId() const;
+		const std::string&	GetName() const;
+		void							SetName(const std::string &name);		
+		DWORD					GetTag() const;
+		void							SetTag(DWORD tag);
+		CGroup*					GetParent() const;
+		void							SetParent(GroupPtr parent);
+		netid						GetParentId() const;
+
 	protected:
 		bool				AddUser(netid userId);
 		bool				AddUserNApplyParent(GroupPtr pGroup, netid userId);
@@ -61,9 +62,8 @@ namespace network
 
 	protected:
 		netid			m_Id;
-		netid			m_ParentId; // m_pParent Id
+		netid			m_ParentId;
 		std::string	m_Name;
-		//NetIdList		m_Users;
 		NetIdes		m_Users;
 		DWORD		m_Tag;
 		CGroup			*m_pParent;

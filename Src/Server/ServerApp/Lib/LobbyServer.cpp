@@ -155,7 +155,7 @@ void CLobbyServer::SendUsers(netid userId)
 //------------------------------------------------------------------------
 // 클라이언트가 서버에 붙었을 때 호출된다.
 //------------------------------------------------------------------------
-void CLobbyServer::OnClientJoin(ServerPtr svr, netid netId)
+void CLobbyServer::OnClientJoin(ServerBasicPtr svr, netid netId)
 {
 	CUserLobby *pUser = new CUserLobby();
 	pUser->SetNetId(netId);
@@ -170,7 +170,7 @@ void CLobbyServer::OnClientJoin(ServerPtr svr, netid netId)
 //------------------------------------------------------------------------
 // 클라이언트가 서버로 부터 떨어져 나갔을 때 호출된다.
 //------------------------------------------------------------------------
-void CLobbyServer::OnClientLeave(ServerPtr svr, netid netId)
+void CLobbyServer::OnClientLeave(ServerBasicPtr svr, netid netId)
 {
 	if (!RemoveUser(netId))
 	{

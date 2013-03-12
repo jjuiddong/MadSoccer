@@ -71,6 +71,11 @@ namespace common
 			return false; // ¸øÃ£À½
 		}
 
+		bool empty()
+		{
+			return m_RandomAccess.empty();
+		}
+
 		void clear()
 		{
 			m_RandomAccess.clear();

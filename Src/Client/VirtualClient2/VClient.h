@@ -11,6 +11,7 @@
 class CVClient : public network::CClient
 						,public network::IClientEventListener
 						,public all::ProtocolListener
+						,public basic::s2c_ProtocolListener
 						,public common::CSingleton<CVClient>
 {
 public:
@@ -32,5 +33,8 @@ public:
 	// network
 	// all::protocol
 	virtual void recv(netid senderId, network::CPacket &packet) override;
+
+	// basic
+	virtual void AckGroupList(netid senderId, const GroupVector &groups) override;
 
 };

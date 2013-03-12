@@ -52,7 +52,9 @@ bool CProtocolTree::Init()
 		GetConsole()->AddString( config::GetErrorMsg() );
 	}
 
-	std::list<std::string> fileList = common::FindFileList( "D:\\Project\\GitHub\\MadSoccer\\Src\\Common\\NetCommon\\*.prt" );
+	std::string protocolDir = config::GetProtocolDirectory();
+	protocolDir += "\\*.prt";
+	std::list<std::string> fileList = common::FindFileList( protocolDir ); //"D:\\Project\\GitHub\\MadSoccer\\Src\\Common\\NetCommon\\*.prt" );
 	BOOST_FOREACH(std::string &str, fileList)
 	{
 		CProtocolParser *pParser = new CProtocolParser();

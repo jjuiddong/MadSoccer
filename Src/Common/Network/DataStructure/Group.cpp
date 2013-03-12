@@ -89,11 +89,33 @@ GroupPtr CGroup::GetChild(netid groupId )
 
 
 //------------------------------------------------------------------------
+// return leaf group node object
+//------------------------------------------------------------------------
+GroupPtr CGroup::GetChildFromUser( netid userId )
+{
+	if (!IsExistUser(userId))
+		return NULL;
+
+	if (m_Children.empty()) // leaf node
+		return this;
+
+	// search children
+	BOOST_FOREACH(auto &child, m_Children.m_Seq)
+	{		
+		GroupPtr ptr = child->GetChildFromUser( userId );
+		if (ptr) return ptr;
+	}
+
+	return this;
+}
+
+
+//------------------------------------------------------------------------
 // 유저 추가
 //------------------------------------------------------------------------
 bool CGroup::AddUser(netid groupId, netid userId)
 {
-	GroupPtr pGroup = GetChild(groupId);
+	GroupPtr pGroup = (GetId() == groupId)? this : GetChild(groupId);
 	if(!pGroup) return false; // not exist group
 	return AddUserNApplyParent(pGroup, userId);	
 }
@@ -104,7 +126,7 @@ bool CGroup::AddUser(netid groupId, netid userId)
 //------------------------------------------------------------------------
 bool CGroup::RemoveUser(netid groupId, netid userId)
 {
-	GroupPtr pGroup = GetChild(groupId);
+	GroupPtr pGroup = (GetId() == groupId)? this : GetChild(groupId);
 	if(!pGroup) return false; // not exist group
 	return RemoveUserNApplyParent(pGroup, userId);
 }

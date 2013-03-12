@@ -10,13 +10,13 @@ namespace network
 {
 	using namespace marshalling;
 
-	class CServer;
+	class CServerBasic;
 	class CClient;
 
 	// Server
-	bool		StartServer(int port, CServer *pSvr);
-	bool		StopServer(CServer *pSvr);
-	ServerPtr	GetServer(netid serverId);
+	bool		StartServer(int port, CServerBasic *pSvr);
+	bool		StopServer(CServerBasic *pSvr);
+	ServerBasicPtr	GetServer(netid serverId);
 
 	// Client
 	bool		StartClient(const std::string &ip, int port, CClient *pClt);

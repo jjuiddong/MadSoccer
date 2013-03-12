@@ -2,9 +2,10 @@
 protocol s2c 500
 {
 	AckGroupList( GroupVector groups );
-	AckGroupJoin( int result );
+	AckGroupJoin( int errorCode );
+	AckGroupCreate( int errorCode, std::string groupName, netid groupid );
 
-	AckP2PConnect( int result, network::P2P_STATE state, std::string ip, int port );
+	AckP2PConnect( int errorCode, network::P2P_STATE state, std::string ip, int port );
 
 	func1( );
 	func2( std::string str );
@@ -18,6 +19,7 @@ protocol c2s 600
 {
 	ReqGroupList( netid groupid );
 	ReqGroupJoin( netid groupid );
+	ReqGroupCreate( netid parentGroupId, std::string groupName  );
 
 	ReqP2PConnect( );
 

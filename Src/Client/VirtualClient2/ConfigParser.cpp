@@ -8,13 +8,14 @@ namespace config
 {
 	using boost::property_tree::ptree;
 
-	ptree n_Props;
-	std::string n_ErrorMsg;
+	ptree g_Props;
+	std::string g_ProtocolDir;
+	std::string g_ErrorMsg;
 }
 
 std::string config::GetErrorMsg()
 {
-	return n_ErrorMsg;
+	return g_ErrorMsg;
 }
 
 
@@ -27,11 +28,12 @@ bool	 config::OpenConfigFile()
 
 	try
 	{
-		boost::property_tree::read_json(configFileName.c_str(), n_Props);
+		boost::property_tree::read_json(configFileName.c_str(), g_Props);
+		g_ProtocolDir = g_Props.get<std::string>("protocol directory");
 	}
 	catch (std::exception &e)
 	{
-		n_ErrorMsg = common::format("\"%s\" json script Err!! [%s]",  
+		g_ErrorMsg = common::format("\"%s\" json script Err!! [%s]",  
 			configFileName.c_str(), e.what());
 		return false;
 	}
@@ -46,11 +48,20 @@ std::string config::FindReservedString( const std::string &scope )
 {
 	try
 	{
-		return n_Props.get<std::string>(scope);
+		return g_Props.get<std::string>(scope);
 	}
 	catch (std::exception &e)
 	{
 		std::string msg = e.what(); // debug¿ë
 	}
 	return "";
+}
+
+
+//------------------------------------------------------------------------
+// return *.ptr directory name
+//------------------------------------------------------------------------
+std::string config::GetProtocolDirectory()
+{
+	return g_ProtocolDir;
 }

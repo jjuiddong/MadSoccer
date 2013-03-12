@@ -47,8 +47,8 @@ protected:
 	void			SendUsers(netid userId);
 
 	// ServerEvent
-	virtual void	OnClientJoin(ServerPtr svr, netid netId) override;
-	virtual void	OnClientLeave(ServerPtr svr, netid netId) override;
+	virtual void	OnClientJoin(ServerBasicPtr svr, netid netId) override;
+	virtual void	OnClientLeave(ServerBasicPtr svr, netid netId) override;
 
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -46,12 +46,20 @@ namespace common
 	{
 	public:
 		sizevector() : m_Size(0) {}
-		sizevector(size_t s) : vector<T>(s), m_Size(0) {}
+		sizevector(size_t s) : vector<T>(s), m_Size(0) {} // process like reserve()  function call
 
 		bool remove(const T &ty) {
 			const bool r = removevector(*this, ty);
 			if (r) --m_Size;
 			return r;
+		}
+		void push_back(const T &ty) {
+			vector<T>::push_back(ty);
+			++m_Size;
+		}
+		void pop_back() {
+			std::vector<T>::pop_back();
+			--m_Size;
 		}
 		void putback(const T &ty) {
 			putvector(*this, m_Size, ty);
@@ -59,6 +67,9 @@ namespace common
 		}
 		void popback() {
 			--m_Size;
+		}
+		size_t size() const {
+			return m_Size;
 		}
 		void clear() {
 			std::vector<T>::clear();

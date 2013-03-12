@@ -1,5 +1,6 @@
 
 {
+	"protocol directory" : "C:\\GitHub\\MadSoccer\\Src\\Common\\NetCommon",
 	"1_connect::c2s::Connect::ip" : "127.0.0.1",
 	"1_connect::c2s::Connect::port" : "2334"
 

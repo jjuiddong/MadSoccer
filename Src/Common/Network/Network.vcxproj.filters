@@ -110,6 +110,9 @@
     <ClCompile Include="Marshalling\MarshallingGroup.cpp">
       <Filter>Lib\Marshalling</Filter>
     </ClCompile>
+    <ClCompile Include="Service\ServerBasic.cpp">
+      <Filter>Lib\Service</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Network.h">
@@ -234,6 +237,9 @@
     </ClInclude>
     <ClInclude Include="Marshalling\MarshallingGroup.h">
       <Filter>Lib\Marshalling</Filter>
+    </ClInclude>
+    <ClInclude Include="Service\ServerBasic.h">
+      <Filter>Lib\Service</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

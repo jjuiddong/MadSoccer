@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "NetController.h"
 #include "NetLauncher.h"
+#include "../Service/ServerBasic.h"
 #include "../Service/Server.h"
 #include "../Service/Client.h"
 #include "CoreClient.h"
@@ -77,7 +78,7 @@ void CNetController::Proc()
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-bool CNetController::StartServer(int port, ServerPtr pSvr)
+bool CNetController::StartServer(int port, ServerBasicPtr pSvr)
 {
 	if (!pSvr)
 		return false;
@@ -117,7 +118,7 @@ bool CNetController::StartServer(int port, ServerPtr pSvr)
 // remove server container
 // remove thread task
 //------------------------------------------------------------------------
-bool CNetController::StopServer(ServerPtr pSvr)
+bool CNetController::StopServer(ServerBasicPtr pSvr)
 {
 	if (!pSvr)
 		return false;
@@ -143,7 +144,7 @@ bool CNetController::StopServer(ServerPtr pSvr)
 //------------------------------------------------------------------------
 // netId 에 해당하는 서버를 리턴한다.
 //------------------------------------------------------------------------
-ServerPtr CNetController::GetServer(netid netId)
+ServerBasicPtr CNetController::GetServer(netid netId)
 {
 	Servers::iterator it = m_Servers.find(netId);
 	if (m_Servers.end() == it)
@@ -155,7 +156,7 @@ ServerPtr CNetController::GetServer(netid netId)
 //------------------------------------------------------------------------
 // SOCKET 에 해당하는 서버를 리턴한다.
 //------------------------------------------------------------------------
-ServerPtr CNetController::GetServerFromSocket(SOCKET sock)
+ServerBasicPtr CNetController::GetServerFromSocket(SOCKET sock)
 {
 	ServerItor it = m_ServerSockets.find(sock);
 	if (m_ServerSockets.end() == it)

@@ -13,7 +13,7 @@
 
 namespace network
 {
-	class CServer;
+	class CServerBasic;
 	class CCoreClient;
 	DECLARE_TYPE_NAME(CP2PClient)
 	class CP2PClient : public CNetConnector
@@ -56,6 +56,6 @@ namespace network
 		P2P_STATE		m_State;
 		PROCESS_TYPE m_ProcessType;
 		CCoreClient	*m_pP2pClient;
-		CServer		*m_pP2pHost;
+		CServerBasic		*m_pP2pHost;
 	};
 }

@@ -18,24 +18,38 @@ void basic::s2c_Protocol::AckGroupList(netid targetId, const GroupVector &groups
 //------------------------------------------------------------------------
 // Protocol: AckGroupJoin
 //------------------------------------------------------------------------
-void basic::s2c_Protocol::AckGroupJoin(netid targetId, const int &result)
+void basic::s2c_Protocol::AckGroupJoin(netid targetId, const int &errorCode)
 {
 	CPacket packet;
 	packet << GetId();
 	packet << 502;
-	packet << result;
+	packet << errorCode;
+	GetNetConnector()->Send(targetId, packet);
+}
+
+//------------------------------------------------------------------------
+// Protocol: AckGroupCreate
+//------------------------------------------------------------------------
+void basic::s2c_Protocol::AckGroupCreate(netid targetId, const int &errorCode, const std::string &groupName, const netid &groupid)
+{
+	CPacket packet;
+	packet << GetId();
+	packet << 503;
+	packet << errorCode;
+	packet << groupName;
+	packet << groupid;
 	GetNetConnector()->Send(targetId, packet);
 }
 
 //------------------------------------------------------------------------
 // Protocol: AckP2PConnect
 //------------------------------------------------------------------------
-void basic::s2c_Protocol::AckP2PConnect(netid targetId, const int &result, const network::P2P_STATE &state, const std::string &ip, const int &port)
+void basic::s2c_Protocol::AckP2PConnect(netid targetId, const int &errorCode, const network::P2P_STATE &state, const std::string &ip, const int &port)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 503;
-	packet << result;
+	packet << 504;
+	packet << errorCode;
 	packet << state;
 	packet << ip;
 	packet << port;
@@ -49,7 +63,7 @@ void basic::s2c_Protocol::func1(netid targetId)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 504;
+	packet << 505;
 	GetNetConnector()->Send(targetId, packet);
 }
 
@@ -60,7 +74,7 @@ void basic::s2c_Protocol::func2(netid targetId, const std::string &str)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 505;
+	packet << 506;
 	packet << str;
 	GetNetConnector()->Send(targetId, packet);
 }
@@ -72,7 +86,7 @@ void basic::s2c_Protocol::func3(netid targetId, const float &value)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 506;
+	packet << 507;
 	packet << value;
 	GetNetConnector()->Send(targetId, packet);
 }
@@ -84,7 +98,7 @@ void basic::s2c_Protocol::func4(netid targetId)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 507;
+	packet << 508;
 	GetNetConnector()->Send(targetId, packet);
 }
 
@@ -95,7 +109,7 @@ void basic::s2c_Protocol::func5(netid targetId, const std::string &ok, const flo
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 508;
+	packet << 509;
 	packet << ok;
 	packet << a;
 	packet << b;
@@ -129,13 +143,26 @@ void basic::c2s_Protocol::ReqGroupJoin(netid targetId, const netid &groupid)
 }
 
 //------------------------------------------------------------------------
+// Protocol: ReqGroupCreate
+//------------------------------------------------------------------------
+void basic::c2s_Protocol::ReqGroupCreate(netid targetId, const netid &parentGroupId, const std::string &groupName)
+{
+	CPacket packet;
+	packet << GetId();
+	packet << 603;
+	packet << parentGroupId;
+	packet << groupName;
+	GetNetConnector()->Send(targetId, packet);
+}
+
+//------------------------------------------------------------------------
 // Protocol: ReqP2PConnect
 //------------------------------------------------------------------------
 void basic::c2s_Protocol::ReqP2PConnect(netid targetId)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 603;
+	packet << 604;
 	GetNetConnector()->Send(targetId, packet);
 }
 
@@ -146,7 +173,7 @@ void basic::c2s_Protocol::func2(netid targetId, const std::string &str)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 604;
+	packet << 605;
 	packet << str;
 	GetNetConnector()->Send(targetId, packet);
 }
@@ -158,7 +185,7 @@ void basic::c2s_Protocol::func3(netid targetId, const float &value)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 605;
+	packet << 606;
 	packet << value;
 	GetNetConnector()->Send(targetId, packet);
 }

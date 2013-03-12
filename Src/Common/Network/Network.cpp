@@ -39,7 +39,7 @@ void network::Clear()
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-bool network::StartServer(int port, CServer *pSvr)
+bool network::StartServer(int port, CServerBasic *pSvr)
 {
 	dbg::Print( "StartServer port: %d", port );
 	return CNetController::Get()->StartServer(port, pSvr);
@@ -48,7 +48,7 @@ bool network::StartServer(int port, CServer *pSvr)
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-bool network::StopServer(CServer *pSvr)
+bool network::StopServer(CServerBasic *pSvr)
 {
 	if (!pSvr) return false;
 	dbg::Print( "StopServer netid: %d", pSvr->GetNetId() );
@@ -59,7 +59,7 @@ bool network::StopServer(CServer *pSvr)
 //------------------------------------------------------------------------
 // serverid 에 해당하는 서버를 리턴한다.
 //------------------------------------------------------------------------
-ServerPtr network::GetServer(netid serverId)
+ServerBasicPtr network::GetServer(netid serverId)
 {
 	return CNetController::Get()->GetServer(serverId);
 }

@@ -16,6 +16,7 @@
 namespace config
 {
 	bool				OpenConfigFile();
+	std::string	GetProtocolDirectory();
 	std::string	FindReservedString( const std::string &scope );
 	std::string	GetErrorMsg();
 

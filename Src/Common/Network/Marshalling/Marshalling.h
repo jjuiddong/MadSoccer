@@ -27,6 +27,13 @@ namespace network
 		CPacket& operator<<(CPacket& packet, const P2P_STATE &rhs);
 
 		template<class T>
+		CPacket& operator<<(CPacket& packet, const common::sizevector<T> &v)
+		{
+			AppendSequence( packet, v );
+			return packet;
+		}
+
+		template<class T>
 		CPacket& operator<<(CPacket& packet, const std::vector<T> &v)
 		{
 			AppendSequence( packet, v );
@@ -57,19 +64,21 @@ namespace network
 		CPacket& operator>>(CPacket& packet, _variant_t &varType);
 
 		template<class T>
-		CPacket& operator>>(CPacket& packet, const std::vector<T> &v)
+		CPacket& operator>>(CPacket& packet, common::sizevector<T> &v)
 		{
-			int size;
-			packet >> size;
-
-			v.reserve(size);
-			for (int i=0; i < size; ++i)
-				packet >> v[ i];
+			GetSequence(packet, v);
 			return packet;
 		}
 
 		template<class T>
-		CPacket& operator>>(CPacket& packet, const std::list<T> &v)
+		CPacket& operator>>(CPacket& packet, std::vector<T> &v)
+		{
+			GetSequence(packet, v);
+			return packet;
+		}
+
+		template<class T>
+		CPacket& operator>>(CPacket& packet, std::list<T> &v)
 		{
 			int size;
 			packet >> size;
@@ -90,14 +99,6 @@ namespace network
 			packet.Append((int)val);
 		}
 
-		template<class T>
-		void GetDataEnum(CPacket& packet, T& val)
-		{
-			int tmp;
-			packet.GetData(tmp);
-			val = (T)tmp;
-		}
-
 		template<class Seq>
 		CPacket& AppendSequence(CPacket& packet, const Seq &v)
 		{
@@ -108,6 +109,27 @@ namespace network
 			return packet;
 		}
 
+		template<class T>
+		void GetDataEnum(CPacket& packet, T& val)
+		{
+			int tmp;
+			packet.GetData(tmp);
+			val = (T)tmp;
+		}
+
+		template<class Seq>
+		void GetSequence(CPacket& packet, Seq& val)
+		{
+			int size;
+			packet >> size;
+			val.reserve(size);
+			for (int i=0; i < size; ++i)
+			{
+				Seq::value_type t;
+				packet >> t;
+				val.push_back(t);
+			}
+		}
 
 	}
 }

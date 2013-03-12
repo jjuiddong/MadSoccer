@@ -39,7 +39,7 @@ namespace network
 	//------------------------------------------------------------------------
 	inline common::CTask::RUN_RESULT CTaskWorkServer::Run()
 	{
-		ServerPtr psvr = GetServer(m_ServerId);
+		ServerBasicPtr psvr = GetServer(m_ServerId);
 		if (!psvr) 
 		{
 			LogNPrint( "CTaskWorkServer::Run() Error!! not found server netid: %d", m_ServerId );

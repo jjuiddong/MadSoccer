@@ -33,33 +33,45 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 
 	case 502:
 		{
-			int result;
-			packet >> result;
-			SEND_LISTENER(s2c_ProtocolListener, listeners, AckGroupJoin(packet.GetSenderId(), result) );
+			int errorCode;
+			packet >> errorCode;
+			SEND_LISTENER(s2c_ProtocolListener, listeners, AckGroupJoin(packet.GetSenderId(), errorCode) );
 		}
 		break;
 
 	case 503:
 		{
-			int result;
-			packet >> result;
+			int errorCode;
+			packet >> errorCode;
+			std::string groupName;
+			packet >> groupName;
+			netid groupid;
+			packet >> groupid;
+			SEND_LISTENER(s2c_ProtocolListener, listeners, AckGroupCreate(packet.GetSenderId(), errorCode, groupName, groupid) );
+		}
+		break;
+
+	case 504:
+		{
+			int errorCode;
+			packet >> errorCode;
 			network::P2P_STATE state;
 			packet >> state;
 			std::string ip;
 			packet >> ip;
 			int port;
 			packet >> port;
-			SEND_LISTENER(s2c_ProtocolListener, listeners, AckP2PConnect(packet.GetSenderId(), result, state, ip, port) );
+			SEND_LISTENER(s2c_ProtocolListener, listeners, AckP2PConnect(packet.GetSenderId(), errorCode, state, ip, port) );
 		}
 		break;
 
-	case 504:
+	case 505:
 		{
 			SEND_LISTENER(s2c_ProtocolListener, listeners, func1(packet.GetSenderId()) );
 		}
 		break;
 
-	case 505:
+	case 506:
 		{
 			std::string str;
 			packet >> str;
@@ -67,7 +79,7 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		}
 		break;
 
-	case 506:
+	case 507:
 		{
 			float value;
 			packet >> value;
@@ -75,13 +87,13 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		}
 		break;
 
-	case 507:
+	case 508:
 		{
 			SEND_LISTENER(s2c_ProtocolListener, listeners, func4(packet.GetSenderId()) );
 		}
 		break;
 
-	case 508:
+	case 509:
 		{
 			std::string ok;
 			packet >> ok;
@@ -136,11 +148,21 @@ void basic::c2s_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 
 	case 603:
 		{
-			SEND_LISTENER(c2s_ProtocolListener, listeners, ReqP2PConnect(packet.GetSenderId()) );
+			netid parentGroupId;
+			packet >> parentGroupId;
+			std::string groupName;
+			packet >> groupName;
+			SEND_LISTENER(c2s_ProtocolListener, listeners, ReqGroupCreate(packet.GetSenderId(), parentGroupId, groupName) );
 		}
 		break;
 
 	case 604:
+		{
+			SEND_LISTENER(c2s_ProtocolListener, listeners, ReqP2PConnect(packet.GetSenderId()) );
+		}
+		break;
+
+	case 605:
 		{
 			std::string str;
 			packet >> str;
@@ -148,7 +170,7 @@ void basic::c2s_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		}
 		break;
 
-	case 605:
+	case 606:
 		{
 			float value;
 			packet >> value;

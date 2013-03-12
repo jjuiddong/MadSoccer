@@ -38,7 +38,7 @@ namespace network
 		if (!CPacketQueue::Get()->PopPacket(packetData))
 			return RR_CONTINUE;
 
-		CServer *pSvr = GetServer(packetData.rcvNetId);
+		CServerBasic *pSvr = GetServer(packetData.rcvNetId);
 		if (!pSvr)
 		{
 			error::ErrorLog( 
