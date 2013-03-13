@@ -22,7 +22,7 @@ protected:
 class s2c_ProtocolListener : virtual public network::IProtocolListener
 {
 	friend class s2c_Dispatcher;
-	virtual void AckGroupList(netid senderId){}
+	virtual void AckGroupList(netid senderId, const GroupVector &groups){}
 	virtual void AckGroupJoin(netid senderId, const int &result){}
 	virtual void AckP2PConnect(netid senderId, const int &result, const network::P2P_STATE &state, const std::string &ip, const int &port){}
 	virtual void func1(netid senderId){}
@@ -49,7 +49,7 @@ protected:
 class c2s_ProtocolListener : virtual public network::IProtocolListener
 {
 	friend class c2s_Dispatcher;
-	virtual void ReqGroupList(netid senderId){}
+	virtual void ReqGroupList(netid senderId, const netid &groupid){}
 	virtual void ReqGroupJoin(netid senderId, const netid &groupid){}
 	virtual void ReqP2PConnect(netid senderId){}
 	virtual void func2(netid senderId, const std::string &str){}

@@ -6,7 +6,7 @@ using namespace network;
 
 
 CGroup::CGroup(GroupPtr parent, const std::string &name)  : 
-	m_NetId(common::GenerateId())
+	m_Id(common::GenerateId())
 ,	m_Name(name)
 ,	m_pParent(parent)
 {
@@ -118,7 +118,7 @@ bool CGroup::IsExistUser(netid groupId, netid userId)
 	GroupPtr pGroup = GetChild(groupId);
 	if(!pGroup) return false; // not exist group
 
-	NetIdItor it = find(m_Users.begin(), m_Users.end(), userId);
+	auto it = find(m_Users.begin(), m_Users.end(), userId);
 	return (m_Users.end() != it);
 }
 
@@ -128,10 +128,11 @@ bool CGroup::IsExistUser(netid groupId, netid userId)
 //------------------------------------------------------------------------
 bool CGroup::AddUser(netid userId)
 {
-	NetIdItor it = find(m_Users.begin(), m_Users.end(), userId);
+	auto it = find(m_Users.begin(), m_Users.end(), userId);
 	if (m_Users.end() != it)
 		return false; // 이미 존재한다면 실패
-	m_Users.push_back( userId );
+	//m_Users.push_back( userId );
+	m_Users.putback(userId);
 	return true;
 }
 
@@ -155,11 +156,11 @@ bool	CGroup::AddUserNApplyParent(GroupPtr pGroup, netid userId)
 //------------------------------------------------------------------------
 bool CGroup::RemoveUser(netid userId)
 {
-	NetIdItor it = find(m_Users.begin(), m_Users.end(), userId);
-	if (m_Users.end() == it)
-		return false; // 없다면 실패
-	m_Users.erase(it);
-	return true;
+	//auto it = find(m_Users.begin(), m_Users.end(), userId);
+	//if (m_Users.end() == it)
+	//	return false; // 없다면 실패
+	//m_Users.erase(it);
+	return m_Users.remove(userId);
 }
 
 
@@ -182,7 +183,7 @@ bool	CGroup::RemoveUserNApplyParent(GroupPtr pGroup, netid userId)
 //------------------------------------------------------------------------
 bool CGroup::IsExistUser(netid userId)
 {
-	NetIdItor it = find(m_Users.begin(), m_Users.end(), userId);
+	auto it = find(m_Users.begin(), m_Users.end(), userId);
 	return (m_Users.end() != it);
 }
 

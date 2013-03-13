@@ -12,7 +12,7 @@ class s2c_Protocol : public network::IProtocol
 {
 public:
 	s2c_Protocol() : IProtocol(s2c_Protocol_ID) {}
-	void AckGroupList(netid targetId);
+	void AckGroupList(netid targetId, const GroupVector &groups);
 	void AckGroupJoin(netid targetId, const int &result);
 	void AckP2PConnect(netid targetId, const int &result, const network::P2P_STATE &state, const std::string &ip, const int &port);
 	void func1(netid targetId);
@@ -27,7 +27,7 @@ class c2s_Protocol : public network::IProtocol
 {
 public:
 	c2s_Protocol() : IProtocol(c2s_Protocol_ID) {}
-	void ReqGroupList(netid targetId);
+	void ReqGroupList(netid targetId, const netid &groupid);
 	void ReqGroupJoin(netid targetId, const netid &groupid);
 	void ReqP2PConnect(netid targetId);
 	void func2(netid targetId, const std::string &str);

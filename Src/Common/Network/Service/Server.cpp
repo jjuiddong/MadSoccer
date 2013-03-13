@@ -21,6 +21,10 @@ CServer::CServer(PROCESS_TYPE procType) :
 	CGroup *pWaitGroup = new CGroup(NULL,"Waiting Group");
 	m_WaitGroupId = pWaitGroup->GetId();
 	m_RootGroup.AddChild( pWaitGroup );
+
+	AddListener(this);
+	m_BasicProtocol.SetNetConnector(this);
+
 }
 
 CServer::~CServer()
@@ -87,18 +91,6 @@ CRemoteClient* CServer::GetRemoteClient(netid netId)
 
 
 //------------------------------------------------------------------------
-// 리모트 클라이언트 얻기
-//------------------------------------------------------------------------
-//CRemoteClient* CServer::GetRemoteClientFromSocket(SOCKET sock)
-//{
-//	RemoteClientItor it = FindRemoteClientBySocket(sock);
-//	if (m_RemoteClients.end() == it)
-//		return NULL; //없다면 실패
-// 	return it->second;
-//}
-
-
-//------------------------------------------------------------------------
 // 소켓번호로 netid 를 얻는다.
 //------------------------------------------------------------------------
 netid CServer::GetNetIdFromSocket(SOCKET sock)
@@ -125,23 +117,6 @@ bool CServer::RemoveClient(netid netId)
 	LeaveSync();
 	return true;
 }
-
-
-//------------------------------------------------------------------------
-// 클라이언트 제거
-//------------------------------------------------------------------------
-//bool CServer::RemoveClientBySocket(SOCKET sock)
-//{
-//	EnterSync();
-//	{
-//		RemoteClientItor it = FindRemoteClientBySocket(sock);
-// 		if (m_RemoteClients.end() == it)
-// 			return false; //없다면 실패
-//  		RemoveClientProcess(it);
-//	}
-//	LeaveSync();
-//	return true;
-//}
 
 
 //------------------------------------------------------------------------
@@ -345,5 +320,50 @@ void	CServer::OnClientLeave(netid netId)
 {
 	RET(!m_pEventListener);
 	m_pEventListener->OnClientLeave(this, netId);
+}
+
+
+//------------------------------------------------------------------------
+// groupid : -1 이라면 root 그룹의 자식을 보낸다.
+//------------------------------------------------------------------------
+void CServer::ReqGroupList(netid senderId, const netid &groupid)
+{
+	GroupPtr pGroup = NULL;
+	if (ROOT_GROUP_NETID == groupid)
+	{
+		pGroup = &m_RootGroup;
+	}
+	else
+	{
+		pGroup = m_RootGroup.GetChild(groupid);
+	}
+
+	GroupVector gv;
+	if (pGroup)
+	{
+		const Groups::VectorType &children = pGroup->GetChildren();
+		gv.reserve(children.size());
+		for (u_int i=0; i < children.size(); ++i)
+			gv[ i] = *children[ i];	
+	}
+	m_BasicProtocol.AckGroupList(senderId, gv);
+}
+
+
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
+void CServer::ReqGroupJoin(netid senderId, const netid &groupid)
+{
+
+}
+
+
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
+void CServer::ReqP2PConnect(netid senderId)
+{
+
 }
 

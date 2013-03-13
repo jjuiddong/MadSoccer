@@ -125,6 +125,7 @@
     <ClInclude Include="thread\Task.h" />
     <ClInclude Include="thread\Thread.h" />
     <ClInclude Include="container\VectorMap.h" />
+    <ClInclude Include="VectorHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />

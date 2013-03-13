@@ -12,6 +12,8 @@
 //------------------------------------------------------------------------
 #pragma once
 
+#include "VectorHelper.h"
+
 namespace common
 {
 	template <class KeyType, class Type>
@@ -36,7 +38,7 @@ namespace common
 			m_RandomAccess.insert( vt );
 
 			// insert vector
-			m_Seq.push_back( vt.second );
+			putvector(m_Seq, m_RandomAccess.size() - 1, vt.second);
 			return true;
 		}
 
@@ -46,7 +48,8 @@ namespace common
 			if (m_RandomAccess.end() == it)
 				return false; // 없다면 리턴
 
-			removevector(it->second);
+			//removevector(it->second);
+			removevector(m_Seq, it->second);
 			m_RandomAccess.erase(it);
 			return true;
 		}
@@ -59,7 +62,8 @@ namespace common
 			{
 				if (ty == it->second)
 				{
-					removevector(it->second);
+					//removevector(it->second);
+					removevector(m_Seq, it->second);
 					m_RandomAccess.erase(it);
 					return true;
 				}
@@ -76,21 +80,6 @@ namespace common
 		iterator find(const KeyType &key) { return m_RandomAccess.find(key); }
 		iterator begin() { return m_RandomAccess.begin(); }
 		iterator end() { return m_RandomAccess.end(); }
-
-	protected:
-		void removevector(const Type &ty)
-		{
-			for (u_int i=0; i < m_Seq.size(); ++i)
-			{
-				if (m_Seq[ i] == ty)
-				{
-					if ((m_Seq.size()-1) > i) // elements를 회전해서 제거한다.
-						std::rotate(m_Seq.begin()+i, m_Seq.begin()+i+1, m_Seq.end() );
-					m_Seq.pop_back();
-					break;
-				}
-			}
-		}
 
 	public:
 		std::map<KeyType, Type>	m_RandomAccess;

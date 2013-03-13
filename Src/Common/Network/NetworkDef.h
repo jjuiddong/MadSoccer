@@ -13,7 +13,8 @@
 typedef int netid;
 #define INVALID_NETID		(-1)		// 잘못된 NetId를 뜻한다. 오류값으로 쓰임
 #define SERVER_NETID		(0)		// 연결된 Server의 NetId를 뜻함 (클라이언트 일 때)
-#define P2P_NETID				(1)		// 연결된 P2P 네트워크 NetId를 뜻함 (클라이언트 일 때)
+#define P2P_NETID				(1)		// 연결된 P2P 네트워크 Host NetId를 뜻함 (클라이언트 일 때)
+#define ROOT_GROUP_NETID (-1)	// 서버의 최상위 그룹을 뜻한다.
 
 
 namespace network
@@ -71,6 +72,7 @@ typedef SocketList::iterator SockItor;
 
 typedef std::list<netid> NetIdList;
 typedef NetIdList::iterator NetIdItor;
+typedef common::sizevector<netid> NetIdes;
 
 typedef std::map<netid,network::CRemoteClient*> RemoteClientMap;
 typedef RemoteClientMap::iterator RemoteClientItor;
@@ -84,7 +86,7 @@ typedef std::list<network::CGroup*> GroupList;
 typedef GroupList::iterator GroupItor;
 typedef common::ReferencePtr<network::CGroup> GroupPtr;
 typedef common::VectorMap<netid, network::CGroup*> Groups;
-typedef Groups::VectorType GroupVector;
+//typedef Groups::VectorType GroupVector;
 
 
 typedef std::map<netid,network::CUser*> UserMap;
@@ -113,8 +115,11 @@ typedef ProtocolMap::iterator ProtocolItor;
 #include "DataStructure/User.h"
 #include "Service/AllProtocol.h"
 #include "Service/AllProtocolListener.h"
-#include "DataStructure/Marshalling.h"
+#include "Marshalling/Marshalling.h"
+#include "Marshalling/MarshallingGroup.h"
 #include "NetworkUtility.h"
+
+typedef std::vector<network::CGroup> GroupVector;
 
 
 

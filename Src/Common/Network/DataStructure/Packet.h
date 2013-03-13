@@ -41,6 +41,8 @@ namespace network
 		char*		GetData() const { return (char*)m_Data; }
 		int			GetPacketSize() const { return m_WriteIdx; }
 
+		// 이렇게 되면 모든 타입이 binary 단위로 복사되기 때문에, 생성자 호출이 
+		// 필요한 객제들은 문제가 생길 수 있다.
 		template<class T>
 		CPacket& operator<<(const T& rhs)
 		{

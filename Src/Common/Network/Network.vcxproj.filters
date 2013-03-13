@@ -36,6 +36,9 @@
     <Filter Include="Lib\Service">
       <UniqueIdentifier>{55f95af7-b0a2-45d0-ae5d-bf4436480343}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lib\Marshalling">
+      <UniqueIdentifier>{353524c7-21d1-419f-a714-be2bfc3dc60a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Network.cpp">
@@ -101,8 +104,11 @@
     <ClCompile Include="Service\Server.cpp">
       <Filter>Lib\Service</Filter>
     </ClCompile>
-    <ClCompile Include="DataStructure\Marshalling.cpp">
-      <Filter>Lib\DataStructure</Filter>
+    <ClCompile Include="Marshalling\Marshalling.cpp">
+      <Filter>Lib\Marshalling</Filter>
+    </ClCompile>
+    <ClCompile Include="Marshalling\MarshallingGroup.cpp">
+      <Filter>Lib\Marshalling</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -223,8 +229,11 @@
     <ClInclude Include="Interface\ClientEventListener.h">
       <Filter>Lib\Interface</Filter>
     </ClInclude>
-    <ClInclude Include="DataStructure\Marshalling.h">
-      <Filter>Lib\DataStructure</Filter>
+    <ClInclude Include="Marshalling\Marshalling.h">
+      <Filter>Lib\Marshalling</Filter>
+    </ClInclude>
+    <ClInclude Include="Marshalling\MarshallingGroup.h">
+      <Filter>Lib\Marshalling</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

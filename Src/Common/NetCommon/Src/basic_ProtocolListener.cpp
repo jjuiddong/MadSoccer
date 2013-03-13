@@ -25,7 +25,9 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 	{
 	case 501:
 		{
-			SEND_LISTENER(s2c_ProtocolListener, listeners, AckGroupList(packet.GetSenderId()) );
+			GroupVector groups;
+			packet >> groups;
+			SEND_LISTENER(s2c_ProtocolListener, listeners, AckGroupList(packet.GetSenderId(), groups) );
 		}
 		break;
 
@@ -118,7 +120,9 @@ void basic::c2s_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 	{
 	case 601:
 		{
-			SEND_LISTENER(c2s_ProtocolListener, listeners, ReqGroupList(packet.GetSenderId()) );
+			netid groupid;
+			packet >> groupid;
+			SEND_LISTENER(c2s_ProtocolListener, listeners, ReqGroupList(packet.GetSenderId(), groupid) );
 		}
 		break;
 

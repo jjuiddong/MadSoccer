@@ -8,10 +8,22 @@
 //------------------------------------------------------------------------
 #pragma once
 
+namespace network { 
+	class CPacket;
+	class CGroup;
+	namespace marshalling {
+		CPacket& operator<<(CPacket& packet, const CGroup &rhs);
+		CPacket& operator>>(CPacket& packet, CGroup &rhs);
+}}
+
+
 namespace network
 {
 	class CGroup
 	{
+		friend CPacket& (marshalling::operator<<(CPacket& packet, const CGroup &rhs));
+		friend CPacket& (marshalling::operator>>(CPacket& packet, CGroup &rhs));
+
 	public:
 		CGroup(GroupPtr parent=NULL, const std::string &name="");
 		virtual ~CGroup();
@@ -23,22 +35,23 @@ namespace network
 		void							SetTag(DWORD tag);
 		CGroup*					GetParent() const;
 		void							SetParent(GroupPtr parent);
+		netid						GetParentId() const;
 
 		// Group
 		bool				AddChild( CGroup *pGroup );
 		bool				RemoveChild( netid groupId );
 		GroupPtr		GetChild( netid groupId );
-		const GroupVector&	GetChildren() const { return m_Children.m_Seq; }
+		const Groups::VectorType&	GetChildren() const { return m_Children.m_Seq; }
 
 		// User
 		bool				AddUser(netid groupId, netid userId);
 		bool				RemoveUser(netid groupId, netid userId);
 		bool				IsExistUser(netid groupId, netid userId);
 		bool				IsExistUser(netid userId);
-		const NetIdList&	GetUsers() const { return m_Users; }
+		const NetIdes&	GetUsers() const { return m_Users; }
 		void				Clear();
 
-		bool operator==(const CGroup &rhs) const { return m_NetId==rhs.GetId(); }
+		bool operator==(const CGroup &rhs) const { return m_Id==rhs.GetId(); }
 
 	protected:
 		bool				AddUser(netid userId);
@@ -47,19 +60,22 @@ namespace network
 		bool				RemoveUserNApplyParent(GroupPtr pGroup, netid userId);
 
 	protected:
-		netid			m_NetId;
+		netid			m_Id;
+		netid			m_ParentId; // m_pParent Id
 		std::string	m_Name;
-		NetIdList		m_Users;
+		//NetIdList		m_Users;
+		NetIdes		m_Users;
 		DWORD		m_Tag;
 		CGroup			*m_pParent;
 		Groups			m_Children;
 	};
 
-	inline netid CGroup::GetId() const { return m_NetId; }
+	inline netid CGroup::GetId() const { return m_Id; }
 	inline const std::string& CGroup::GetName() const { return m_Name; }
 	inline void CGroup::SetName(const std::string &name) { m_Name = name; }
 	inline CGroup* CGroup::GetParent() const { return m_pParent; }
-	inline void CGroup::SetParent(GroupPtr parent) { m_pParent = parent; }
+	inline netid CGroup::GetParentId() const { return m_ParentId; }
+	inline void CGroup::SetParent(GroupPtr parent) { m_pParent = parent; if(parent) {m_ParentId = parent->GetId();} }
 	inline DWORD CGroup::GetTag() const { return m_Tag; }
 	inline void CGroup::SetTag(DWORD tag) { m_Tag = tag; }
 

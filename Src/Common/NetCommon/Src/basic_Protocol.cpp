@@ -6,11 +6,12 @@ using namespace basic;
 //------------------------------------------------------------------------
 // Protocol: AckGroupList
 //------------------------------------------------------------------------
-void basic::s2c_Protocol::AckGroupList(netid targetId)
+void basic::s2c_Protocol::AckGroupList(netid targetId, const GroupVector &groups)
 {
 	CPacket packet;
 	packet << GetId();
 	packet << 501;
+	packet << groups;
 	GetNetConnector()->Send(targetId, packet);
 }
 
@@ -106,11 +107,12 @@ void basic::s2c_Protocol::func5(netid targetId, const std::string &ok, const flo
 //------------------------------------------------------------------------
 // Protocol: ReqGroupList
 //------------------------------------------------------------------------
-void basic::c2s_Protocol::ReqGroupList(netid targetId)
+void basic::c2s_Protocol::ReqGroupList(netid targetId, const netid &groupid)
 {
 	CPacket packet;
 	packet << GetId();
 	packet << 601;
+	packet << groupid;
 	GetNetConnector()->Send(targetId, packet);
 }
 

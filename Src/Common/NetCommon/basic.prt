@@ -1,7 +1,7 @@
 
 protocol s2c 500
 {
-	AckGroupList();
+	AckGroupList( GroupVector groups );
 	AckGroupJoin( int result );
 
 	AckP2PConnect( int result, network::P2P_STATE state, std::string ip, int port );
@@ -16,7 +16,7 @@ protocol s2c 500
 
 protocol c2s 600
 {
-	ReqGroupList();
+	ReqGroupList( netid groupid );
 	ReqGroupJoin( netid groupid );
 
 	ReqP2PConnect( );

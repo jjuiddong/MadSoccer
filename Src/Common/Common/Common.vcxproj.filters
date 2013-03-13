@@ -193,6 +193,9 @@
     <ClInclude Include="container\VectorMap.h">
       <Filter>Container</Filter>
     </ClInclude>
+    <ClInclude Include="VectorHelper.h">
+      <Filter>Container</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
