@@ -80,6 +80,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Algorithm\GroupTraverse.cpp" />
     <ClCompile Include="Marshalling\Marshalling.cpp" />
     <ClCompile Include="Marshalling\MarshallingGroup.cpp" />
     <ClCompile Include="Network.cpp" />
@@ -109,6 +110,7 @@
     <ClCompile Include="Service\Server.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Algorithm\GroupTraverse.h" />
     <ClInclude Include="Interface\ClientEventListener.h" />
     <ClInclude Include="Interface\CoreClientEventListener.h" />
     <ClInclude Include="Interface\P2PClientEventListener.h" />

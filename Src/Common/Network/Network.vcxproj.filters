@@ -113,6 +113,9 @@
     <ClCompile Include="Service\ServerBasic.cpp">
       <Filter>Lib\Service</Filter>
     </ClCompile>
+    <ClCompile Include="Algorithm\GroupTraverse.cpp">
+      <Filter>Lib\Algorithm</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Network.h">
@@ -240,6 +243,9 @@
     </ClInclude>
     <ClInclude Include="Service\ServerBasic.h">
       <Filter>Lib\Service</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\GroupTraverse.h">
+      <Filter>Lib\Algorithm</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

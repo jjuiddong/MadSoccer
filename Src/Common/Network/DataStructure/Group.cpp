@@ -9,6 +9,7 @@ CGroup::CGroup(GroupPtr parent, const std::string &name)  :
 	m_Id(common::GenerateId())
 ,	m_Name(name)
 ,	m_pParent(parent)
+,	m_NetState(NET_STATE_SERVERCLIENT)
 {
 	m_Users.reserve(32);
 

@@ -1,6 +1,7 @@
 
 #include "stdafx.h"
 #include "server.h"
+#include "../Algorithm/GroupTraverse.h"
 
 using namespace network;
 
@@ -102,10 +103,25 @@ void CServer::ReqGroupCreate(netid senderId, const netid &parentGroupId, const s
 
 
 //------------------------------------------------------------------------
-// 
+// Request peer to peer connection
 //------------------------------------------------------------------------
 void CServer::ReqP2PConnect(netid senderId)
 {
+	// check p2p connection
+	// if networking this group on p2p
+	// -> then connect to p2p host with this senderId client
+	// else
+	// -> select p2p host in group client, and network p2p each other
+
+	GroupPtr pGroup = m_RootGroup.GetChildFromUser(senderId);
+	
+	// search up and down p2p connection
+	// if already connect p2p, then this group is p2p connection group
+
+	const bool IsP2Pconnection = group::IsP2PConnection(pGroup);
+
+
+	
+
 
 }
-

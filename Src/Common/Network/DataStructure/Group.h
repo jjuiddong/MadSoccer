@@ -25,6 +25,12 @@ namespace network
 		friend CPacket& (marshalling::operator>>(CPacket& packet, CGroup &rhs));
 
 	public:
+		enum NET_STATE
+		{
+			NET_STATE_P2P,
+			NET_STATE_SERVERCLIENT,
+		};
+
 		CGroup(GroupPtr parent=NULL, const std::string &name="");
 		virtual ~CGroup();
 
@@ -33,17 +39,17 @@ namespace network
 		bool				RemoveChild( netid groupId );
 		GroupPtr		GetChild( netid groupId );
 		GroupPtr		GetChildFromUser( netid userId );
-		const Groups::VectorType&	GetChildren() const { return m_Children.m_Seq; }
+		const Groups::VectorType&	GetChildren() const;
 
 		// User
 		bool				AddUser(netid groupId, netid userId);
 		bool				RemoveUser(netid groupId, netid userId);
 		bool				IsExistUser(netid groupId, netid userId);
 		bool				IsExistUser(netid userId);
-		const NetIdes&	GetUsers() const { return m_Users; }
+		const NetIdes& GetUsers() const;
 		void				Clear();
 
-		bool operator==(const CGroup &rhs) const { return m_Id==rhs.GetId(); }
+		bool operator==(const CGroup &rhs) const;
 
 		netid						GetId() const;
 		const std::string&	GetName() const;
@@ -53,6 +59,7 @@ namespace network
 		CGroup*					GetParent() const;
 		void							SetParent(GroupPtr parent);
 		netid						GetParentId() const;
+		NET_STATE				GetNetState() const;
 
 	protected:
 		bool				AddUser(netid userId);
@@ -64,9 +71,10 @@ namespace network
 		netid			m_Id;
 		netid			m_ParentId;
 		std::string	m_Name;
-		NetIdes		m_Users;
 		DWORD		m_Tag;
+		NET_STATE	m_NetState;
 		CGroup			*m_pParent;
+		NetIdes		m_Users;
 		Groups			m_Children;
 	};
 
@@ -78,5 +86,8 @@ namespace network
 	inline void CGroup::SetParent(GroupPtr parent) { m_pParent = parent; if(parent) {m_ParentId = parent->GetId();} }
 	inline DWORD CGroup::GetTag() const { return m_Tag; }
 	inline void CGroup::SetTag(DWORD tag) { m_Tag = tag; }
-
+	inline CGroup::NET_STATE CGroup::GetNetState() const { return m_NetState; }
+	inline const Groups::VectorType& CGroup::GetChildren() const { return m_Children.m_Seq; }
+	inline const NetIdes& CGroup::GetUsers() const { return m_Users; }
+	inline bool CGroup::operator==(const CGroup &rhs) const { return m_Id==rhs.GetId(); }
 }
