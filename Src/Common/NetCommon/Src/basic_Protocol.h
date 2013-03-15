@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------
-// Name:    C:\GitHub\MadSoccer\Src\Common\NetCommon\Src\basic_Protocol.h
+// Name:    D:\Project\GitHub\MadSoccer\Src\Common\NetCommon\Src\basic_Protocol.h
 // Author:  ProtocolCompiler (by jjuiddong)
 // Date:    
 //------------------------------------------------------------------------
@@ -12,7 +12,7 @@ class s2c_Protocol : public network::IProtocol
 {
 public:
 	s2c_Protocol() : IProtocol(s2c_Protocol_ID) {}
-	void AckGroupList(netid targetId, const GroupVector &groups);
+	void AckGroupList(netid targetId, const int &errorCode, const GroupVector &groups);
 	void AckGroupJoin(netid targetId, const int &errorCode);
 	void AckGroupCreate(netid targetId, const int &errorCode, const std::string &groupName, const netid &groupid);
 	void AckP2PConnect(netid targetId, const int &errorCode, const network::P2P_STATE &state, const std::string &ip, const int &port);

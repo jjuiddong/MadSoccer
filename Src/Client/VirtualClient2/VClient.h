@@ -35,6 +35,6 @@ public:
 	virtual void recv(netid senderId, network::CPacket &packet) override;
 
 	// basic
-	virtual void AckGroupList(netid senderId, const GroupVector &groups) override;
+	virtual void AckGroupList(netid senderId, const int &errorCode, const GroupVector &groups) override;
 
 };

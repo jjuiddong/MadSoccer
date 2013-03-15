@@ -27,13 +27,6 @@ namespace network
 		CPacket& operator<<(CPacket& packet, const P2P_STATE &rhs);
 
 		template<class T>
-		CPacket& operator<<(CPacket& packet, const common::sizevector<T> &v)
-		{
-			AppendSequence( packet, v );
-			return packet;
-		}
-
-		template<class T>
 		CPacket& operator<<(CPacket& packet, const std::vector<T> &v)
 		{
 			AppendSequence( packet, v );
@@ -62,13 +55,6 @@ namespace network
 		CPacket& operator>>(CPacket& packet, std::string &rhs);
 		CPacket& operator>>(CPacket& packet, P2P_STATE &rhs);
 		CPacket& operator>>(CPacket& packet, _variant_t &varType);
-
-		template<class T>
-		CPacket& operator>>(CPacket& packet, common::sizevector<T> &v)
-		{
-			GetSequence(packet, v);
-			return packet;
-		}
 
 		template<class T>
 		CPacket& operator>>(CPacket& packet, std::vector<T> &v)

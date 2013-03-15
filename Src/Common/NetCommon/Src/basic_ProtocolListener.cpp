@@ -25,9 +25,11 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 	{
 	case 501:
 		{
+			int errorCode;
+			packet >> errorCode;
 			GroupVector groups;
 			packet >> groups;
-			SEND_LISTENER(s2c_ProtocolListener, listeners, AckGroupList(packet.GetSenderId(), groups) );
+			SEND_LISTENER(s2c_ProtocolListener, listeners, AckGroupList(packet.GetSenderId(), errorCode, groups) );
 		}
 		break;
 

@@ -1,7 +1,7 @@
 
 protocol s2c 500
 {
-	AckGroupList( GroupVector groups );
+	AckGroupList( int errorCode, GroupVector groups );
 	AckGroupJoin( int errorCode );
 	AckGroupCreate( int errorCode, std::string groupName, netid groupid );
 

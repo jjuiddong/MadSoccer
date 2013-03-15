@@ -72,7 +72,7 @@ typedef SocketList::iterator SockItor;
 
 typedef std::list<netid> NetIdList;
 typedef NetIdList::iterator NetIdItor;
-typedef common::sizevector<netid> NetIdes;
+typedef std::vector<netid> NetIdes;
 
 typedef std::map<netid,network::CRemoteClient*> RemoteClientMap;
 typedef RemoteClientMap::iterator RemoteClientItor;

@@ -59,12 +59,12 @@ void CVClient::recv(netid senderId, network::CPacket &packet)
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-void CVClient::AckGroupList(netid senderId, const GroupVector &groups)
+void CVClient::AckGroupList(netid senderId, const int &errorCode, const GroupVector &groups)
 {
 	GetConsole()->AddString( "------------" );
 	GetConsole()->AddString( 
-		common::format( "group count: %d",
-		groups.size()) );		
+		common::format( "group count: %d, errorCode: %d",
+		groups.size(), errorCode) );		
 
 	for (u_int i=0; i < groups.size(); ++i)
 	{

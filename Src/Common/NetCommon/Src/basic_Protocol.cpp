@@ -6,11 +6,12 @@ using namespace basic;
 //------------------------------------------------------------------------
 // Protocol: AckGroupList
 //------------------------------------------------------------------------
-void basic::s2c_Protocol::AckGroupList(netid targetId, const GroupVector &groups)
+void basic::s2c_Protocol::AckGroupList(netid targetId, const int &errorCode, const GroupVector &groups)
 {
 	CPacket packet;
 	packet << GetId();
 	packet << 501;
+	packet << errorCode;
 	packet << groups;
 	GetNetConnector()->Send(targetId, packet);
 }

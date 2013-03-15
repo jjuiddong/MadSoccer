@@ -10,6 +10,7 @@ CGroup::CGroup(GroupPtr parent, const std::string &name)  :
 ,	m_Name(name)
 ,	m_pParent(parent)
 {
+	m_Users.reserve(32);
 
 }
 
@@ -153,8 +154,7 @@ bool CGroup::AddUser(netid userId)
 	auto it = find(m_Users.begin(), m_Users.end(), userId);
 	if (m_Users.end() != it)
 		return false; // 이미 존재한다면 실패
-	//m_Users.push_back( userId );
-	m_Users.putback(userId);
+	m_Users.push_back( userId );
 	return true;
 }
 
@@ -182,7 +182,7 @@ bool CGroup::RemoveUser(netid userId)
 	//if (m_Users.end() == it)
 	//	return false; // 없다면 실패
 	//m_Users.erase(it);
-	return m_Users.remove(userId);
+	return common::removevector(m_Users, userId);
 }
 
 

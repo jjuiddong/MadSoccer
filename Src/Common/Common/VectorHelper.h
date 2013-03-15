@@ -19,10 +19,7 @@ namespace common
 			{
 				if ((seq.size()-1) > i) // elements를 회전해서 제거한다.
 					std::rotate( seq.begin()+i, seq.begin()+i+1, seq.end() );
-
-				// 제거될 때, pop을 호출하지 않는다. 이렇게 된다면, 데이타가 
-				// 계속 쌓이고, 제거될 경우 메모리가 해제되지 않기 때문에, 
-				// 메모리가 소모가 많을 수 있다. 주의할 것
+				seq.pop_back();
 				return true;
 			}
 		}
@@ -40,44 +37,43 @@ namespace common
 
 	// void inservector(const std::vector<T> &seq, u_int idx, const T &ty);
 
+	//template<class T>
+	//class sizevector : public std::vector<T>
+	//{
+	//public:
+	//	sizevector() : m_Size(0) {}
+	//	sizevector(size_t s) : vector<T>(s), m_Size(0) {} // process like reserve()  function call
 
-	template<class T>
-	class sizevector : public std::vector<T>
-	{
-	public:
-		sizevector() : m_Size(0) {}
-		sizevector(size_t s) : vector<T>(s), m_Size(0) {} // process like reserve()  function call
-
-		bool remove(const T &ty) {
-			const bool r = removevector(*this, ty);
-			if (r) --m_Size;
-			return r;
-		}
-		void push_back(const T &ty) {
-			vector<T>::push_back(ty);
-			++m_Size;
-		}
-		void pop_back() {
-			std::vector<T>::pop_back();
-			--m_Size;
-		}
-		void putback(const T &ty) {
-			putvector(*this, m_Size, ty);
-			++m_Size;
-		}
-		void popback() {
-			--m_Size;
-		}
-		size_t size() const {
-			return m_Size;
-		}
-		void clear() {
-			std::vector<T>::clear();
-			m_Size = 0;
-		}
-	protected:
-		size_t m_Size;
-	};
+	//	bool remove(const T &ty) {
+	//		const bool r = removevector(*this, ty);
+	//		if (r) --m_Size;
+	//		return r;
+	//	}
+	//	void push_back(const T &ty) {
+	//		vector<T>::push_back(ty);
+	//		++m_Size;
+	//	}
+	//	void pop_back() {
+	//		std::vector<T>::pop_back();
+	//		--m_Size;
+	//	}
+	//	void putback(const T &ty) {
+	//		putvector(*this, m_Size, ty);
+	//		++m_Size;
+	//	}
+	//	void popback() {
+	//		--m_Size;
+	//	}
+	//	size_t size() const {
+	//		return m_Size;
+	//	}
+	//	void clear() {
+	//		std::vector<T>::clear();
+	//		m_Size = 0;
+	//	}
+	//protected:
+	//	size_t m_Size;
+	//};
 
 }
 

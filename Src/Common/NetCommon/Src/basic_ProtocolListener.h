@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------
-// Name:    C:\GitHub\MadSoccer\Src\Common\NetCommon\Src\basic_ProtocolListener.h
+// Name:    D:\Project\GitHub\MadSoccer\Src\Common\NetCommon\Src\basic_ProtocolListener.h
 // Author:  ProtocolCompiler (by jjuiddong)
 // Date:    
 //------------------------------------------------------------------------
@@ -22,7 +22,7 @@ protected:
 class s2c_ProtocolListener : virtual public network::IProtocolListener
 {
 	friend class s2c_Dispatcher;
-	virtual void AckGroupList(netid senderId, const GroupVector &groups){}
+	virtual void AckGroupList(netid senderId, const int &errorCode, const GroupVector &groups){}
 	virtual void AckGroupJoin(netid senderId, const int &errorCode){}
 	virtual void AckGroupCreate(netid senderId, const int &errorCode, const std::string &groupName, const netid &groupid){}
 	virtual void AckP2PConnect(netid senderId, const int &errorCode, const network::P2P_STATE &state, const std::string &ip, const int &port){}

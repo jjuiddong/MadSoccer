@@ -45,7 +45,7 @@ void CServer::ReqGroupList(netid senderId, const netid &groupid)
 		for (u_int i=0; i < children.size(); ++i)
 			gv.push_back( *children[i] );
 	}
-	m_BasicProtocol.AckGroupList(senderId, gv);
+	m_BasicProtocol.AckGroupList(senderId, (pGroup)? 0 : 1, gv);
 }
 
 
@@ -78,10 +78,26 @@ void CServer::ReqGroupCreate(netid senderId, const netid &parentGroupId, const s
 	CGroup *pNewGroup = new CGroup(&m_RootGroup, groupName);
 	const bool result = m_RootGroup.AddChild( pNewGroup );
 	if (!result) 
+	{
 		SAFE_DELETE(pNewGroup);
+		m_BasicProtocol.AckGroupCreate( senderId, 1, groupName, 0 );
+	}
+	
+	GroupPtr pFrom = m_RootGroup.GetChildFromUser( senderId );
+	if (pFrom)
+	{
+		pFrom->RemoveUser(pFrom->GetId(), senderId);
+		pNewGroup->AddUser(pNewGroup->GetId(), senderId);
 
-	const netid groupId = (pNewGroup)? pNewGroup->GetId() : INVALID_NETID;
-	m_BasicProtocol.AckGroupCreate( senderId, (result? 0 : 1), groupName, groupId );
+		const netid groupId = pNewGroup->GetId();
+		m_BasicProtocol.AckGroupCreate( senderId, 0, groupName, groupId );
+		m_BasicProtocol.AckGroupJoin( senderId, 0 );
+	}
+	else
+	{
+		m_RootGroup.RemoveChild(pNewGroup->GetId());
+		m_BasicProtocol.AckGroupCreate( senderId, 1, groupName, 0 );
+	}
 }
 
 
