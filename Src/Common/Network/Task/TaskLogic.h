@@ -47,7 +47,7 @@ namespace network
 			return RR_CONTINUE;
 		}
 
-		const ProtocolListenerList &listeners = pSvr->GetListeners();
+		const ProtocolListenerList &listeners = pSvr->GetProtocolListeners();
 		if (listeners.empty())
 		{
 			error::ErrorLog( 

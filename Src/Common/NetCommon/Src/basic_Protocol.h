@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------
-// Name:    C:\GitHub\MadSoccer\Src\Common\NetCommon\Src\basic_Protocol.h
+// Name:    D:\Project\GitHub\MadSoccer\Src\Common\NetCommon\Src\basic_Protocol.h
 // Author:  ProtocolCompiler (by jjuiddong)
 // Date:    
 //------------------------------------------------------------------------
@@ -16,6 +16,7 @@ public:
 	void AckGroupJoin(netid targetId, const int &errorCode);
 	void AckGroupCreate(netid targetId, const int &errorCode, const std::string &groupName, const netid &groupid);
 	void AckP2PConnect(netid targetId, const int &errorCode, const network::P2P_STATE &state, const std::string &ip, const int &port);
+	void AckP2PHostCreate(netid targetId, const int &errorCode);
 	void func1(netid targetId);
 	void func2(netid targetId, const std::string &str);
 	void func3(netid targetId, const float &value);
@@ -32,6 +33,7 @@ public:
 	void ReqGroupJoin(netid targetId, const netid &groupid);
 	void ReqGroupCreate(netid targetId, const netid &parentGroupId, const std::string &groupName);
 	void ReqP2PConnect(netid targetId);
+	void ReqP2PHostCreate(netid targetId, const bool &isSuccess);
 	void func2(netid targetId, const std::string &str);
 	void func3(netid targetId, const float &value);
 };

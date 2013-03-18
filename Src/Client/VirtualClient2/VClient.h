@@ -7,6 +7,8 @@
 //------------------------------------------------------------------------
 #pragma once
 
+#include "NetCommon/Src/basic_ProtocolListener.h"
+#include "NetCommon/Src/basic_Protocol.h"
 
 class CVClient : public network::CClient
 						,public network::IClientEventListener
@@ -24,11 +26,14 @@ protected:
 public:
 	all::Protocol&		GetProtocol() { return m_Protocol; }
 
-	//virtual void OnConnect() override;
-	//virtual void OnDisconnect() override;
-	virtual void			OnClientConnect(ClientPtr client) override;
-	virtual void			OnClientDisconnect(ClientPtr client) override;
+	// Client Event Handler
+	virtual void		OnClientConnect(ClientBasicPtr client) override;
+	virtual void		OnClientDisconnect(ClientBasicPtr client) override;
 
+	virtual void		OnP2PConnect(ClientBasicPtr client) override;
+	virtual void		OnP2PDisconnect(ClientBasicPtr client) override;
+	virtual void		OnMemberJoin(ClientBasicPtr client, netid clientId) override;
+	virtual void		OnMemberLeave(ClientBasicPtr client, netid clientId) override;
 
 	// network
 	// all::protocol

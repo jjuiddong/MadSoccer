@@ -58,13 +58,25 @@ void basic::s2c_Protocol::AckP2PConnect(netid targetId, const int &errorCode, co
 }
 
 //------------------------------------------------------------------------
+// Protocol: AckP2PHostCreate
+//------------------------------------------------------------------------
+void basic::s2c_Protocol::AckP2PHostCreate(netid targetId, const int &errorCode)
+{
+	CPacket packet;
+	packet << GetId();
+	packet << 505;
+	packet << errorCode;
+	GetNetConnector()->Send(targetId, packet);
+}
+
+//------------------------------------------------------------------------
 // Protocol: func1
 //------------------------------------------------------------------------
 void basic::s2c_Protocol::func1(netid targetId)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 505;
+	packet << 506;
 	GetNetConnector()->Send(targetId, packet);
 }
 
@@ -75,7 +87,7 @@ void basic::s2c_Protocol::func2(netid targetId, const std::string &str)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 506;
+	packet << 507;
 	packet << str;
 	GetNetConnector()->Send(targetId, packet);
 }
@@ -87,7 +99,7 @@ void basic::s2c_Protocol::func3(netid targetId, const float &value)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 507;
+	packet << 508;
 	packet << value;
 	GetNetConnector()->Send(targetId, packet);
 }
@@ -99,7 +111,7 @@ void basic::s2c_Protocol::func4(netid targetId)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 508;
+	packet << 509;
 	GetNetConnector()->Send(targetId, packet);
 }
 
@@ -110,7 +122,7 @@ void basic::s2c_Protocol::func5(netid targetId, const std::string &ok, const flo
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 509;
+	packet << 510;
 	packet << ok;
 	packet << a;
 	packet << b;
@@ -168,13 +180,25 @@ void basic::c2s_Protocol::ReqP2PConnect(netid targetId)
 }
 
 //------------------------------------------------------------------------
+// Protocol: ReqP2PHostCreate
+//------------------------------------------------------------------------
+void basic::c2s_Protocol::ReqP2PHostCreate(netid targetId, const bool &isSuccess)
+{
+	CPacket packet;
+	packet << GetId();
+	packet << 605;
+	packet << isSuccess;
+	GetNetConnector()->Send(targetId, packet);
+}
+
+//------------------------------------------------------------------------
 // Protocol: func2
 //------------------------------------------------------------------------
 void basic::c2s_Protocol::func2(netid targetId, const std::string &str)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 605;
+	packet << 606;
 	packet << str;
 	GetNetConnector()->Send(targetId, packet);
 }
@@ -186,7 +210,7 @@ void basic::c2s_Protocol::func3(netid targetId, const float &value)
 {
 	CPacket packet;
 	packet << GetId();
-	packet << 606;
+	packet << 607;
 	packet << value;
 	GetNetConnector()->Send(targetId, packet);
 }

@@ -69,11 +69,19 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 
 	case 505:
 		{
-			SEND_LISTENER(s2c_ProtocolListener, listeners, func1(packet.GetSenderId()) );
+			int errorCode;
+			packet >> errorCode;
+			SEND_LISTENER(s2c_ProtocolListener, listeners, AckP2PHostCreate(packet.GetSenderId(), errorCode) );
 		}
 		break;
 
 	case 506:
+		{
+			SEND_LISTENER(s2c_ProtocolListener, listeners, func1(packet.GetSenderId()) );
+		}
+		break;
+
+	case 507:
 		{
 			std::string str;
 			packet >> str;
@@ -81,7 +89,7 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		}
 		break;
 
-	case 507:
+	case 508:
 		{
 			float value;
 			packet >> value;
@@ -89,13 +97,13 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		}
 		break;
 
-	case 508:
+	case 509:
 		{
 			SEND_LISTENER(s2c_ProtocolListener, listeners, func4(packet.GetSenderId()) );
 		}
 		break;
 
-	case 509:
+	case 510:
 		{
 			std::string ok;
 			packet >> ok;
@@ -166,13 +174,21 @@ void basic::c2s_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 
 	case 605:
 		{
+			bool isSuccess;
+			packet >> isSuccess;
+			SEND_LISTENER(c2s_ProtocolListener, listeners, ReqP2PHostCreate(packet.GetSenderId(), isSuccess) );
+		}
+		break;
+
+	case 606:
+		{
 			std::string str;
 			packet >> str;
 			SEND_LISTENER(c2s_ProtocolListener, listeners, func2(packet.GetSenderId(), str) );
 		}
 		break;
 
-	case 606:
+	case 607:
 		{
 			float value;
 			packet >> value;

@@ -23,20 +23,21 @@ namespace network
 		CServerBasic(PROCESS_TYPE procType);
 		virtual ~CServerBasic();
 
-		bool				AddClient(SOCKET sock);
+		bool				AddRemoteClient(SOCKET sock, const std::string &ip);
 		CRemoteClient* GetRemoteClient(netid netId);
-		bool				RemoveClient(netid netId);
-		RemoteClientItor	RemoveClientInLoop(netid netId);
+		bool				RemoveRemoteClient(netid netId);
+		RemoteClientItor	RemoveRemoteClientInLoop(netid netId);
 		netid			GetNetIdFromSocket(SOCKET sock);
+		bool				IsExist(netid netId);
 		void				Clear();
 
+		void				Proc();
 		bool				Stop();
 		void				Disconnect();
 
 		virtual bool	Send(netid netId, const CPacket &packet) override;
 		virtual bool	SendAll(const CPacket &packet) override;
 
-		bool				IsExist(netid netId);
 		void				SetEventListener(ServerEventListenerPtr ptr) { m_pEventListener = ptr; }
 		void				MakeFDSET( SFd_Set *pfdset);
 		void				EnterSync();

@@ -14,14 +14,14 @@ namespace network
 	class CClient;
 
 	// Server
-	bool		StartServer(int port, CServerBasic *pSvr);
-	bool		StopServer(CServerBasic *pSvr);
+	bool		StartServer(int port, ServerBasicPtr pSvr);
+	bool		StopServer(ServerBasicPtr pSvr);
 	ServerBasicPtr	GetServer(netid serverId);
 
 	// Client
-	bool		StartClient(const std::string &ip, int port, CClient *pClt);
-	bool		StopClient(CClient *pClt);
-	ClientPtr	GetClient(netid clientId);
+	bool		StartClient(const std::string &ip, int port, ClientBasicPtr pClt);
+	bool		StopClient(ClientBasicPtr pClt);
+	ClientBasicPtr	GetClient(netid clientId);
 
 	// Common
 	bool		Init(int logicThreadCount);

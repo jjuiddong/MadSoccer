@@ -7,10 +7,12 @@
 //------------------------------------------------------------------------
 namespace network { namespace group {
 
-		bool		IsP2PConnection( GroupPtr pGroup );
+	bool			IsP2PConnection( GroupPtr pGroup );
 
-		netid	GetP2PHostClient( GroupPtr pGroup );
+	netid		GetP2PHostClient( GroupPtr pGroup, IUserAccess &userAccess);
 
-		GroupPtr GetP2PGroup( GroupPtr pGroup );
+	GroupPtr	GetP2PGroup( GroupPtr pGroup );
+
+	netid		SelectP2PHostClient( GroupPtr pGroup );
 	
 }}

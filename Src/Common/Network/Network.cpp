@@ -39,7 +39,7 @@ void network::Clear()
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-bool network::StartServer(int port, CServerBasic *pSvr)
+bool network::StartServer(int port, ServerBasicPtr pSvr)
 {
 	dbg::Print( "StartServer port: %d", port );
 	return CNetController::Get()->StartServer(port, pSvr);
@@ -48,7 +48,7 @@ bool network::StartServer(int port, CServerBasic *pSvr)
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-bool network::StopServer(CServerBasic *pSvr)
+bool network::StopServer(ServerBasicPtr pSvr)
 {
 	if (!pSvr) return false;
 	dbg::Print( "StopServer netid: %d", pSvr->GetNetId() );
@@ -67,7 +67,7 @@ ServerBasicPtr network::GetServer(netid serverId)
 //------------------------------------------------------------------------
 // 클라이언트 실행
 //------------------------------------------------------------------------
-bool network::StartClient(const std::string &ip, int port, CClient *pClt)
+bool network::StartClient(const std::string &ip, int port, ClientBasicPtr pClt)
 {
 	dbg::Print( "StartClient %s, %d", ip.c_str(), port);
 	return CNetController::Get()->StartClient(ip, port, pClt);
@@ -76,7 +76,7 @@ bool network::StartClient(const std::string &ip, int port, CClient *pClt)
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-bool network::StopClient(CClient *pClt)
+bool network::StopClient(ClientBasicPtr pClt)
 {
 	if (!pClt) return false;
 	dbg::Print( "StopClient netid: %d", pClt->GetNetId() );
@@ -88,7 +88,7 @@ bool network::StopClient(CClient *pClt)
 //------------------------------------------------------------------------
 // clientId에 해당하는 클라이언트를 리턴한다.
 //------------------------------------------------------------------------
-ClientPtr network::GetClient(netid clientId)
+ClientBasicPtr network::GetClient(netid clientId)
 {
 	return CNetController::Get()->GetClient(clientId);
 }

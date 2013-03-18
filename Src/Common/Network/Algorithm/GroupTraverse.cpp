@@ -12,6 +12,7 @@ using namespace group;
 //------------------------------------------------------------------------
 // boost::bind 에서 GroupPtr을 쓰면 인식하지 못해서 일단 CGroup*
 // 를 인자로 받게했다.
+// 서술자 ty가 true이면 pGroup을 리턴한다.
 //------------------------------------------------------------------------
 template<class T>
 CGroup* TraverseUpward( CGroup *pGroup, T &ty )
@@ -54,25 +55,28 @@ bool	group::IsP2PConnection( GroupPtr pGroup )
 // search up and down tree node 
 // to find p2p host client
 //------------------------------------------------------------------------
-netid group::GetP2PHostClient( GroupPtr pGroup )
+netid group::GetP2PHostClient( GroupPtr pGroup, IUserAccess &userAccess)
 {
 	GroupPtr p2pGroup = GetP2PGroup(pGroup);
 	if (!p2pGroup)
 		return INVALID_NETID;
 
 	const NetIdes &users = p2pGroup->GetUsers();
-	BOOST_FOREACH(auto &user, users)
+	BOOST_FOREACH(auto &userId, users)
 	{
-		// ~~
+		RemoteClientPtr clientPtr = userAccess.GetUser(userId);
+		if (!clientPtr)
+			continue;
+		if (P2P_HOST == clientPtr->GetP2PState())
+			return userId;				
 	}
-
-	return 0;
+	return INVALID_NETID;
 }
 
 
 //------------------------------------------------------------------------
 // return p2p group
-// search up and down tree nod to find p2p group
+// search up and down tree node to find p2p group
 // p2p group is only one node in tree line
 //------------------------------------------------------------------------
 GroupPtr group::GetP2PGroup( GroupPtr pGroup )
@@ -94,4 +98,18 @@ GroupPtr group::GetP2PGroup( GroupPtr pGroup )
 		return ptr;
 
 	return NULL;
+}
+
+
+/**
+ @brief Select P2P Host Client In Group Member
+*/
+netid group::SelectP2PHostClient( GroupPtr pGroup )
+{
+	RETV(!pGroup, INVALID_NETID);
+
+	if (pGroup->GetUsers().size() <= 0)
+		return INVALID_NETID;
+
+	return pGroup->GetUsers().front();
 }

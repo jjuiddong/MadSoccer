@@ -5,12 +5,16 @@
 #include "DlgConsole.h"
 #include "ProtocolTree.h"
 
+#include "NetCommon/Src/basic_ProtocolListener.cpp"
+#include "NetCommon/Src/basic_Protocol.cpp"
+
+
 using namespace network;
 
 CVClient::CVClient() : CClient(network::USER_LOOP)
 {
 	RegisterProtocol(&m_Protocol);
-	AddListener(this);
+	AddProtocolListener(this);
 	SetEventListener(this);
 
 }
@@ -24,7 +28,7 @@ CVClient::~CVClient()
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-void CVClient::OnClientConnect(ClientPtr client)
+void CVClient::OnClientConnect(ClientBasicPtr client)
 {
 	GetConsole()->AddString( "Connect" );
 }
@@ -33,7 +37,7 @@ void CVClient::OnClientConnect(ClientPtr client)
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-void CVClient::OnClientDisconnect(ClientPtr client)
+void CVClient::OnClientDisconnect(ClientBasicPtr client)
 {
 	GetConsole()->AddString( "DisConnect" );
 }
@@ -83,3 +87,40 @@ void CVClient::AckGroupList(netid senderId, const int &errorCode, const GroupVec
 			groups[ i].GetUsers().size()) );
 	}
 }
+
+
+/**
+ @brief 
+ */
+void	CVClient::OnP2PConnect(ClientBasicPtr client)
+{
+	GetConsole()->AddString( "P2P Connect" );
+}
+
+
+/**
+ @brief 
+ */
+void	CVClient::OnP2PDisconnect(ClientBasicPtr client)
+{
+	GetConsole()->AddString( "P2P Disconnect" );
+}
+
+
+/**
+ @brief 
+ */
+void	CVClient::OnMemberJoin(ClientBasicPtr client, netid clientId)
+{
+	GetConsole()->AddString( "Member Join" );
+}
+
+
+/**
+ @brief 
+ */
+void	CVClient::OnMemberLeave(ClientBasicPtr client, netid clientId)
+{
+	GetConsole()->AddString( "Member Leave" );
+}
+

@@ -2,10 +2,7 @@
 #include "ServerBasic.h"
 #include <winsock.h>
 #include <process.h> 
-//#include <boost/bind.hpp>
 #include "../Controller/NetController.h"
-#include "NetCommon/Src/basic_ProtocolListener.cpp"
-#include "NetCommon/Src/basic_Protocol.cpp"
 
 using namespace network;
 
@@ -26,6 +23,67 @@ CServerBasic::~CServerBasic()
 }
 
 
+/**
+ @brief packet process
+*/
+void	CServerBasic::Proc()
+{
+
+	const timeval t = {0, 10}; // 10 millisecond
+	SFd_Set readSockets;
+	MakeFDSET(&readSockets);
+	const SFd_Set sockets = readSockets;
+
+	const int ret = select( readSockets.fd_count, &readSockets, NULL, NULL, &t);
+	if (ret != 0 && ret != SOCKET_ERROR)
+	{
+		for (u_int i=0; i < sockets.fd_count; ++i)
+		{
+			if (!FD_ISSET(sockets.fd_array[ i], &readSockets)) continue;
+
+			char buf[ CPacket::MAX_PACKETSIZE];
+			const int result = recv(sockets.fd_array[ i], buf, sizeof(buf), 0);
+			if (result == INVALID_SOCKET || 0 == result)
+			{
+				RemoveRemoteClient(sockets.netid_array[ i]);
+			}
+			else
+			{
+				const ProtocolListenerList &listeners = GetProtocolListeners();
+				if (listeners.empty())
+				{
+					error::ErrorLog( " CServerBasic::Proc():: 프로토콜 리스너가 없습니다.");
+				}
+				else
+				{
+					CPacket packet(SERVER_NETID,buf);
+
+					// 모든 패킷을 받아서 처리하는 리스너에게 패킷을 보낸다.
+					all::Dispatcher allDispatcher;
+					allDispatcher.Dispatch(packet, listeners);
+					// 
+
+					const int protocolId = packet.GetProtocolId();
+					IProtocolDispatcher *pDispatcher = CNetController::Get()->GetDispatcher(protocolId);
+					if (!pDispatcher)
+					{
+						error::ErrorLog( 
+							common::format(" CClientCore::Proc() %d 에 해당하는 프로토콜 디스패쳐가 없습니다.", 
+							protocolId) );
+					}
+					else
+					{
+						pDispatcher->Dispatch(packet, listeners);
+					}
+				}
+
+			}
+		}
+	}
+
+}
+
+
 //------------------------------------------------------------------------
 // 저장된 remoteClient를 모두 제거한다.
 //------------------------------------------------------------------------
@@ -40,7 +98,7 @@ bool CServerBasic::Stop()
 //------------------------------------------------------------------------
 // 클라이언트 추가
 //------------------------------------------------------------------------
-bool CServerBasic::AddClient(SOCKET sock)
+bool CServerBasic::AddRemoteClient(SOCKET sock, const std::string &ip)
 {
 	EnterSync();
 	{
@@ -50,8 +108,9 @@ bool CServerBasic::AddClient(SOCKET sock)
 
 		CRemoteClient *pNewRemoteClient = new CRemoteClient();
 		pNewRemoteClient->SetSocket(sock);
-
+		pNewRemoteClient->SetIp(ip);
 		pNewRemoteClient->SetGroupId(m_WaitGroupId);
+
 		if (!m_RootGroup.AddUser(m_WaitGroupId, pNewRemoteClient->GetId()))
 		{
 			LogNPrint( "CServer::AddClient Error!! netid: %d", pNewRemoteClient->GetId());
@@ -98,7 +157,7 @@ netid CServerBasic::GetNetIdFromSocket(SOCKET sock)
 //------------------------------------------------------------------------
 // 클라이언트 제거
 //------------------------------------------------------------------------
-bool CServerBasic::RemoveClient(netid netId)
+bool CServerBasic::RemoveRemoteClient(netid netId)
 {
 	EnterSync();
 	{
@@ -132,7 +191,7 @@ RemoteClientItor CServerBasic::FindRemoteClientBySocket(SOCKET sock)
 // m_RemoteClients 루프안에서 Client를 제거해야 될때 쓰이는 함수다.
 // Client를 제거하고 다음을 가르키는 iterator를 반환한다.
 //------------------------------------------------------------------------
-RemoteClientItor CServerBasic::RemoveClientInLoop(netid netId)
+RemoteClientItor CServerBasic::RemoveRemoteClientInLoop(netid netId)
 {
 	RemoteClientItor it = m_RemoteClients.find(netId);
 	if (m_RemoteClients.end() == it)
@@ -249,7 +308,7 @@ bool CServerBasic::Send(netid netId, const CPacket &packet)
 	{
 		error::ErrorLog( common::format("CServer::Send() Socket Error id=%d", it->second->GetId()) );
 		dbg::Print( "CServer::Send() Socket Error id=%d", it->second->GetId() );
-		RemoveClient(packet.GetSenderId());
+		RemoveRemoteClient(packet.GetSenderId());
 		return false;
 	}
 	return true;
@@ -267,7 +326,7 @@ bool CServerBasic::SendAll(const CPacket &packet)
 		const int result = send(it->second->GetSocket(), packet.GetData(), packet.GetPacketSize(), 0);
 		if (result == INVALID_SOCKET)
 		{
-			it = RemoveClientInLoop(it->second->GetId());
+			it = RemoveRemoteClientInLoop(it->second->GetId());
 		}
 		else
 		{

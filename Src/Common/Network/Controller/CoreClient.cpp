@@ -59,7 +59,7 @@ bool CCoreClient::Proc()
 		}
 		else
 		{
-			const ProtocolListenerList &listeners = GetListeners();
+			const ProtocolListenerList &listeners = GetProtocolListeners();
 			if (listeners.empty())
 			{
 				error::ErrorLog( " CClientCore::Proc():: 프로토콜 리스너가 없습니다.");

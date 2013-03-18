@@ -60,6 +60,8 @@ namespace network
 		void							SetParent(GroupPtr parent);
 		netid						GetParentId() const;
 		NET_STATE				GetNetState() const;
+		void							SetNetState(NET_STATE state);
+
 
 	protected:
 		bool				AddUser(netid userId);
@@ -87,6 +89,7 @@ namespace network
 	inline DWORD CGroup::GetTag() const { return m_Tag; }
 	inline void CGroup::SetTag(DWORD tag) { m_Tag = tag; }
 	inline CGroup::NET_STATE CGroup::GetNetState() const { return m_NetState; }
+	inline void CGroup::SetNetState(NET_STATE state) { m_NetState = state; }
 	inline const Groups::VectorType& CGroup::GetChildren() const { return m_Children.m_Seq; }
 	inline const NetIdes& CGroup::GetUsers() const { return m_Users; }
 	inline bool CGroup::operator==(const CGroup &rhs) const { return m_Id==rhs.GetId(); }

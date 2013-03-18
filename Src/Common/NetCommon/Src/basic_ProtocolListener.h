@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------
-// Name:    C:\GitHub\MadSoccer\Src\Common\NetCommon\Src\basic_ProtocolListener.h
+// Name:    D:\Project\GitHub\MadSoccer\Src\Common\NetCommon\Src\basic_ProtocolListener.h
 // Author:  ProtocolCompiler (by jjuiddong)
 // Date:    
 //------------------------------------------------------------------------
@@ -26,6 +26,7 @@ class s2c_ProtocolListener : virtual public network::IProtocolListener
 	virtual void AckGroupJoin(netid senderId, const int &errorCode){}
 	virtual void AckGroupCreate(netid senderId, const int &errorCode, const std::string &groupName, const netid &groupid){}
 	virtual void AckP2PConnect(netid senderId, const int &errorCode, const network::P2P_STATE &state, const std::string &ip, const int &port){}
+	virtual void AckP2PHostCreate(netid senderId, const int &errorCode){}
 	virtual void func1(netid senderId){}
 	virtual void func2(netid senderId, const std::string &str){}
 	virtual void func3(netid senderId, const float &value){}
@@ -54,6 +55,7 @@ class c2s_ProtocolListener : virtual public network::IProtocolListener
 	virtual void ReqGroupJoin(netid senderId, const netid &groupid){}
 	virtual void ReqGroupCreate(netid senderId, const netid &parentGroupId, const std::string &groupName){}
 	virtual void ReqP2PConnect(netid senderId){}
+	virtual void ReqP2PHostCreate(netid senderId, const bool &isSuccess){}
 	virtual void func2(netid senderId, const std::string &str){}
 	virtual void func3(netid senderId, const float &value){}
 };

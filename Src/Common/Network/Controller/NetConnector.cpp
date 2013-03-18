@@ -6,7 +6,7 @@ using namespace network;
 
 
 CNetConnector::CNetConnector() :
-	m_NetId(common::GenerateId())
+	m_Id(common::GenerateId())
 {
 
 }
@@ -30,7 +30,7 @@ bool CNetConnector::RegisterProtocol(ProtocolPtr protocol)
 //------------------------------------------------------------------------
 // 리스너 등록
 //------------------------------------------------------------------------
-bool CNetConnector::AddListener(ProtocolListenerPtr pListener)
+bool CNetConnector::AddProtocolListener(ProtocolListenerPtr pListener)
 {
 	ProtocolListenerItor it = find(m_ProtocolListeners.begin(), m_ProtocolListeners.end(), pListener);
 	if (m_ProtocolListeners.end() != it)
@@ -43,7 +43,7 @@ bool CNetConnector::AddListener(ProtocolListenerPtr pListener)
 //------------------------------------------------------------------------
 // 리스너 제거 (메모리는 외부에서 소거해야한다.)
 //------------------------------------------------------------------------
-bool CNetConnector::RemoveListener(ProtocolListenerPtr pListener)
+bool CNetConnector::RemoveProtocolListener(ProtocolListenerPtr pListener)
 {
 	ProtocolListenerItor it = find(m_ProtocolListeners.begin(), m_ProtocolListeners.end(), pListener);
 	if (m_ProtocolListeners.end() == it)

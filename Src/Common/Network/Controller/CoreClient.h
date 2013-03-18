@@ -17,7 +17,8 @@ namespace network
 	{
 		friend class CNetLauncher;
 		friend class CNetController;
-		friend class CClient;
+		friend class CClientBasic;
+		friend class CP2PClient;
 		typedef common::ReferencePtr<ICoreClientEventListener> CoreClientEventListenerPtr;
 
 	public:

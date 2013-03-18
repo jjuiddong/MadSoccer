@@ -57,7 +57,14 @@ namespace network
 					return RR_CONTINUE;
 				}
 
-				pSvr->AddClient( remoteSocket );
+				// get ip address
+				sockaddr_in addr;
+				int len = sizeof(addr);
+				memset(&addr,0,sizeof(addr));
+				getpeername( remoteSocket, (sockaddr*)&addr, &len );
+				std::string ip = inet_ntoa(addr.sin_addr);
+
+				pSvr->AddRemoteClient( remoteSocket, ip );
 			}
 		}
 		return RR_CONTINUE; 

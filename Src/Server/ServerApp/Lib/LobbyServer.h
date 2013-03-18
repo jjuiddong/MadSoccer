@@ -54,7 +54,6 @@ protected:
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Test
 	virtual void ReqLogIn(netid senderId, const std::string &id, const std::string &password) override;
-	virtual void func2(netid senderId, const std::string &str) override;
 
 protected:
 	UserMap				m_Users;

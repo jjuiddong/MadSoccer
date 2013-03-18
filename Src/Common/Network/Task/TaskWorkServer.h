@@ -18,10 +18,7 @@ namespace network
 	{
 	public:
 		CTaskWorkServer(int taskId, netid netId);
-		virtual ~CTaskWorkServer()
-		{
-			int a = 0;
-		}
+		virtual ~CTaskWorkServer() {}
 		virtual RUN_RESULT	Run() override;
 
 	protected:
@@ -62,7 +59,7 @@ namespace network
 				const int result = recv(sockets.fd_array[ i], buf, sizeof(buf), 0);
 				if (result == INVALID_SOCKET || 0 == result)
 				{
-					psvr->RemoveClient(sockets.netid_array[ i]);
+					psvr->RemoveRemoteClient(sockets.netid_array[ i]);
 				}
 				else
 				{

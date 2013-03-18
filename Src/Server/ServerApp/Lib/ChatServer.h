@@ -21,17 +21,17 @@ public:
 	CChatServer() : CServer(network::SERVICE_EXCLUSIVE_THREAD)
 	{
 		RegisterProtocol(&m_S2CProtocol);
-		AddListener( this );
+		//AddListener( this );
 	}
 
 protected:
 	basic::s2c_Protocol m_S2CProtocol;
 
 public:
-	virtual void func2(netid senderId, const std::string &str) override
-	{
-		//Stop(); Test Code
-	}
+	//virtual void func2(netid senderId, const std::string &str) override
+	//{
+	//	//Stop(); Test Code
+	//}
 
 // 	virtual void func2(netid senderId, const std::string &str) override
 // 	{

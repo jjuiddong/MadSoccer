@@ -22,8 +22,8 @@ namespace network
 		typedef std::map<SOCKET, ServerBasicPtr> ServerSockets;
 		typedef common::VectorMap<netid, ServerBasicPtr> Servers;
 
-		typedef std::map<SOCKET, ClientPtr> ClientSockets;
-		typedef common::VectorMap<netid, ClientPtr> Clients;
+		typedef std::map<SOCKET, ClientBasicPtr> ClientSockets;
+		typedef common::VectorMap<netid, ClientBasicPtr> Clients;
 		typedef common::VectorMap<netid, CoreClientPtr> CoreClients;
 
 		typedef std::map<int,IProtocolDispatcher*> DispatcherMap;
@@ -46,10 +46,10 @@ namespace network
 		ServerBasicPtr	GetServerFromSocket(SOCKET sock);
 
 		// Client
-		bool		StartClient(const std::string &ip, int port, ClientPtr pClt);
-		bool		StopClient(ClientPtr pClt);
-		ClientPtr	GetClient(netid netId);
-		ClientPtr	GetClientFromSocket(SOCKET sock);
+		bool		StartClient(const std::string &ip, int port, ClientBasicPtr pClt);
+		bool		StopClient(ClientBasicPtr pClt);
+		ClientBasicPtr	GetClient(netid netId);
+		ClientBasicPtr	GetClientFromSocket(SOCKET sock);
 
 		// CoreClient
 		bool		StartCoreClient(const std::string &ip, int port, CoreClientPtr pClt);

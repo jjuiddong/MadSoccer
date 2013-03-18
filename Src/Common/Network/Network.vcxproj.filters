@@ -39,6 +39,12 @@
     <Filter Include="Lib\Marshalling">
       <UniqueIdentifier>{353524c7-21d1-419f-a714-be2bfc3dc60a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lib\Utillity">
+      <UniqueIdentifier>{648cc939-3b3c-4290-bd49-501ada6af3e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\ProtocolHandler">
+      <UniqueIdentifier>{0a45ec0b-5b81-40cd-b4e5-ed8a71f44e66}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Network.cpp">
@@ -115,6 +121,15 @@
     </ClCompile>
     <ClCompile Include="Algorithm\GroupTraverse.cpp">
       <Filter>Lib\Algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="Service\ClientBasic.cpp">
+      <Filter>Lib\Service</Filter>
+    </ClCompile>
+    <ClCompile Include="ProtocolHandler\BasicC2SProtocolHandler.cpp">
+      <Filter>Lib\ProtocolHandler</Filter>
+    </ClCompile>
+    <ClCompile Include="ProtocolHandler\BasicS2CProtocolHandler.cpp">
+      <Filter>Lib\ProtocolHandler</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -246,6 +261,30 @@
     </ClInclude>
     <ClInclude Include="Algorithm\GroupTraverse.h">
       <Filter>Lib\Algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="ErrReport\ErrorCode.h">
+      <Filter>Lib\ErrReport</Filter>
+    </ClInclude>
+    <ClInclude Include="Utillity\UserAccess.h">
+      <Filter>Lib\Utillity</Filter>
+    </ClInclude>
+    <ClInclude Include="Utillity\ServerUserAccess.h">
+      <Filter>Lib\Utillity</Filter>
+    </ClInclude>
+    <ClInclude Include="Utillity\Utillity.h">
+      <Filter>Lib\Utillity</Filter>
+    </ClInclude>
+    <ClInclude Include="Service\ClientBasic.h">
+      <Filter>Lib\Service</Filter>
+    </ClInclude>
+    <ClInclude Include="Utillity\ClientUserAccess.h">
+      <Filter>Lib\Utillity</Filter>
+    </ClInclude>
+    <ClInclude Include="ProtocolHandler\BasicC2SProtocolHandler.h">
+      <Filter>Lib\ProtocolHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="ProtocolHandler\BasicS2CProtocolHandler.h">
+      <Filter>Lib\ProtocolHandler</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

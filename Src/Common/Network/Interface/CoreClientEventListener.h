@@ -12,6 +12,7 @@ namespace network
 	class ICoreClientEventListener
 	{
 	public:
+		virtual ~ICoreClientEventListener() {}
 		virtual void		OnCoreClientConnect(CoreClientPtr client) {}
 		virtual void		OnClientDisconnect(CoreClientPtr client) {}
 		//virtual void		OnMemberJoin(CoreClientPtr client) {}

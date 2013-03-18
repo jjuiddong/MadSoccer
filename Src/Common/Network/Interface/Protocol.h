@@ -14,6 +14,7 @@ namespace network
 	{
 	protected:
 		IProtocol(int id) : m_Id(id) {}
+		virtual ~IProtocol() {}
 		int m_Id; // 대응하는 ProtocolListener ID 와 동일한 값이다.
 		NetConnectorPtr m_pNetConnector;
 	public:

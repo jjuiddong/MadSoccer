@@ -12,6 +12,7 @@ namespace network
 	class IServerEventListener
 	{
 	public:
+		virtual ~IServerEventListener() {}
 		virtual void		OnListen(ServerBasicPtr svr) {}
 		virtual void		OnServerDisconnect(ServerBasicPtr svr) {}
 		virtual void		OnClientJoin(ServerBasicPtr svr, netid netId) {}

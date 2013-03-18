@@ -16,13 +16,17 @@ namespace network
 		IProtocolDispatcher(int id) : m_Id(id) {}
 		virtual ~IProtocolDispatcher() {}
 		friend class CTaskLogic;
-		friend class CClient;
 		friend class CCoreClient;
-	protected:
-		int m_Id; // 대응하는 protocol ID 와 동일한 값이다.
+		friend class CServerBasic;
+
 	public:
-		int GetId() const { return m_Id; }
+		int GetId() const;
 	protected:
 		virtual void Dispatch(CPacket &packet, const ProtocolListenerList &listeners)=0;
+	protected:
+		int m_Id; // 대응하는 protocol ID 와 동일한 값이다.
 	};
+
+	inline int IProtocolDispatcher::GetId() const { return m_Id; }
+
 }

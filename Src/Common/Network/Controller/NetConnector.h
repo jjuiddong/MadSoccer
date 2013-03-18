@@ -16,25 +16,31 @@ namespace network
 		CNetConnector();
 		virtual ~CNetConnector();
 
-		netid			GetNetId() const { return m_NetId; }
-		SOCKET		GetSocket() const { return m_Socket; }
-
 		bool				RegisterProtocol(ProtocolPtr protocol);
-		const ProtocolListenerList&	GetListeners() { return m_ProtocolListeners; }
-		virtual bool	AddListener(ProtocolListenerPtr pListener);
-		virtual bool	RemoveListener(ProtocolListenerPtr pListener);
+		const ProtocolListenerList&	GetProtocolListeners() const;
+		virtual bool	AddProtocolListener(ProtocolListenerPtr pListener);
+		virtual bool	RemoveProtocolListener(ProtocolListenerPtr pListener);
 		void				ClearConnection();
 
 		// child implementes
-		virtual bool		Send(netid netId, const CPacket &packet) = 0;
-		virtual bool		SendAll(const CPacket &packet) = 0;
+		virtual bool	Send(netid netId, const CPacket &packet) = 0;
+		virtual bool	SendAll(const CPacket &packet) = 0;
+
+		netid			GetNetId() const;
+		SOCKET		GetSocket() const;
 
 	protected:
-		void				SetSocket(SOCKET sock) { m_Socket = sock; }
+		void				SetSocket(SOCKET sock);
 
 	protected:
-		netid						m_NetId;				// 고유ID (자동생성)
+		netid						m_Id;
 		SOCKET					m_Socket; 
 		ProtocolListenerList m_ProtocolListeners;
 	};
+
+	inline void	 CNetConnector::SetSocket(SOCKET sock) { m_Socket = sock; }
+	inline const ProtocolListenerList&	 CNetConnector::GetProtocolListeners() const { return m_ProtocolListeners; }
+	inline netid CNetConnector::GetNetId() const { return m_Id; }
+	inline SOCKET CNetConnector::GetSocket() const { return m_Socket; }
+
 }

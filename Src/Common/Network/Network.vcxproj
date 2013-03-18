@@ -84,6 +84,9 @@
     <ClCompile Include="Marshalling\Marshalling.cpp" />
     <ClCompile Include="Marshalling\MarshallingGroup.cpp" />
     <ClCompile Include="Network.cpp" />
+    <ClCompile Include="ProtocolHandler\BasicC2SProtocolHandler.cpp" />
+    <ClCompile Include="ProtocolHandler\BasicS2CProtocolHandler.cpp" />
+    <ClCompile Include="Service\ClientBasic.cpp" />
     <ClCompile Include="Service\ServerBasic.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -111,6 +114,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Algorithm\GroupTraverse.h" />
+    <ClInclude Include="ErrReport\ErrorCode.h" />
     <ClInclude Include="Interface\ClientEventListener.h" />
     <ClInclude Include="Interface\CoreClientEventListener.h" />
     <ClInclude Include="Interface\P2PClientEventListener.h" />
@@ -120,6 +124,9 @@
     <ClInclude Include="Network.h" />
     <ClInclude Include="NetworkDef.h" />
     <ClInclude Include="NetworkUtility.h" />
+    <ClInclude Include="ProtocolHandler\BasicC2SProtocolHandler.h" />
+    <ClInclude Include="ProtocolHandler\BasicS2CProtocolHandler.h" />
+    <ClInclude Include="Service\ClientBasic.h" />
     <ClInclude Include="Service\ServerBasic.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -153,6 +160,10 @@
     <ClInclude Include="Service\Client.h" />
     <ClInclude Include="Service\Server.h" />
     <ClInclude Include="Task\TaskWorkServer.h" />
+    <ClInclude Include="Utillity\ClientUserAccess.h" />
+    <ClInclude Include="Utillity\ServerUserAccess.h" />
+    <ClInclude Include="Utillity\UserAccess.h" />
+    <ClInclude Include="Utillity\Utillity.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />

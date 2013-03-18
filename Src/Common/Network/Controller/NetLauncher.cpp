@@ -72,6 +72,7 @@ bool CNetLauncher::LaunchServer(ServerBasicPtr pSvr, int port)
 
 	pSvr->SetSocket(svrSocket);
 	pSvr->SetPort(port);
+	pSvr->OnListen();
 	return true;
 }
 

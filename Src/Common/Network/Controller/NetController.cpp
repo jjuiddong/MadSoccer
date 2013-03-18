@@ -67,7 +67,7 @@ bool CNetController::Init(int logicThreadCount)
 //------------------------------------------------------------------------
 void CNetController::Proc()
 {
-	BOOST_FOREACH(ClientPtr &ptr, m_Clients.m_Seq)
+	BOOST_FOREACH(ClientBasicPtr &ptr, m_Clients.m_Seq)
 	{
 		if (!ptr) break;
 		ptr->Proc();
@@ -168,7 +168,7 @@ ServerBasicPtr CNetController::GetServerFromSocket(SOCKET sock)
 //------------------------------------------------------------------------
 // 클라이언트는 ip, port 의 서버에 접속을 시도한다.
 //------------------------------------------------------------------------
-bool CNetController::StartClient(const std::string &ip, int port, ClientPtr pClt)
+bool CNetController::StartClient(const std::string &ip, int port, ClientBasicPtr pClt)
 {
 	if (!pClt)
 		return false;
@@ -193,7 +193,7 @@ bool CNetController::StartClient(const std::string &ip, int port, ClientPtr pClt
 //------------------------------------------------------------------------
 // 클라이언트를 종료한다.
 //------------------------------------------------------------------------
-bool CNetController::StopClient(ClientPtr pClt)
+bool CNetController::StopClient(ClientBasicPtr pClt)
 {
 	if (!pClt)
 		return false;
@@ -213,7 +213,7 @@ bool CNetController::StopClient(ClientPtr pClt)
 //------------------------------------------------------------------------
 // clientId에 해당하는 클라이언트를 리턴한다.
 //------------------------------------------------------------------------
-ClientPtr CNetController::GetClientFromSocket(SOCKET sock)
+ClientBasicPtr CNetController::GetClientFromSocket(SOCKET sock)
 {
 	ClientItor it = m_ClientSockets.find(sock);
 	if (m_ClientSockets.end() == it)
@@ -225,7 +225,7 @@ ClientPtr CNetController::GetClientFromSocket(SOCKET sock)
 //------------------------------------------------------------------------
 // clientId에 해당하는 클라이언트를 리턴한다.
 //------------------------------------------------------------------------
-ClientPtr CNetController::GetClient(netid netId)
+ClientBasicPtr CNetController::GetClient(netid netId)
 {
 	Clients::iterator it = m_Clients.find(netId);
 	if (m_Clients.end() == it)

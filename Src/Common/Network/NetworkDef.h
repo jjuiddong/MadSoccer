@@ -20,6 +20,7 @@ typedef int netid;
 namespace network
 {
 	class CServerBasic;
+	class CClientBasic;
 	class CClient;
 	class CCoreClient;
 	class CP2PClient;
@@ -52,6 +53,7 @@ namespace network
 
 }
 typedef common::ReferencePtr<network::CServerBasic> ServerBasicPtr;
+typedef common::ReferencePtr<network::CClientBasic> ClientBasicPtr;
 typedef common::ReferencePtr<network::CClient> ClientPtr;
 typedef common::ReferencePtr<network::CP2PClient> P2PClientPtr;
 typedef common::ReferencePtr<network::CCoreClient> CoreClientPtr;
@@ -62,10 +64,10 @@ typedef common::ReferencePtr<network::CCharacter> CharacterPtr;
 
 
 #include "ErrReport/Error.h"
+#include "ErrReport/ErrorCode.h"
 #include "DataStructure/Packet.h"
 #include "Controller/RemoteClient.h"
 #include "Algorithm/BindCore.h"
-
 
 typedef std::list<SOCKET> SocketList;
 typedef SocketList::iterator SockItor;
@@ -110,6 +112,9 @@ typedef ProtocolMap::iterator ProtocolItor;
 #include "Interface/Protocol.h"
 #include "Interface/ProtocolListener.h"
 #include "Interface/ProtocolDispatcher.h"
+#include "Utillity/UserAccess.h"
+#include "Utillity/Utillity.h"
+
 #include "DataStructure/Group.h"
 #include "DataStructure/Room.h"
 #include "DataStructure/User.h"
@@ -117,7 +122,8 @@ typedef ProtocolMap::iterator ProtocolItor;
 #include "Service/AllProtocolListener.h"
 #include "Marshalling/Marshalling.h"
 #include "Marshalling/MarshallingGroup.h"
-#include "NetworkUtility.h"
+
+
 
 typedef std::vector<network::CGroup> GroupVector;
 

@@ -93,7 +93,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	CVirtualClient client;
 	client.RegisterProtocol(&protocol);
 	client.RegisterProtocol(&login_protocol);
-	client.AddListener( &client );
+	client.AddProtocolListener( &client );
 
 	network::StartClient( "127.0.0.1", 2334, &client );
 

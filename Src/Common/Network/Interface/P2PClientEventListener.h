@@ -11,8 +11,12 @@ namespace network
 {
 	class IP2PClientEventListener
 	{
-		virtual void		OnMemberJoin(P2PClientPtr client) {}
-		virtual void		OnMemberLeave(P2PClientPtr client) {}
+	public:
+		virtual ~IP2PClientEventListener() {}
+		virtual void		OnP2PCreate(P2PClientPtr client) {}
+		virtual void		OnP2PDisconnect(P2PClientPtr client) {}
+		virtual void		OnMemberJoin(P2PClientPtr client, netid clientId) {}
+		virtual void		OnMemberLeave(P2PClientPtr client, netid clientId) {}
 	};
 
 }

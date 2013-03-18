@@ -10,7 +10,7 @@ CLobbyServer::CLobbyServer() : CServer(SERVICE_EXCLUSIVE_THREAD)
 {
 	RegisterProtocol(&m_LoginProtocol);
 	RegisterProtocol(&m_BasicProtocol);
-	AddListener( this );
+	AddProtocolListener( this );
 	SetEventListener(this);
 
 }
@@ -205,9 +205,4 @@ std::string CLobbyServer::ToString()
 void CLobbyServer::ReqLogIn(netid senderId, const std::string &id, const std::string &password)
 {
 	m_LoginProtocol.AckLogIn(senderId, id, 1 );
-}
-
-void CLobbyServer::func2(netid senderId, const std::string &str)
-{
-	m_BasicProtocol.func1(senderId);
 }

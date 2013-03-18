@@ -25,7 +25,7 @@ std::string config::GetErrorMsg()
 bool	 config::OpenConfigFile()
 {
 	std::string configFileName("virtualclient2_config.json");
-
+	
 	try
 	{
 		boost::property_tree::read_json(configFileName.c_str(), g_Props);
