@@ -13,6 +13,7 @@ CServer::CServer(PROCESS_TYPE procType) :
 ,	m_pBasicPrtHandler(NULL)
 {
 	CGroup *pWaitGroup = new CGroup(NULL,"Waiting Group");
+	pWaitGroup->AddViewer(m_RootGroup.GetId()); /// root group is viewer to waitting group
 	m_WaitGroupId = pWaitGroup->GetId();
 	m_RootGroup.AddChild( pWaitGroup );
 

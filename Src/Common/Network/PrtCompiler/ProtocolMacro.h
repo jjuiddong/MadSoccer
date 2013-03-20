@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------
 #pragma once
 
-
 // Dispatcher::Dispatch 에서 사용되는 매크로
 #define SEND_LISTENER(listenerType, listeners, func)												\
 	BOOST_FOREACH(ProtocolListenerPtr p, listeners)												\
@@ -18,3 +17,19 @@
 			lstr->func;																										\
 	}																																\
 
+
+/**
+ @brief 템플릿 인자 T 타입과 같은 프로토콜을 matchListeners 에 넣어 리턴한다.
+ @return if matchListeners is empty return false, or return true
+ */
+template<class T>
+inline bool ListenerMatching(const ProtocolListenerList &listeners, OUT ProtocolListenerList &matchListeners)
+{
+	BOOST_FOREACH(auto &it, listeners)
+	{
+		T *lstr = dynamic_cast<T*>((IProtocolListener*)it.Get());
+		if (lstr)
+			matchListeners.push_back(lstr);
+	}
+	return !matchListeners.empty();
+}

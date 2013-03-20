@@ -20,7 +20,6 @@ namespace network
 
 	protected:
 		CBasicS2CProtocolHandler *m_pBasicS2CProtocolHandler;
-
 	};
 
 };

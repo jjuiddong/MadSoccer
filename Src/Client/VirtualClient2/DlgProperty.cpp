@@ -43,6 +43,7 @@ BEGIN_MESSAGE_MAP(CDlgProperty, CDialog)
 	ON_WM_PAINT()
 	ON_WM_SIZE()
 	ON_BN_CLICKED(IDC_BUTTON_SEND, &CDlgProperty::OnBnClickedButtonSend)
+	ON_BN_CLICKED(IDC_BUTTON_P2PSEND, &CDlgProperty::OnBnClickedButtonP2PSend)
 	ON_BN_CLICKED(IDOK, &CDlgProperty::OnBnClickedOk)
 	ON_BN_CLICKED(IDCANCEL, &CDlgProperty::OnBnClickedCancel)
 END_MESSAGE_MAP()
@@ -73,6 +74,7 @@ int CDlgProperty::OnCreate(LPCREATESTRUCT lpCreateStruct)
 // 	m_wndPropList.SetVSDotNetLook ();
 
 	m_BtnSend.Create(_T("Send"), WS_VISIBLE | WS_CHILD|BS_PUSHBUTTON, CRect(0,0,60,30), this, IDC_BUTTON_SEND);
+	m_BtnP2PSend.Create(_T("P2PSend"), WS_VISIBLE | WS_CHILD|BS_PUSHBUTTON, CRect(0,0,60,30), this, IDC_BUTTON_P2PSEND);
 
 	return 0;
 }
@@ -110,11 +112,12 @@ void CDlgProperty::OnSize(UINT nType, int cx, int cy)
 	}
 
 	// Send Button 이동
-	const int btnW=60;
+	const int btnW=80;
 	const int btnH=30;
 	const int x = cx/2 - btnW/2;
 	const int y = cy-55;
-	m_BtnSend.MoveWindow(x, y, btnW, btnH);
+	m_BtnSend.MoveWindow(x-(int)((float)btnW*0.6f), y, btnW, btnH);
+	m_BtnP2PSend.MoveWindow(x+(int)((float)btnW*0.6f), y, btnW, btnH);
 
 	InvalidateRect(NULL);
 }
@@ -213,8 +216,6 @@ void CDlgProperty::OnBnClickedButtonSend()
 	// 특수 프로토콜, 서버에 접속하는 프로토콜이다.
 	if (m_pProtocol->name == "Connect")
 	{
-		int p1,p2;
-		packet >> p1 >> p2;
 		std::string ip;
 		int port;
 		packet >> ip >> port;
@@ -231,9 +232,28 @@ void CDlgProperty::OnBnClickedButtonSend()
 		ss << network::Packet2String(packet, m_pProtocol);
 		GetConsole()->AddString( ss.str() );
 
-		CVClient::Get()->GetProtocol().send(SERVER_NETID, packet);
+		packet.EndPack();
+		CVClient::Get()->GetProtocol().send(SERVER_NETID, SEND_NORMAL, packet);
 	}
+}
 
+
+/**
+ @brief P2P send
+ */
+void CDlgProperty::OnBnClickedButtonP2PSend()
+{
+	if (!m_pProtocol) 
+		return;
+
+	CPacket packet;
+	MakePacket(packet, m_pRmi, m_pProtocol);
+
+	std::stringstream ss;
+	ss << "Send = ";
+	ss << network::Packet2String(packet, m_pProtocol);
+	GetConsole()->AddString( ss.str() );
+	CVClient::Get()->GetProtocol().send(P2P_NETID, SEND_NORMAL, packet);
 }
 
 
@@ -245,8 +265,8 @@ void CDlgProperty::MakePacket( network::CPacket &packet, sRmi *rmi, sProtocol *p
 {
 	const int protocolID = rmi->number;
 	const int packetID = GetPacketID(rmi, protocol);
-	packet << protocolID;
-	packet << packetID;
+	packet.SetProtocolId(protocolID);
+	packet.SetPacketId(packetID);
 	MakePacketProperty(packet, m_PropList.begin(), protocol->argList);
 }
 

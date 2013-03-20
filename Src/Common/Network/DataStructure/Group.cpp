@@ -201,6 +201,28 @@ bool	CGroup::RemoveUserNApplyParent(GroupPtr pGroup, netid userId)
 }
 
 
+/**
+ @brief Add Viewer
+ */
+bool	CGroup::AddViewer(netid id)
+{
+	auto it = find(m_Viewers.begin(), m_Viewers.end(), id);
+	if (m_Viewers.end() != it)
+		return false; // already exist, return
+	m_Viewers.push_back( id );
+	return true;
+}
+
+
+/**
+ @brief Remove Viewer
+ */
+bool	CGroup::RemoveViewer(netid id)
+{
+	return common::removevector(m_Viewers, id);
+}
+
+
 //------------------------------------------------------------------------
 // User가 Group에 속해있다면 true를 리턴한다.
 //------------------------------------------------------------------------

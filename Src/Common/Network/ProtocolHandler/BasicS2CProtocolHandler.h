@@ -21,7 +21,6 @@ namespace network
 
 		// Network Handler
 		virtual void AckP2PConnect(netid senderId, const int &errorCode, const network::P2P_STATE &state, const std::string &ip, const int &port) override;
-		virtual void AckP2PHostCreate(netid senderId, const int &errorCode) override;
 
 	protected:
 		CClient							&m_Client;		/// CClient Reference 

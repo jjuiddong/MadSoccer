@@ -16,18 +16,48 @@ CPacket network::DisconnectPacket()
 
 
 CPacket::CPacket():
-	m_WriteIdx(0)
-,	m_ReadIdx(0)
+	m_WriteIdx(HEADER_SIZE)
+,	m_ReadIdx(HEADER_SIZE)
 {
 }
 
 CPacket::CPacket(netid senderId, char *buf256) :
 	m_SenderId(senderId)
-,	m_WriteIdx(0)
-,	m_ReadIdx(0)
+,	m_WriteIdx(HEADER_SIZE)
+,	m_ReadIdx(HEADER_SIZE)
 {
-	if (buf256)
+	if (buf256) // todo: packet size copy
+	{
 		memcpy( m_Data, buf256, MAX_PACKETSIZE);
+		m_WriteIdx = GetPacketSizeFromRawData();
+	}
+}
+
+
+/**
+	@brief 
+	*/
+void	CPacket::SetProtocolId(int protocolId)
+{
+	*(int*)m_Data = protocolId;
+}
+
+
+/**
+ @brief 
+ */
+void	CPacket::SetPacketId(int packetId)
+{
+	*(int*)(m_Data+sizeof(int)) = packetId;
+}
+
+
+/**
+ @brief 
+ */
+void	CPacket::SetPacketSize(short packetSize)
+{
+	*(short*)(m_Data+sizeof(int)+sizeof(int)) = packetSize;
 }
 
 
@@ -49,6 +79,45 @@ int	CPacket::GetPacketId() const
 	const int id = *(int*)(m_Data+sizeof(int));
 	return id;
 }
+
+
+/**
+ @brief Data 에 저장된 packet size 값을 리턴한다. 일반적으로 m_WirteIdx를 
+ 리턴하는게 보통이다.
+ */
+short CPacket::GetPacketSizeFromRawData()
+{
+	const short size = *(short*)(m_Data+sizeof(int)+sizeof(int));
+	return size;
+}
+
+
+/**
+ @brief  읽을 수 있는 패킷 사이즈를 리턴한다. (byte단위)
+ */
+int	CPacket::GetReadableSize() const
+{
+	return GetPacketSize() - m_ReadIdx;
+}
+
+
+/**
+ @brief save packet size
+ */
+void	CPacket::EndPack()
+{
+	SetPacketSize( (short)GetPacketSize() );
+}
+
+
+/**
+ @brief 
+ */
+//int	CPacket::GetPacketSize() const
+//{
+//	const int size = *(int*)(m_Data+sizeof(int)+sizeof(int));
+//	return size;
+//}
 
 
 //CPacket& CPacket::operator<<(const _variant_t &rhs)

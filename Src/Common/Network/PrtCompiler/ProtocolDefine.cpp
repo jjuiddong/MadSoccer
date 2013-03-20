@@ -165,8 +165,8 @@ std::string network::Packet2String(const CPacket &packet, sProtocol *protocol)
 	std::stringstream ss;
 	CPacket tempPacket = packet;
 
-	int protocolID, packetID;
-	tempPacket >> protocolID >> packetID;
+	const int protocolID = tempPacket.GetProtocolId();
+	const int packetID = tempPacket.GetPacketId();
 
 	ss << protocol->name << " ";
 

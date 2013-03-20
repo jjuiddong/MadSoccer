@@ -112,22 +112,32 @@ bool	CClientBasic::RemoveProtocolListener(ProtocolListenerPtr pListener)
 }
 
 
-//------------------------------------------------------------------------
-// 패킷 전송
-//------------------------------------------------------------------------
-bool CClientBasic::Send(netid netId, const CPacket &packet)
+/**
+ @brief Send Packet
+ */
+bool	CClientBasic::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
 {
 	if (P2P_NETID == netId)
 	{
-		if (m_pP2p)
-			m_pP2p->Send(netId, packet);
+		return SendP2P(packet);
 	}
 	else
 	{
-		if (m_pConnectSvr)
-			m_pConnectSvr->Send(netId, packet);
+		if (!m_pConnectSvr)
+			return false;
+		return m_pConnectSvr->Send(netId, flag, packet);
 	}
-	return true;
+}
+
+
+/**
+ @brief Send P2P Packet
+ */
+bool	CClientBasic::SendP2P(const CPacket &packet)
+{
+	if (!m_pP2p)
+		return false;
+	return m_pP2p->Send(P2P_NETID, SEND_TARGET, packet);
 }
 
 

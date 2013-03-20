@@ -71,8 +71,6 @@ BOOL CVirtualClient2App::InitInstance()
 
 	common::dump::InstallSelfMiniDump();
 
-	sharedmemory::Init( "VirtualClient2", sharedmemory::SHARED_SERVER );
-
 	CVirtualClient2Dlg *pdlg = new CVirtualClient2Dlg();
 	m_pMainWnd = pdlg;
 	pdlg->Create(CVirtualClient2Dlg::IDD, NULL);
@@ -107,7 +105,6 @@ BOOL CVirtualClient2App::InitInstance()
 	pdlg->DestroyWindow();
 	delete pdlg;
 
-	sharedmemory::Release();
 	return FALSE;
 }
 

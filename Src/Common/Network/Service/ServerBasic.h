@@ -35,7 +35,7 @@ namespace network
 		bool				Stop();
 		void				Disconnect();
 
-		virtual bool	Send(netid netId, const CPacket &packet) override;
+		virtual bool	Send(netid netId, const SEND_FLAG flag, const CPacket &packet);
 		virtual bool	SendAll(const CPacket &packet) override;
 
 		void				SetEventListener(ServerEventListenerPtr ptr) { m_pEventListener = ptr; }
@@ -49,7 +49,11 @@ namespace network
 		HANDLE			GetThreadHandle() const;
 
 	protected:
-		void				SetPort(int port) { m_ServerPort = port; }
+		bool				SendGroup(GroupPtr pGroup, const CPacket &packet);
+		bool				SendViewer(netid groupId, const SEND_FLAG flag, const CPacket &packet);
+		bool				SendViewerRecursive(netid viewerId, const netid exceptGroupId, const CPacket &packet);
+
+		void				SetPort(int port);
 		RemoteClientItor	RemoveClientProcess(RemoteClientItor it);
 		RemoteClientItor	FindRemoteClientBySocket(SOCKET sock);
 
@@ -75,5 +79,6 @@ namespace network
 	inline PROCESS_TYPE CServerBasic::GetProcessType() const { return m_ProcessType; }
 	inline void	 CServerBasic::SetThreadHandle(HANDLE handle) { m_hThread = handle; }
 	inline HANDLE CServerBasic::GetThreadHandle() const { return m_hThread; }
+	inline void	 CServerBasic::SetPort(int port) { m_ServerPort = port; }
 
 };

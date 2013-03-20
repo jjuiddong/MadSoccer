@@ -115,9 +115,9 @@ int _tmain(int argc, _TCHAR* argv[])
 			static bool flag = true;
 
 			if (flag)
-				login_protocol.ReqLogIn(SERVER_NETID, "testLogin", "pass1234" );
+				login_protocol.ReqLogIn(SERVER_NETID, SEND_NORMAL, "testLogin", "pass1234" );
 			else
-				protocol.func2(SERVER_NETID, "client send func2" );
+				protocol.func2(SERVER_NETID, SEND_NORMAL, "client send func2" );
 			flag = !flag;
 		}
 

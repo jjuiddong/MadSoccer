@@ -9,7 +9,10 @@
 
 namespace common
 {	
-	// ty 유니크할 때만 제대로 동작하는 함수다.
+	/**
+	 @brief this function only avaible to unique ty value
+	 remove ty and then rotate vector to sequence elements
+	 */
 	template <class Seq>
 	bool removevector(Seq &seq, const typename Seq::value_type &ty)
 	{

@@ -43,7 +43,7 @@ namespace network
 		virtual bool		RemoveProtocolListener(ProtocolListenerPtr pListener) override;
 
 		// Child Implementes
-		virtual bool	Send(netid netId, const CPacket &packet);
+		virtual bool	Send(netid netId, const SEND_FLAG flag, const CPacket &packet);
 		virtual bool	SendAll(const CPacket &packet);
 
 		PROCESS_TYPE GetProcessType() const;

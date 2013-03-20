@@ -93,22 +93,32 @@ void	CP2PClient::Clear()
 }
 
 
-//------------------------------------------------------------------------
-// 
-//------------------------------------------------------------------------
-bool	CP2PClient::Send(netid netId, const CPacket &packet)
+/**
+ @brief 
+ */
+bool	CP2PClient::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
 {
-
-	return true;
+	return SendAll(packet);
 }
 
 
 //------------------------------------------------------------------------
-// 
+// send to p2p host client
 //------------------------------------------------------------------------
 bool	CP2PClient::SendAll(const CPacket &packet)
 {
+	switch (m_State)
+	{
+	case P2P_CLIENT: 
+		if (!m_pP2pClient)
+			return false;
+		m_pP2pClient->Send(P2P_NETID, SEND_TARGET, packet);
+		break;
 
+	case P2P_HOST:
+		m_pP2pHost->SendAll(packet);
+		break;
+	}
 	return true;
 }
 

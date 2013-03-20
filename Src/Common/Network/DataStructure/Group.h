@@ -49,6 +49,11 @@ namespace network
 		const NetIdes& GetUsers() const;
 		void				Clear();
 
+		// Viewer
+		bool				AddViewer(netid id);
+		bool				RemoveViewer(netid id);
+		const NetIdes& GetViewers() const;
+
 		bool operator==(const CGroup &rhs) const;
 
 		netid						GetId() const;
@@ -61,7 +66,6 @@ namespace network
 		netid						GetParentId() const;
 		NET_STATE				GetNetState() const;
 		void							SetNetState(NET_STATE state);
-
 
 	protected:
 		bool				AddUser(netid userId);
@@ -77,6 +81,7 @@ namespace network
 		NET_STATE	m_NetState;
 		CGroup			*m_pParent;
 		NetIdes		m_Users;
+		NetIdes		m_Viewers;
 		Groups			m_Children;
 	};
 
@@ -92,5 +97,6 @@ namespace network
 	inline void CGroup::SetNetState(NET_STATE state) { m_NetState = state; }
 	inline const Groups::VectorType& CGroup::GetChildren() const { return m_Children.m_Seq; }
 	inline const NetIdes& CGroup::GetUsers() const { return m_Users; }
+	inline const NetIdes& CGroup::GetViewers() const { return m_Viewers; }
 	inline bool CGroup::operator==(const CGroup &rhs) const { return m_Id==rhs.GetId(); }
 }

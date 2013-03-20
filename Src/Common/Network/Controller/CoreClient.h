@@ -34,7 +34,8 @@ namespace network
 		bool					Stop();
 		void					Disconnect();
 
-		virtual bool		Send(netid netId, const CPacket &packet) override;
+		//virtual bool		Send(netid netId, const CPacket &packet) override;
+		virtual bool		Send(netid netId, const SEND_FLAG flag, const CPacket &packet);
 		virtual bool		SendAll(const CPacket &packet) override;
 
 	protected:

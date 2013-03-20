@@ -18,7 +18,9 @@ public:
 	CDlgProperty(CWnd* pParent = NULL);   // 표준 생성자입니다.
 	virtual ~CDlgProperty();
 	enum { IDD = IDD_DLG_PROPERTY,
-		IDC_BUTTON_SEND=100};
+		IDC_BUTTON_SEND=100,
+		IDC_BUTTON_P2PSEND,
+	};
 
 protected:
 	typedef struct _SPropItem
@@ -34,6 +36,7 @@ protected:
 	network::sRmi							*m_pRmi;
 
 	CButton						m_BtnSend;
+	CButton						m_BtnP2PSend;
 	CProtocolPropertyCtrl	m_wndPropList;
 
 public:
@@ -56,6 +59,7 @@ public:
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnBnClickedButtonSend();
+	afx_msg void OnBnClickedButtonP2PSend();
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnBnClickedCancel();
 };

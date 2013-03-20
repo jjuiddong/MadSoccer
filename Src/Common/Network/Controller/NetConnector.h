@@ -23,7 +23,8 @@ namespace network
 		void				ClearConnection();
 
 		// child implementes
-		virtual bool	Send(netid netId, const CPacket &packet) = 0;
+		//virtual bool	Send(netid netId, const CPacket &packet) = 0;
+		virtual bool	Send(netid netId, const SEND_FLAG flag, const CPacket &packet) = 0;
 		virtual bool	SendAll(const CPacket &packet) = 0;
 
 		netid			GetNetId() const;

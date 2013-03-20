@@ -108,6 +108,11 @@ namespace network
 		{
 			int size;
 			packet >> size;
+			if (size < 0)
+				return; // todo: log, error!! 
+			if (size > 10000)
+				return; // todo: too many size data in packet, log, error!!	
+
 			val.reserve(size);
 			for (int i=0; i < size; ++i)
 			{

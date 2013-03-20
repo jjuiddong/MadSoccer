@@ -15,6 +15,7 @@ m_IsServerOn(true)
 {
 	m_ServerPort = 2333;
 	InitializeCriticalSection( &m_CriticalSection );
+
 }
 
 CServerBasic::~CServerBasic()
@@ -295,27 +296,6 @@ void CServerBasic::LeaveSync()
 
 
 //------------------------------------------------------------------------
-// 패킷 전송
-//------------------------------------------------------------------------
-bool CServerBasic::Send(netid netId, const CPacket &packet)
-{
-	RemoteClientItor it = m_RemoteClients.find(netId);
-	if (m_RemoteClients.end() == it)
-		return false;
-
-	const int result = send(it->second->GetSocket(), packet.GetData(), packet.GetPacketSize(), 0);
-	if (result == INVALID_SOCKET)
-	{
-		error::ErrorLog( common::format("CServer::Send() Socket Error id=%d", it->second->GetId()) );
-		dbg::Print( "CServer::Send() Socket Error id=%d", it->second->GetId() );
-		RemoveRemoteClient(packet.GetSenderId());
-		return false;
-	}
-	return true;
-}
-
-
-//------------------------------------------------------------------------
 // 연결된 모든 클라이언트에게 메세지를 보낸다. 
 //------------------------------------------------------------------------
 bool CServerBasic::SendAll(const CPacket &packet)
@@ -334,6 +314,135 @@ bool CServerBasic::SendAll(const CPacket &packet)
 		}
 	}
 
+	return true;
+}
+
+
+/**
+ @brief 
+ */
+bool	CServerBasic::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
+{
+	bool sendResult = true;
+	if ((flag == SEND_T) || (flag == SEND_T_V))
+	{
+		RemoteClientItor it = m_RemoteClients.find(netId);
+		if (m_RemoteClients.end() != it) // Send To Client
+		{
+			const int result = send(it->second->GetSocket(), packet.GetData(), packet.GetPacketSize(), 0);
+			if (result == INVALID_SOCKET)
+			{
+				error::ErrorLog( common::format("CServer::Send() Socket Error id=%d", it->second->GetId()) );
+				dbg::Print( "CServer::Send() Socket Error id=%d", it->second->GetId() );
+				RemoveRemoteClient(packet.GetSenderId());
+				sendResult = false;
+			}
+		}
+		else
+		{
+			// Send To Group
+			GroupPtr pGroup = (m_RootGroup.GetId() == netId)? &m_RootGroup : m_RootGroup.GetChild(netId);
+			if (pGroup)
+			{
+				const bool result = SendGroup(pGroup, packet);
+				if (!result)
+					sendResult = false;
+			}
+			else
+			{
+				sendResult = false;
+			}
+		}
+	}
+
+	if ((flag == SEND_V) || (flag == SEND_T_V))
+	{
+		const bool result = SendViewer(netId, flag, packet);
+		if (!result)
+			sendResult = false;
+	}
+
+	return sendResult;
+}
+
+
+/**
+ @brief groupId의 뷰어에게 패킷을 전송한다.
+ @param groupId: group netid 일 때만 동작한다.
+ @param flag: SEND_VIEWER, SEND_TARGET_VIEWER 타입일 때 동작하는 함수다.
+ */
+bool	CServerBasic::SendViewer(netid groupId, const SEND_FLAG flag, const CPacket &packet)
+{
+	if ((flag != SEND_V) && (flag != SEND_T_V))
+		return false;
+
+	GroupPtr pGroup = (m_RootGroup.GetId() == groupId)? &m_RootGroup : m_RootGroup.GetChild(groupId);
+	if (!pGroup)
+		return false;
+
+	bool sendResult = true;
+	const bool IsGroupSend = (flag == SEND_T) || (flag == SEND_T_V);
+
+	BOOST_FOREACH(auto &viewerId, pGroup->GetViewers())
+	{
+		const bool result = SendViewerRecursive(viewerId, ((IsGroupSend)? pGroup->GetId() : INVALID_NETID), packet);
+		if (!result)
+			sendResult = result;
+	}
+
+	return sendResult;
+}
+
+
+/**
+ @brief pGroup 에 소속된 user들에게 패킷을 전송한다.
+ @param excetpGroupId 값에 해당하는 group은 제외하고 패킷을 전송한다.
+ */
+bool	CServerBasic::SendViewerRecursive(netid viewerId, const netid exceptGroupId, const CPacket &packet)
+{
+	if (exceptGroupId == viewerId)
+		return true;
+
+	GroupPtr pGroup = (m_RootGroup.GetId() == viewerId)? &m_RootGroup : m_RootGroup.GetChild(viewerId);
+	if (!pGroup)
+		return false;
+
+	if (exceptGroupId == INVALID_NETID)
+	{
+		return SendGroup(pGroup, packet);
+	}
+	else
+	{
+		if( pGroup->GetChildren().empty())
+		{
+			return SendGroup(pGroup, packet);
+		}
+		else
+		{
+			bool sendResult = true;
+			BOOST_FOREACH(auto &child, pGroup->GetChildren())
+			{
+				if (!child) continue;
+				const bool result = SendViewerRecursive(child->GetId(), exceptGroupId, packet);
+				if (!result)
+					sendResult = false;
+			}
+			return sendResult;
+		}
+	}
+}
+
+
+/**
+ @brief 
+ */
+bool	CServerBasic::SendGroup(GroupPtr pGroup, const CPacket &packet)
+{
+	RETV(!pGroup, false);
+	BOOST_FOREACH(auto &userId, pGroup->GetUsers())
+	{
+		Send(userId, SEND_TARGET, packet);
+	}
 	return true;
 }
 

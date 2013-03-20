@@ -28,7 +28,7 @@ namespace sharedmemory
 	bool		Init( const std::string &name, SHARED_TYPE type, const size_t size=65536 );
 	void		Release();
 	void*	Allocate(const std::string &name, size_t size);
-	void		DeAllocate(void *ptr);
+	bool		DeAllocate(void *ptr);
 	void*	AllocateAnonymous(const std::string &typeName, size_t size);
 
 

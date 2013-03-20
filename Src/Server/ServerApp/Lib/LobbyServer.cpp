@@ -198,11 +198,10 @@ std::string CLobbyServer::ToString()
 }
 
 
-
 //------------------------------------------------------------------------
 //  Test Packet
 //------------------------------------------------------------------------
 void CLobbyServer::ReqLogIn(netid senderId, const std::string &id, const std::string &password)
 {
-	m_LoginProtocol.AckLogIn(senderId, id, 1 );
+	m_LoginProtocol.AckLogIn(senderId, SEND_TARGET, id, 1 );
 }

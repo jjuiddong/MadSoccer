@@ -43,7 +43,7 @@ void CBasicC2SProtocolHandler::ReqGroupList(netid senderId, const netid &groupid
 		for (u_int i=0; i < children.size(); ++i)
 			gv.push_back( *children[i] );
 	}
-	m_BasicProtocol.AckGroupList(senderId, (pGroup)? 0 : 1, gv);
+	m_BasicProtocol.AckGroupList(senderId, SEND_TARGET, (pGroup)? 0 : 1, gv);
 }
 
 
@@ -58,11 +58,11 @@ void CBasicC2SProtocolHandler::ReqGroupJoin(netid senderId, const netid &groupid
 	{
 		pFrom->RemoveUser(pFrom->GetId(), senderId);
 		pTo->AddUser(pTo->GetId(), senderId);
-		m_BasicProtocol.AckGroupJoin( senderId, 0 );
+		m_BasicProtocol.AckGroupJoin( pTo->GetId(), SEND_T_V, 0 );
 	}
 	else
 	{
-		m_BasicProtocol.AckGroupJoin( senderId, 1 );
+		m_BasicProtocol.AckGroupJoin( senderId, SEND_TARGET, 1 );
 	}
 
 }
@@ -78,7 +78,7 @@ void CBasicC2SProtocolHandler::ReqGroupCreate(netid senderId, const netid &paren
 	if (!result) 
 	{
 		SAFE_DELETE(pNewGroup);
-		m_BasicProtocol.AckGroupCreate( senderId, 1, groupName, 0 );
+		m_BasicProtocol.AckGroupCreate( senderId, SEND_TARGET, 1, groupName, 0 );
 	}
 
 	GroupPtr pFrom = m_Server.m_RootGroup.GetChildFromUser( senderId );
@@ -86,15 +86,16 @@ void CBasicC2SProtocolHandler::ReqGroupCreate(netid senderId, const netid &paren
 	{
 		pFrom->RemoveUser(pFrom->GetId(), senderId);
 		pNewGroup->AddUser(pNewGroup->GetId(), senderId);
+		pNewGroup->AddViewer( m_Server.m_RootGroup.GetId() );
 
 		const netid groupId = pNewGroup->GetId();
-		m_BasicProtocol.AckGroupCreate( senderId, 0, groupName, groupId );
-		m_BasicProtocol.AckGroupJoin( senderId, 0 );
+		m_BasicProtocol.AckGroupCreate( pNewGroup->GetId(), SEND_T_V, 0, groupName, groupId );
+		m_BasicProtocol.AckGroupJoin( pNewGroup->GetId(), SEND_T_V, 0 );
 	}
 	else
 	{
 		m_Server.m_RootGroup.RemoveChild(pNewGroup->GetId());
-		m_BasicProtocol.AckGroupCreate( senderId, 1, groupName, 0 );
+		m_BasicProtocol.AckGroupCreate( senderId, SEND_TARGET, 1, groupName, 0 );
 	}
 }
 
@@ -132,8 +133,8 @@ void CBasicC2SProtocolHandler::ReqP2PConnect(netid senderId)
 		if (p2pHostClient == senderId)
 		{
 			// error!!
-			m_BasicProtocol.AckP2PConnect( senderId, error::ERR_P2PCONNECTION_ALREADY_CONNECTED, 
-				network::P2P_CLIENT, "", 0);
+			m_BasicProtocol.AckP2PConnect( senderId, SEND_TARGET, 
+				error::ERR_P2PCONNECTION_ALREADY_CONNECTED, network::P2P_CLIENT, "", 0);
 		}
 		else
 		{
@@ -142,15 +143,15 @@ void CBasicC2SProtocolHandler::ReqP2PConnect(netid senderId)
 			{
 				// error!!
 				// maybe~ never happen this accident
-				m_BasicProtocol.AckP2PConnect( senderId, error::ERR_P2PCONNECTION_HOSTCLIENT_DISAPPEAR, 
-					network::P2P_CLIENT, "", 0);
+				m_BasicProtocol.AckP2PConnect( senderId, SEND_TARGET, 
+					error::ERR_P2PCONNECTION_HOSTCLIENT_DISAPPEAR, network::P2P_CLIENT, "", 0);
 				// waitting next command. maybe good work
 			}
 			else
 			{
 				// connect p2p client
-				m_BasicProtocol.AckP2PConnect( senderId, error::ERR_SUCCESS, network::P2P_CLIENT, 
-					pHostClient->GetIp(), 2400);
+				m_BasicProtocol.AckP2PConnect( senderId, SEND_TARGET, 
+					error::ERR_SUCCESS, network::P2P_CLIENT, pHostClient->GetIp(), 2400);
 			}
 		}
 	}
@@ -160,7 +161,7 @@ void CBasicC2SProtocolHandler::ReqP2PConnect(netid senderId)
 		if (INVALID_NETID == newHostClient)
 		{
 			// error!!
-			m_BasicProtocol.AckP2PConnect( senderId, 
+			m_BasicProtocol.AckP2PConnect( senderId, SEND_TARGET, 
 				error::ERR_P2PCONNECTION_NO_MEMBER_IN_GROUP, network::P2P_CLIENT, " ", 0 );
 			return;
 		}
@@ -169,7 +170,7 @@ void CBasicC2SProtocolHandler::ReqP2PConnect(netid senderId)
 		// build p2p network
 		pClient->SetP2PState(P2P_HOST);
 		pGroup->SetNetState(CGroup::NET_STATE_P2P);
-		m_BasicProtocol.AckP2PConnect( senderId, error::ERR_SUCCESS, network::P2P_HOST, "", 2400);
+		m_BasicProtocol.AckP2PConnect( senderId, SEND_TARGET, error::ERR_SUCCESS, network::P2P_HOST, "", 2400 );
 	}
 }
 

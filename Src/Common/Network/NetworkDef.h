@@ -51,7 +51,19 @@ namespace network
 		P2P_CLIENT,
 	};
 
+	/// Send Packet Flag, composite flag
+	enum SEND_FLAG
+	{
+		SEND_TARGET,
+		SEND_VIEWER,
+		SEND_TARGET_VIEWER,
+		SEND_T = SEND_TARGET,
+		SEND_V = SEND_VIEWER,
+		SEND_T_V = SEND_TARGET_VIEWER,
+	};
+
 }
+
 typedef common::ReferencePtr<network::CServerBasic> ServerBasicPtr;
 typedef common::ReferencePtr<network::CClientBasic> ClientBasicPtr;
 typedef common::ReferencePtr<network::CClient> ClientPtr;

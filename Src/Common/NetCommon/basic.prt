@@ -5,9 +5,9 @@ protocol s2c 500
 	AckGroupJoin( int errorCode );
 	AckGroupCreate( int errorCode, std::string groupName, netid groupid );
 
-	AckP2PConnect( int errorCode, network::P2P_STATE state, std::string ip, int port );
-	AckP2PHostCreate(  int errorCode );
+	JoinMember( netid toGroupId, netid fromGroupId, netid userId );
 
+	AckP2PConnect( int errorCode, network::P2P_STATE state, std::string ip, int port );
 
 	func1( );
 	func2( std::string str );
@@ -24,7 +24,7 @@ protocol c2s 600
 	ReqGroupCreate( netid parentGroupId, std::string groupName  );
 
 	ReqP2PConnect( );
-	ReqP2PHostCreate(  bool isSuccess );
+	ReqP2PConnectTryResult(  bool isSuccess );
 
 	func2( std::string str );
 	func3( float value );

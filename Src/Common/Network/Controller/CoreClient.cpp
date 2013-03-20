@@ -118,7 +118,15 @@ void CCoreClient::Clear()
 //------------------------------------------------------------------------
 // 패킷 전송
 //------------------------------------------------------------------------
-bool CCoreClient::Send(netid netId, const CPacket &packet)
+//bool CCoreClient::Send(netid netId, const CPacket &packet)
+//{
+//}
+
+
+/**
+ @brief 
+ */
+bool	CCoreClient::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
 {
 	// send(연결된 소켓, 보낼 버퍼, 버퍼의 길이, 상태값)
 	const int result = send(m_Socket, packet.GetData(), packet.GetPacketSize(), 0);

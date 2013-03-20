@@ -19,27 +19,35 @@ login::s2c_Dispatcher::s2c_Dispatcher()
 //------------------------------------------------------------------------
 void login::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList &listeners)
 {
-	int protocolId, packetId;
-	packet >> protocolId >> packetId;
+	const int protocolId = packet.GetProtocolId();
+	const int packetId = packet.GetPacketId();
 	switch (packetId)
 	{
 	case 101:
 		{
+			ProtocolListenerList recvListener;
+			if (!ListenerMatching<s2c_ProtocolListener>(listeners, recvListener))
+				break;
+
 			std::string id;
 			packet >> id;
 			int result;
 			packet >> result;
-			SEND_LISTENER(s2c_ProtocolListener, listeners, AckLogIn(packet.GetSenderId(), id, result) );
+			SEND_LISTENER(s2c_ProtocolListener, recvListener, AckLogIn(packet.GetSenderId(), id, result) );
 		}
 		break;
 
 	case 102:
 		{
+			ProtocolListenerList recvListener;
+			if (!ListenerMatching<s2c_ProtocolListener>(listeners, recvListener))
+				break;
+
 			std::string id;
 			packet >> id;
 			int result;
 			packet >> result;
-			SEND_LISTENER(s2c_ProtocolListener, listeners, AckLogOut(packet.GetSenderId(), id, result) );
+			SEND_LISTENER(s2c_ProtocolListener, recvListener, AckLogOut(packet.GetSenderId(), id, result) );
 		}
 		break;
 
@@ -64,25 +72,33 @@ login::c2s_Dispatcher::c2s_Dispatcher()
 //------------------------------------------------------------------------
 void login::c2s_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList &listeners)
 {
-	int protocolId, packetId;
-	packet >> protocolId >> packetId;
+	const int protocolId = packet.GetProtocolId();
+	const int packetId = packet.GetPacketId();
 	switch (packetId)
 	{
 	case 201:
 		{
+			ProtocolListenerList recvListener;
+			if (!ListenerMatching<c2s_ProtocolListener>(listeners, recvListener))
+				break;
+
 			std::string id;
 			packet >> id;
 			std::string password;
 			packet >> password;
-			SEND_LISTENER(c2s_ProtocolListener, listeners, ReqLogIn(packet.GetSenderId(), id, password) );
+			SEND_LISTENER(c2s_ProtocolListener, recvListener, ReqLogIn(packet.GetSenderId(), id, password) );
 		}
 		break;
 
 	case 202:
 		{
+			ProtocolListenerList recvListener;
+			if (!ListenerMatching<c2s_ProtocolListener>(listeners, recvListener))
+				break;
+
 			std::string id;
 			packet >> id;
-			SEND_LISTENER(c2s_ProtocolListener, listeners, ReqLogOut(packet.GetSenderId(), id) );
+			SEND_LISTENER(c2s_ProtocolListener, recvListener, ReqLogOut(packet.GetSenderId(), id) );
 		}
 		break;
 

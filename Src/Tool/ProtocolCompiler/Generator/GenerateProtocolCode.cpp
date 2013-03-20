@@ -46,12 +46,12 @@ namespace compiler
 	string GetProtocolDispatcherClassName(const string &protocolName, const string &rmiName );
 
 
-	string n_className; // Protocol, ProtocolListener 공동으로 사용하고 있다.
-	string n_protocolId;
+	string g_className; // Protocol, ProtocolListener 공동으로 사용하고 있다.
+	string g_protocolId;
 	string n_fileName;
-	string n_protocolName;	// *.prt 파일의 확장자와 경로를 제외한 파일이름을 저장한다.
+	string g_protocolName;	// *.prt 파일의 확장자와 경로를 제외한 파일이름을 저장한다.
 	string n_OrigianlFileName;
-	string n_listenerClassName;
+	string g_listenerClassName;
 	string n_SrcFolderName = "Src";
 }
 
@@ -72,7 +72,7 @@ bool compiler::WriteProtocolCode(string protocolFileName, sRmi *rmi)
 	_mkdir(folder.c_str());
 	n_OrigianlFileName = folder+ "\\" + fileName;
 
-	n_protocolName = GetProtocolName(protocolFileName);
+	g_protocolName = GetProtocolName(protocolFileName);
 
 	WriteFirstProtocolClassHeader(rmi);
 	WriteFirstProtocolCpp(rmi, false);
@@ -159,7 +159,7 @@ bool compiler::WriteFirstProtocolClassHeader(sRmi *rmi)
 
 	fs << "#pragma once\n";
 	fs << endl;
-	fs << "namespace " << n_protocolName << " {\n";
+	fs << "namespace " << g_protocolName << " {\n";
 
 	WriteProtocolClassHeader(fs, rmi);
 
@@ -175,15 +175,15 @@ bool compiler::WriteProtocolClassHeader(ofstream &fs, sRmi *rmi)
 {
 	if (!rmi) return true;
 
-	n_className = GetProtocolClassName(n_protocolName, rmi->name );
-	n_protocolId = n_className + "_ID";
+	g_className = GetProtocolClassName(g_protocolName, rmi->name );
+	g_protocolId = g_className + "_ID";
 
-	fs << "static const int " << n_protocolId << "= " << rmi->number << ";\n";
+	fs << "static const int " << g_protocolId << "= " << rmi->number << ";\n";
 	fs << endl;
-	fs << "class " << n_className <<  " : public network::IProtocol\n";
+	fs << "class " << g_className <<  " : public network::IProtocol\n";
 	fs << "{" << endl;
 	fs << "public:" << endl;
-	fs << "\t" << n_className << "() : IProtocol(" << n_protocolId << ") {}\n";
+	fs << "\t" << g_className << "() : IProtocol(" << g_protocolId << ") {}\n";
 	// print protocol list
 	WriteDeclProtocolList( fs, rmi->protocol, false, false, true);
 	fs << "};\n";
@@ -211,7 +211,7 @@ bool compiler::WriteFirstListenerHeader(sRmi *rmi)
 
 	fs << "#pragma once\n";
 	fs << endl;
-	fs << "namespace " << n_protocolName << " {\n";
+	fs << "namespace " << g_protocolName << " {\n";
 
 	WriteListenerHeader(fs, rmi);
 
@@ -227,18 +227,18 @@ bool compiler::WriteListenerHeader(ofstream &fs, sRmi *rmi)
 {
 	if (!rmi) return true;
 
-	n_className = GetProtocolDispatcherClassName(n_protocolName, rmi->name);
-	n_protocolId = n_className + "_ID";
+	g_className = GetProtocolDispatcherClassName(g_protocolName, rmi->name);
+	g_protocolId = g_className + "_ID";
 
-	fs << "static const int " << n_protocolId << " = " << rmi->number << ";\n";
+	fs << "static const int " << g_protocolId << " = " << rmi->number << ";\n";
 	fs << endl;
 
 	// Protocol Dispatcher
 	fs << "// Protocol Dispatcher\n";
-	fs << "class " << n_className << ": public network::IProtocolDispatcher\n";
+	fs << "class " << g_className << ": public network::IProtocolDispatcher\n";
 	fs << "{\n";
 	fs << "public:\n";
-	fs << "\t" << n_className << "();\n";
+	fs << "\t" << g_className << "();\n";
 	fs << "protected:\n";
 	fs << "\tvirtual void Dispatch(network::CPacket &packet, const ProtocolListenerList &listeners) override;\n";
 	fs << "};\n";
@@ -246,11 +246,11 @@ bool compiler::WriteListenerHeader(ofstream &fs, sRmi *rmi)
 	fs << endl;
 
 	// CProtocolListener class
-	n_className = GetProtocolListenerClassName(n_protocolName, rmi->name);
-	string dispatcherClassName = GetProtocolDispatcherClassName(n_protocolName, rmi->name);
+	g_className = GetProtocolListenerClassName(g_protocolName, rmi->name);
+	string dispatcherClassName = GetProtocolDispatcherClassName(g_protocolName, rmi->name);
 
 	fs << "// ProtocolListener\n";
-	fs << "class " << n_className << " : virtual public network::IProtocolListener\n";
+	fs << "class " << g_className << " : virtual public network::IProtocolListener\n";
 	fs << "{\n";
 //	fs << "public:\n" );
 // 	pProtocol->name"\t%s() : IProtocolListener(%s) {}\n", n_className.c_str(), n_protocolId.c_str() );
@@ -272,7 +272,7 @@ bool compiler::WriteListenerHeader(ofstream &fs, sRmi *rmi)
 bool compiler::WriteFirstListenerCpp(sRmi *rmi, bool IsAddStdafxHeader)
 {
 	n_fileName = n_OrigianlFileName + "_ProtocolListener.cpp";
-	string headerFileName = n_protocolName + "_ProtocolListener.h";
+	string headerFileName = g_protocolName + "_ProtocolListener.h";
 
 	ofstream fs(n_fileName.c_str());
 	if (!fs.is_open())
@@ -286,7 +286,7 @@ bool compiler::WriteFirstListenerCpp(sRmi *rmi, bool IsAddStdafxHeader)
 	fs << endl;
 	fs << "using namespace network;\n";
 	fs << "using namespace marshalling;\n";
-	fs << "using namespace " << n_protocolName << ";\n";
+	fs << "using namespace " << g_protocolName << ";\n";
 	fs << endl;
 
 	WriteListenerCpp(fs, rmi);
@@ -301,14 +301,14 @@ bool compiler::WriteListenerCpp(ofstream &fs, sRmi *rmi)
 {
 	if (!rmi) return true;
 
-	n_className = GetProtocolDispatcherClassName(n_protocolName, rmi->name);
-	n_protocolId = n_className + "_ID";
+	g_className = GetProtocolDispatcherClassName(g_protocolName, rmi->name);
+	g_protocolId = g_className + "_ID";
 
 	// Dispatcher 생성자 코드 생성
-	fs << "static " << n_protocolName << "::" << n_className << " g_" << n_protocolName << "_" << n_className << ";\n";// 전역변수 선언
+	fs << "static " << g_protocolName << "::" << g_className << " g_" << g_protocolName << "_" << g_className << ";\n";// 전역변수 선언
 	fs << "\n";
-	fs << n_protocolName << "::" << n_className << "::" << n_className << "()\n";
-	fs << "\t: IProtocolDispatcher(" << n_protocolName << "::" << n_protocolId << ")\n";
+	fs << g_protocolName << "::" << g_className << "::" << g_className << "()\n";
+	fs << "\t: IProtocolDispatcher(" << g_protocolName << "::" << g_protocolId << ")\n";
 	fs << "{\n";
 	fs << "\tCNetController::Get()->AddDispatcher(this);\n";
 	fs << "}\n";
@@ -355,7 +355,7 @@ void compiler::WriteImplProtocolList(ofstream &fs, sProtocol *pProtocol, int pac
 	fs << "//------------------------------------------------------------------------\n";
 	fs << "// Protocol: " << pProtocol->name << endl;
 	fs << "//------------------------------------------------------------------------\n";
-	fs << "void " << n_protocolName << "::" << n_className << "::" << pProtocol->name << "(";
+	fs << "void " << g_protocolName << "::" << g_className << "::" << pProtocol->name << "(";
 	WriteFirstArg(fs, pProtocol->argList, true);
 	fs << ")\n";
 	fs << "{\n";
@@ -372,9 +372,15 @@ void compiler::WriteImplProtocolList(ofstream &fs, sProtocol *pProtocol, int pac
 void compiler::WriteFirstArg(ofstream &fs, sArg*p, bool isTarget)
 {
 	if (isTarget)
+	{
 		fs <<"netid targetId";
+		fs << ", const network::SEND_FLAG flag";
+	}
 	else
+	{
 		fs << "netid senderId";
+	}
+
 	WriteArg(fs, p, true);
 }
 void compiler::WriteArg(ofstream &fs, sArg *arg, bool comma)
@@ -405,9 +411,10 @@ void compiler::WriteArgVar(ofstream &fs, sArg *arg, bool comma)
 void compiler::WriteFirstImpleProtocol(ofstream &fs, sArg*p, int packetId)
 {
 	fs << "\tCPacket packet;\n";
-	fs << "\tpacket << GetId();\n";
-	fs << "\tpacket << " << packetId << ";\n";
+	fs << "\tpacket.SetProtocolId( GetId() );\n";
+	fs << "\tpacket.SetPacketId( " << packetId << " );\n";
 	WriteImpleArg(fs, p);
+	fs << "\tpacket.EndPack();\n";
 	WriteLastImpleProtocol(fs);
 }
 
@@ -428,7 +435,7 @@ void compiler::WriteImpleArg(ofstream &fs, sArg*p)
 //------------------------------------------------------------------------
 void compiler::WriteLastImpleProtocol(ofstream &fs)
 {
-	fs << "\tGetNetConnector()->Send(targetId, packet);\n";
+	fs << "\tGetNetConnector()->Send(targetId, flag, packet);\n";
 }
 
 
@@ -438,7 +445,7 @@ void compiler::WriteLastImpleProtocol(ofstream &fs)
 bool compiler::WriteFirstProtocolCpp(sRmi *rmi, bool IsAddStdafxHeader)
 {
 	n_fileName = n_OrigianlFileName + "_Protocol.cpp";
-	string headerFileName = n_protocolName + "_Protocol.h";
+	string headerFileName = g_protocolName + "_Protocol.h";
 
 	ofstream fs(n_fileName.c_str());
 	if (!fs.is_open()) return false;
@@ -448,7 +455,7 @@ bool compiler::WriteFirstProtocolCpp(sRmi *rmi, bool IsAddStdafxHeader)
 	fs << "#include \"" << headerFileName << "\"\n";
 	fs << "using namespace network;\n";
 	fs << "using namespace marshalling;\n";
-	fs << "using namespace " << n_protocolName << ";\n";
+	fs << "using namespace " << g_protocolName << ";\n";
 	fs << endl;
 
 	WriteProtocolCpp(fs, rmi);
@@ -464,7 +471,7 @@ bool compiler::WriteProtocolCpp(ofstream &fs, sRmi *rmi)
 {
 	if (!rmi) return true;
 	
-	n_className = GetProtocolClassName(n_protocolName, rmi->name);
+	g_className = GetProtocolClassName(g_protocolName, rmi->name);
 	WriteImplProtocolList( fs, rmi->protocol, rmi->number+1 );
 	fs << endl;
 	fs << endl;
@@ -478,15 +485,15 @@ bool compiler::WriteProtocolCpp(ofstream &fs, sRmi *rmi)
 //------------------------------------------------------------------------
 void compiler::WriteProtocolDispatchFunc(ofstream &fs, sRmi *rmi)
 {
-	n_listenerClassName = GetProtocolListenerClassName(n_protocolName, rmi->name);
+	g_listenerClassName = GetProtocolListenerClassName(g_protocolName, rmi->name);
 
 	fs << "//------------------------------------------------------------------------\n";
 	fs << "// 패킷의 프로토콜에 따라 해당하는 리스너의 함수를 호출한다.\n";
 	fs << "//------------------------------------------------------------------------\n";
-	fs << "void " << n_protocolName << "::" << n_className << "::Dispatch(CPacket &packet, const ProtocolListenerList &listeners)\n", 
+	fs << "void " << g_protocolName << "::" << g_className << "::Dispatch(CPacket &packet, const ProtocolListenerList &listeners)\n", 
 	fs << "{\n";
-		fs << "\tint protocolId, packetId;\n";
-		fs << "\tpacket >> protocolId >> packetId;\n";
+		fs << "\tconst int protocolId = packet.GetProtocolId();\n";
+		fs << "\tconst int packetId = packet.GetPacketId();\n";
 
 	if (rmi->protocol)
 	{
@@ -513,6 +520,12 @@ void compiler::WriteDispatchSwitchCase(ofstream &fs, sProtocol *pProtocol, int p
 
 	fs << "\tcase " << packetId << ":\n";
 	fs << "\t\t{\n";
+
+	// call ListenerMatching<T> function 
+	fs << "\t\t\tProtocolListenerList recvListener;\n";
+	fs << "\t\t\tif (!ListenerMatching<" << g_listenerClassName << ">(listeners, recvListener))\n";
+	fs << "\t\t\t\tbreak;\n";
+	fs << endl;
 
 	WriteDispatchImpleArg(fs, pProtocol->argList);
 	WriteLastDispatchSwitchCase(fs, pProtocol);
@@ -546,7 +559,7 @@ void compiler::WriteDispatchImpleArg(ofstream &fs, sArg*p)
 //------------------------------------------------------------------------
 void compiler::WriteLastDispatchSwitchCase(ofstream &fs, sProtocol *pProtocol)
 {
-	fs << "\t\t\tSEND_LISTENER(" << n_listenerClassName << ", listeners, " << pProtocol->name << "(packet.GetSenderId()";
+	fs << "\t\t\tSEND_LISTENER(" << g_listenerClassName << ", recvListener, " << pProtocol->name << "(packet.GetSenderId()";
 	WriteArgVar(fs, pProtocol->argList, true );
 	fs << ") );\n";
 }
