@@ -1,14 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="소스 파일">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="헤더 파일">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="리소스 파일">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
@@ -19,29 +11,14 @@
     <Filter Include="MFC">
       <UniqueIdentifier>{f0374fee-13f9-415a-b470-6ff807b0dd66}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{ceb12c83-0d89-4526-bee8-37fc94daceb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Control">
+      <UniqueIdentifier>{e158610c-4619-4fef-beb1-45e765e6597b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ConfigParser.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="DlgConsole.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="DlgProperty.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="ProtocolPropertyCtrl.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="ProtocolTree.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="VClient.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="VirtualClient2Dlg.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Lib\TreeCtrlBase.cpp">
       <Filter>Lib</Filter>
     </ClCompile>
@@ -51,29 +28,29 @@
     <ClCompile Include="VirtualClient2.cpp">
       <Filter>MFC</Filter>
     </ClCompile>
+    <ClCompile Include="Control\ConfigParser.cpp">
+      <Filter>Control</Filter>
+    </ClCompile>
+    <ClCompile Include="Control\VClient.cpp">
+      <Filter>Control</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\DlgLog.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\DlgProperty.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\ProtocolPropertyCtrl.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\ProtocolTree.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\VirtualClient2Dlg.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ConfigParser.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="DlgConsole.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="DlgProperty.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="ProtocolPropertyCtrl.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="ProtocolTree.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="VClient.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="VirtualClient2Dlg.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Lib\TreeCtrlBase.h">
       <Filter>Lib</Filter>
     </ClInclude>
@@ -88,6 +65,30 @@
     </ClInclude>
     <ClInclude Include="VirtualClient2.h">
       <Filter>MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="Control\ConfigParser.h">
+      <Filter>Control</Filter>
+    </ClInclude>
+    <ClInclude Include="Control\VClient.h">
+      <Filter>Control</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\DlgLog.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\DlgProperty.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\ProtocolPropertyCtrl.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\ProtocolTree.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\VirtualClient2Dlg.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\wxMemMonitor\wxMemMonitor.h">
+      <Filter>Lib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

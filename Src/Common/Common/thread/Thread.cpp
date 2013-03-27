@@ -25,8 +25,6 @@ CThread::CThread(const std::string &name) :
 //,	m_Name(name)
 {
 	strcpy_s(m_Name, name.c_str());
-	InitializeCriticalSection( &m_TaskCriticalSection );
-	InitializeCriticalSection( &m_MsgCriticalSection );
 
 }
 
@@ -68,9 +66,8 @@ void CThread::Terminate()
 //------------------------------------------------------------------------
 void CThread::Send2ThreadMessage( threadmsg::MSG msg, WPARAM wParam, LPARAM lParam, LPARAM added)
 {
-	EnterMsgSync();
+	AutoCSLock cs(m_MsgCriticalSection);
 	m_ThreadMsgs.push_back( SExternalMsg(-1, (int)msg, wParam, lParam, added) );
-	LeaveMsgSync();
 }
 
 
@@ -79,39 +76,8 @@ void CThread::Send2ThreadMessage( threadmsg::MSG msg, WPARAM wParam, LPARAM lPar
 //------------------------------------------------------------------------
 void CThread::Send2ExternalMessage( int msg, WPARAM wParam, LPARAM lParam, LPARAM added )
 {
-	EnterMsgSync();
+	AutoCSLock cs(m_MsgCriticalSection);
 	m_ExternalMsgs.push_back( SExternalMsg(-1, msg, wParam, lParam, added) );
-	LeaveMsgSync();
-}
-
-
-//------------------------------------------------------------------------
-// Task 동기화
-//------------------------------------------------------------------------
-void CThread::EnterTaskSync()
-{
-	EnterCriticalSection( &m_TaskCriticalSection );
-}
-//------------------------------------------------------------------------
-// 
-//------------------------------------------------------------------------
-void CThread::LeaveTaskSync()
-{
-	LeaveCriticalSection( &m_TaskCriticalSection );
-}
-//------------------------------------------------------------------------
-// Msg 동기화
-//------------------------------------------------------------------------
-void CThread::EnterMsgSync()
-{
-	EnterCriticalSection( &m_MsgCriticalSection );
-}
-//------------------------------------------------------------------------
-// 
-//------------------------------------------------------------------------
-void CThread::LeaveMsgSync()
-{
-	LeaveCriticalSection( &m_MsgCriticalSection );
 }
 
 
@@ -125,8 +91,8 @@ bool CThread::GetThreadMsg( OUT SExternalMsg *pMsg, MSG_OPT opt ) // opt = MSG_R
 		return false;
 
 	bool reval;
-	EnterMsgSync();
 	{
+		AutoCSLock cs(m_MsgCriticalSection);
 		if (m_ThreadMsgs.empty())
 		{
 			reval = false;
@@ -139,7 +105,6 @@ bool CThread::GetThreadMsg( OUT SExternalMsg *pMsg, MSG_OPT opt ) // opt = MSG_R
 			reval = true;
 		}
 	}
-	LeaveMsgSync();
 	return reval;
 }
 
@@ -154,8 +119,8 @@ bool CThread::GetExternalMsg( OUT SExternalMsg *pMsg, MSG_OPT opt ) // opt = MSG
 		return false;
 
 	bool reval;
-	EnterMsgSync();
 	{
+		AutoCSLock cs(m_MsgCriticalSection);
 		if (m_ExternalMsgs.empty())
 		{
 			reval = false;
@@ -168,7 +133,6 @@ bool CThread::GetExternalMsg( OUT SExternalMsg *pMsg, MSG_OPT opt ) // opt = MSG
 			reval = true;
 		}
 	}
-	LeaveMsgSync();
 	return reval;
 }
 
@@ -180,16 +144,15 @@ bool CThread::AddTask(CTask *pTask)
 {
 	if (!pTask)
 		return false;
-	EnterTaskSync();
-	{
-		TaskItor it = find_if(m_Tasks.begin(), m_Tasks.end(), IsTask(pTask->GetId()));
-		if (m_Tasks.end() != it)
-			return false; // 이미 존재한다면 실패
 
-		pTask->SetThread(this);
-		m_Tasks.push_back( pTask );
-	}
-	LeaveTaskSync();
+	AutoCSLock cs(m_TaskCriticalSection);
+	TaskItor it = find_if(m_Tasks.begin(), m_Tasks.end(), IsTask(pTask->GetId()));
+	if (m_Tasks.end() != it)
+		return false; // 이미 존재한다면 실패
+
+	pTask->SetThread(this);
+	m_Tasks.push_back( pTask );
+
 	return true;
 }
 
@@ -201,15 +164,13 @@ bool CThread::RemoveTask(CTask *pTask)
 {
 	if (!pTask)
 		return false;
-	EnterTaskSync();
-	{
-		TaskItor it = find_if(m_Tasks.begin(), m_Tasks.end(), IsTask(pTask->GetId()));
-		if (m_Tasks.end() == it)
-			return false; // 없다면 실패
+	
+	AutoCSLock cs(m_TaskCriticalSection);
+	TaskItor it = find_if(m_Tasks.begin(), m_Tasks.end(), IsTask(pTask->GetId()));
+	if (m_Tasks.end() == it)
+		return false; // 없다면 실패
 
-		m_Tasks.remove_if( IsTask(pTask->GetId()) );
-	}
-	LeaveTaskSync();
+	m_Tasks.remove_if( IsTask(pTask->GetId()) );
 	return true;
 }
 
@@ -219,27 +180,18 @@ bool CThread::RemoveTask(CTask *pTask)
 //------------------------------------------------------------------------
 void CThread::Clear()
 {
-	EnterTaskSync();
+	AutoCSLock cs(m_TaskCriticalSection);
+	TaskItor it = m_Tasks.begin();
+	while (m_Tasks.end() != it)
 	{
-		TaskItor it = m_Tasks.begin();
-		while (m_Tasks.end() != it)
-		{
-			CTask *p = *it++;
-			delete p;
-		}
-		m_Tasks.clear();
+		CTask *p = *it++;
+		delete p;
 	}
-	LeaveTaskSync();
+	m_Tasks.clear();
 
-	EnterMsgSync();
-	{
-		m_ThreadMsgs.clear();
-		m_ExternalMsgs.clear();
-	}
-	LeaveMsgSync();
-
-	DeleteCriticalSection( &m_TaskCriticalSection );
-	DeleteCriticalSection( &m_MsgCriticalSection );
+	AutoCSLock cs2(m_MsgCriticalSection);
+	m_ThreadMsgs.clear();
+	m_ExternalMsgs.clear();
 
 	CloseHandle(m_hThread);
 }
@@ -257,8 +209,8 @@ void CThread::Run()
 			break;
 
 		//1. 태스크 처리
-		EnterTaskSync();
 		{
+			AutoCSLock cs(m_TaskCriticalSection);
 			TaskItor it = m_Tasks.begin();
 			while (m_Tasks.end() != it)
 			{
@@ -275,7 +227,6 @@ void CThread::Run()
 				}
 			}
 		}
-		LeaveTaskSync();
 
 		//2. 메세지 처리
 		DispatchMessage();
@@ -302,13 +253,14 @@ void	CThread::Exit()
 //------------------------------------------------------------------------
 void CThread::DispatchMessage()
 {
-	EnterMsgSync();
+	AutoCSLock cs(m_MsgCriticalSection);
+	ExternalMsgItor it = m_ThreadMsgs.begin();
+	while (m_ThreadMsgs.end() != it)
 	{
-		ExternalMsgItor it = m_ThreadMsgs.begin();
-		while (m_ThreadMsgs.end() != it)
+		if (threadmsg::TASK_MSG == it->msg) // task message
 		{
-			if (threadmsg::TASK_MSG == it->msg) // task message
 			{
+				AutoCSLock cs(m_TaskCriticalSection);
 				TaskItor t = find_if(m_Tasks.begin(), m_Tasks.end(), 
 					boost::bind( &IsSameId<CTask>, _1, it->wParam) );
 				if (m_Tasks.end() != t)
@@ -320,15 +272,14 @@ void CThread::DispatchMessage()
 					// 목적지가 없는 메세지 error
 				}
 			}
-			else // Thread에게 온 메세지
-			{
-				MessageProc((threadmsg::MSG)it->msg, it->wParam, it->lParam, it->added);
-			}
-			++it;
 		}
-		m_ThreadMsgs.clear();
+		else // Thread에게 온 메세지
+		{
+			MessageProc((threadmsg::MSG)it->msg, it->wParam, it->lParam, it->added);
+		}
+		++it;
 	}
-	LeaveMsgSync();
+	m_ThreadMsgs.clear();
 }
 
 
@@ -342,8 +293,8 @@ void	CThread::MessageProc( threadmsg::MSG msg, WPARAM wParam, LPARAM lParam, LPA
 	case threadmsg::TERMINATE_TASK:
 		{
 			// terminate task of id wParam
-			EnterTaskSync();
 			{
+				AutoCSLock cs(m_TaskCriticalSection);
 				auto it = std::find_if( m_Tasks.begin(), m_Tasks.end(), 
 					bind( &IsSameId<common::CTask>, _1, (int)wParam) );
 				if (m_Tasks.end() != it)
@@ -352,7 +303,6 @@ void	CThread::MessageProc( threadmsg::MSG msg, WPARAM wParam, LPARAM lParam, LPA
 					m_Tasks.erase(it);
 				}
 			}
-			LeaveTaskSync();
 		}
 		break;
 	}

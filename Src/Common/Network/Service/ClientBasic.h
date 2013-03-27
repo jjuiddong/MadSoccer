@@ -34,17 +34,16 @@ namespace network
 		bool					Stop();
 		void					Disconnect();
 
+		bool					IsConnect() const;
+		void					SetEventListener(ClientEventListenerPtr ptr);
+		CoreClientPtr	GetConnectSvrClient() const;
+
 		// Overriding
 		virtual bool		AddProtocolListener(ProtocolListenerPtr pListener) override;
 		virtual bool		RemoveProtocolListener(ProtocolListenerPtr pListener) override;
 		virtual bool		Send(netid netId, const SEND_FLAG flag, const CPacket &packet) override;
 		virtual bool		SendP2P(const CPacket &packet);
 		virtual bool		SendAll(const CPacket &packet) override;
-
-		bool					IsConnect() const;
-		void					SetEventListener(ClientEventListenerPtr ptr);
-		PROCESS_TYPE GetProcessType() const;
-		CoreClientPtr	GetConnectSvrClient() const;
 
 	protected:
 		void					Clear();
@@ -58,7 +57,6 @@ namespace network
 		virtual void		OnMemberLeave(P2PClientPtr client, netid clientId) override;
 
 	protected:
-		PROCESS_TYPE m_ProcessType;		// m_pConnectSvr 와 값이 같다.
 		CCoreClient	*m_pConnectSvr;			// p2p Server와 연결되는 CoreClient
 		CP2PClient	*m_pP2p;
 		ClientEventListenerPtr m_pEventListener;
@@ -66,7 +64,6 @@ namespace network
 	};
 
 	inline void CClientBasic::SetEventListener(ClientEventListenerPtr ptr) { m_pEventListener = ptr; }
-	inline PROCESS_TYPE CClientBasic::GetProcessType() const { return m_ProcessType; }
 	inline CoreClientPtr CClientBasic::GetConnectSvrClient() const { return CoreClientPtr(m_pConnectSvr); }
 
 }

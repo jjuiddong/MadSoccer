@@ -7,7 +7,7 @@
 using namespace network;
 
 CP2PClient::CP2PClient(PROCESS_TYPE procType) :
-	m_ProcessType(procType)
+	CNetConnector(procType)
 ,	m_pP2pClient(NULL)
 ,	m_pP2pHost(NULL)
 ,	m_pEventListener(NULL)
@@ -131,9 +131,11 @@ bool	CP2PClient::CreateP2PHost( const int port )
 	if (m_pP2pHost)
 		CNetController::Get()->StopServer(m_pP2pHost);
 	else
-		m_pP2pHost = new CServerBasic(m_ProcessType);
+		m_pP2pHost = new CServerBasic(GetProcessType());
+
 	m_pP2pHost->SetEventListener(this);
-	return CNetController::Get()->StartServer(port, m_pP2pHost);;
+	m_pP2pHost->SetParent(this);
+	return CNetController::Get()->StartServer(port, m_pP2pHost);
 }
 
 
@@ -145,8 +147,10 @@ bool	CP2PClient::CreateP2PClient( const std::string &ip, const int port )
 	if (m_pP2pClient)
 		CNetController::Get()->StopCoreClient(m_pP2pClient);
 	else
-		m_pP2pClient = new CCoreClient(m_ProcessType);
+		m_pP2pClient = new CCoreClient(GetProcessType());
+
 	m_pP2pClient->SetEventListener(this);
+	m_pP2pClient->SetParent(this);
 	return CNetController::Get()->StartCoreClient(ip, port, m_pP2pClient);
 }
 

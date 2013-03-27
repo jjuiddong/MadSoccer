@@ -161,7 +161,7 @@ void CLobbyServer::OnClientJoin(ServerBasicPtr svr, netid netId)
 	pUser->SetNetId(netId);
 	if (!AddUser( pUser ))
 	{
-		LogNPrint( "AddUser() Faile!! id = %d", netId);
+		clog::Error( clog::ERROR_PROBLEM, "AddUser() Faile!! id = %d", netId);
 		delete pUser;
 	}
 }
@@ -174,7 +174,7 @@ void CLobbyServer::OnClientLeave(ServerBasicPtr svr, netid netId)
 {
 	if (!RemoveUser(netId))
 	{
-		LogNPrint( "RemoveUser() Faile!! id = %d", netId);
+		clog::Error(clog::ERROR_PROBLEM,  "RemoveUser() Faile!! id = %d", netId);
 	}
 }
 
@@ -184,16 +184,14 @@ void CLobbyServer::OnClientLeave(ServerBasicPtr svr, netid netId)
 //------------------------------------------------------------------------
 std::string CLobbyServer::ToString()
 {
+	common::AutoCSLock cs(m_CS);
+
 	std::stringstream ss;
-	EnterSync();
+	ss << "RemoteClient: " << m_RemoteClients.size() << std::endl;
+	BOOST_FOREACH(RemoteClientMap::value_type &kv, m_RemoteClients)
 	{
-		ss << "RemoteClient: " << m_RemoteClients.size() << std::endl;
-		BOOST_FOREACH(RemoteClientMap::value_type &kv, m_RemoteClients)
-		{
-			ss << "netid: " << kv.second->GetId() << ", sock: " << kv.second->GetSocket() << std::endl;			
-		}
+		ss << "netid: " << kv.second->GetId() << ", sock: " << kv.second->GetSocket() << std::endl;			
 	}
-	LeaveSync();
 	return ss.str();
 }
 

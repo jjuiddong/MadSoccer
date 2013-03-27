@@ -6,7 +6,7 @@ using namespace basic;
 //------------------------------------------------------------------------
 // Protocol: AckGroupList
 //------------------------------------------------------------------------
-void basic::s2c_Protocol::AckGroupList(netid targetId, const network::SEND_FLAG flag, const int &errorCode, const GroupVector &groups)
+void basic::s2c_Protocol::AckGroupList(netid targetId, const network::SEND_FLAG flag, const network::error::ERROR_CODE &errorCode, const GroupVector &groups)
 {
 	CPacket packet;
 	packet.SetProtocolId( GetId() );
@@ -20,12 +20,14 @@ void basic::s2c_Protocol::AckGroupList(netid targetId, const network::SEND_FLAG 
 //------------------------------------------------------------------------
 // Protocol: AckGroupJoin
 //------------------------------------------------------------------------
-void basic::s2c_Protocol::AckGroupJoin(netid targetId, const network::SEND_FLAG flag, const int &errorCode)
+void basic::s2c_Protocol::AckGroupJoin(netid targetId, const network::SEND_FLAG flag, const network::error::ERROR_CODE &errorCode, const netid &reqId, const netid &joinGroupId)
 {
 	CPacket packet;
 	packet.SetProtocolId( GetId() );
 	packet.SetPacketId( 502 );
 	packet << errorCode;
+	packet << reqId;
+	packet << joinGroupId;
 	packet.EndPack();
 	GetNetConnector()->Send(targetId, flag, packet);
 }
@@ -33,14 +35,33 @@ void basic::s2c_Protocol::AckGroupJoin(netid targetId, const network::SEND_FLAG 
 //------------------------------------------------------------------------
 // Protocol: AckGroupCreate
 //------------------------------------------------------------------------
-void basic::s2c_Protocol::AckGroupCreate(netid targetId, const network::SEND_FLAG flag, const int &errorCode, const std::string &groupName, const netid &groupid)
+void basic::s2c_Protocol::AckGroupCreate(netid targetId, const network::SEND_FLAG flag, const network::error::ERROR_CODE &errorCode, const netid &reqId, const netid &crGroupId, const netid &crParentGroupId, const std::string &groupName)
 {
 	CPacket packet;
 	packet.SetProtocolId( GetId() );
 	packet.SetPacketId( 503 );
 	packet << errorCode;
+	packet << reqId;
+	packet << crGroupId;
+	packet << crParentGroupId;
 	packet << groupName;
-	packet << groupid;
+	packet.EndPack();
+	GetNetConnector()->Send(targetId, flag, packet);
+}
+
+//------------------------------------------------------------------------
+// Protocol: AckGroupCreateBlank
+//------------------------------------------------------------------------
+void basic::s2c_Protocol::AckGroupCreateBlank(netid targetId, const network::SEND_FLAG flag, const network::error::ERROR_CODE &errorCode, const netid &reqId, const netid &crGroupId, const netid &crParentGroupId, const std::string &groupName)
+{
+	CPacket packet;
+	packet.SetProtocolId( GetId() );
+	packet.SetPacketId( 504 );
+	packet << errorCode;
+	packet << reqId;
+	packet << crGroupId;
+	packet << crParentGroupId;
+	packet << groupName;
 	packet.EndPack();
 	GetNetConnector()->Send(targetId, flag, packet);
 }
@@ -52,7 +73,7 @@ void basic::s2c_Protocol::JoinMember(netid targetId, const network::SEND_FLAG fl
 {
 	CPacket packet;
 	packet.SetProtocolId( GetId() );
-	packet.SetPacketId( 504 );
+	packet.SetPacketId( 505 );
 	packet << toGroupId;
 	packet << fromGroupId;
 	packet << userId;
@@ -63,11 +84,11 @@ void basic::s2c_Protocol::JoinMember(netid targetId, const network::SEND_FLAG fl
 //------------------------------------------------------------------------
 // Protocol: AckP2PConnect
 //------------------------------------------------------------------------
-void basic::s2c_Protocol::AckP2PConnect(netid targetId, const network::SEND_FLAG flag, const int &errorCode, const network::P2P_STATE &state, const std::string &ip, const int &port)
+void basic::s2c_Protocol::AckP2PConnect(netid targetId, const network::SEND_FLAG flag, const network::error::ERROR_CODE &errorCode, const network::P2P_STATE &state, const std::string &ip, const int &port)
 {
 	CPacket packet;
 	packet.SetProtocolId( GetId() );
-	packet.SetPacketId( 505 );
+	packet.SetPacketId( 506 );
 	packet << errorCode;
 	packet << state;
 	packet << ip;
@@ -83,7 +104,7 @@ void basic::s2c_Protocol::func1(netid targetId, const network::SEND_FLAG flag)
 {
 	CPacket packet;
 	packet.SetProtocolId( GetId() );
-	packet.SetPacketId( 506 );
+	packet.SetPacketId( 507 );
 	packet.EndPack();
 	GetNetConnector()->Send(targetId, flag, packet);
 }
@@ -95,7 +116,7 @@ void basic::s2c_Protocol::func2(netid targetId, const network::SEND_FLAG flag, c
 {
 	CPacket packet;
 	packet.SetProtocolId( GetId() );
-	packet.SetPacketId( 507 );
+	packet.SetPacketId( 508 );
 	packet << str;
 	packet.EndPack();
 	GetNetConnector()->Send(targetId, flag, packet);
@@ -108,7 +129,7 @@ void basic::s2c_Protocol::func3(netid targetId, const network::SEND_FLAG flag, c
 {
 	CPacket packet;
 	packet.SetProtocolId( GetId() );
-	packet.SetPacketId( 508 );
+	packet.SetPacketId( 509 );
 	packet << value;
 	packet.EndPack();
 	GetNetConnector()->Send(targetId, flag, packet);
@@ -121,7 +142,7 @@ void basic::s2c_Protocol::func4(netid targetId, const network::SEND_FLAG flag)
 {
 	CPacket packet;
 	packet.SetProtocolId( GetId() );
-	packet.SetPacketId( 509 );
+	packet.SetPacketId( 510 );
 	packet.EndPack();
 	GetNetConnector()->Send(targetId, flag, packet);
 }
@@ -133,7 +154,7 @@ void basic::s2c_Protocol::func5(netid targetId, const network::SEND_FLAG flag, c
 {
 	CPacket packet;
 	packet.SetProtocolId( GetId() );
-	packet.SetPacketId( 510 );
+	packet.SetPacketId( 511 );
 	packet << ok;
 	packet << a;
 	packet << b;
@@ -184,13 +205,27 @@ void basic::c2s_Protocol::ReqGroupCreate(netid targetId, const network::SEND_FLA
 }
 
 //------------------------------------------------------------------------
+// Protocol: ReqGroupCreateBlank
+//------------------------------------------------------------------------
+void basic::c2s_Protocol::ReqGroupCreateBlank(netid targetId, const network::SEND_FLAG flag, const netid &parentGroupId, const std::string &groupName)
+{
+	CPacket packet;
+	packet.SetProtocolId( GetId() );
+	packet.SetPacketId( 604 );
+	packet << parentGroupId;
+	packet << groupName;
+	packet.EndPack();
+	GetNetConnector()->Send(targetId, flag, packet);
+}
+
+//------------------------------------------------------------------------
 // Protocol: ReqP2PConnect
 //------------------------------------------------------------------------
 void basic::c2s_Protocol::ReqP2PConnect(netid targetId, const network::SEND_FLAG flag)
 {
 	CPacket packet;
 	packet.SetProtocolId( GetId() );
-	packet.SetPacketId( 604 );
+	packet.SetPacketId( 605 );
 	packet.EndPack();
 	GetNetConnector()->Send(targetId, flag, packet);
 }
@@ -202,7 +237,7 @@ void basic::c2s_Protocol::ReqP2PConnectTryResult(netid targetId, const network::
 {
 	CPacket packet;
 	packet.SetProtocolId( GetId() );
-	packet.SetPacketId( 605 );
+	packet.SetPacketId( 606 );
 	packet << isSuccess;
 	packet.EndPack();
 	GetNetConnector()->Send(targetId, flag, packet);
@@ -215,7 +250,7 @@ void basic::c2s_Protocol::func2(netid targetId, const network::SEND_FLAG flag, c
 {
 	CPacket packet;
 	packet.SetProtocolId( GetId() );
-	packet.SetPacketId( 606 );
+	packet.SetPacketId( 607 );
 	packet << str;
 	packet.EndPack();
 	GetNetConnector()->Send(targetId, flag, packet);
@@ -228,7 +263,7 @@ void basic::c2s_Protocol::func3(netid targetId, const network::SEND_FLAG flag, c
 {
 	CPacket packet;
 	packet.SetProtocolId( GetId() );
-	packet.SetPacketId( 607 );
+	packet.SetPacketId( 608 );
 	packet << value;
 	packet.EndPack();
 	GetNetConnector()->Send(targetId, flag, packet);

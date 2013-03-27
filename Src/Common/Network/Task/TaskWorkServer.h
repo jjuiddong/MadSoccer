@@ -14,7 +14,7 @@ namespace network
 {
 	DECLARE_TYPE_NAME_SCOPE(network, CTaskWorkServer)
 	class CTaskWorkServer : public common::CTask
-		, public sharedmemory::CSharedMem<CTaskWorkServer, TYPE_NAME(network::CTaskWorkServer)>
+		, public memmonitor::Monitor<CTaskWorkServer, TYPE_NAME(network::CTaskWorkServer)>
 	{
 	public:
 		CTaskWorkServer(int taskId, netid netId);
@@ -36,12 +36,17 @@ namespace network
 	//------------------------------------------------------------------------
 	inline common::CTask::RUN_RESULT CTaskWorkServer::Run()
 	{
-		ServerBasicPtr psvr = GetServer(m_ServerId);
+		if (INVALID_NETID == m_ServerId)
+			return RR_END;
+
+		ServerBasicPtr psvr = GetServer( m_ServerId );
 		if (!psvr) 
 		{
-			LogNPrint( "CTaskWorkServer::Run() Error!! not found server netid: %d", m_ServerId );
+			clog::Error( clog::ERROR_CRITICAL, "CTaskWorkServer::Run() Error!! not found server netid: %d", m_ServerId );
 			return RR_END;
 		}
+		if (!psvr->IsServerOn())
+			return RR_CONTINUE;
 
 		const timeval t = {0, 10}; // 10 millisecond
 		SFd_Set readSockets;
@@ -57,13 +62,16 @@ namespace network
 
 				char buf[ CPacket::MAX_PACKETSIZE];
 				const int result = recv(sockets.fd_array[ i], buf, sizeof(buf), 0);
+				const netid senderId = sockets.netid_array[ i];
 				if (result == INVALID_SOCKET || 0 == result)
 				{
-					psvr->RemoveRemoteClient(sockets.netid_array[ i]);
+					psvr->RemoveRemoteClientSocket(sockets.netid_array[ i]);
+
+					CPacketQueue::Get()->PushPacket( 
+						CPacketQueue::SPacketData(m_ServerId, DisconnectPacket(senderId) ));
 				}
 				else
 				{
-					const netid senderId = sockets.netid_array[ i];
 					CPacketQueue::Get()->PushPacket( 
 						CPacketQueue::SPacketData(m_ServerId, CPacket(senderId, buf)) );
 				}

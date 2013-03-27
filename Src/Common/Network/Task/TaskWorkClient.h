@@ -3,7 +3,7 @@
 // Author:  jjuiddong
 // Date:    03/03/2013
 // 
-// CoreClient 중에 PROCESS_TYPE이 SERVICE_SEPERATE_THREAD 인
+// CoreClient 중에 PROCESS_TYPE 이 SERVICE_SEPERATE_THREAD 인
 // 객체만 패킷을 받아서 Queue에 넘겨준다.
 //------------------------------------------------------------------------
 #pragma once
@@ -14,10 +14,10 @@ namespace network
 {
 	DECLARE_TYPE_NAME_SCOPE(network, CTaskWorkClient)
 	class CTaskWorkClient : public common::CTask
-		, public sharedmemory::CSharedMem<CTaskWorkClient, TYPE_NAME(network::CTaskWorkClient)>
+		, public memmonitor::Monitor<CTaskWorkClient, TYPE_NAME(network::CTaskWorkClient)>
 	{
 	public:
-		CTaskWorkClient() : CTask(3,"TaskWorkClient") {}
+		CTaskWorkClient(int id) : CTask(id,"TaskWorkClient") {}
 		virtual RUN_RESULT	Run() override;
 	};
 
@@ -45,7 +45,7 @@ namespace network
 				if (result == INVALID_SOCKET || 0 == result)
 				{
 					CPacketQueue::Get()->PushPacket( 
-						CPacketQueue::SPacketData(recvId, DisconnectPacket() ));
+						CPacketQueue::SPacketData(recvId, DisconnectPacket(recvId) ));
 				}
 				else
 				{

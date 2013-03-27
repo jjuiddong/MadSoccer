@@ -13,7 +13,7 @@ namespace network
 {
 	DECLARE_TYPE_NAME_SCOPE(network, CTaskAccept)
 	class CTaskAccept : public common::CTask
-		, public sharedmemory::CSharedMem<CTaskAccept, TYPE_NAME(network::CTaskAccept)>
+		, public memmonitor::Monitor<CTaskAccept, TYPE_NAME(network::CTaskAccept)>
 	{
 	public:
 		CTaskAccept();
@@ -44,14 +44,14 @@ namespace network
 				SOCKET remoteSocket = accept(readSockets.fd_array[ i], NULL, NULL);
 				if (remoteSocket == INVALID_SOCKET)
 				{
-					error::ErrorLog( "Client를 Accept하는 도중에 에러가 발생함" );
+					clog::Error( clog::ERROR_CRITICAL, "Client를 Accept하는 도중에 에러가 발생함" );
 					return RR_CONTINUE;
 				}
 
 				CServerBasic *pSvr = CNetController::Get()->GetServerFromSocket(readSockets.fd_array[ i]);
 				if (!pSvr)
 				{
-					error::ErrorLog( 
+					clog::Error( clog::ERROR_PROBLEM,
 						common::format("%d 소켓에 해당하는 클라이언트를 찾지못함", 
 						readSockets.fd_array[ i]) );
 					return RR_CONTINUE;

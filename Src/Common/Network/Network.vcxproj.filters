@@ -68,9 +68,6 @@
     <ClCompile Include="DataStructure\User.cpp">
       <Filter>Lib\DataStructure</Filter>
     </ClCompile>
-    <ClCompile Include="ErrReport\Error.cpp">
-      <Filter>Lib\ErrReport</Filter>
-    </ClCompile>
     <ClCompile Include="Controller\CoreClient.cpp">
       <Filter>Lib\Controller</Filter>
     </ClCompile>
@@ -131,6 +128,9 @@
     <ClCompile Include="ProtocolHandler\BasicS2CProtocolHandler.cpp">
       <Filter>Lib\ProtocolHandler</Filter>
     </ClCompile>
+    <ClCompile Include="ProtocolHandler\BasicProtocolDispatcher.cpp">
+      <Filter>Lib\ProtocolHandler</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Network.h">
@@ -168,9 +168,6 @@
     </ClInclude>
     <ClInclude Include="DataStructure\User.h">
       <Filter>Lib\DataStructure</Filter>
-    </ClInclude>
-    <ClInclude Include="ErrReport\Error.h">
-      <Filter>Lib\ErrReport</Filter>
     </ClInclude>
     <ClInclude Include="Interface\Protocol.h">
       <Filter>Lib\Interface</Filter>
@@ -284,6 +281,9 @@
       <Filter>Lib\ProtocolHandler</Filter>
     </ClInclude>
     <ClInclude Include="ProtocolHandler\BasicS2CProtocolHandler.h">
+      <Filter>Lib\ProtocolHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="ProtocolHandler\BasicProtocolDispatcher.h">
       <Filter>Lib\ProtocolHandler</Filter>
     </ClInclude>
   </ItemGroup>

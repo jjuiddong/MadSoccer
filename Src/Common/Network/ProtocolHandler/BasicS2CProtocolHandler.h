@@ -20,7 +20,7 @@ namespace network
 		virtual ~CBasicS2CProtocolHandler();
 
 		// Network Handler
-		virtual void AckP2PConnect(netid senderId, const int &errorCode, const network::P2P_STATE &state, const std::string &ip, const int &port) override;
+		virtual void AckP2PConnect(netid senderId, const network::error::ERROR_CODE &errorCode, const network::P2P_STATE &state, const std::string &ip, const int &port) override;
 
 	protected:
 		CClient							&m_Client;		/// CClient Reference 

@@ -6,10 +6,8 @@
 // 쓰레드 라이브러리
 // CTask 를 실행한다.
 //------------------------------------------------------------------------
-
 #pragma once
 
-#include "../etc/SharedMemory.h"
 
 namespace common
 {
@@ -28,8 +26,7 @@ namespace common
 	}
 
 	class CTask;
-	DECLARE_TYPE_NAME_SCOPE(common, CThread)
-	class CThread : public sharedmemory::CSharedMem<CThread, TYPE_NAME(CThread)>
+	class CThread
 	{
 	public:
 		enum MSG_OPT
@@ -69,23 +66,19 @@ namespace common
 
 	protected:
 		void			DispatchMessage();
-		void			EnterTaskSync();
-		void			LeaveTaskSync();
-		void			EnterMsgSync();
-		void			LeaveMsgSync();
 
 	protected:
 		STATE					m_State;
 		HANDLE				m_hThread;
 		char						m_Name[ 32];
 
-		// 외부 쓰레드에서 접근하기 때문에 동기화 코드가 들어가 있다.
-		CRITICAL_SECTION	m_TaskCriticalSection;
+		/// 외부 쓰레드에서 접근하기 때문에 동기화 코드가 들어가 있다.
+		CriticalSection		m_TaskCriticalSection;
 		TaskList				m_Tasks;
 
-		CRITICAL_SECTION	m_MsgCriticalSection;
-		ExternalMsgList		m_ThreadMsgs;				// 쓰레드가 받은 메세지
-		ExternalMsgList		m_ExternalMsgs;				// 쓰레드에서 외부로 보낸 메세지
+		CriticalSection		m_MsgCriticalSection;
+		ExternalMsgList	m_ThreadMsgs;				/// 쓰레드가 받은 메세지
+		ExternalMsgList	m_ExternalMsgs;				/// 쓰레드에서 외부로 보낸 메세지
 	};
 
 	inline CThread::STATE	CThread::GetState() const { return m_State; }

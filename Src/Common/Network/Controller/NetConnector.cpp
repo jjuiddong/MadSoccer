@@ -5,8 +5,11 @@
 using namespace network;
 
 
-CNetConnector::CNetConnector() :
+CNetConnector::CNetConnector(PROCESS_TYPE procType) :
 	m_Id(common::GenerateId())
+,	m_ProcessType(procType)
+,	m_pParent(NULL)
+,	m_hThread(NULL)
 {
 
 }

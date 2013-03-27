@@ -29,7 +29,7 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 			if (!ListenerMatching<s2c_ProtocolListener>(listeners, recvListener))
 				break;
 
-			int errorCode;
+			network::error::ERROR_CODE errorCode;
 			packet >> errorCode;
 			GroupVector groups;
 			packet >> groups;
@@ -43,9 +43,13 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 			if (!ListenerMatching<s2c_ProtocolListener>(listeners, recvListener))
 				break;
 
-			int errorCode;
+			network::error::ERROR_CODE errorCode;
 			packet >> errorCode;
-			SEND_LISTENER(s2c_ProtocolListener, recvListener, AckGroupJoin(packet.GetSenderId(), errorCode) );
+			netid reqId;
+			packet >> reqId;
+			netid joinGroupId;
+			packet >> joinGroupId;
+			SEND_LISTENER(s2c_ProtocolListener, recvListener, AckGroupJoin(packet.GetSenderId(), errorCode, reqId, joinGroupId) );
 		}
 		break;
 
@@ -55,17 +59,41 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 			if (!ListenerMatching<s2c_ProtocolListener>(listeners, recvListener))
 				break;
 
-			int errorCode;
+			network::error::ERROR_CODE errorCode;
 			packet >> errorCode;
+			netid reqId;
+			packet >> reqId;
+			netid crGroupId;
+			packet >> crGroupId;
+			netid crParentGroupId;
+			packet >> crParentGroupId;
 			std::string groupName;
 			packet >> groupName;
-			netid groupid;
-			packet >> groupid;
-			SEND_LISTENER(s2c_ProtocolListener, recvListener, AckGroupCreate(packet.GetSenderId(), errorCode, groupName, groupid) );
+			SEND_LISTENER(s2c_ProtocolListener, recvListener, AckGroupCreate(packet.GetSenderId(), errorCode, reqId, crGroupId, crParentGroupId, groupName) );
 		}
 		break;
 
 	case 504:
+		{
+			ProtocolListenerList recvListener;
+			if (!ListenerMatching<s2c_ProtocolListener>(listeners, recvListener))
+				break;
+
+			network::error::ERROR_CODE errorCode;
+			packet >> errorCode;
+			netid reqId;
+			packet >> reqId;
+			netid crGroupId;
+			packet >> crGroupId;
+			netid crParentGroupId;
+			packet >> crParentGroupId;
+			std::string groupName;
+			packet >> groupName;
+			SEND_LISTENER(s2c_ProtocolListener, recvListener, AckGroupCreateBlank(packet.GetSenderId(), errorCode, reqId, crGroupId, crParentGroupId, groupName) );
+		}
+		break;
+
+	case 505:
 		{
 			ProtocolListenerList recvListener;
 			if (!ListenerMatching<s2c_ProtocolListener>(listeners, recvListener))
@@ -81,13 +109,13 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		}
 		break;
 
-	case 505:
+	case 506:
 		{
 			ProtocolListenerList recvListener;
 			if (!ListenerMatching<s2c_ProtocolListener>(listeners, recvListener))
 				break;
 
-			int errorCode;
+			network::error::ERROR_CODE errorCode;
 			packet >> errorCode;
 			network::P2P_STATE state;
 			packet >> state;
@@ -99,7 +127,7 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		}
 		break;
 
-	case 506:
+	case 507:
 		{
 			ProtocolListenerList recvListener;
 			if (!ListenerMatching<s2c_ProtocolListener>(listeners, recvListener))
@@ -109,7 +137,7 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		}
 		break;
 
-	case 507:
+	case 508:
 		{
 			ProtocolListenerList recvListener;
 			if (!ListenerMatching<s2c_ProtocolListener>(listeners, recvListener))
@@ -121,7 +149,7 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		}
 		break;
 
-	case 508:
+	case 509:
 		{
 			ProtocolListenerList recvListener;
 			if (!ListenerMatching<s2c_ProtocolListener>(listeners, recvListener))
@@ -133,7 +161,7 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		}
 		break;
 
-	case 509:
+	case 510:
 		{
 			ProtocolListenerList recvListener;
 			if (!ListenerMatching<s2c_ProtocolListener>(listeners, recvListener))
@@ -143,7 +171,7 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		}
 		break;
 
-	case 510:
+	case 511:
 		{
 			ProtocolListenerList recvListener;
 			if (!ListenerMatching<s2c_ProtocolListener>(listeners, recvListener))
@@ -228,11 +256,25 @@ void basic::c2s_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 			if (!ListenerMatching<c2s_ProtocolListener>(listeners, recvListener))
 				break;
 
-			SEND_LISTENER(c2s_ProtocolListener, recvListener, ReqP2PConnect(packet.GetSenderId()) );
+			netid parentGroupId;
+			packet >> parentGroupId;
+			std::string groupName;
+			packet >> groupName;
+			SEND_LISTENER(c2s_ProtocolListener, recvListener, ReqGroupCreateBlank(packet.GetSenderId(), parentGroupId, groupName) );
 		}
 		break;
 
 	case 605:
+		{
+			ProtocolListenerList recvListener;
+			if (!ListenerMatching<c2s_ProtocolListener>(listeners, recvListener))
+				break;
+
+			SEND_LISTENER(c2s_ProtocolListener, recvListener, ReqP2PConnect(packet.GetSenderId()) );
+		}
+		break;
+
+	case 606:
 		{
 			ProtocolListenerList recvListener;
 			if (!ListenerMatching<c2s_ProtocolListener>(listeners, recvListener))
@@ -244,7 +286,7 @@ void basic::c2s_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		}
 		break;
 
-	case 606:
+	case 607:
 		{
 			ProtocolListenerList recvListener;
 			if (!ListenerMatching<c2s_ProtocolListener>(listeners, recvListener))
@@ -256,7 +298,7 @@ void basic::c2s_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		}
 		break;
 
-	case 607:
+	case 608:
 		{
 			ProtocolListenerList recvListener;
 			if (!ListenerMatching<c2s_ProtocolListener>(listeners, recvListener))

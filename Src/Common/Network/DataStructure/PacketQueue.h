@@ -13,63 +13,72 @@ namespace network
 	class CPacketQueue : public common::CSingleton<CPacketQueue>
 	{
 	public:
-		CPacketQueue() { InitializeCriticalSection(&m_CriticalSection); }
-		virtual ~CPacketQueue() { Clear(); }
 		friend class CTaskLogic;
 		friend class CTaskWork;
 		friend class CTaskWorkClient;
 		friend class CTaskWorkServer;
+		friend class CNetController;
+		friend class CCoreClient;
+		friend class CServerBasic;
 
 		struct SPacketData
 		{
-			netid rcvNetId;	// 패킷을 받은 서버의 netid
+			netid rcvNetId;	/// 패킷을 받은 서버의 netid
 			CPacket packet;
 			SPacketData() {}
 			SPacketData(netid _rcvNetId, const CPacket &p) : rcvNetId(_rcvNetId), packet(p) {}
 		};
 
 	protected:
-		typedef std::list<SPacketData> PacketQueue;
-		typedef PacketQueue::iterator PacketItor;
-
-		PacketQueue			m_Packets;				// 네트워크로부터 받은 패킷을 저장한다.
-		CRITICAL_SECTION	m_CriticalSection;
+		void PushPacket(const SPacketData &data);
+		bool PopPacket(OUT SPacketData &data);
+		bool PopPacket(netid recvId, OUT SPacketData &data);
 
 	protected:
-		void PushPacket(const SPacketData &data)
-		{
-			EnterSync();
-			m_Packets.push_back(data);
-			LeaveSync();
-		}
-
-		bool PopPacket(OUT SPacketData &data)
-		{
-			EnterSync();
-			if (m_Packets.empty())
-			{
-				LeaveSync();
-				return false;
-			}
-			data = m_Packets.front();
-			m_Packets.pop_front();
-			LeaveSync();
-			return true;
-		}
-
-		void Clear()
-		{
-			DeleteCriticalSection(&m_CriticalSection);
-		}
-
-		void EnterSync()
-		{
-			EnterCriticalSection(&m_CriticalSection);
-		}
-
-		void LeaveSync()
-		{
-			LeaveCriticalSection(&m_CriticalSection);
-		}
+		typedef std::list<SPacketData> PacketQueue;
+		typedef PacketQueue::iterator PacketItor;
+		PacketQueue	m_Packets;				/// 네트워크로부터 받은 패킷을 저장한다.
+		common::CriticalSection	m_CS;
 	};
+
+
+	/// Push Packet 
+	inline void CPacketQueue::PushPacket(const SPacketData &data)
+	{
+		common::AutoCSLock cs(m_CS);
+		m_Packets.push_back(data);
+	}
+
+	/// Pop Packet
+	inline bool CPacketQueue::PopPacket(OUT SPacketData &data)
+	{
+		common::AutoCSLock cs(m_CS);
+		if (m_Packets.empty())
+			return false;
+		data = m_Packets.front();
+		m_Packets.pop_front();
+		return true;
+	}
+
+	/// Pop Packet whose recvId
+	inline bool CPacketQueue::PopPacket(netid recvId, OUT SPacketData &data)
+	{
+		common::AutoCSLock cs(m_CS);
+		if (m_Packets.empty())
+			return false;
+
+		PacketItor it = m_Packets.begin();
+		while (m_Packets.end() != it)
+		{
+			if (it->rcvNetId == recvId)
+			{
+				data = *it;
+				m_Packets.erase(it);
+				return true;
+			}
+			++it;
+		}
+		return false;
+	}
+
 }

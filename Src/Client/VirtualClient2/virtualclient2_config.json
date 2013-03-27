@@ -3,6 +3,12 @@
 	"protocol directory" : "D:\\Project\\GitHub\\MadSoccer\\Src\\Common\\NetCommon",
 	"1_connect::c2s::Connect::ip" : "127.0.0.1",
 	"1_connect::c2s::Connect::port" : "2334",
-	"basic::c2s::ReqGroupList::groupid" : "-1"
+	"basic::c2s::ReqGroupList::groupid" : "-1",
+	"basic::c2s::ReqGroupJoin::groupid" : "-1",
+	"basic::c2s::ReqGroupCreate::parentGroupId" : "-1",
 
+	"collapse" : [
+		"basic::s2c",  
+		"login::s2c"
+	]
 }

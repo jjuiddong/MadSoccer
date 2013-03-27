@@ -22,7 +22,8 @@ CBasicS2CProtocolHandler::~CBasicS2CProtocolHandler()
  @brief Acknowlege packet of RequestP2PConnect 
  */
 void CBasicS2CProtocolHandler::AckP2PConnect(
-	netid senderId, const int &errorCode, const network::P2P_STATE &state, const std::string &ip, const int &port)
+	netid senderId, const network::error::ERROR_CODE &errorCode, const network::P2P_STATE &state, 
+	const std::string &ip, const int &port)
 {
 	if (errorCode != error::ERR_SUCCESS)
 		return; // todo: error process

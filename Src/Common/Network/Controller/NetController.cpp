@@ -23,7 +23,7 @@ CNetController::CNetController() :
 ,	m_pSeperateServerWorkThread(NULL)
 ,	m_pSeperateClientWorkThread(NULL)
 {
-	InitializeCriticalSection(&m_CriticalSection);
+
 }
 
 CNetController::~CNetController() 
@@ -58,6 +58,8 @@ bool CNetController::Init(int logicThreadCount)
 		//	pWorkThread->Start();
 	}
 
+	m_UniqueValue = rand();
+
 	return true;
 }
 
@@ -86,7 +88,7 @@ bool CNetController::StartServer(int port, ServerBasicPtr pSvr)
 	Servers::iterator it = m_Servers.find(pSvr->GetNetId());
 	if (m_Servers.end() != it)
 	{
-		error::ErrorLog("이미 실행되고 있는 서버를 다시 실행시켰음");
+		clog::Error( clog::ERROR_WARNING, "이미 실행되고 있는 서버를 다시 실행시켰음");
 		return false;
 	}
 
@@ -97,12 +99,12 @@ bool CNetController::StartServer(int port, ServerBasicPtr pSvr)
 		return false;
 
 	// 서버 시작에 관련된 코드 추가
-	LogNPrint( "%d Server Start", pSvr->GetNetId() );
+	clog::Log( clog::LOG_F_N_O, "%d Server Start", pSvr->GetNetId() );
 	m_Servers.insert( Servers::value_type(pSvr->GetNetId(), pSvr) );
 	m_ServerSockets.insert( ServerSockets::value_type(pSvr->GetSocket(), pSvr) );
 
 	// Work 쓰레드 생성
-	common::CThread *pWorkTread = CreateWorkThread(SERVER, pSvr->GetProcessType());
+	common::CThread *pWorkTread = AllocWorkThread(SERVER, pSvr.Get());
 	if (pWorkTread)
 	{
 		pWorkTread->AddTask( new CTaskWorkServer((int)pSvr->GetSocket(), pSvr->GetNetId()) );
@@ -123,6 +125,21 @@ bool CNetController::StopServer(ServerBasicPtr pSvr)
 	if (!pSvr)
 		return false;
 
+	// Stop Server Work Thread
+	DisconnectServer(pSvr);
+	return true;
+}
+
+
+/**
+ @brief Remove Server
+	Call from CServerBasic::Disconnect()
+ */
+bool	 CNetController::RemoveServer(ServerBasicPtr pSvr)
+{
+	if (!pSvr)
+		return false;
+
 	if (!m_Servers.remove(pSvr->GetNetId()))
 		return false;
 
@@ -130,13 +147,6 @@ bool CNetController::StopServer(ServerBasicPtr pSvr)
 	if (m_ServerSockets.end() != it)
 		m_ServerSockets.erase(it);
 
-	// Stop Server Work Thread
-	if (pSvr->GetProcessType() == SERVICE_EXCLUSIVE_THREAD)
-	{
-		ThreadPtr ptr = GetThread( m_WorkThreads, pSvr->GetThreadHandle() );
-		if (ptr)
-			ptr->Send2ThreadMessage( common::threadmsg::TERMINATE_TASK, pSvr->GetSocket(), 0 );
-	}
 	return true;
 }
 
@@ -176,7 +186,7 @@ bool CNetController::StartClient(const std::string &ip, int port, ClientBasicPtr
 	if (pClt->IsConnect())
 		pClt->Disconnect(); // 연결을 끊고
 
-	LogNPrint( "%d Client Start", pClt->GetNetId() );
+	clog::Log( clog::LOG_F_N_O, "%d Client Start", pClt->GetNetId() );
 	if (!StartCoreClient(ip, port, pClt->GetConnectSvrClient()))
 		return false;
 
@@ -198,8 +208,22 @@ bool CNetController::StopClient(ClientBasicPtr pClt)
 	if (!pClt)
 		return false;
 
+	DisconnectClient(pClt);
+	return true;
+}
+
+
+/**
+ @brief Remove Client
+ Call from CClientBasic::Disconnect
+ */
+bool	CNetController::RemoveClient(ClientBasicPtr pClt)
+{
+	if (!pClt)
+		return false;
+
 	if (!m_Clients.remove(pClt->GetNetId()))
-		LogNPrint( "StopClient Error!! netid: %d client", pClt->GetNetId());
+		clog::Error( clog::ERROR_PROBLEM, "StopClient Error!! netid: %d client", pClt->GetNetId());
 
 	ClientItor it = m_ClientSockets.find(pClt->GetSocket());
 	if (m_ClientSockets.end() == it)
@@ -246,10 +270,10 @@ bool CNetController::StartCoreClient(const std::string &ip, int port, CoreClient
 		pClt->Disconnect(); // 연결을 끊고
 
 	// 서버 시작에 관련된 코드 추가
-	LogNPrint( "%d Client Start", pClt->GetNetId() );
+	clog::Log( clog::LOG_F_N_O, "%d Client Start", pClt->GetNetId() );
  	if (!CNetLauncher::Get()->LaunchCoreClient(pClt, ip, port))
  	{
- 		LogNPrint( "StartCoreClient Error!! Launch Fail ip: %s, port: %d", ip.c_str(), port);
+ 		clog::Error( clog::ERROR_CRITICAL, "StartCoreClient Error!! Launch Fail ip: %s, port: %d", ip.c_str(), port);
  		return false;
  	}
 
@@ -260,7 +284,7 @@ bool CNetController::StartCoreClient(const std::string &ip, int port, CoreClient
 	}
 
 	// CoreClient 속성에 따라 Thread에서 패킷을 처리할지, 유저 루프에서 처리할지 결정한다.
-	common::CThread *pWorkTread = CreateWorkThread(CLIENT, pClt->GetProcessType());
+	common::CThread *pWorkTread = AllocWorkThread(CLIENT, pClt.Get());
 	if (pWorkTread)
 	{
 		if (SERVICE_EXCLUSIVE_THREAD == pClt->GetProcessType())
@@ -279,11 +303,24 @@ bool CNetController::StartCoreClient(const std::string &ip, int port, CoreClient
 //------------------------------------------------------------------------
 bool CNetController::StopCoreClient(CoreClientPtr pClt)
 {
+	RETV(!pClt, false);
+
+	DisconnectCoreClient(pClt);
+	return true;
+}
+
+
+/**
+ @brief Remove CoreClient
+ Call from CCoreClient::Disconnect()
+ */
+bool	CNetController::RemoveCoreClient(CoreClientPtr  pClt)
+{
 	if (!pClt)
 		return false;
 
 	if (!m_CoreClients.remove(pClt->GetNetId()))
-		LogNPrint( "StopClient Error!! netid: %d client", pClt->GetNetId());
+		clog::Error( clog::ERROR_PROBLEM, "StopClient Error!! netid: %d client", pClt->GetNetId());
 
 	// Stop CoreClient Work Thread
 	if (pClt->GetProcessType() == SERVICE_EXCLUSIVE_THREAD)
@@ -292,7 +329,6 @@ bool CNetController::StopCoreClient(CoreClientPtr pClt)
 		if (ptr)
 			ptr->Send2ThreadMessage( common::threadmsg::TERMINATE_TASK, pClt->GetSocket(), 0 );
 	}
-
 	return true;
 }
 
@@ -317,7 +353,7 @@ void CNetController::AddDispatcher(IProtocolDispatcher *pDispatcher)
 	DispatcherItor it = m_Dispatchers.find(pDispatcher->GetId());
 	if (m_Dispatchers.end() != it)
 	{
-		error::ErrorLog( 
+		clog::Error( clog::ERROR_WARNING, 
 			common::format( "같은 ProtocolDispatcher를 이미 등록했습니다. DispatcherId: %d ", pDispatcher->GetId()) );
 		return; // 이미 존재한다면 실패
 	}
@@ -342,17 +378,15 @@ IProtocolDispatcher* CNetController::GetDispatcher(int protocolID)
 //------------------------------------------------------------------------
 void CNetController::MakeServersFDSET( fd_set *pfdset )
 {
-	EnterSync();
+	common::AutoCSLock cs(m_CS);
+
+	FD_ZERO(pfdset);
+	BOOST_FOREACH(ServerSockets::value_type &kv, m_ServerSockets)
 	{
-		FD_ZERO(pfdset);
-		BOOST_FOREACH(ServerSockets::value_type &kv, m_ServerSockets)
-		{
-			FD_SET( kv.second->GetSocket(), pfdset );
-			//pfdset->fd_array[ pfdset->fd_count] = kv.second->GetSocket();
-			//++pfdset->fd_count;
-		}
+		FD_SET( kv.second->GetSocket(), pfdset );
+		//pfdset->fd_array[ pfdset->fd_count] = kv.second->GetSocket();
+		//++pfdset->fd_count;
 	}
-	LeaveSync();
 }
 
 
@@ -361,38 +395,18 @@ void CNetController::MakeServersFDSET( fd_set *pfdset )
 //------------------------------------------------------------------------
 void	CNetController::MakeCoreClientsFDSET( PROCESS_TYPE procType, SFd_Set *pfdset)
 {
-	EnterSync();
+	common::AutoCSLock cs(m_CS);
+
+	FD_ZERO(pfdset);
+	BOOST_FOREACH(CoreClientPtr &ptr, m_CoreClients.m_Seq)
 	{
-		FD_ZERO(pfdset);
-		BOOST_FOREACH(CoreClientPtr &ptr, m_CoreClients.m_Seq)
+		if (!ptr) continue;
+		if (ptr->GetProcessType() == procType)
 		{
-			if (!ptr) continue;
-			if (ptr->GetProcessType() == procType)
-			{
-				FD_SET( ptr->GetSocket(), pfdset );
-				pfdset->netid_array[ pfdset->fd_count-1] = ptr->GetNetId();
-			}
+			FD_SET( ptr->GetSocket(), pfdset );
+			pfdset->netid_array[ pfdset->fd_count-1] = ptr->GetNetId();
 		}
 	}
-	LeaveSync();
-}
-
-
-//------------------------------------------------------------------------
-// 동기화 시작
-//------------------------------------------------------------------------
-void CNetController::EnterSync()
-{
-	EnterCriticalSection( &m_CriticalSection );
-}
-
-
-//------------------------------------------------------------------------
-// 동기화 끝
-//------------------------------------------------------------------------
-void CNetController::LeaveSync()
-{
-	LeaveCriticalSection( &m_CriticalSection );
 }
 
 
@@ -421,8 +435,6 @@ void CNetController::Clear()
 	m_pSeperateClientWorkThread = NULL;
 
 	CPacketQueue::Release();
-
-	DeleteCriticalSection(&m_CriticalSection);
 
 }
 
@@ -465,57 +477,63 @@ std::string CNetController::ToString()
 //------------------------------------------------------------------------
 // 해당되는 타입의 WorkThread를 리턴한다.
 //------------------------------------------------------------------------
-ThreadPtr CNetController::CreateWorkThread(SERVICE_TYPE serviceType, PROCESS_TYPE processType)
+ThreadPtr CNetController::AllocWorkThread(SERVICE_TYPE serviceType, NetConnectorPtr pConnector)
 {
+	RETV(!pConnector, NULL);
+
+	const PROCESS_TYPE processType = pConnector->GetProcessType();
+
 	switch (serviceType)
 	{
 	case CLIENT:
-		switch (processType)
+		if (SERVICE_SEPERATE_THREAD == processType)
 		{
-		case USER_LOOP: return NULL;
-		case SERVICE_SEPERATE_THREAD:
-			{
-				if (m_pSeperateClientWorkThread)
-					return m_pSeperateClientWorkThread;
+			if (m_pSeperateClientWorkThread)
+				return m_pSeperateClientWorkThread;
 
-				common::CThread *pThread = new common::CThread("ClientWorkThread");
-				m_pSeperateClientWorkThread = pThread;
-				m_WorkThreads.push_back(pThread);
-				return pThread;
-			}
-			break;
-		case SERVICE_EXCLUSIVE_THREAD:
-			{
-				common::CThread *pThread = new common::CThread("ClientWorkThread");
-				m_WorkThreads.push_back(pThread);
-				return pThread;
-			}
-			break;
+			common::CThread *pThread = new common::CThread("ClientWorkThread");
+			m_pSeperateClientWorkThread = pThread;
+
+			pThread->AddTask( new CTaskWorkClient(0) );
+			m_WorkThreads.push_back(pThread);
+			return pThread;
 		}
 		break;
 
 	case SERVER:
-		switch (processType)
+		if (SERVICE_SEPERATE_THREAD == processType)
 		{
-		case USER_LOOP: return NULL;
-		case SERVICE_SEPERATE_THREAD:
-			{
-				if (m_pSeperateServerWorkThread)
-					return m_pSeperateServerWorkThread;
+			if (m_pSeperateServerWorkThread)
+				return m_pSeperateServerWorkThread;
 
-				common::CThread *pThread = new common::CThread("ServerWorkThread");
-				m_pSeperateServerWorkThread = pThread;
-				m_WorkThreads.push_back(pThread);
-				return pThread;
-			}
-			break;
-		case SERVICE_EXCLUSIVE_THREAD:
-			{
-				common::CThread *pThread = new common::CThread("ServerWorkThread");
-				m_WorkThreads.push_back(pThread);
-				return pThread;
-			}
-			break;
+			common::CThread *pThread = new common::CThread("ServerWorkThread");
+			m_pSeperateServerWorkThread = pThread;
+			m_WorkThreads.push_back(pThread);
+			return pThread;
+		}
+		break;
+	}
+
+	/// etc
+	switch (processType)
+	{
+	case USER_LOOP: return NULL;
+	case SERVICE_EXCLUSIVE_THREAD:
+		{
+			std::string threadName = (serviceType==SERVER)? "ServerWorkThread" : "ClientWorkThread";
+			common::CThread *pThread = new common::CThread(threadName);
+			m_WorkThreads.push_back(pThread);
+			return pThread;
+		}
+		break;
+
+	case SERVICE_CHILD_THREAD:
+		{
+			NetConnectorPtr pParent = pConnector->GetParent();
+			if (!pParent)
+				return NULL;
+			ThreadPtr ptr = GetThread( m_WorkThreads, pParent->GetThreadHandle() );
+			return ptr;
 		}
 		break;
 	}
@@ -534,4 +552,79 @@ ThreadPtr CNetController::GetThread( const ThreadList &threads, HANDLE hThreadHa
 	if (threads.end() == it)
 		return NULL;
 	return *it;
+}
+
+
+/**
+ @brief Call Disconnect function through the thread message communication
+ */
+void	CNetController::DisconnectServer(ServerBasicPtr pSvr)
+{
+	RET(!pSvr);
+
+	CPacketQueue::Get()->PushPacket( 
+		CPacketQueue::SPacketData(pSvr->GetNetId(), DisconnectPacket(pSvr->GetNetId()) ));
+
+	switch (pSvr->GetProcessType())
+	{
+	case USER_LOOP: 
+	case SERVICE_SEPERATE_THREAD:  
+		break;
+
+	case SERVICE_EXCLUSIVE_THREAD:
+		{
+			ThreadPtr ptr = GetThread( m_WorkThreads, pSvr->GetThreadHandle() );
+			if (!ptr) break;
+			ptr->Send2ThreadMessage( common::threadmsg::TERMINATE_TASK, pSvr->GetSocket(), 0 );
+		}
+		break;
+	}
+}
+
+
+/**
+ @brief Call Disconnect function through the thread message communication
+ */
+void	CNetController::DisconnectClient(ClientBasicPtr pClt)
+{
+	RET(!pClt);
+
+	CPacketQueue::Get()->PushPacket( 
+		CPacketQueue::SPacketData(pClt->GetNetId(), DisconnectPacket(pClt->GetNetId()) ));
+
+	switch (pClt->GetProcessType())
+	{
+	case USER_LOOP: 
+	case SERVICE_SEPERATE_THREAD: 
+	case SERVICE_EXCLUSIVE_THREAD:
+		break;
+	}
+}
+
+
+/**
+ @brief Call Disconnect function through the thread message communication
+ */
+void	CNetController::DisconnectCoreClient(CoreClientPtr pCoreClt)
+{
+	RET(!pCoreClt);
+
+	CPacketQueue::Get()->PushPacket( 
+		CPacketQueue::SPacketData(pCoreClt->GetNetId(), DisconnectPacket(pCoreClt->GetNetId()) ));
+
+	switch (pCoreClt->GetProcessType())
+	{
+	case USER_LOOP: 
+	case SERVICE_SEPERATE_THREAD: 
+		break;
+
+	// 아직 이 case 가 호출될 일은 없다. core client 는 현재 user loop에서만 동작한다.
+	case SERVICE_EXCLUSIVE_THREAD:
+		{
+			ThreadPtr ptr = GetThread( m_WorkThreads, pCoreClt->GetThreadHandle() );
+			if (!ptr) break;
+			ptr->Send2ThreadMessage( common::threadmsg::TERMINATE_TASK, pCoreClt->GetSocket(), 0 );
+		}
+		break;
+	}
 }

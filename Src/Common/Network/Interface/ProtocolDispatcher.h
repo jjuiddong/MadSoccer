@@ -19,11 +19,10 @@ namespace network
 		friend class CCoreClient;
 		friend class CServerBasic;
 
-	public:
 		int GetId() const;
+
 	protected:
 		virtual void Dispatch(CPacket &packet, const ProtocolListenerList &listeners)=0;
-	protected:
 		int m_Id; // 대응하는 protocol ID 와 동일한 값이다.
 	};
 

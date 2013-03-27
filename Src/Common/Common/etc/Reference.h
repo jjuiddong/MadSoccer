@@ -34,7 +34,7 @@ namespace common
 		bool operator==(T *p) const { return m_p == p; }
 		bool operator==(const ReferencePtr<T> &rhs) const { return m_p == rhs.m_p; }
 		operator T*() { return m_p; } // casting operator
-		const T* Get() const { return m_p; }
+		T* Get() const { return m_p; }
 // 		operator unspecified_bool_type() const 
 // 		{ 
 // 			return (m_p == NULL)?  0 : &this_type::m_p;

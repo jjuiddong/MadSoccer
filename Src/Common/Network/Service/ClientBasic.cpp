@@ -10,15 +10,17 @@ using namespace network;
 
 
 CClientBasic::CClientBasic(PROCESS_TYPE procType) :
-m_ProcessType(procType)
-	,	m_pP2p(NULL)
-	,	m_pConnectSvr(NULL)
-	,	m_pEventListener(NULL)
+	CNetConnector(procType)
+,	m_pP2p(NULL)
+,	m_pConnectSvr(NULL)
+,	m_pEventListener(NULL)
 {
-	m_pConnectSvr = new CCoreClient(procType);
+	m_pConnectSvr = new CCoreClient(SERVICE_CHILD_THREAD);
 	m_pConnectSvr->SetEventListener(this);
-	m_pP2p = new CP2PClient(procType);
+	m_pConnectSvr->SetParent(this);
+	m_pP2p = new CP2PClient(SERVICE_CHILD_THREAD);
 	m_pP2p->SetEventListener(this);
+	m_pP2p->SetParent(this);
 
 }
 
@@ -62,12 +64,11 @@ bool CClientBasic::Proc()
 //------------------------------------------------------------------------
 void CClientBasic::Disconnect()
 {
+	CNetController::Get()->RemoveClient(this);
 	if (m_pConnectSvr)
 		m_pConnectSvr->Disconnect();
 	if (m_pP2p)
 		m_pP2p->Disconnect();
-
-	//OnDisconnect();
 }
 
 

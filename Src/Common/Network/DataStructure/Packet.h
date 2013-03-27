@@ -61,7 +61,6 @@ namespace network
 		char			m_Data[ MAX_PACKETSIZE];
 		int			m_ReadIdx;
 		int			m_WriteIdx;
-
 	};
 
 	inline netid CPacket::GetSenderId() const { return m_SenderId; }
@@ -151,10 +150,10 @@ namespace network
 	// Global Packet Functions
 	enum RESERVED_PACKETID
 	{
-		PACKETID_CONNECT = 0,
+		PACKETID_CONNECT = 1,
 		PACKETID_DISCONNECT,
 	};
 
-	CPacket DisconnectPacket();
+	CPacket DisconnectPacket(netid netId);
 
 }

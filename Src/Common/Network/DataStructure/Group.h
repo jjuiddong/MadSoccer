@@ -32,14 +32,17 @@ namespace network
 		};
 
 		CGroup(GroupPtr parent=NULL, const std::string &name="");
+		CGroup(const CGroup &rhs);
 		virtual ~CGroup();
 
 		// Group
 		bool				AddChild( CGroup *pGroup );
 		bool				RemoveChild( netid groupId );
 		GroupPtr		GetChild( netid groupId );
+		GroupPtr		GetChildandThis( netid groupId );
 		GroupPtr		GetChildFromUser( netid userId );
 		const Groups::VectorType&	GetChildren() const;
+		bool				IsTerminal();
 
 		// User
 		bool				AddUser(netid groupId, netid userId);
@@ -55,6 +58,7 @@ namespace network
 		const NetIdes& GetViewers() const;
 
 		bool operator==(const CGroup &rhs) const;
+		CGroup& operator=(const CGroup &rhs);
 
 		netid						GetId() const;
 		const std::string&	GetName() const;

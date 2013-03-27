@@ -8,6 +8,7 @@
 #include "NetCommon/Src/basic_Protocol.cpp"
 
 using namespace network;
+using namespace network::error;
 
 CBasicC2SProtocolHandler::CBasicC2SProtocolHandler( CServer &svr ) :
 	m_Server(svr)
@@ -32,7 +33,7 @@ void CBasicC2SProtocolHandler::ReqGroupList(netid senderId, const netid &groupid
 	}
 	else
 	{
-		pGroup = m_Server.m_RootGroup.GetChild(groupid);
+		pGroup = m_Server.m_RootGroup.GetChildandThis(groupid);
 	}
 
 	GroupVector gv;
@@ -43,7 +44,8 @@ void CBasicC2SProtocolHandler::ReqGroupList(netid senderId, const netid &groupid
 		for (u_int i=0; i < children.size(); ++i)
 			gv.push_back( *children[i] );
 	}
-	m_BasicProtocol.AckGroupList(senderId, SEND_TARGET, (pGroup)? 0 : 1, gv);
+	m_BasicProtocol.AckGroupList(senderId, SEND_TARGET, 
+		(pGroup)? ERR_SUCCESS : ERR_GROUPLIST_NOT_FOUND_GROUP, gv);
 }
 
 
@@ -52,51 +54,126 @@ void CBasicC2SProtocolHandler::ReqGroupList(netid senderId, const netid &groupid
 //------------------------------------------------------------------------
 void CBasicC2SProtocolHandler::ReqGroupJoin(netid senderId, const netid &groupid)
 {
-	GroupPtr pTo = m_Server.m_RootGroup.GetChild(groupid);
+	GroupPtr pTo = (groupid == INVALID_NETID)? &m_Server.m_RootGroup : m_Server.m_RootGroup.GetChildandThis(groupid);
 	GroupPtr pFrom = m_Server.m_RootGroup.GetChildFromUser( senderId );
 	if (pTo && pFrom)
 	{
+		if (pTo->GetId() == pFrom->GetId())
+		{// Error!!
+			m_BasicProtocol.AckGroupJoin( senderId, SEND_TARGET, ERR_GROUPJOIN_ALREADY_SAME_GROUP, 
+				senderId, groupid );
+			return;
+		}
+		if (!pTo->IsTerminal())
+		{// Error!!
+			m_BasicProtocol.AckGroupJoin( senderId, SEND_TARGET, ERR_GROUPJOIN_NOT_TERMINAL, 
+				senderId, groupid );
+		}
+
 		pFrom->RemoveUser(pFrom->GetId(), senderId);
 		pTo->AddUser(pTo->GetId(), senderId);
-		m_BasicProtocol.AckGroupJoin( pTo->GetId(), SEND_T_V, 0 );
+		m_BasicProtocol.AckGroupJoin( pTo->GetId(), SEND_T_V, ERR_SUCCESS , senderId, groupid );
+		m_BasicProtocol.AckGroupJoin( pFrom->GetId(), SEND_T_V, ERR_SUCCESS , senderId, groupid );
 	}
 	else
-	{
-		m_BasicProtocol.AckGroupJoin( senderId, SEND_TARGET, 1 );
+	{ // Error!!
+		m_BasicProtocol.AckGroupJoin( senderId, SEND_TARGET, ERR_NOT_FOUND_GROUP, senderId, groupid );
 	}
-
 }
 
 
 //------------------------------------------------------------------------
 // Request Create Group 
+// 이미 group에 유저가 있으면 group이 자식으로 group을 생성할 수 없다.
+// 만약 이렇게 하려면, group에 소속된 멤버들을 새 그룹에 소속시키고, 
+// 현재 group의 자식으로 추가해야 한다. (단말 노드에만 유저가 소속될 수 있다.)
 //------------------------------------------------------------------------
 void CBasicC2SProtocolHandler::ReqGroupCreate(netid senderId, const netid &parentGroupId, const std::string &groupName)
 {
-	CGroup *pNewGroup = new CGroup(&m_Server.m_RootGroup, groupName);
-	const bool result = m_Server.m_RootGroup.AddChild( pNewGroup );
+	GroupPtr pParentGroup, pFrom, pNewGroup;
+	if (!CreateBlankGroup(senderId, parentGroupId, groupName, pParentGroup, pFrom, pNewGroup))
+		return;
+
+	pFrom->RemoveUser(pFrom->GetId(), senderId);
+	pNewGroup->AddUser(pNewGroup->GetId(), senderId);
+	pNewGroup->AddViewer( pParentGroup->GetId() );
+
+	const netid groupId = pNewGroup->GetId();
+	m_BasicProtocol.AckGroupCreate( pNewGroup->GetId(), SEND_T_V, ERR_SUCCESS, 
+		senderId, groupId, parentGroupId, groupName);
+	m_BasicProtocol.AckGroupJoin( pNewGroup->GetId(), SEND_T_V, ERR_SUCCESS,
+		senderId, groupId);
+}
+
+
+/**
+ @brief Create Blank Group
+ */
+void CBasicC2SProtocolHandler::ReqGroupCreateBlank(
+	netid senderId, const netid &parentGroupId, const std::string &groupName)
+{
+	GroupPtr pParentGroup, pFrom, pNewGroup;
+	if (!CreateBlankGroup(senderId, parentGroupId, groupName, pParentGroup, pFrom, pNewGroup))
+		return;
+
+	pNewGroup->AddViewer( pParentGroup->GetId() );
+	m_BasicProtocol.AckGroupCreateBlank( pNewGroup->GetId(), SEND_T_V, ERR_SUCCESS, 
+		senderId, pNewGroup->GetId(), parentGroupId, groupName);
+}
+
+
+/**
+ @brief Create Blank Group
+ 
+ 이미 group에 유저가 있으면 group이 자식으로 group을 생성할 수 없다.
+ 만약 이렇게 하려면, group에 소속된 멤버들을 새 그룹에 소속시키고, 
+ 현재 group의 자식으로 추가해야 한다. 
+ 
+ 단말 노드에는 그룹을 추가할 수 없다.
+ 단말 노드에만 유저가 소속될 수 있다. 
+ */
+bool	CBasicC2SProtocolHandler::CreateBlankGroup( 
+	netid senderId, const netid &parentGroupId, const std::string &groupName, 
+	OUT GroupPtr &pParent, OUT GroupPtr &pFrom, OUT GroupPtr &pNew )
+{
+	GroupPtr pParentGroup = 
+		(parentGroupId == INVALID_NETID)? &m_Server.m_RootGroup : m_Server.m_RootGroup.GetChildandThis(parentGroupId);
+	if (!pParentGroup)
+	{ // Error!!
+		m_BasicProtocol.AckGroupCreate( senderId, SEND_TARGET, 
+			ERR_GROUPCREATE_NOT_FOUND_PARENT_GROUP, senderId, 0, parentGroupId, groupName );
+		return false;
+	}
+
+	if (pParentGroup->IsTerminal())
+	{// Error!!
+		m_BasicProtocol.AckGroupCreate( senderId, SEND_TARGET, 
+			ERR_GROUPCREATE_PARENT_TERMINALNODE, senderId, 0, parentGroupId, groupName );
+		return false;
+	}
+
+	GroupPtr pFromGroup = m_Server.m_RootGroup.GetChildFromUser( senderId );
+	if (!pFromGroup)
+	{ // Error!!
+		m_BasicProtocol.AckGroupCreate( senderId, SEND_TARGET, ERR_NOT_FOUND_USER, 
+			senderId, 0, parentGroupId, groupName );
+		return false;
+	}
+
+	CGroup *pNewGroup = new CGroup(pParentGroup, groupName);
+	const bool result = pParentGroup->AddChild( pNewGroup );
 	if (!result) 
-	{
+	{ // Error!!
 		SAFE_DELETE(pNewGroup);
-		m_BasicProtocol.AckGroupCreate( senderId, SEND_TARGET, 1, groupName, 0 );
+		m_BasicProtocol.AckGroupCreate( senderId, SEND_TARGET, ERR_GROUPCREATE_NOR_MORE_CREATE_GROUP, 
+			senderId, 0, parentGroupId, groupName );
+		return false;
 	}
 
-	GroupPtr pFrom = m_Server.m_RootGroup.GetChildFromUser( senderId );
-	if (pFrom)
-	{
-		pFrom->RemoveUser(pFrom->GetId(), senderId);
-		pNewGroup->AddUser(pNewGroup->GetId(), senderId);
-		pNewGroup->AddViewer( m_Server.m_RootGroup.GetId() );
-
-		const netid groupId = pNewGroup->GetId();
-		m_BasicProtocol.AckGroupCreate( pNewGroup->GetId(), SEND_T_V, 0, groupName, groupId );
-		m_BasicProtocol.AckGroupJoin( pNewGroup->GetId(), SEND_T_V, 0 );
-	}
-	else
-	{
-		m_Server.m_RootGroup.RemoveChild(pNewGroup->GetId());
-		m_BasicProtocol.AckGroupCreate( senderId, SEND_TARGET, 1, groupName, 0 );
-	}
+	pParent = pParentGroup;
+	pFrom = pFromGroup;
+	pNew = pNewGroup;
+	return true;
 }
 
 
@@ -114,14 +191,14 @@ void CBasicC2SProtocolHandler::ReqP2PConnect(netid senderId)
 	CRemoteClient* pClient = m_Server.GetRemoteClient(senderId);
 	if (!pClient)
 	{
-		LogNPrint( "not found remoteclient netid: %d", senderId );
+		clog::Error( clog::ERROR_PROBLEM, "not found remoteclient netid: %d", senderId );
 		return;
 	}
 
 	GroupPtr pGroup = m_Server.m_RootGroup.GetChildFromUser(senderId);
 	if (!pGroup)
 	{
-		LogNPrint( "not found group from user id: %d", senderId );
+		clog::Error( clog::ERROR_PROBLEM, "not found group from user id: %d", senderId );
 		return;
 	}
 

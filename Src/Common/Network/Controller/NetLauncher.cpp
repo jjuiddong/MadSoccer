@@ -20,7 +20,7 @@ bool CNetLauncher::LaunchServer(ServerBasicPtr pSvr, int port)
 	int nRet = WSAStartup(wVersionRequested, &wsaData);
 	if(wsaData.wVersion != wVersionRequested)
 	{
-		error::ErrorLog( "윈속 버전이 틀렸습니다" );
+		clog::Error( clog::ERROR_CRITICAL,  "윈속 버전이 틀렸습니다" );
 		return false;
 	}
 
@@ -28,7 +28,7 @@ bool CNetLauncher::LaunchServer(ServerBasicPtr pSvr, int port)
 	SOCKET svrSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if(svrSocket == INVALID_SOCKET)
 	{
-		error::ErrorLog( "socket() error" );
+		clog::Error( clog::ERROR_CRITICAL, "socket() error" );
 		return false;
 	}
 
@@ -43,7 +43,7 @@ bool CNetLauncher::LaunchServer(ServerBasicPtr pSvr, int port)
 	nRet = bind(svrSocket, (LPSOCKADDR)&saServer, sizeof(struct sockaddr) );
 	if(nRet == SOCKET_ERROR)
 	{
-		error::ErrorLog( "bind() error" );
+		clog::Error( clog::ERROR_CRITICAL,  "bind() error" );
 		closesocket(svrSocket);
 		return false;
 	}
@@ -55,7 +55,7 @@ bool CNetLauncher::LaunchServer(ServerBasicPtr pSvr, int port)
 	nRet = gethostname( szBuf, sizeof(szBuf) );
 	if (nRet == SOCKET_ERROR)
 	{
-		error::ErrorLog( "gethostname() error" );
+		clog::Error( clog::ERROR_CRITICAL, "gethostname() error" );
 		closesocket(svrSocket);
 		return false;
 	}
@@ -65,7 +65,7 @@ bool CNetLauncher::LaunchServer(ServerBasicPtr pSvr, int port)
 
 	if (nRet == SOCKET_ERROR)
 	{
-		error::ErrorLog( "listen() error" );
+		clog::Error( clog::ERROR_CRITICAL, "listen() error" );
 		closesocket(svrSocket);
 		return false;
 	}
@@ -108,7 +108,7 @@ bool	CNetLauncher::LaunchCoreClient(CoreClientPtr pClient, const std::string &ip
 	int nRet = WSAStartup(wVersionRequested, &wsaData);
 	if (wsaData.wVersion != wVersionRequested)
 	{
-		error::ErrorLog( "윈속 버전이 틀렸습니다" );
+		clog::Error( clog::ERROR_CRITICAL, "윈속 버전이 틀렸습니다" );
 		return false;
 	}
 
@@ -116,7 +116,7 @@ bool	CNetLauncher::LaunchCoreClient(CoreClientPtr pClient, const std::string &ip
 	lpHostEntry = gethostbyname(ip.c_str());
 	if(lpHostEntry == NULL)
 	{
-		error::ErrorLog( "gethostbyname() error" );
+		clog::Error( clog::ERROR_CRITICAL, "gethostbyname() error" );
 		return false;
 	}
 
@@ -125,7 +125,7 @@ bool	CNetLauncher::LaunchCoreClient(CoreClientPtr pClient, const std::string &ip
 	SOCKET clientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (clientSocket == INVALID_SOCKET)
 	{
-		error::ErrorLog( "socket() error" );
+		clog::Error( clog::ERROR_CRITICAL, "socket() error" );
 		return false;
 	}
 
@@ -140,7 +140,7 @@ bool	CNetLauncher::LaunchCoreClient(CoreClientPtr pClient, const std::string &ip
 	nRet = connect(clientSocket, (LPSOCKADDR)&saServer, sizeof(struct sockaddr) );
 	if(nRet == SOCKET_ERROR)
 	{
-		error::ErrorLog( "connect() error" );
+		clog::Error( clog::ERROR_CRITICAL, "connect() error" );
 		closesocket(clientSocket);
 		return false;
 	}

@@ -18,11 +18,16 @@ namespace network
 		CBasicC2SProtocolHandler( CServer &svr );
 		virtual ~CBasicC2SProtocolHandler();
 
-		// Overriding
+		// Network Protocol Handler
 		virtual void ReqGroupList(netid senderId, const netid &groupid) override;
 		virtual void ReqGroupJoin(netid senderId, const netid &groupid) override;
 		virtual void ReqGroupCreate(netid senderId, const netid &parentGroupId, const std::string &groupName) override;
+		virtual void ReqGroupCreateBlank(netid senderId, const netid &parentGroupId, const std::string &groupName) override;
 		virtual void ReqP2PConnect(netid senderId) override;
+
+	protected:
+		bool			CreateBlankGroup( netid senderId, const netid &parentGroupId, const std::string &groupName, 
+			OUT GroupPtr &pParent, OUT GroupPtr &pFrom, OUT GroupPtr &pNew );
 
 	protected:
 		CServer						&m_Server;		/// CServer Reference 

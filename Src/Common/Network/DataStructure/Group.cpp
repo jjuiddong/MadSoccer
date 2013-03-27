@@ -11,9 +11,16 @@ CGroup::CGroup(GroupPtr parent, const std::string &name)  :
 ,	m_pParent(parent)
 ,	m_NetState(NET_STATE_SERVERCLIENT)
 {
-	m_Users.reserve(32);
+	//m_Users.reserve(32);
 
 }
+
+// copy constructor
+CGroup::CGroup(const CGroup &rhs)
+{
+	this->operator=(rhs);
+}
+
 
 CGroup::~CGroup() 
 {
@@ -90,6 +97,17 @@ GroupPtr CGroup::GetChild(netid groupId )
 }
 
 
+/**
+ @brief return child or current of object same id
+ */
+GroupPtr	CGroup::GetChildandThis( netid groupId )
+{
+	if (GetId() == groupId)
+		return this;
+	return GetChild(groupId);
+}
+
+
 //------------------------------------------------------------------------
 // return leaf group node object
 //------------------------------------------------------------------------
@@ -109,6 +127,17 @@ GroupPtr CGroup::GetChildFromUser( netid userId )
 	}
 
 	return this;
+}
+
+
+/**
+ @brief if this group is terminal node, return true or return false
+ */
+bool	CGroup::IsTerminal()
+{
+	if ((m_Children.size() <= 0) && (m_Users.size() > 0))
+		return true;
+	return false;
 }
 
 
@@ -244,4 +273,24 @@ void CGroup::Clear()
 	}
 	m_Children.clear();
 	m_Users.clear();
+}
+
+
+/**
+ @brief 
+ */
+CGroup& CGroup::operator=(const CGroup &rhs)
+{
+	if (this != &rhs)
+	{
+		m_Id = rhs.m_Id;
+		m_ParentId = rhs.m_ParentId;
+		m_Name = rhs.m_Name;
+		m_Tag = rhs.m_Tag;
+		m_NetState = rhs.m_NetState;
+		m_pParent = NULL;
+		m_Users = rhs.m_Users;
+		m_Viewers = rhs.m_Viewers;
+	}
+	return *this;
 }

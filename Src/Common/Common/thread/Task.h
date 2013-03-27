@@ -19,7 +19,7 @@ namespace common
 			RR_CONTINUE,	// 태스크 계속실행
 		};
 
-		CTask(int id, const std::string &name="");// : m_Id(id), m_pThread(NULL), m_Name(name) {}
+		CTask(int id, const std::string &name="");
 		virtual ~CTask() {}
 		int GetId() const;
 		const std::string& GetName() const;

@@ -9,7 +9,7 @@
 
 DECLARE_TYPE_NAME(CRoomLobby)
 class CRoomLobby : public network::CRoom
-			, public sharedmemory::CSharedMem<CRoomLobby, TYPE_NAME(CRoomLobby)>
+			, public memmonitor::Monitor<CRoomLobby, TYPE_NAME(CRoomLobby)>
 {
 public:
 	CRoomLobby() {}

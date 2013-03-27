@@ -17,7 +17,7 @@ class CLobbyServer : public network::CServer
 					, public network::IServerEventListener
 					, public login::c2s_ProtocolListener
 					//, public basic::c2s_ProtocolListener
-					, public sharedmemory::CSharedMem<CLobbyServer, TYPE_NAME(CLobbyServer)>
+					, public memmonitor::Monitor<CLobbyServer, TYPE_NAME(CLobbyServer)>
 {
 public:
 	CLobbyServer();

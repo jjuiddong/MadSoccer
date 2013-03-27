@@ -56,10 +56,13 @@
 #include "Network/Network.h"
 
 class CDlgProperty;
-class CDlgConsole;
+class CDlgLog;
 class CProtocolTree;
+class CVirtualClient2Dlg;
 typedef common::ReferencePtr<CDlgProperty> DlgPropertyPtr;
-typedef common::ReferencePtr<CDlgConsole> DlgConsolePtr;
+typedef common::ReferencePtr<CDlgLog> DlgConsolePtr;
 typedef common::ReferencePtr<CProtocolTree> DlgTreePtr;
+typedef common::ReferencePtr<CVirtualClient2Dlg> DlgVClientPtr;
 
-#include "VClient.h"
+#include "Control/VClient.h"
+

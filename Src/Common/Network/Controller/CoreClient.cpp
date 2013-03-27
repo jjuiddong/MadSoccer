@@ -4,14 +4,15 @@
 #include "../Interface/Protocol.h"
 #include "../Service/AllProtocolListener.h"
 #include "NetController.h"
+#include "../ProtocolHandler/BasicProtocolDispatcher.h"
+#include "../DataStructure/PacketQueue.h"
 
 
 using namespace network;
 
 CCoreClient::CCoreClient(PROCESS_TYPE procType) :
-	m_ServiceType(procType)
+	CNetConnector(procType)
 ,	m_pEventListener(NULL)
-,	m_hThread(NULL)
 {
 	m_ServerIP = "127.0.0.1";
 	m_ServerPort = 2333;
@@ -30,7 +31,7 @@ CCoreClient::~CCoreClient()
 bool CCoreClient::Stop()
 {
 	CNetController::Get()->StopCoreClient(this);
-	Disconnect();
+	//Disconnect();
 	return true;
 }
 
@@ -55,41 +56,67 @@ bool CCoreClient::Proc()
 		const int result = recv( readSockets.fd_array[ 0], buf, sizeof(buf), 0);
 		if (result == SOCKET_ERROR || result == 0) // 받은 패킷사이즈가 0이면 서버와 끊겼다는 의미다.
 		{
-			Disconnect();
+			CPacketQueue::Get()->PushPacket( 
+				CPacketQueue::SPacketData(GetNetId(), DisconnectPacket(GetNetId()) ));
 		}
 		else
 		{
-			const ProtocolListenerList &listeners = GetProtocolListeners();
-			if (listeners.empty())
-			{
-				error::ErrorLog( " CClientCore::Proc():: 프로토콜 리스너가 없습니다.");
-			}
-			else
-			{
-				CPacket packet(SERVER_NETID,buf);
-
-				// 모든 패킷을 받아서 처리하는 리스너에게 패킷을 보낸다.
-				all::Dispatcher allDispatcher;
-				allDispatcher.Dispatch(packet, listeners);
-				// 
-
-				const int protocolId = packet.GetProtocolId();
-				IProtocolDispatcher *pDispatcher = CNetController::Get()->GetDispatcher(protocolId);
-				if (!pDispatcher)
-				{
-					error::ErrorLog( 
-						common::format(" CClientCore::Proc() %d 에 해당하는 프로토콜 디스패쳐가 없습니다.", 
-						protocolId) );
-				}
-				else
-				{
-					pDispatcher->Dispatch(packet, listeners);
-				}
-			}
+			CPacketQueue::Get()->PushPacket( 
+				CPacketQueue::SPacketData(GetNetId(), CPacket(SERVER_NETID,buf)) );
 		}
 	}
 
+	/// Dispatch Packet
+	DispatchPacket();
+
 	return true;
+}
+
+
+/**
+ @brief Packet 전송
+ */
+void	CCoreClient::DispatchPacket()
+{
+	CPacketQueue::SPacketData packetData;
+	if (!CPacketQueue::Get()->PopPacket(GetNetId(), packetData))
+		return;
+
+	const ProtocolListenerList &listeners = GetProtocolListeners();
+	if (listeners.empty())
+	{
+		clog::Error( clog::ERROR_CRITICAL, " CClientCore::DispatchPacket() 프로토콜 리스너가 없습니다. netid: %d", GetNetId());
+	}
+	else
+	{
+		// 모든 패킷을 받아서 처리하는 리스너에게 패킷을 보낸다.
+		all::Dispatcher allDispatcher;
+		allDispatcher.Dispatch(packetData.packet, listeners);
+		// 
+
+		const int protocolId = packetData.packet.GetProtocolId();
+
+		// 기본 프로토콜 처리
+		if (protocolId == 0)
+		{
+			basic_protocol::ClientDispatcher dispatcher;
+			dispatcher.Dispatch( packetData.packet, this );
+			return;
+		}
+
+		IProtocolDispatcher *pDispatcher = CNetController::Get()->GetDispatcher(protocolId);
+		if (!pDispatcher)
+		{
+			clog::Error( clog::ERROR_WARNING, 
+				common::format(" CClientCore::DispatchPacket() %d 에 해당하는 프로토콜 디스패쳐가 없습니다.", 
+				protocolId) );
+		}
+		else
+		{
+			pDispatcher->Dispatch(packetData.packet, listeners);
+		}
+	}
+
 }
 
 
@@ -99,6 +126,7 @@ bool CCoreClient::Proc()
 void CCoreClient::Disconnect()
 {
 	m_IsConnect = false;
+	CNetController::Get()->RemoveCoreClient(this);
 	ClearConnection();
 	OnDisconnect();
 }
@@ -115,21 +143,13 @@ void CCoreClient::Clear()
 }
 
 
-//------------------------------------------------------------------------
-// 패킷 전송
-//------------------------------------------------------------------------
-//bool CCoreClient::Send(netid netId, const CPacket &packet)
-//{
-//}
-
-
 /**
  @brief 
  */
 bool	CCoreClient::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
 {
 	// send(연결된 소켓, 보낼 버퍼, 버퍼의 길이, 상태값)
-	const int result = send(m_Socket, packet.GetData(), packet.GetPacketSize(), 0);
+	const int result = send(m_Socket, packet.GetData(), CPacket::MAX_PACKETSIZE, 0);
 	if (result == INVALID_SOCKET)
 	{
 		Disconnect();

@@ -9,7 +9,7 @@
 
 DECLARE_TYPE_NAME(CUserLobby)
 class CUserLobby : public network::CUser
-			, public sharedmemory::CSharedMem<CUserLobby, TYPE_NAME(CUserLobby)>
+			, public memmonitor::Monitor<CUserLobby, TYPE_NAME(CUserLobby)>
 {
 public:
 	CUserLobby() {}

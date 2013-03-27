@@ -16,6 +16,11 @@
 #include "Lib/ServerLauncher.h"
 #include "Lib/LobbyServer.h"
 
+
+#include "wxMemMonitorLib/wxMemMonitor.h"
+MEMORYMONITOR_INNER_PROCESS();
+
+
 CChatServer *g_pChatServer;
 CLobbyServer *g_pLobbyServer;
 
@@ -56,7 +61,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		return FALSE;
 	}
 
-	sharedmemory::Init("MadSoccerServer", sharedmemory::SHARED_SERVER, 20480 );
+	//sharedmemory::Init("MadSoccerServer", sharedmemory::SHARED_SERVER, 20480 );
+	memmonitor::Init(memmonitor::INNER_PROCESS, hInstance, "madsoccer_server_monitor.json" );
+
 	CServerLauncher::Get()->Launcher( "script/serverstartconfig.txt" );
 	network::Init(1);
 
@@ -95,10 +102,14 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		}
 	}
 
+	g_pLobbyServer->Stop();
+
 	network::Clear();
 	delete g_pLobbyServer;
 	delete g_pChatServer;
-	sharedmemory::Release();
+	//sharedmemory::Release();
+	memmonitor::Cleanup();
+
 	return (int) msg.wParam;
 }
 
@@ -232,6 +243,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 			case VK_ESCAPE:
 				PostQuitMessage(0);
+				break;
+			case VK_F5:
+				g_pLobbyServer->Stop();
 				break;
 			}
 		}

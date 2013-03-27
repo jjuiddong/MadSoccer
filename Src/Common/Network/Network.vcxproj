@@ -85,6 +85,7 @@
     <ClCompile Include="Marshalling\MarshallingGroup.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="ProtocolHandler\BasicC2SProtocolHandler.cpp" />
+    <ClCompile Include="ProtocolHandler\BasicProtocolDispatcher.cpp" />
     <ClCompile Include="ProtocolHandler\BasicS2CProtocolHandler.cpp" />
     <ClCompile Include="Service\ClientBasic.cpp" />
     <ClCompile Include="Service\ServerBasic.cpp" />
@@ -97,7 +98,6 @@
     <ClCompile Include="DataStructure\Packet.cpp" />
     <ClCompile Include="DataStructure\Room.cpp" />
     <ClCompile Include="DataStructure\User.cpp" />
-    <ClCompile Include="ErrReport\Error.cpp" />
     <ClCompile Include="Controller\CoreClient.cpp" />
     <ClCompile Include="Controller\NetConnector.cpp" />
     <ClCompile Include="Controller\NetController.cpp" />
@@ -125,6 +125,7 @@
     <ClInclude Include="NetworkDef.h" />
     <ClInclude Include="NetworkUtility.h" />
     <ClInclude Include="ProtocolHandler\BasicC2SProtocolHandler.h" />
+    <ClInclude Include="ProtocolHandler\BasicProtocolDispatcher.h" />
     <ClInclude Include="ProtocolHandler\BasicS2CProtocolHandler.h" />
     <ClInclude Include="Service\ClientBasic.h" />
     <ClInclude Include="Service\ServerBasic.h" />
@@ -137,7 +138,6 @@
     <ClInclude Include="DataStructure\PacketQueue.h" />
     <ClInclude Include="DataStructure\Room.h" />
     <ClInclude Include="DataStructure\User.h" />
-    <ClInclude Include="ErrReport\Error.h" />
     <ClInclude Include="Interface\Protocol.h" />
     <ClInclude Include="Interface\ProtocolDispatcher.h" />
     <ClInclude Include="Interface\ProtocolListener.h" />

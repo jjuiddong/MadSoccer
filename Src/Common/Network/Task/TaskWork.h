@@ -13,7 +13,7 @@ namespace network
 {
 	DECLARE_TYPE_NAME_SCOPE(network, CTaskWork)
 	class CTaskWork : public common::CTask
-		, public sharedmemory::CSharedMem<CTaskWork, TYPE_NAME(network::CTaskWork)>
+		, public memmonitor::Monitor<CTaskWork, TYPE_NAME(network::CTaskWork)>
 	{
 	public:
 		CTaskWork(int taskId, netid netId, SOCKET sock);
@@ -48,7 +48,7 @@ namespace network
 			if (result == SOCKET_ERROR || result == 0) // 받은 패킷사이즈가 0이면 서버와 끊겼다는 의미다.
 			{
 				CPacketQueue::Get()->PushPacket( 
-					CPacketQueue::SPacketData(m_NetId, DisconnectPacket() ));
+					CPacketQueue::SPacketData(m_NetId, DisconnectPacket(m_NetId) ));
 				return RR_END;
 			}
 			else

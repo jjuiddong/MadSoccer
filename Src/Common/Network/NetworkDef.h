@@ -9,6 +9,8 @@
 #include <string>
 #include <algorithm>
 
+#include "wxMemMonitorLib/wxMemMonitor.h"
+
 
 typedef int netid;
 #define INVALID_NETID		(-1)		// 잘못된 NetId를 뜻한다. 오류값으로 쓰임
@@ -43,6 +45,7 @@ namespace network
 		USER_LOOP,									// 유저의 쓰레드에서 처리
 		SERVICE_SEPERATE_THREAD,		// 통합 쓰레드에서 처리 (통합처리를 위해 따로 분리해둔 쓰레드를 뜻한다)
 		SERVICE_EXCLUSIVE_THREAD,		// 별도의 쓰레드를 생성해서 처리
+		SERVICE_CHILD_THREAD,				// 부모 쓰레드에서 처리한다. 만약 부모가 USER_LOOP 라면, 자식도 USER_LOOP로 동작한다.
 	};
 
 	enum P2P_STATE
@@ -64,18 +67,17 @@ namespace network
 
 }
 
+typedef common::ReferencePtr<network::CNetConnector> NetConnectorPtr;
 typedef common::ReferencePtr<network::CServerBasic> ServerBasicPtr;
 typedef common::ReferencePtr<network::CClientBasic> ClientBasicPtr;
 typedef common::ReferencePtr<network::CClient> ClientPtr;
 typedef common::ReferencePtr<network::CP2PClient> P2PClientPtr;
 typedef common::ReferencePtr<network::CCoreClient> CoreClientPtr;
-typedef common::ReferencePtr<network::CNetConnector> NetConnectorPtr;
 typedef common::ReferencePtr<network::CCharacter> CharacterPtr;
 
 
 
 
-#include "ErrReport/Error.h"
 #include "ErrReport/ErrorCode.h"
 #include "DataStructure/Packet.h"
 #include "Controller/RemoteClient.h"
@@ -136,8 +138,9 @@ typedef ProtocolMap::iterator ProtocolItor;
 #include "Marshalling/MarshallingGroup.h"
 
 
-
 typedef std::vector<network::CGroup> GroupVector;
+
+
 
 
 

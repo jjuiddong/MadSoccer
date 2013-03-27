@@ -30,7 +30,6 @@ namespace network
 
 	// Debug
 	std::string	ToString();
-	void				LogNPrint( const char* fmt, ... );
 
 };
 

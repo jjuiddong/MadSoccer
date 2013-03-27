@@ -47,12 +47,6 @@
     <ClCompile Include="etc\RandNoDuplicate.cpp">
       <Filter>Etc</Filter>
     </ClCompile>
-    <ClCompile Include="etc\SharedMemoryMng.cpp">
-      <Filter>Etc</Filter>
-    </ClCompile>
-    <ClCompile Include="etc\SharedMemoryString.cpp">
-      <Filter>Etc</Filter>
-    </ClCompile>
     <ClCompile Include="etc\String.cpp">
       <Filter>Etc</Filter>
     </ClCompile>
@@ -130,21 +124,6 @@
     <ClInclude Include="etc\Reference.h">
       <Filter>Etc</Filter>
     </ClInclude>
-    <ClInclude Include="etc\SharedMemory.h">
-      <Filter>Etc</Filter>
-    </ClInclude>
-    <ClInclude Include="etc\SharedMemoryContainer.h">
-      <Filter>Etc</Filter>
-    </ClInclude>
-    <ClInclude Include="etc\SharedMemoryList.h">
-      <Filter>Etc</Filter>
-    </ClInclude>
-    <ClInclude Include="etc\SharedMemoryMng.h">
-      <Filter>Etc</Filter>
-    </ClInclude>
-    <ClInclude Include="etc\SharedMemoryString.h">
-      <Filter>Etc</Filter>
-    </ClInclude>
     <ClInclude Include="etc\Singleton.h">
       <Filter>Etc</Filter>
     </ClInclude>
@@ -195,6 +174,9 @@
     </ClInclude>
     <ClInclude Include="VectorHelper.h">
       <Filter>Container</Filter>
+    </ClInclude>
+    <ClInclude Include="etc\AutoLock.h">
+      <Filter>Etc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

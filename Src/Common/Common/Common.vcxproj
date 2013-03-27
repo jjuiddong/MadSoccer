@@ -75,8 +75,6 @@
     <ClCompile Include="etc\FilePath.cpp" />
     <ClCompile Include="etc\Log.cpp" />
     <ClCompile Include="etc\RandNoDuplicate.cpp" />
-    <ClCompile Include="etc\SharedMemoryMng.cpp" />
-    <ClCompile Include="etc\SharedMemoryString.cpp" />
     <ClCompile Include="etc\String.cpp" />
     <ClCompile Include="math\box.cpp" />
     <ClCompile Include="math\Matrix.cpp" />
@@ -91,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
+    <ClInclude Include="etc\AutoLock.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="CodeGen.h" />
@@ -104,11 +103,6 @@
     <ClInclude Include="etc\parser.h" />
     <ClInclude Include="etc\RandNoDuplicate.h" />
     <ClInclude Include="etc\Reference.h" />
-    <ClInclude Include="etc\SharedMemory.h" />
-    <ClInclude Include="etc\SharedMemoryContainer.h" />
-    <ClInclude Include="etc\SharedMemoryList.h" />
-    <ClInclude Include="etc\SharedMemoryMng.h" />
-    <ClInclude Include="etc\SharedMemoryString.h" />
     <ClInclude Include="etc\Singleton.h" />
     <ClInclude Include="etc\String.h" />
     <ClInclude Include="etc\Time.h" />

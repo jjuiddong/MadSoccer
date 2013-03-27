@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "Network.h"
 #include "Controller/NetController.h"
+#include <MMSystem.h>
 
 
 namespace network
@@ -17,11 +18,11 @@ using namespace network;
 //------------------------------------------------------------------------
 bool network::Init(int logicThreadCount)
 {
-	dbg::Print( "Network Init" );
+	srand( timeGetTime() );
+	clog::Log( clog::LOG_F_N_O, "Network Init" );
 
 	common::InitRandNoDuplicate();
 	const bool result = CNetController::Get()->Init(logicThreadCount);
-
 	return result;
 }
 
@@ -41,7 +42,7 @@ void network::Clear()
 //------------------------------------------------------------------------
 bool network::StartServer(int port, ServerBasicPtr pSvr)
 {
-	dbg::Print( "StartServer port: %d", port );
+	clog::Log( clog::LOG_F_N_O, "StartServer port: %d", port );
 	return CNetController::Get()->StartServer(port, pSvr);
 }
 
@@ -51,7 +52,7 @@ bool network::StartServer(int port, ServerBasicPtr pSvr)
 bool network::StopServer(ServerBasicPtr pSvr)
 {
 	if (!pSvr) return false;
-	dbg::Print( "StopServer netid: %d", pSvr->GetNetId() );
+	clog::Log( clog::LOG_F_N_O, "StopServer netid: %d", pSvr->GetNetId() );
 	return pSvr->Stop();
 //	return CNetController::Get()->StopServer(pSvr);
 }
@@ -69,7 +70,7 @@ ServerBasicPtr network::GetServer(netid serverId)
 //------------------------------------------------------------------------
 bool network::StartClient(const std::string &ip, int port, ClientBasicPtr pClt)
 {
-	dbg::Print( "StartClient %s, %d", ip.c_str(), port);
+	clog::Log( clog::LOG_F_N_O, "StartClient %s, %d", ip.c_str(), port);
 	return CNetController::Get()->StartClient(ip, port, pClt);
 }
 
@@ -79,7 +80,7 @@ bool network::StartClient(const std::string &ip, int port, ClientBasicPtr pClt)
 bool network::StopClient(ClientBasicPtr pClt)
 {
 	if (!pClt) return false;
-	dbg::Print( "StopClient netid: %d", pClt->GetNetId() );
+	clog::Log( clog::LOG_F_N_O, "StopClient netid: %d", pClt->GetNetId() );
 	return pClt->Stop();
 //	return CNetController::Get()->StopClient(pClt);
 }
@@ -109,20 +110,4 @@ void network::Proc()
 std::string network::ToString()
 {
 	return CNetController::Get()->ToString();
-}
-
-
-//------------------------------------------------------------------------
-// Log와 출력창에 동시에 출력한다.
-//------------------------------------------------------------------------
-void	network::LogNPrint( const char* fmt, ... )
-{
-	char textString[ 256] = {'\0'};
-	va_list args;
-	va_start ( args, fmt );
-	vsnprintf_s( textString, sizeof(textString), _TRUNCATE, fmt, args );
-	va_end ( args );
-
-	clog::Log( textString );
-	dbg::Print( textString );
 }

@@ -15,7 +15,7 @@
 DECLARE_TYPE_NAME(CChatServer)
 class CChatServer : public network::CServer
 								,public network::IServerEventListener
-								,public sharedmemory::CSharedMem<CChatServer, TYPE_NAME(CChatServer)>
+								,public memmonitor::Monitor<CChatServer, TYPE_NAME(CChatServer)>
 {
 public:
 	CChatServer() : CServer(network::SERVICE_EXCLUSIVE_THREAD)

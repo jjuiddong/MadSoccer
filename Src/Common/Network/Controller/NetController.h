@@ -42,34 +42,40 @@ namespace network
 		// Server
 		bool		StartServer(int port, ServerBasicPtr pSvr);
 		bool		StopServer(ServerBasicPtr pSvr);
+		bool		RemoveServer(ServerBasicPtr pSvr);
 		ServerBasicPtr	GetServer(netid netId);
 		ServerBasicPtr	GetServerFromSocket(SOCKET sock);
 
 		// Client
 		bool		StartClient(const std::string &ip, int port, ClientBasicPtr pClt);
 		bool		StopClient(ClientBasicPtr pClt);
+		bool		RemoveClient(ClientBasicPtr pClt);
 		ClientBasicPtr	GetClient(netid netId);
 		ClientBasicPtr	GetClientFromSocket(SOCKET sock);
 
 		// CoreClient
 		bool		StartCoreClient(const std::string &ip, int port, CoreClientPtr pClt);
 		bool		StopCoreClient(CoreClientPtr  pClt);
+		bool		RemoveCoreClient(CoreClientPtr  pClt);
 		CoreClientPtr	GetCoreClient(netid netId);
 
 		// protocol
 		void		AddDispatcher(IProtocolDispatcher *pDispatcher);
 		IProtocolDispatcher* GetDispatcher(int protocolID);
 
+		int		GetUniqueValue() const;
+
 		// debug
 		std::string ToString();
 
 	protected:
-		ThreadPtr CreateWorkThread(SERVICE_TYPE serviceType, PROCESS_TYPE processType);
+		ThreadPtr AllocWorkThread(SERVICE_TYPE serviceType, NetConnectorPtr pConnector);
 		ThreadPtr GetThread( const ThreadList &threads, HANDLE hThreadHandle );
 		void		MakeServersFDSET( fd_set *pfdset);
 		void		MakeCoreClientsFDSET( PROCESS_TYPE procType, SFd_Set *pfdset);
-		void		EnterSync();
-		void		LeaveSync();
+		void		DisconnectServer(ServerBasicPtr pSvr);
+		void		DisconnectClient(ClientBasicPtr pClt);
+		void		DisconnectCoreClient(CoreClientPtr pClt);
 
 	protected:
 		Servers							m_Servers;
@@ -83,17 +89,22 @@ namespace network
 		DispatcherMap				m_Dispatchers;
 		common::CThread		m_AcceptThread;
 
-		// CServer가 SERVICE_THREAD 타입일때 추가된다.
-		// Thread 인스턴스는 m_WorkThreads 에 저장된다.
+		/// CServer가 SERVICE_THREAD 타입일때 추가된다.
+		/// Thread 인스턴스는 m_WorkThreads 에 저장된다.
 		ThreadPtr						m_pSeperateServerWorkThread;
 
-		// CCoreClient가 SERVICE_THREAD 타입일때 추가된다.
-		// Thread 인스턴스는 m_WorkThreads 에 저장된다.
+		/// CCoreClient가 SERVICE_THREAD 타입일때 추가된다.
+		/// Thread 인스턴스는 m_WorkThreads 에 저장된다.
 		ThreadPtr						m_pSeperateClientWorkThread;	
 
 		ThreadList					m_WorkThreads;
 		ThreadList					m_LogicThreads;
-		CRITICAL_SECTION		m_CriticalSection;
+		common::CriticalSection  m_CS;
+		int								m_UniqueValue;
 
 	};
+
+
+	inline int	CNetController::GetUniqueValue() const { return m_UniqueValue; }
+
 }

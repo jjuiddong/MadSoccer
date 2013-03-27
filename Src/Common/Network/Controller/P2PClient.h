@@ -1,10 +1,10 @@
-//------------------------------------------------------------------------
-// Name:    P2PClient.h
-// Author:  jjuiddong
-// Date:    2/28/2013
-// 
-// P2P 통신을 하는 클래스다.
-//------------------------------------------------------------------------
+/**
+Name:   P2PClient.h
+Author:  jjuiddong
+Date:    2/28/2013
+
+P2P 통신을 하는 클래스다.
+*/
 #pragma once
 
 #include "NetConnector.h"
@@ -17,11 +17,11 @@ namespace network
 	class CServerBasic;
 	class CCoreClient;
 
-	DECLARE_TYPE_NAME(CP2PClient)
+	DECLARE_TYPE_NAME_SCOPE(network, CP2PClient)
 	class CP2PClient : public CNetConnector
 								, public ICoreClientEventListener
 								, public IServerEventListener
-								, public sharedmemory::CSharedMem<CP2PClient, TYPE_NAME(CP2PClient)>
+								, public memmonitor::Monitor<CP2PClient, TYPE_NAME(CP2PClient)>
 	{
 		friend class CNetController;
 		friend class CClient;
@@ -38,16 +38,15 @@ namespace network
 		void				Disconnect();
 		void				SetEventListener(P2PClientEventListenerPtr ptr);
 
+		bool				IsConnect() const;
+
 		// Overriding
-		virtual bool		AddProtocolListener(ProtocolListenerPtr pListener) override;
-		virtual bool		RemoveProtocolListener(ProtocolListenerPtr pListener) override;
+		virtual bool	AddProtocolListener(ProtocolListenerPtr pListener) override;
+		virtual bool	RemoveProtocolListener(ProtocolListenerPtr pListener) override;
 
 		// Child Implementes
 		virtual bool	Send(netid netId, const SEND_FLAG flag, const CPacket &packet);
 		virtual bool	SendAll(const CPacket &packet);
-
-		PROCESS_TYPE GetProcessType() const;
-		bool				IsConnect() const;
 
 	protected:
 		void				Clear();
@@ -66,13 +65,11 @@ namespace network
 
 	protected:
 		P2P_STATE		m_State;
-		PROCESS_TYPE m_ProcessType;
 		CCoreClient		*m_pP2pClient;
 		CServerBasic	*m_pP2pHost;
 		P2PClientEventListenerPtr m_pEventListener;
 	};
 
-	inline PROCESS_TYPE CP2PClient::GetProcessType() const { return m_ProcessType; }
 	inline bool CP2PClient::IsConnect() const { return true; }
 	inline void	 CP2PClient::SetEventListener(P2PClientEventListenerPtr ptr) { m_pEventListener = ptr; }
 

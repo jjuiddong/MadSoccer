@@ -1,16 +1,20 @@
 
 #include "stdafx.h"
 #include "Packet.h"
+#include "../Controller/NetController.h"
 
 
 using namespace network;
 
 // Disconnect 패킷을 리턴한다.
-CPacket network::DisconnectPacket()
+// netid: disconnect 된 netid
+CPacket network::DisconnectPacket(netid netId)
 {
 	CPacket packet;
-	packet << 0;
-	packet << (int)PACKETID_DISCONNECT;
+	packet.SetProtocolId(0); // basic_protocol
+	packet.SetPacketId(PACKETID_DISCONNECT);
+	packet << CNetController::Get()->GetUniqueValue(); // packet 을 검증을 위한 코드
+	packet << netId;
 	return packet;
 }
 

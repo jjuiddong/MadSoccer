@@ -1,0 +1,66 @@
+
+#include "stdafx.h"
+#include "BasicProtocolDispatcher.h"
+#include "Network/Controller/NetController.h"
+#include "network/PrtCompiler/ProtocolMacro.h"
+#include "../Controller/CoreClient.h"
+
+
+using namespace network;
+using namespace basic_protocol;
+
+//------------------------------------------------------------------------
+// 패킷의 프로토콜에 따라 해당하는 리스너의 함수를 호출한다.
+//------------------------------------------------------------------------
+void basic_protocol::ServerDispatcher::Dispatch(CPacket &packet, ServerBasicPtr pSvr)
+{
+	RET(!pSvr);
+
+	CPacket newPacket = packet;
+	switch (newPacket.GetPacketId())
+	{
+	case PACKETID_DISCONNECT:
+		{
+			int uniqueValue = 0;
+			newPacket >> uniqueValue;
+			if (CNetController::Get()->GetUniqueValue() != uniqueValue) // 패킷 검증
+				return;
+				 
+			netid disconnectId = INVALID_NETID;
+			newPacket >> disconnectId;
+			if (pSvr->GetNetId() == disconnectId)
+			{
+				pSvr->Disconnect();
+			}
+			else
+			{
+				pSvr->RemoveRemoteClient(disconnectId);
+			}
+		}
+		break;
+	}
+}
+
+
+//------------------------------------------------------------------------
+// 패킷의 프로토콜에 따라 해당하는 리스너의 함수를 호출한다.
+//------------------------------------------------------------------------
+void basic_protocol::ClientDispatcher::Dispatch(CPacket &packet, CoreClientPtr pClt)
+{
+	RET(!pClt);
+
+	CPacket newPacket = packet;
+	switch (newPacket.GetPacketId())
+	{
+	case PACKETID_DISCONNECT:
+		{
+			int uniqueValue = 0;
+			newPacket >> uniqueValue;
+			if (CNetController::Get()->GetUniqueValue() != uniqueValue) // 패킷 검증
+				return;
+
+			pClt->Disconnect();
+		}
+		break;
+	}
+}

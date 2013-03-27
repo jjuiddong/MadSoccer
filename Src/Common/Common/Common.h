@@ -91,6 +91,7 @@ typedef unsigned short u_short;
 
 // 공용 헤더파일은 가장 나중에 선언한다.
 #include "math/Math.h"
+#include "etc/AutoLock.h"
 #include "thread/Thread.h"
 #include "thread/Task.h"
 #include "thread/Instance.h"
@@ -105,11 +106,8 @@ typedef unsigned short u_short;
 #include "etc/Dbg.h"
 #include "etc/Log.h"
 #include "etc/Dump.h"
-#include "etc/SharedMemoryMng.h"
-#include "etc/SharedMemory.h"
 #include "CodeGen.h"
 #include "container/VectorMap.h"
-
 
 
 

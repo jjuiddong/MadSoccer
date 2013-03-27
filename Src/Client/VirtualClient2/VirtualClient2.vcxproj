@@ -90,6 +90,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalDependencies>../../../Lib/wxMemMonitorLib/wxMemMonitorLib.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -123,32 +124,33 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ConfigParser.cpp" />
-    <ClCompile Include="DlgConsole.cpp" />
-    <ClCompile Include="DlgProperty.cpp" />
-    <ClCompile Include="ProtocolPropertyCtrl.cpp" />
-    <ClCompile Include="ProtocolTree.cpp" />
-    <ClCompile Include="VClient.cpp" />
-    <ClCompile Include="VirtualClient2Dlg.cpp" />
+    <ClCompile Include="Control\ConfigParser.cpp" />
+    <ClCompile Include="Control\VClient.cpp" />
     <ClCompile Include="Lib\TreeCtrlBase.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="UI\DlgLog.cpp" />
+    <ClCompile Include="UI\DlgProperty.cpp" />
+    <ClCompile Include="UI\ProtocolPropertyCtrl.cpp" />
+    <ClCompile Include="UI\ProtocolTree.cpp" />
+    <ClCompile Include="UI\VirtualClient2Dlg.cpp" />
     <ClCompile Include="VirtualClient2.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ConfigParser.h" />
-    <ClInclude Include="DlgConsole.h" />
-    <ClInclude Include="DlgProperty.h" />
-    <ClInclude Include="ProtocolPropertyCtrl.h" />
-    <ClInclude Include="ProtocolTree.h" />
-    <ClInclude Include="VClient.h" />
-    <ClInclude Include="VirtualClient2Dlg.h" />
+    <ClInclude Include="..\..\Common\wxMemMonitor\wxMemMonitor.h" />
+    <ClInclude Include="Control\ConfigParser.h" />
+    <ClInclude Include="Control\VClient.h" />
     <ClInclude Include="Lib\TreeCtrlBase.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="UI\DlgLog.h" />
+    <ClInclude Include="UI\DlgProperty.h" />
+    <ClInclude Include="UI\ProtocolPropertyCtrl.h" />
+    <ClInclude Include="UI\ProtocolTree.h" />
+    <ClInclude Include="UI\VirtualClient2Dlg.h" />
     <ClInclude Include="VirtualClient2.h" />
   </ItemGroup>
   <ItemGroup>

@@ -12,11 +12,12 @@ class s2c_Protocol : public network::IProtocol
 {
 public:
 	s2c_Protocol() : IProtocol(s2c_Protocol_ID) {}
-	void AckGroupList(netid targetId, const network::SEND_FLAG flag, const int &errorCode, const GroupVector &groups);
-	void AckGroupJoin(netid targetId, const network::SEND_FLAG flag, const int &errorCode);
-	void AckGroupCreate(netid targetId, const network::SEND_FLAG flag, const int &errorCode, const std::string &groupName, const netid &groupid);
+	void AckGroupList(netid targetId, const network::SEND_FLAG flag, const network::error::ERROR_CODE &errorCode, const GroupVector &groups);
+	void AckGroupJoin(netid targetId, const network::SEND_FLAG flag, const network::error::ERROR_CODE &errorCode, const netid &reqId, const netid &joinGroupId);
+	void AckGroupCreate(netid targetId, const network::SEND_FLAG flag, const network::error::ERROR_CODE &errorCode, const netid &reqId, const netid &crGroupId, const netid &crParentGroupId, const std::string &groupName);
+	void AckGroupCreateBlank(netid targetId, const network::SEND_FLAG flag, const network::error::ERROR_CODE &errorCode, const netid &reqId, const netid &crGroupId, const netid &crParentGroupId, const std::string &groupName);
 	void JoinMember(netid targetId, const network::SEND_FLAG flag, const netid &toGroupId, const netid &fromGroupId, const netid &userId);
-	void AckP2PConnect(netid targetId, const network::SEND_FLAG flag, const int &errorCode, const network::P2P_STATE &state, const std::string &ip, const int &port);
+	void AckP2PConnect(netid targetId, const network::SEND_FLAG flag, const network::error::ERROR_CODE &errorCode, const network::P2P_STATE &state, const std::string &ip, const int &port);
 	void func1(netid targetId, const network::SEND_FLAG flag);
 	void func2(netid targetId, const network::SEND_FLAG flag, const std::string &str);
 	void func3(netid targetId, const network::SEND_FLAG flag, const float &value);
@@ -32,6 +33,7 @@ public:
 	void ReqGroupList(netid targetId, const network::SEND_FLAG flag, const netid &groupid);
 	void ReqGroupJoin(netid targetId, const network::SEND_FLAG flag, const netid &groupid);
 	void ReqGroupCreate(netid targetId, const network::SEND_FLAG flag, const netid &parentGroupId, const std::string &groupName);
+	void ReqGroupCreateBlank(netid targetId, const network::SEND_FLAG flag, const netid &parentGroupId, const std::string &groupName);
 	void ReqP2PConnect(netid targetId, const network::SEND_FLAG flag);
 	void ReqP2PConnectTryResult(netid targetId, const network::SEND_FLAG flag, const bool &isSuccess);
 	void func2(netid targetId, const network::SEND_FLAG flag, const std::string &str);
