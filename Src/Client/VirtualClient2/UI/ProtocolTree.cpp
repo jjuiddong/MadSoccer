@@ -4,8 +4,6 @@
 #include "stdafx.h"
 #include "../VirtualClient2.h"
 #include "ProtocolTree.h"
-#include "Network/PrtCompiler/ProtocolDefine.h"
-#include "Network/PrtCompiler/ProtocolParser.h"
 #include "DlgProperty.h"
 #include "../Control/ConfigParser.h"
 #include "DlgLog.h"

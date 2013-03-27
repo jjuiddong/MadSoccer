@@ -81,7 +81,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Algorithm\GroupTraverse.cpp" />
-    <ClCompile Include="Marshalling\Marshalling.cpp" />
     <ClCompile Include="Marshalling\MarshallingGroup.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="ProtocolHandler\BasicC2SProtocolHandler.cpp" />
@@ -95,18 +94,13 @@
     </ClCompile>
     <ClCompile Include="DataStructure\Character.cpp" />
     <ClCompile Include="DataStructure\Group.cpp" />
-    <ClCompile Include="DataStructure\Packet.cpp" />
     <ClCompile Include="DataStructure\Room.cpp" />
     <ClCompile Include="DataStructure\User.cpp" />
     <ClCompile Include="Controller\CoreClient.cpp" />
-    <ClCompile Include="Controller\NetConnector.cpp" />
     <ClCompile Include="Controller\NetController.cpp" />
     <ClCompile Include="Controller\NetLauncher.cpp" />
     <ClCompile Include="Controller\P2PClient.cpp" />
     <ClCompile Include="Controller\RemoteClient.cpp" />
-    <ClCompile Include="PrtCompiler\ProtocolDefine.cpp" />
-    <ClCompile Include="PrtCompiler\ProtocolParser.cpp" />
-    <ClCompile Include="PrtCompiler\ProtocolScanner.cpp" />
     <ClCompile Include="Service\AllProtocol.cpp" />
     <ClCompile Include="Service\AllProtocolListener.cpp" />
     <ClCompile Include="Service\Client.cpp" />
@@ -119,7 +113,6 @@
     <ClInclude Include="Interface\CoreClientEventListener.h" />
     <ClInclude Include="Interface\P2PClientEventListener.h" />
     <ClInclude Include="Interface\ServerEventListener.h" />
-    <ClInclude Include="Marshalling\Marshalling.h" />
     <ClInclude Include="Marshalling\MarshallingGroup.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="NetworkDef.h" />
@@ -134,27 +127,17 @@
     <ClInclude Include="Algorithm\BindCore.h" />
     <ClInclude Include="DataStructure\Character.h" />
     <ClInclude Include="DataStructure\Group.h" />
-    <ClInclude Include="DataStructure\Packet.h" />
-    <ClInclude Include="DataStructure\PacketQueue.h" />
     <ClInclude Include="DataStructure\Room.h" />
     <ClInclude Include="DataStructure\User.h" />
-    <ClInclude Include="Interface\Protocol.h" />
-    <ClInclude Include="Interface\ProtocolDispatcher.h" />
-    <ClInclude Include="Interface\ProtocolListener.h" />
     <ClInclude Include="Task\TaskAccept.h" />
     <ClInclude Include="Task\TaskWorkClient.h" />
     <ClInclude Include="Task\TaskLogic.h" />
     <ClInclude Include="Task\TaskWork.h" />
     <ClInclude Include="Controller\CoreClient.h" />
-    <ClInclude Include="Controller\NetConnector.h" />
     <ClInclude Include="Controller\NetController.h" />
     <ClInclude Include="Controller\NetLauncher.h" />
     <ClInclude Include="Controller\P2PClient.h" />
     <ClInclude Include="Controller\RemoteClient.h" />
-    <ClInclude Include="PrtCompiler\ProtocolDefine.h" />
-    <ClInclude Include="PrtCompiler\ProtocolMacro.h" />
-    <ClInclude Include="PrtCompiler\ProtocolParser.h" />
-    <ClInclude Include="PrtCompiler\ProtocolScanner.h" />
     <ClInclude Include="Service\AllProtocol.h" />
     <ClInclude Include="Service\AllProtocolListener.h" />
     <ClInclude Include="Service\Client.h" />
@@ -172,6 +155,12 @@
     <ProjectReference Include="..\Common\Common.vcxproj">
       <Project>{f3998dc9-8441-45d0-a8f0-719c0a06c955}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\NetCommon\NetCommon.vcxproj">
+      <Project>{b2cb8551-b147-4c4d-86ab-a04309af20de}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\wxMemMonitorLib\wxMemMonitorLib.vcxproj">
+      <Project>{20d4fc42-81e1-469f-8697-705005321531}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

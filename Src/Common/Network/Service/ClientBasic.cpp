@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "ClientBasic.h"
 #include "../Controller/P2PClient.h"
-#include "../Interface/Protocol.h"
 #include "../Controller/NetController.h"
 #include "AllProtocolListener.h"
 #include "../Controller/CoreClient.h"
@@ -69,6 +68,18 @@ void CClientBasic::Disconnect()
 		m_pConnectSvr->Disconnect();
 	if (m_pP2p)
 		m_pP2p->Disconnect();
+}
+
+
+/**
+@brief  close socket
+*/
+void	CClientBasic::Close()
+{
+	if (m_pConnectSvr)
+		m_pConnectSvr->Close();
+	if (m_pP2p)
+		m_pP2p->Close();
 }
 
 

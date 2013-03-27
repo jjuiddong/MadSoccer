@@ -8,7 +8,6 @@ Date:    3/17/2013
 */
 #pragma once
 
-#include "Controller/NetConnector.h"
 #include "../interface/CoreClientEventListener.h"
 #include "../interface/P2PClientEventListener.h"
 #include "../interface/ClientEventListener.h"
@@ -33,6 +32,7 @@ namespace network
 		bool					Proc();
 		bool					Stop();
 		void					Disconnect();
+		void					Close();
 
 		bool					IsConnect() const;
 		void					SetEventListener(ClientEventListenerPtr ptr);

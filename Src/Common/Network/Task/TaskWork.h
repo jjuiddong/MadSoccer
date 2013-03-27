@@ -7,7 +7,6 @@
 //------------------------------------------------------------------------
 #pragma once
 
-#include "../DataStructure/PacketQueue.h"
 
 namespace network
 {
@@ -48,7 +47,8 @@ namespace network
 			if (result == SOCKET_ERROR || result == 0) // 받은 패킷사이즈가 0이면 서버와 끊겼다는 의미다.
 			{
 				CPacketQueue::Get()->PushPacket( 
-					CPacketQueue::SPacketData(m_NetId, DisconnectPacket(m_NetId) ));
+					CPacketQueue::SPacketData(m_NetId, 
+						DisconnectPacket(m_NetId, CNetController::Get()->GetUniqueValue()) ));
 				return RR_END;
 			}
 			else

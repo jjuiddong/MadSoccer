@@ -2,7 +2,6 @@
 #include "stdafx.h"
 #include "AllProtocolListener.h"
 #include "Network/Controller/NetController.h"
-#include "network/PrtCompiler/ProtocolMacro.h"
 
 using namespace network;
 using namespace all;

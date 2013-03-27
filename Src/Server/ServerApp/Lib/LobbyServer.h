@@ -7,10 +7,10 @@
 //------------------------------------------------------------------------
 #pragma once
 
-#include "NetCommon/Src/login_Protocol.h"
-#include "NetCommon/Src/login_ProtocolListener.h"
-#include "NetCommon/Src/basic_Protocol.h"
-#include "NetCommon/Src/basic_ProtocolListener.h"
+#include "NetProtocol/Src/login_Protocol.h"
+#include "NetProtocol/Src/login_ProtocolListener.h"
+#include "NetProtocol/Src/basic_Protocol.h"
+#include "NetProtocol/Src/basic_ProtocolListener.h"
 
 DECLARE_TYPE_NAME(CLobbyServer)
 class CLobbyServer : public network::CServer

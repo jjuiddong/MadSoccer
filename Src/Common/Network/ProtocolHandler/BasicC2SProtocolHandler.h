@@ -6,8 +6,8 @@ Date:    3/17/2013
 basic_protocol.prt Protocol Handler
 */
 
-#include "NetCommon/Src/basic_ProtocolListener.h"
-#include "NetCommon/Src/basic_Protocol.h"
+#include "NetProtocol/Src/basic_ProtocolListener.h"
+#include "NetProtocol/Src/basic_Protocol.h"
 
 namespace network
 {

@@ -4,7 +4,6 @@
 #include <process.h> 
 #include "../Controller/NetController.h"
 #include "../ProtocolHandler/BasicProtocolDispatcher.h"
-#include "../DataStructure/PacketQueue.h"
 
 using namespace network;
 
@@ -49,7 +48,8 @@ void	CServerBasic::Proc()
 				RemoveRemoteClientSocket(sockets.netid_array[ i]);
 
 				CPacketQueue::Get()->PushPacket( 
-					CPacketQueue::SPacketData(GetNetId(), DisconnectPacket(senderId) ));
+					CPacketQueue::SPacketData(GetNetId(), 
+						DisconnectPacket(senderId, CNetController::Get()->GetUniqueValue()) ));
 			}
 			else
 			{
@@ -480,11 +480,19 @@ bool	CServerBasic::SendGroup(GroupPtr pGroup, const CPacket &packet)
 //------------------------------------------------------------------------
 void	CServerBasic::Disconnect()
 {
-	m_IsServerOn = false;
+	Close();
 	CNetController::Get()->RemoveServer(this);
-	ClearConnection();
 }
 
+
+/**
+@brief  close socket
+*/
+void	CServerBasic::Close()
+{
+	m_IsServerOn = false;
+	ClearConnection();
+}
 
 //------------------------------------------------------------------------
 // Event Listen

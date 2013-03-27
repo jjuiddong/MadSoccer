@@ -66,7 +66,7 @@ void CThread::Terminate()
 //------------------------------------------------------------------------
 void CThread::Send2ThreadMessage( threadmsg::MSG msg, WPARAM wParam, LPARAM lParam, LPARAM added)
 {
-	AutoCSLock cs(m_MsgCriticalSection);
+	AutoCSLock cs(m_MsgCS);
 	m_ThreadMsgs.push_back( SExternalMsg(-1, (int)msg, wParam, lParam, added) );
 }
 
@@ -76,7 +76,7 @@ void CThread::Send2ThreadMessage( threadmsg::MSG msg, WPARAM wParam, LPARAM lPar
 //------------------------------------------------------------------------
 void CThread::Send2ExternalMessage( int msg, WPARAM wParam, LPARAM lParam, LPARAM added )
 {
-	AutoCSLock cs(m_MsgCriticalSection);
+	AutoCSLock cs(m_MsgCS);
 	m_ExternalMsgs.push_back( SExternalMsg(-1, msg, wParam, lParam, added) );
 }
 
@@ -92,7 +92,7 @@ bool CThread::GetThreadMsg( OUT SExternalMsg *pMsg, MSG_OPT opt ) // opt = MSG_R
 
 	bool reval;
 	{
-		AutoCSLock cs(m_MsgCriticalSection);
+		AutoCSLock cs(m_MsgCS);
 		if (m_ThreadMsgs.empty())
 		{
 			reval = false;
@@ -120,7 +120,7 @@ bool CThread::GetExternalMsg( OUT SExternalMsg *pMsg, MSG_OPT opt ) // opt = MSG
 
 	bool reval;
 	{
-		AutoCSLock cs(m_MsgCriticalSection);
+		AutoCSLock cs(m_MsgCS);
 		if (m_ExternalMsgs.empty())
 		{
 			reval = false;
@@ -145,7 +145,7 @@ bool CThread::AddTask(CTask *pTask)
 	if (!pTask)
 		return false;
 
-	AutoCSLock cs(m_TaskCriticalSection);
+	AutoCSLock cs(m_TaskCS);
 	TaskItor it = find_if(m_Tasks.begin(), m_Tasks.end(), IsTask(pTask->GetId()));
 	if (m_Tasks.end() != it)
 		return false; // 이미 존재한다면 실패
@@ -165,7 +165,7 @@ bool CThread::RemoveTask(CTask *pTask)
 	if (!pTask)
 		return false;
 	
-	AutoCSLock cs(m_TaskCriticalSection);
+	AutoCSLock cs(m_TaskCS);
 	TaskItor it = find_if(m_Tasks.begin(), m_Tasks.end(), IsTask(pTask->GetId()));
 	if (m_Tasks.end() == it)
 		return false; // 없다면 실패
@@ -180,7 +180,7 @@ bool CThread::RemoveTask(CTask *pTask)
 //------------------------------------------------------------------------
 void CThread::Clear()
 {
-	AutoCSLock cs(m_TaskCriticalSection);
+	AutoCSLock cs(m_TaskCS);
 	TaskItor it = m_Tasks.begin();
 	while (m_Tasks.end() != it)
 	{
@@ -189,7 +189,7 @@ void CThread::Clear()
 	}
 	m_Tasks.clear();
 
-	AutoCSLock cs2(m_MsgCriticalSection);
+	AutoCSLock cs2(m_MsgCS);
 	m_ThreadMsgs.clear();
 	m_ExternalMsgs.clear();
 
@@ -210,7 +210,7 @@ void CThread::Run()
 
 		//1. 태스크 처리
 		{
-			AutoCSLock cs(m_TaskCriticalSection);
+			AutoCSLock cs(m_TaskCS);
 			TaskItor it = m_Tasks.begin();
 			while (m_Tasks.end() != it)
 			{
@@ -253,14 +253,14 @@ void	CThread::Exit()
 //------------------------------------------------------------------------
 void CThread::DispatchMessage()
 {
-	AutoCSLock cs(m_MsgCriticalSection);
+	AutoCSLock cs(m_MsgCS);
 	ExternalMsgItor it = m_ThreadMsgs.begin();
 	while (m_ThreadMsgs.end() != it)
 	{
 		if (threadmsg::TASK_MSG == it->msg) // task message
 		{
 			{
-				AutoCSLock cs(m_TaskCriticalSection);
+				AutoCSLock cs(m_TaskCS);
 				TaskItor t = find_if(m_Tasks.begin(), m_Tasks.end(), 
 					boost::bind( &IsSameId<CTask>, _1, it->wParam) );
 				if (m_Tasks.end() != t)
@@ -294,7 +294,7 @@ void	CThread::MessageProc( threadmsg::MSG msg, WPARAM wParam, LPARAM lParam, LPA
 		{
 			// terminate task of id wParam
 			{
-				AutoCSLock cs(m_TaskCriticalSection);
+				AutoCSLock cs(m_TaskCS);
 				auto it = std::find_if( m_Tasks.begin(), m_Tasks.end(), 
 					bind( &IsSameId<common::CTask>, _1, (int)wParam) );
 				if (m_Tasks.end() != it)

@@ -1,11 +1,9 @@
 
 #include "stdafx.h"
 #include "CoreClient.h"
-#include "../Interface/Protocol.h"
 #include "../Service/AllProtocolListener.h"
 #include "NetController.h"
 #include "../ProtocolHandler/BasicProtocolDispatcher.h"
-#include "../DataStructure/PacketQueue.h"
 
 
 using namespace network;
@@ -31,7 +29,6 @@ CCoreClient::~CCoreClient()
 bool CCoreClient::Stop()
 {
 	CNetController::Get()->StopCoreClient(this);
-	//Disconnect();
 	return true;
 }
 
@@ -57,7 +54,8 @@ bool CCoreClient::Proc()
 		if (result == SOCKET_ERROR || result == 0) // 받은 패킷사이즈가 0이면 서버와 끊겼다는 의미다.
 		{
 			CPacketQueue::Get()->PushPacket( 
-				CPacketQueue::SPacketData(GetNetId(), DisconnectPacket(GetNetId()) ));
+				CPacketQueue::SPacketData(GetNetId(), 
+					DisconnectPacket(GetNetId(), CNetController::Get()->GetUniqueValue()) ));
 		}
 		else
 		{
@@ -125,10 +123,19 @@ void	CCoreClient::DispatchPacket()
 //------------------------------------------------------------------------
 void CCoreClient::Disconnect()
 {
-	m_IsConnect = false;
+	Close();
 	CNetController::Get()->RemoveCoreClient(this);
-	ClearConnection();
 	OnDisconnect();
+}
+
+
+/**
+@brief  close socket
+*/
+void CCoreClient::Close()
+{
+	m_IsConnect = false;
+	ClearConnection();
 }
 
 
@@ -170,7 +177,7 @@ bool CCoreClient::SendAll(const CPacket &packet)
 
 
 //------------------------------------------------------------------------
-// Event Connect
+// Event Connect, call from launcer
 //------------------------------------------------------------------------
 void	CCoreClient::OnConnect()
 {

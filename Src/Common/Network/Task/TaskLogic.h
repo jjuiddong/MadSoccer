@@ -10,7 +10,6 @@
 //------------------------------------------------------------------------
 #pragma once
 
-#include "../DataStructure/PacketQueue.h"
 #include "../Controller/NetController.h"
 #include "../Service/AllProtocolListener.h"
 #include "../ProtocolHandler/BasicProtocolDispatcher.h"

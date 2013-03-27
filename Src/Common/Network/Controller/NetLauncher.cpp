@@ -5,11 +5,10 @@
 
 using namespace network;
 
-
 //------------------------------------------------------------------------
 // 서버 시작
 //------------------------------------------------------------------------
-bool CNetLauncher::LaunchServer(ServerBasicPtr pSvr, int port)
+bool netlauncher::LaunchServer(ServerBasicPtr pSvr, int port)
 {
 	if (!pSvr)
 		return false;
@@ -80,7 +79,7 @@ bool CNetLauncher::LaunchServer(ServerBasicPtr pSvr, int port)
 //------------------------------------------------------------------------
 // 클라이언트 시작
 //------------------------------------------------------------------------
-bool CNetLauncher::LaunchClient(ClientPtr pClient, const std::string &ip, int port)
+bool netlauncher::LaunchClient(ClientPtr pClient, const std::string &ip, int port)
 {
 	if (!pClient)
 		return false;
@@ -95,7 +94,7 @@ bool CNetLauncher::LaunchClient(ClientPtr pClient, const std::string &ip, int po
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-bool	CNetLauncher::LaunchCoreClient(CoreClientPtr pClient, const std::string &ip, int port)
+bool	netlauncher::LaunchCoreClient(CoreClientPtr pClient, const std::string &ip, int port)
 {
 	if (!pClient)
 		return false;

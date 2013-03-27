@@ -2,7 +2,6 @@
 #include "stdafx.h"
 #include "BasicProtocolDispatcher.h"
 #include "Network/Controller/NetController.h"
-#include "network/PrtCompiler/ProtocolMacro.h"
 #include "../Controller/CoreClient.h"
 
 

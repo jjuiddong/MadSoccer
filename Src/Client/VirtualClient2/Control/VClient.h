@@ -1,14 +1,14 @@
-//------------------------------------------------------------------------
-// Name:    VClient.h
-// Author:  jjuiddong
-// Date:    1/3/2013
-// 
-// virtualClient 의 Client클래스
-//------------------------------------------------------------------------
+/**
+Name:    VClient.h
+Author:  jjuiddong
+Date:    1/3/2013
+
+virtualClient 의 Client클래스
+*/
 #pragma once
 
-#include "NetCommon/Src/basic_ProtocolListener.h"
-#include "NetCommon/Src/basic_Protocol.h"
+#include "NetProtocol/Src/basic_ProtocolListener.h"
+#include "NetProtocol/Src/basic_Protocol.h"
 
 DECLARE_TYPE_NAME(CVClient);
 class CVClient : public network::CClient

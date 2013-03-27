@@ -7,7 +7,6 @@
 //------------------------------------------------------------------------
 #pragma once
 
-#include "Network/PrtCompiler/ProtocolDefine.h"
 #include "afxwin.h"
 #include "ProtocolPropertyCtrl.h"
 

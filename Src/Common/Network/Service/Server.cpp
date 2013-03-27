@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 #include "server.h"
-#include "NetCommon/Src/basic_Protocol.h"
+#include "NetProtocol/Src/basic_Protocol.h"
 #include "../ProtocolHandler/BasicC2SProtocolHandler.h"
 
 

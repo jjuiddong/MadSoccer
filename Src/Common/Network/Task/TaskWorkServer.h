@@ -8,8 +8,6 @@
 //------------------------------------------------------------------------
 #pragma once
 
-#include "../DataStructure/PacketQueue.h"
-
 namespace network
 {
 	DECLARE_TYPE_NAME_SCOPE(network, CTaskWorkServer)
@@ -68,7 +66,8 @@ namespace network
 					psvr->RemoveRemoteClientSocket(sockets.netid_array[ i]);
 
 					CPacketQueue::Get()->PushPacket( 
-						CPacketQueue::SPacketData(m_ServerId, DisconnectPacket(senderId) ));
+						CPacketQueue::SPacketData(m_ServerId, 
+							DisconnectPacket(senderId, CNetController::Get()->GetUniqueValue()) ));
 				}
 				else
 				{

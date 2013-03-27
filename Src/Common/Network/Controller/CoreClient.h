@@ -5,10 +5,8 @@ Date:    2/28/2013
 
 CServer 에 접속하는 클라이언트 클래스다. 
 */
-
 #pragma once
 
-#include "NetConnector.h"
 #include "../interface/CoreClientEventListener.h"
 
 namespace network
@@ -28,24 +26,25 @@ namespace network
 
 		bool					Stop();
 		void					Disconnect();
+		void					Close();
 
 		bool					IsConnect() const;
 		void					SetEventListener(CoreClientEventListenerPtr ptr);
+		void					SetConnect(bool isConnect);
+		void					SetServerIp(const std::string &ip);
+		void					SetServerPort(int port);
 
 		virtual bool		Send(netid netId, const SEND_FLAG flag, const CPacket &packet);
 		virtual bool		SendAll(const CPacket &packet) override;
+
+		// Event Handler
+		void				OnConnect();
+		void				OnDisconnect();
 
 	protected:
 		bool				Proc();
 		void				DispatchPacket();
 		void				Clear();
-		void				SetConnect(bool isConnect);
-		void				SetServerIp(const std::string &ip);
-		void				SetServerPort(int port);
-
-		// Event Handler
-		void				OnConnect();
-		void				OnDisconnect();
 
 	protected:
 		std::string							m_ServerIP;

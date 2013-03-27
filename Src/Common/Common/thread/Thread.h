@@ -73,10 +73,10 @@ namespace common
 		char						m_Name[ 32];
 
 		/// 외부 쓰레드에서 접근하기 때문에 동기화 코드가 들어가 있다.
-		CriticalSection		m_TaskCriticalSection;
+		CriticalSection		m_TaskCS;
 		TaskList				m_Tasks;
 
-		CriticalSection		m_MsgCriticalSection;
+		CriticalSection		m_MsgCS;
 		ExternalMsgList	m_ThreadMsgs;				/// 쓰레드가 받은 메세지
 		ExternalMsgList	m_ExternalMsgs;				/// 쓰레드에서 외부로 보낸 메세지
 	};

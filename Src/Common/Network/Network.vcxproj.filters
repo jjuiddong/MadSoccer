@@ -30,9 +30,6 @@
     <Filter Include="Lib\Controller">
       <UniqueIdentifier>{b95e0e89-7636-4f0f-a07c-eef1720ec3c2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Lib\PrtCompiler">
-      <UniqueIdentifier>{6955fb2d-87e1-47ca-913e-314199802dcb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Lib\Service">
       <UniqueIdentifier>{55f95af7-b0a2-45d0-ae5d-bf4436480343}</UniqueIdentifier>
     </Filter>
@@ -59,9 +56,6 @@
     <ClCompile Include="DataStructure\Group.cpp">
       <Filter>Lib\DataStructure</Filter>
     </ClCompile>
-    <ClCompile Include="DataStructure\Packet.cpp">
-      <Filter>Lib\DataStructure</Filter>
-    </ClCompile>
     <ClCompile Include="DataStructure\Room.cpp">
       <Filter>Lib\DataStructure</Filter>
     </ClCompile>
@@ -69,9 +63,6 @@
       <Filter>Lib\DataStructure</Filter>
     </ClCompile>
     <ClCompile Include="Controller\CoreClient.cpp">
-      <Filter>Lib\Controller</Filter>
-    </ClCompile>
-    <ClCompile Include="Controller\NetConnector.cpp">
       <Filter>Lib\Controller</Filter>
     </ClCompile>
     <ClCompile Include="Controller\NetController.cpp">
@@ -86,15 +77,6 @@
     <ClCompile Include="Controller\RemoteClient.cpp">
       <Filter>Lib\Controller</Filter>
     </ClCompile>
-    <ClCompile Include="PrtCompiler\ProtocolDefine.cpp">
-      <Filter>Lib\PrtCompiler</Filter>
-    </ClCompile>
-    <ClCompile Include="PrtCompiler\ProtocolParser.cpp">
-      <Filter>Lib\PrtCompiler</Filter>
-    </ClCompile>
-    <ClCompile Include="PrtCompiler\ProtocolScanner.cpp">
-      <Filter>Lib\PrtCompiler</Filter>
-    </ClCompile>
     <ClCompile Include="Service\AllProtocol.cpp">
       <Filter>Lib\Service</Filter>
     </ClCompile>
@@ -106,9 +88,6 @@
     </ClCompile>
     <ClCompile Include="Service\Server.cpp">
       <Filter>Lib\Service</Filter>
-    </ClCompile>
-    <ClCompile Include="Marshalling\Marshalling.cpp">
-      <Filter>Lib\Marshalling</Filter>
     </ClCompile>
     <ClCompile Include="Marshalling\MarshallingGroup.cpp">
       <Filter>Lib\Marshalling</Filter>
@@ -157,26 +136,11 @@
     <ClInclude Include="DataStructure\Group.h">
       <Filter>Lib\DataStructure</Filter>
     </ClInclude>
-    <ClInclude Include="DataStructure\Packet.h">
-      <Filter>Lib\DataStructure</Filter>
-    </ClInclude>
-    <ClInclude Include="DataStructure\PacketQueue.h">
-      <Filter>Lib\DataStructure</Filter>
-    </ClInclude>
     <ClInclude Include="DataStructure\Room.h">
       <Filter>Lib\DataStructure</Filter>
     </ClInclude>
     <ClInclude Include="DataStructure\User.h">
       <Filter>Lib\DataStructure</Filter>
-    </ClInclude>
-    <ClInclude Include="Interface\Protocol.h">
-      <Filter>Lib\Interface</Filter>
-    </ClInclude>
-    <ClInclude Include="Interface\ProtocolDispatcher.h">
-      <Filter>Lib\Interface</Filter>
-    </ClInclude>
-    <ClInclude Include="Interface\ProtocolListener.h">
-      <Filter>Lib\Interface</Filter>
     </ClInclude>
     <ClInclude Include="Task\TaskAccept.h">
       <Filter>Lib\Task</Filter>
@@ -190,9 +154,6 @@
     <ClInclude Include="Controller\CoreClient.h">
       <Filter>Lib\Controller</Filter>
     </ClInclude>
-    <ClInclude Include="Controller\NetConnector.h">
-      <Filter>Lib\Controller</Filter>
-    </ClInclude>
     <ClInclude Include="Controller\NetController.h">
       <Filter>Lib\Controller</Filter>
     </ClInclude>
@@ -204,18 +165,6 @@
     </ClInclude>
     <ClInclude Include="Controller\RemoteClient.h">
       <Filter>Lib\Controller</Filter>
-    </ClInclude>
-    <ClInclude Include="PrtCompiler\ProtocolDefine.h">
-      <Filter>Lib\PrtCompiler</Filter>
-    </ClInclude>
-    <ClInclude Include="PrtCompiler\ProtocolMacro.h">
-      <Filter>Lib\PrtCompiler</Filter>
-    </ClInclude>
-    <ClInclude Include="PrtCompiler\ProtocolParser.h">
-      <Filter>Lib\PrtCompiler</Filter>
-    </ClInclude>
-    <ClInclude Include="PrtCompiler\ProtocolScanner.h">
-      <Filter>Lib\PrtCompiler</Filter>
     </ClInclude>
     <ClInclude Include="Service\AllProtocol.h">
       <Filter>Lib\Service</Filter>
@@ -246,9 +195,6 @@
     </ClInclude>
     <ClInclude Include="Interface\ClientEventListener.h">
       <Filter>Lib\Interface</Filter>
-    </ClInclude>
-    <ClInclude Include="Marshalling\Marshalling.h">
-      <Filter>Lib\Marshalling</Filter>
     </ClInclude>
     <ClInclude Include="Marshalling\MarshallingGroup.h">
       <Filter>Lib\Marshalling</Filter>

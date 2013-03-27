@@ -1,0 +1,34 @@
+
+protocol s2c 500
+{
+	AckGroupList( network::error::ERROR_CODE errorCode, GroupVector groups );
+	AckGroupJoin( network::error::ERROR_CODE errorCode, netid reqId, netid joinGroupId );
+	AckGroupCreate( network::error::ERROR_CODE errorCode, netid reqId, netid crGroupId, netid crParentGroupId, std::string groupName );
+	AckGroupCreateBlank( network::error::ERROR_CODE errorCode, netid reqId, netid crGroupId, netid crParentGroupId, std::string groupName );
+
+	JoinMember( netid toGroupId, netid fromGroupId, netid userId );
+
+	AckP2PConnect( network::error::ERROR_CODE errorCode, network::P2P_STATE state, std::string ip, int port );
+
+	func1( );
+	func2( std::string str );
+	func3( float value );
+	func4( );
+	func5(std::string ok, float a, int b );
+	
+}
+
+protocol c2s 600
+{
+	ReqGroupList( netid groupid );
+	ReqGroupJoin( netid groupid );
+	ReqGroupCreate( netid parentGroupId, std::string groupName  );
+	ReqGroupCreateBlank( netid parentGroupId, std::string groupName  );
+
+	ReqP2PConnect( );
+	ReqP2PConnectTryResult(  bool isSuccess );
+
+	func2( std::string str );
+	func3( float value );
+}
+

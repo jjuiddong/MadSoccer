@@ -1,0 +1,15 @@
+
+
+protocol s2c 100
+{
+	AckLogIn( std::string id, int result );
+	AckLogOut( std::string id, int result );
+}
+
+protocol c2s 200
+{
+	ReqLogIn( std::string id, std::string password );
+	ReqLogOut( std::string id );
+
+}
+

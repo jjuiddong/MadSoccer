@@ -8,8 +8,6 @@
 //------------------------------------------------------------------------
 #pragma once
 
-#include "../DataStructure/PacketQueue.h"
-
 namespace network
 {
 	DECLARE_TYPE_NAME_SCOPE(network, CTaskWorkClient)
@@ -45,7 +43,8 @@ namespace network
 				if (result == INVALID_SOCKET || 0 == result)
 				{
 					CPacketQueue::Get()->PushPacket( 
-						CPacketQueue::SPacketData(recvId, DisconnectPacket(recvId) ));
+						CPacketQueue::SPacketData(recvId, 
+							DisconnectPacket(recvId, CNetController::Get()->GetUniqueValue()) ));
 				}
 				else
 				{

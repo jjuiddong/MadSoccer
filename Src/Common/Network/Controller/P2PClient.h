@@ -7,7 +7,6 @@ P2P 통신을 하는 클래스다.
 */
 #pragma once
 
-#include "NetConnector.h"
 #include "../interface/CoreClientEventListener.h"
 #include "../interface/ServerEventListener.h"
 #include "../interface/P2PClientEventListener.h"
@@ -36,6 +35,7 @@ namespace network
 		bool				Proc();
 		bool				Stop();
 		void				Disconnect();
+		void				Close();
 		void				SetEventListener(P2PClientEventListenerPtr ptr);
 
 		bool				IsConnect() const;
@@ -45,8 +45,8 @@ namespace network
 		virtual bool	RemoveProtocolListener(ProtocolListenerPtr pListener) override;
 
 		// Child Implementes
-		virtual bool	Send(netid netId, const SEND_FLAG flag, const CPacket &packet);
-		virtual bool	SendAll(const CPacket &packet);
+		virtual bool	Send(netid netId, const SEND_FLAG flag, const CPacket &packet) override;
+		virtual bool	SendAll(const CPacket &packet) override;
 
 	protected:
 		void				Clear();

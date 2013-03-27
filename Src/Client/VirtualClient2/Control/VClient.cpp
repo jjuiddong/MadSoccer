@@ -5,8 +5,8 @@
 #include "../UI/DlgLog.h"
 #include "../UI/ProtocolTree.h"
 
-#include "NetCommon/Src/basic_ProtocolListener.cpp"
-#include "NetCommon/Src/basic_Protocol.cpp"
+#include "NetProtocol/Src/basic_ProtocolListener.cpp"
+#include "NetProtocol/Src/basic_Protocol.cpp"
 
 
 using namespace network;

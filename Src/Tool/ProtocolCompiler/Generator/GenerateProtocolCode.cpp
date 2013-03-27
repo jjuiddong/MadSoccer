@@ -3,9 +3,6 @@
 #include "GenerateProtocolCode.h"
 #include <direct.h>
 
-// #include <shlwapi.h>
-// #pragma comment(lib, "shlwapi")
-
 using namespace network;
 using namespace std;
 
@@ -282,7 +279,7 @@ bool compiler::WriteFirstListenerCpp(sRmi *rmi, bool IsAddStdafxHeader)
 		fs << "#include \"stdafx.h\"\n";
 	fs << "#include \"" << headerFileName << "\"\n";
 	fs << "#include \"Network/Controller/NetController.h\"\n";
-	fs << "#include \"network/PrtCompiler/ProtocolMacro.h\"\n";
+	fs << "#include \"NetCommon/PrtCompiler/ProtocolMacro.h\"\n";
 	fs << endl;
 	fs << "using namespace network;\n";
 	fs << "using namespace marshalling;\n";

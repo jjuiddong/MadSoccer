@@ -90,7 +90,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalDependencies>../../../Lib/wxMemMonitorLib/wxMemMonitorLib.lib</AdditionalDependencies>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -166,9 +167,15 @@
       <Project>{f3998dc9-8441-45d0-a8f0-719c0a06c955}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+    <ProjectReference Include="..\..\Common\NetCommon\NetCommon.vcxproj">
+      <Project>{b2cb8551-b147-4c4d-86ab-a04309af20de}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\Network\Network.vcxproj">
       <Project>{dfec316a-4224-4e50-abb0-1fdebe77461f}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\wxMemMonitorLib\wxMemMonitorLib.vcxproj">
+      <Project>{20d4fc42-81e1-469f-8697-705005321531}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

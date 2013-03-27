@@ -1,16 +1,98 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Protocol">
-      <UniqueIdentifier>{f1bdaa68-e89b-49bf-833d-e925df99e3a7}</UniqueIdentifier>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="PrtCompiler">
+      <UniqueIdentifier>{5df9946c-edaf-480b-8b0a-e853617cbcef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interface">
+      <UniqueIdentifier>{84222274-65da-42a6-b871-25032d374ccd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataStructure">
+      <UniqueIdentifier>{58785896-38ae-4049-856f-4c1297297984}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Controller">
+      <UniqueIdentifier>{727828a4-4996-4710-b617-87abdf42a8f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Marshalling">
+      <UniqueIdentifier>{30c414f4-9889-41ae-a162-6481b1e1c7a4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="basic.prt">
-      <Filter>Protocol</Filter>
-    </CustomBuild>
-    <CustomBuild Include="login.prt">
-      <Filter>Protocol</Filter>
-    </CustomBuild>
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="PrtCompiler\ProtocolDefine.h">
+      <Filter>PrtCompiler</Filter>
+    </ClInclude>
+    <ClInclude Include="PrtCompiler\ProtocolMacro.h">
+      <Filter>PrtCompiler</Filter>
+    </ClInclude>
+    <ClInclude Include="PrtCompiler\ProtocolParser.h">
+      <Filter>PrtCompiler</Filter>
+    </ClInclude>
+    <ClInclude Include="PrtCompiler\ProtocolScanner.h">
+      <Filter>PrtCompiler</Filter>
+    </ClInclude>
+    <ClInclude Include="NetCommon.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Protocol.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\ProtocolDispatcher.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\ProtocolListener.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="DataStructure\Packet.h">
+      <Filter>DataStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="DataStructure\PacketQueue.h">
+      <Filter>DataStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\NetConnector.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Marshalling\Marshalling.h">
+      <Filter>Marshalling</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="PrtCompiler\ProtocolDefine.cpp">
+      <Filter>PrtCompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="PrtCompiler\ProtocolParser.cpp">
+      <Filter>PrtCompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="PrtCompiler\ProtocolScanner.cpp">
+      <Filter>PrtCompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="DataStructure\Packet.cpp">
+      <Filter>DataStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller\NetConnector.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="Marshalling\Marshalling.cpp">
+      <Filter>Marshalling</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

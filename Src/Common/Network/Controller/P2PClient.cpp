@@ -155,15 +155,27 @@ bool	CP2PClient::CreateP2PClient( const std::string &ip, const int port )
 }
 
 
-//------------------------------------------------------------------------
-// 
-//------------------------------------------------------------------------
+/**
+@brief  close socket and remove link CNetController
+*/
 void	CP2PClient::Disconnect()
 {
 	if (m_pP2pClient)
 		m_pP2pClient->Disconnect();
 	if (m_pP2pHost)
 		m_pP2pHost->Disconnect();
+}
+
+
+/**
+@brief  close socket
+*/
+void	CP2PClient::Close()
+{
+	if (m_pP2pClient)
+		m_pP2pClient->Close();
+	if (m_pP2pHost)
+		m_pP2pHost->Close();
 }
 
 

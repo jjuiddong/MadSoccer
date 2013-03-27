@@ -7,7 +7,6 @@
 //------------------------------------------------------------------------
 #pragma once
 
-#include "Controller/NetConnector.h"
 #include "../interface/ServerEventListener.h"
 
 namespace network
@@ -37,12 +36,19 @@ namespace network
 		void				Proc();
 		bool				Stop();
 		void				Disconnect();
+		void				Close();
 		bool				IsServerOn() const;
 		void				SetEventListener(ServerEventListenerPtr ptr) { m_pEventListener = ptr; }
 		void				MakeFDSET( SFd_Set *pfdset);
+		void				SetPort(int port);
 
 		virtual bool	Send(netid netId, const SEND_FLAG flag, const CPacket &packet) override;
 		virtual bool	SendAll(const CPacket &packet) override;
+
+		// Event Handler
+		void				OnListen();
+		void				OnClientJoin(netid netId);
+		void				OnClientLeave(netid netId);
 
 	protected:
 		void				DispatchPacket();
@@ -50,14 +56,8 @@ namespace network
 		bool				SendViewer(netid groupId, const SEND_FLAG flag, const CPacket &packet);
 		bool				SendViewerRecursive(netid viewerId, const netid exceptGroupId, const CPacket &packet);
 
-		void				SetPort(int port);
 		RemoteClientItor	RemoveClientProcess(RemoteClientItor it);
 		RemoteClientItor	FindRemoteClientBySocket(SOCKET sock);
-
-		// Event Handler
-		void				OnListen();
-		void				OnClientJoin(netid netId);
-		void				OnClientLeave(netid netId);
 
 	protected:
 		int								m_ServerPort;

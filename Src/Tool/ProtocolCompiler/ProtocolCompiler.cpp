@@ -2,7 +2,6 @@
 //
 
 #include "stdafx.h"
-#include "Network/PrtCompiler/ProtocolParser.h"
 #include "Generator/GenerateProtocolCode.h"
 
 using namespace network;

@@ -8,7 +8,6 @@ Date:    1/3/2013
 #pragma once
 
 #include "../Lib/TreeCtrlBase.h"
-#include "Network/PrtCompiler/ProtocolDefine.h"
 
 namespace network
 {

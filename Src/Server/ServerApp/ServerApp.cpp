@@ -4,13 +4,13 @@
 #include "stdafx.h"
 #include "ServerApp.h"
 
-#include "NetCommon/Src/login_Protocol.h"
-#include "NetCommon/Src/login_ProtocolListener.h"
-#include "NetCommon/Src/login_Protocol.cpp"
-#include "NetCommon/Src/login_ProtocolListener.cpp"
+#include "NetProtocol/Src/login_Protocol.h"
+#include "NetProtocol/Src/login_ProtocolListener.h"
+#include "NetProtocol/Src/login_Protocol.cpp"
+#include "NetProtocol/Src/login_ProtocolListener.cpp"
 
-#include "NetCommon/Src/basic_Protocol.h"
-#include "NetCommon/Src/basic_ProtocolListener.h"
+#include "NetProtocol/Src/basic_Protocol.h"
+#include "NetProtocol/Src/basic_ProtocolListener.h"
 
 #include "Lib/ChatServer.h"
 #include "Lib/ServerLauncher.h"
