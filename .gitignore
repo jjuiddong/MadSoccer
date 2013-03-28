@@ -174,4 +174,5 @@ Lib/Common/*.lib
 Lib/Graphics/*.lib
 Lib/Network/*.lib
 Src/Client/VirtualClient2/virtualclient2_config.json
-
+Src/Common/NetProtocol/Src/*
+*.json
