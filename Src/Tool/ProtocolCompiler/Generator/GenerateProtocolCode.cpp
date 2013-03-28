@@ -279,7 +279,6 @@ bool compiler::WriteFirstListenerCpp(sRmi *rmi, bool IsAddStdafxHeader)
 		fs << "#include \"stdafx.h\"\n";
 	fs << "#include \"" << headerFileName << "\"\n";
 	fs << "#include \"Network/Controller/NetController.h\"\n";
-	fs << "#include \"NetCommon/PrtCompiler/ProtocolMacro.h\"\n";
 	fs << endl;
 	fs << "using namespace network;\n";
 	fs << "using namespace marshalling;\n";
