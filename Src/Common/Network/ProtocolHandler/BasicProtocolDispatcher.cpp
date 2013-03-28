@@ -37,6 +37,16 @@ void basic_protocol::ServerDispatcher::Dispatch(CPacket &packet, ServerBasicPtr 
 			}
 		}
 		break;
+
+	case PACKETID_ACCEPT:
+		{
+			SOCKET remoteClientSock;
+			newPacket >> remoteClientSock;
+			std::string ip;
+			newPacket >> ip;
+			pSvr->AddRemoteClient(remoteClientSock, ip);
+		}
+		break;
 	}
 }
 

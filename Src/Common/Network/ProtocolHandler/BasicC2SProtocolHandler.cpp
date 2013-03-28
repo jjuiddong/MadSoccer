@@ -177,9 +177,9 @@ bool	CBasicC2SProtocolHandler::CreateBlankGroup(
 }
 
 
-//------------------------------------------------------------------------
-// Request peer to peer connection
-//------------------------------------------------------------------------
+/**
+ @brief Request peer to peer connection
+ */
 void CBasicC2SProtocolHandler::ReqP2PConnect(netid senderId)
 {
 	// check p2p connection
@@ -191,21 +191,39 @@ void CBasicC2SProtocolHandler::ReqP2PConnect(netid senderId)
 	CRemoteClient* pClient = m_Server.GetRemoteClient(senderId);
 	if (!pClient)
 	{
-		clog::Error( clog::ERROR_PROBLEM, "not found remoteclient netid: %d", senderId );
+		clog::Error( clog::ERROR_PROBLEM, "not found remoteclient netid: %d\n", senderId );
 		return;
 	}
 
 	GroupPtr pGroup = m_Server.m_RootGroup.GetChildFromUser(senderId);
 	if (!pGroup)
 	{
-		clog::Error( clog::ERROR_PROBLEM, "not found group from user id: %d", senderId );
+		clog::Error( clog::ERROR_PROBLEM, "not found group from user id: %d\n", senderId );
 		return;
 	}
 
 	// search up and down p2p connection
 	// if already connect p2p, then this group is p2p connection group
 	const netid p2pHostClient = group::GetP2PHostClient(pGroup, CServerUserAccess(&m_Server));
-	if (INVALID_NETID != p2pHostClient)
+	if (INVALID_NETID == p2pHostClient)
+	{
+		const netid newHostClient = group::SelectP2PHostClient(pGroup);
+		if (INVALID_NETID == newHostClient)
+		{
+			// error!!
+			// maybe~ never happen this accident
+			m_BasicProtocol.AckP2PConnect( senderId, SEND_TARGET, 
+				error::ERR_P2PCONNECTION_NO_MEMBER_IN_GROUP, network::P2P_CLIENT, " ", 0 );
+			return;
+		}
+
+		// p2p host 
+		// build p2p network
+		pClient->SetP2PState(P2P_HOST);
+		pGroup->SetNetState(CGroup::NET_STATE_P2P);
+		m_BasicProtocol.AckP2PConnect( senderId, SEND_TARGET, error::ERR_SUCCESS, network::P2P_HOST, "", 2400 );
+	}
+	else
 	{
 		if (p2pHostClient == senderId)
 		{
@@ -231,23 +249,6 @@ void CBasicC2SProtocolHandler::ReqP2PConnect(netid senderId)
 					error::ERR_SUCCESS, network::P2P_CLIENT, pHostClient->GetIp(), 2400);
 			}
 		}
-	}
-	else
-	{
-		const netid newHostClient = group::SelectP2PHostClient(pGroup);
-		if (INVALID_NETID == newHostClient)
-		{
-			// error!!
-			m_BasicProtocol.AckP2PConnect( senderId, SEND_TARGET, 
-				error::ERR_P2PCONNECTION_NO_MEMBER_IN_GROUP, network::P2P_CLIENT, " ", 0 );
-			return;
-		}
-
-		// p2p host 
-		// build p2p network
-		pClient->SetP2PState(P2P_HOST);
-		pGroup->SetNetState(CGroup::NET_STATE_P2P);
-		m_BasicProtocol.AckP2PConnect( senderId, SEND_TARGET, error::ERR_SUCCESS, network::P2P_HOST, "", 2400 );
 	}
 }
 

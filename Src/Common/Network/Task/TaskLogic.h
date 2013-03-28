@@ -49,19 +49,12 @@ namespace network
 		if (!pSvr)
 		{
 			clog::Error( clog::ERROR_PROBLEM,
-				common::format("CTaskLogic:: netid: %d 에 해당하는 서버가 없습니다.", 
+				common::format("CTaskLogic:: netid: %d 에 해당하는 서버가 없습니다.\n", 
 				packetData.rcvNetId) );
 			return RR_CONTINUE;
 		}
 
 		const ProtocolListenerList &listeners = pSvr->GetProtocolListeners();
-		if (listeners.empty())
-		{
-			clog::Error( clog::ERROR_CRITICAL,
-				common::format("CTaskLogic %d NetConnector의 프로토콜 리스너가 없습니다.", 
-				pSvr->GetNetId()) );
-			return RR_CONTINUE;
-		}
 
 		// 모든 패킷을 받아서 처리하는 리스너에게 패킷을 보낸다.
 		all::Dispatcher allDispatcher;
@@ -78,11 +71,19 @@ namespace network
 			return RR_CONTINUE;
 		}
 
+		if (listeners.empty())
+		{
+			clog::Error( clog::ERROR_CRITICAL,
+				common::format("CTaskLogic %d NetConnector의 프로토콜 리스너가 없습니다.\n", 
+				pSvr->GetNetId()) );
+			return RR_CONTINUE;
+		}
+
 		IProtocolDispatcher *pDispatcher = CNetController::Get()->GetDispatcher(protocolId);
 		if (!pDispatcher)
 		{
 			clog::Error( clog::ERROR_WARNING,
-				common::format("CTaskLogic:: %d 에 해당하는 프로토콜 디스패쳐가 없습니다.", 
+				common::format("CTaskLogic:: %d 에 해당하는 프로토콜 디스패쳐가 없습니다.\n", 
 				protocolId) );
 			return RR_CONTINUE;
 		}

@@ -15,6 +15,10 @@ CServerBasic::CServerBasic(PROCESS_TYPE procType) :
 {
 	m_ServerPort = 2333;
 
+	CGroup *pWaitGroup = new CGroup(NULL,"Waiting Group");
+	pWaitGroup->AddViewer(m_RootGroup.GetId()); /// root group is viewer to waitting group
+	m_WaitGroupId = pWaitGroup->GetId();
+	m_RootGroup.AddChild( pWaitGroup );
 }
 
 CServerBasic::~CServerBasic()
@@ -28,6 +32,9 @@ CServerBasic::~CServerBasic()
 */
 void	CServerBasic::Proc()
 {
+	/// Accept
+	AcceptProcess();
+	
 	const timeval t = {0, 10}; // 10 millisecond
 	SFd_Set readSockets;
 	MakeFDSET(&readSockets);
@@ -66,6 +73,45 @@ void	CServerBasic::Proc()
 
 
 /**
+ @brief Accept
+ */
+bool CServerBasic::AcceptProcess()
+{
+	const timeval t = {0, 10}; // 10 millisecond
+	fd_set readSockets;
+	FD_ZERO(&readSockets);
+	FD_SET(GetSocket(), &readSockets);
+
+	const int ret = select( readSockets.fd_count, &readSockets, NULL, NULL, &t );
+	if (ret != 0 && ret != SOCKET_ERROR)
+	{
+		for (u_int i=0; i < readSockets.fd_count; ++i)
+		{
+			// accept(요청을 받으 소켓, 선택 클라이언트 주소)
+			SOCKET remoteSocket = accept(readSockets.fd_array[ i], NULL, NULL);
+			if (remoteSocket == INVALID_SOCKET)
+			{
+				clog::Error( clog::ERROR_CRITICAL, "Client를 Accept하는 도중에 에러가 발생함\n" );
+				return true;
+			}
+
+			// get ip address
+			sockaddr_in addr;
+			int len = sizeof(addr);
+			memset(&addr,0,sizeof(addr));
+			getpeername( remoteSocket, (sockaddr*)&addr, &len );
+			std::string ip = inet_ntoa(addr.sin_addr);
+
+			CPacketQueue::Get()->PushPacket( 
+				CPacketQueue::SPacketData(GetNetId(), AcceptPacket(remoteSocket, ip)) );
+			//AddRemoteClient( remoteSocket, ip );
+		}
+	}
+	return true; 
+}
+
+
+/**
  @brief Dispatch Packet
  */
 void	CServerBasic::DispatchPacket()
@@ -75,38 +121,38 @@ void	CServerBasic::DispatchPacket()
 		return;
 
 	const ProtocolListenerList &listeners = GetProtocolListeners();
+
+	// 모든 패킷을 받아서 처리하는 리스너에게 패킷을 보낸다.
+	all::Dispatcher allDispatcher;
+	allDispatcher.Dispatch(packetData.packet, listeners);
+	// 
+
+	const int protocolId = packetData.packet.GetProtocolId();
+
+	// 기본 프로토콜 처리
+	if (protocolId == 0)
+	{
+		basic_protocol::ServerDispatcher dispatcher;
+		dispatcher.Dispatch( packetData.packet, this );
+		return;
+	}
+
 	if (listeners.empty())
 	{
-		clog::Error(clog::ERROR_CRITICAL, " CServerBasic::DispatchPacket() 프로토콜 리스너가 없습니다. netid: %d", GetNetId() );
+		clog::Error(clog::ERROR_CRITICAL, " CServerBasic::DispatchPacket() 프로토콜 리스너가 없습니다. netid: %d\n", GetNetId() );
+		return;
+	}
+
+	IProtocolDispatcher *pDispatcher = CNetController::Get()->GetDispatcher(protocolId);
+	if (!pDispatcher)
+	{
+		clog::Error( clog::ERROR_WARNING,
+			common::format(" CServerBasic::DispatchPacket() %d 에 해당하는 프로토콜 디스패쳐가 없습니다.\n", 
+			protocolId) );
 	}
 	else
 	{
-		// 모든 패킷을 받아서 처리하는 리스너에게 패킷을 보낸다.
-		all::Dispatcher allDispatcher;
-		allDispatcher.Dispatch(packetData.packet, listeners);
-		// 
-
-		const int protocolId = packetData.packet.GetProtocolId();
-
-		// 기본 프로토콜 처리
-		if (protocolId == 0)
-		{
-			basic_protocol::ServerDispatcher dispatcher;
-			dispatcher.Dispatch( packetData.packet, this );
-			return;
-		}
-
-		IProtocolDispatcher *pDispatcher = CNetController::Get()->GetDispatcher(protocolId);
-		if (!pDispatcher)
-		{
-			clog::Error( clog::ERROR_WARNING,
-				common::format(" CServerBasic::DispatchPacket() %d 에 해당하는 프로토콜 디스패쳐가 없습니다.", 
-				protocolId) );
-		}
-		else
-		{
-			pDispatcher->Dispatch(packetData.packet, listeners);
-		}
+		pDispatcher->Dispatch(packetData.packet, listeners);
 	}
 }
 
@@ -135,11 +181,10 @@ bool CServerBasic::AddRemoteClient(SOCKET sock, const std::string &ip)
 	CRemoteClient *pNewRemoteClient = new CRemoteClient();
 	pNewRemoteClient->SetSocket(sock);
 	pNewRemoteClient->SetIp(ip);
-	//pNewRemoteClient->SetGroupId(m_WaitGroupId);
 
 	if (!m_RootGroup.AddUser(m_WaitGroupId, pNewRemoteClient->GetId()))
 	{
-		clog::Error( clog::ERROR_CRITICAL, "CServer::AddClient Error!! netid: %d", pNewRemoteClient->GetId());
+		clog::Error( clog::ERROR_CRITICAL, "CServerBasic::AddClient Error!! netid: %d\n", pNewRemoteClient->GetId());
 		SAFE_DELETE(pNewRemoteClient);
 	}
 	else
@@ -147,7 +192,7 @@ bool CServerBasic::AddRemoteClient(SOCKET sock, const std::string &ip)
 		m_RemoteClients.insert( 
 			RemoteClientMap::value_type(pNewRemoteClient->GetId(), pNewRemoteClient) );
 
-		clog::Log( clog::LOG_F_N_O, "AddClient netid: %d, socket: %d", pNewRemoteClient->GetId(), sock );
+		clog::Log( clog::LOG_F_N_O, "AddClient netid: %d, socket: %d\n", pNewRemoteClient->GetId(), sock );
 		OnClientJoin(pNewRemoteClient->GetId());
 	}
 
@@ -257,19 +302,19 @@ RemoteClientItor CServerBasic::RemoveClientProcess(RemoteClientItor it)
 	 {
 		if (!m_RootGroup.RemoveUser(pGroup->GetId(), userId))
 		{
-			clog::Error( clog::ERROR_PROBLEM, "CServer::RemoveClientProcess() Error!! not remove user groupid: %d, userid: %d",
+			clog::Error( clog::ERROR_PROBLEM, "CServer::RemoveClientProcess() Error!! not remove user groupid: %d, userid: %d\n",
 				pGroup->GetId(), userId);
 		}
 	 }
 	 else
 	 {
-		 clog::Error( clog::ERROR_PROBLEM, "CServer::RemoveClientProcess() Error!! not found group userid: %d",userId);
+		 clog::Error( clog::ERROR_PROBLEM, "CServer::RemoveClientProcess() Error!! not found group userid: %d\n",userId);
 	 }
 
 	delete it->second;
 	RemoteClientItor r = m_RemoteClients.erase(it);
 
-	clog::Log( clog::LOG_F_N_O, "RemoveClient netid: %d, socket: %d", userId, sock );
+	clog::Log( clog::LOG_F_N_O, "RemoveClient netid: %d, socket: %d\n", userId, sock );
 	return r;
 }
 
@@ -361,7 +406,7 @@ bool	CServerBasic::Send(netid netId, const SEND_FLAG flag, const CPacket &packet
 			const int result = send(it->second->GetSocket(), packet.GetData(), CPacket::MAX_PACKETSIZE, 0);
 			if (result == INVALID_SOCKET)
 			{
-				clog::Error( clog::ERROR_WARNING, common::format("CServer::Send() Socket Error id=%d", it->second->GetId()) );
+				clog::Error( clog::ERROR_WARNING, common::format("CServer::Send() Socket Error id=%d\n", it->second->GetId()) );
 				RemoveRemoteClient(packet.GetSenderId());
 				sendResult = false;
 			}

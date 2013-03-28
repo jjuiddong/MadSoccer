@@ -40,7 +40,7 @@ namespace network
 		ServerBasicPtr psvr = GetServer( m_ServerId );
 		if (!psvr) 
 		{
-			clog::Error( clog::ERROR_CRITICAL, "CTaskWorkServer::Run() Error!! not found server netid: %d", m_ServerId );
+			clog::Error( clog::ERROR_CRITICAL, "CTaskWorkServer::Run() Error!! not found server netid: %d\n", m_ServerId );
 			return RR_END;
 		}
 		if (!psvr->IsServerOn())

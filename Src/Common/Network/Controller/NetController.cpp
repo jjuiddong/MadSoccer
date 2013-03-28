@@ -94,7 +94,7 @@ bool CNetController::StartServer(int port, ServerBasicPtr pSvr)
 		Servers::iterator it = m_Servers.find(pSvr->GetNetId());
 		if (m_Servers.end() != it)
 		{
-			clog::Error( clog::ERROR_WARNING, "이미 실행되고 있는 서버를 다시 실행시켰음");
+			clog::Error( clog::ERROR_WARNING, "이미 실행되고 있는 서버를 다시 실행시켰음\n");
 			return false;
 		}
 	}
@@ -106,7 +106,7 @@ bool CNetController::StartServer(int port, ServerBasicPtr pSvr)
 		return false;
 
 	// 서버 시작에 관련된 코드 추가
-	clog::Log( clog::LOG_F_N_O, "%d Server Start", pSvr->GetNetId() );
+	clog::Log( clog::LOG_F_N_O, "%d Server Start\n", pSvr->GetNetId() );
 
 	{ /// Sync
 		common::AutoCSLock cs(m_CS); /// Sync
@@ -199,7 +199,7 @@ bool CNetController::StartClient(const std::string &ip, int port, ClientBasicPtr
 	if (pClt->IsConnect())
 		pClt->Close(); // 연결을 끊고
 
-	clog::Log( clog::LOG_F_N_O, "%d Client Start", pClt->GetNetId() );
+	clog::Log( clog::LOG_F_N_O, "%d Client Start\n", pClt->GetNetId() );
 	if (!StartCoreClient(ip, port, pClt->GetConnectSvrClient()))
 		return false;
 
@@ -239,7 +239,7 @@ bool	CNetController::RemoveClient(ClientBasicPtr pClt)
 	common::AutoCSLock cs(m_CS); 	/// Sync
 
 	if (!m_Clients.remove(pClt->GetNetId()))
-		clog::Error( clog::ERROR_PROBLEM, "StopClient Error!! netid: %d client", pClt->GetNetId());
+		clog::Error( clog::ERROR_PROBLEM, "StopClient Error!! netid: %d client\n", pClt->GetNetId());
 
 	ClientItor it = m_ClientSockets.find(pClt->GetSocket());
 	if (m_ClientSockets.end() == it)
@@ -289,11 +289,11 @@ bool CNetController::StartCoreClient(const std::string &ip, int port, CoreClient
 		pClt->Close(); // 연결을 끊고
 
 	// 서버 시작에 관련된 코드 추가
-	clog::Log( clog::LOG_F_N_O, "%d Client Start", pClt->GetNetId() );
+	clog::Log( clog::LOG_F_N_O, "%d Client Start\n", pClt->GetNetId() );
 
  	if (!netlauncher::LaunchCoreClient(pClt, ip, port))
  	{
- 		clog::Error( clog::ERROR_CRITICAL, "StartCoreClient Error!! Launch Fail ip: %s, port: %d", ip.c_str(), port);
+ 		clog::Error( clog::ERROR_CRITICAL, "StartCoreClient Error!! Launch Fail ip: %s, port: %d\n", ip.c_str(), port);
  		return false;
  	}
 
@@ -341,7 +341,7 @@ bool	CNetController::RemoveCoreClient(CoreClientPtr  pClt)
 	{ /// Sync
 		common::AutoCSLock cs(m_CS); 	/// Sync
 		if (!m_CoreClients.remove(pClt->GetNetId()))
-			clog::Error( clog::ERROR_PROBLEM, "StopClient Error!! netid: %d client", pClt->GetNetId());
+			clog::Error( clog::ERROR_PROBLEM, "StopClient Error!! netid: %d client\n", pClt->GetNetId());
 	}
 
 	// Stop CoreClient Work Thread
@@ -380,7 +380,7 @@ void CNetController::AddDispatcher(IProtocolDispatcher *pDispatcher)
 	if (m_Dispatchers.end() != it)
 	{
 		clog::Error( clog::ERROR_WARNING, 
-			common::format( "같은 ProtocolDispatcher를 이미 등록했습니다. DispatcherId: %d ", pDispatcher->GetId()) );
+			common::format( "같은 ProtocolDispatcher를 이미 등록했습니다. DispatcherId: %d\n", pDispatcher->GetId()) );
 		return; // 이미 존재한다면 실패
 	}
 	m_Dispatchers.insert( DispatcherMap::value_type(pDispatcher->GetId(), pDispatcher) );

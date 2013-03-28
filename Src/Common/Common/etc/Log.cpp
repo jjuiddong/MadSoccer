@@ -15,13 +15,37 @@ using namespace std;
 
 
 /**
+ @brief cut the Too many string of same value
+ */
+bool IsCutMessage(const char *msg)
+{
+	static int sameMsgCnt = 0;
+	static int oldT = GetTickCount();
+	static string oldMsg = msg;
+	const int curT = GetTickCount();
+	if ((curT - oldT < 10) &&  (oldMsg == msg) && (sameMsgCnt > 3))
+	{
+		++sameMsgCnt;
+		return true;
+	}
+
+	sameMsgCnt = 0;
+	oldMsg = msg;
+	return false;
+}
+
+
+/**
  @brief 
  */
 void log::Log_char( const char *label, const char *msg )
 {
+	if (IsCutMessage(msg))
+		return;
+
 	ofstream fs("Log.log", ios_base::app);
 	if (!fs.is_open()) return;
-	fs << label << "   [" << common::GetTimeString() << "]  " << msg << endl;
+	fs << label << "   [" << common::GetTimeString() << "]  " << msg;
 }
 
 
@@ -30,9 +54,12 @@ void log::Log_char( const char *label, const char *msg )
  */
 void log::ErrorLog_char( const char *label, const char *msg )
 {
+	if (IsCutMessage(msg))
+		return;
+
 	ofstream fs("ErrLog.log", ios_base::app);
 	if (!fs.is_open()) return;
-	fs << label << "   [" << common::GetTimeString() << "]  " << msg << endl;
+	fs << label << "   [" << common::GetTimeString() << "]  " << msg;
 }
 
 
@@ -56,7 +83,7 @@ void log::Log(const std::string &str)
 	ofstream fs("Log.log", ios_base::out);
 	if (!fs.is_open()) return;
 
-	fs << "[" << common::GetTimeString() << "]	" << str << endl;
+	fs << "[" << common::GetTimeString() << "]	" << str;
 }
 
 
@@ -73,7 +100,7 @@ void log::Log( const char* fmt, ...)
 
 	ofstream fs("Log.log", ios_base::out);
 	if (!fs.is_open()) return;
-	fs << "[" << common::GetTimeString() << "]	" << textString << endl;
+	fs << "[" << common::GetTimeString() << "]	" << textString;
 }
 
 
@@ -95,7 +122,7 @@ void log::ErrorLog(const std::string &str)
 	std::ofstream fs("ErrorLog.log", std::ios_base::out);
 	if (!fs.is_open()) return;
 
-	fs << "[" << common::GetTimeString() << "]	" << str << std::endl;
+	fs << "[" << common::GetTimeString() << "]	" << str;
 }
 
 

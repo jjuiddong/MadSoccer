@@ -62,5 +62,6 @@ bool CNetConnector::RemoveProtocolListener(ProtocolListenerPtr pListener)
 void	CNetConnector::ClearConnection()
 {
 	closesocket(m_Socket);
+	m_Socket = 0;
 	//WSACleanup();
 }

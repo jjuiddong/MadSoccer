@@ -1,11 +1,12 @@
 
 #include "stdafx.h"
 #include "Packet.h"
+#include "NetCommon/Marshalling/Marshalling.h"
 //#include "../Controller/NetController.h"
 
 
 using namespace network;
-
+using namespace marshalling;
 /**
 @brief  Disconnect 패킷을 리턴한다.
 @param netid: disconnect 된 netid
@@ -17,6 +18,20 @@ CPacket network::DisconnectPacket(netid disconnectId, int netControllerUniqValue
 	packet.SetPacketId(PACKETID_DISCONNECT);
 	packet << netControllerUniqValue; // packet 을 검증하기 위한 용도로 쓰인다.
 	packet << disconnectId;
+	return packet;
+}
+
+
+/**
+ @brief return the AcceptPacket
+ */
+CPacket network::AcceptPacket(SOCKET acceptSocket, std::string clientIP )
+{
+	CPacket packet;
+	packet.SetProtocolId(0); // basic_protocol
+	packet.SetPacketId(PACKETID_ACCEPT);
+	packet << acceptSocket;
+	packet << clientIP;
 	return packet;
 }
 

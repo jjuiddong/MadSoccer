@@ -12,11 +12,6 @@ CServer::CServer(PROCESS_TYPE procType) :
 ,	m_pBasicProtocol(NULL)
 ,	m_pBasicPrtHandler(NULL)
 {
-	CGroup *pWaitGroup = new CGroup(NULL,"Waiting Group");
-	pWaitGroup->AddViewer(m_RootGroup.GetId()); /// root group is viewer to waitting group
-	m_WaitGroupId = pWaitGroup->GetId();
-	m_RootGroup.AddChild( pWaitGroup );
-
 	m_pBasicProtocol = new basic::s2c_Protocol();
 	m_pBasicProtocol->SetNetConnector(this);
 

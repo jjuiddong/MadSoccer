@@ -19,7 +19,7 @@ using namespace network;
 bool network::Init(int logicThreadCount)
 {
 	srand( timeGetTime() );
-	clog::Log( clog::LOG_F_N_O, "Network Init" );
+	clog::Log( clog::LOG_F_N_O, "Network Init\n" );
 
 	common::InitRandNoDuplicate();
 	const bool result = CNetController::Get()->Init(logicThreadCount);
@@ -42,7 +42,7 @@ void network::Clear()
 //------------------------------------------------------------------------
 bool network::StartServer(int port, ServerBasicPtr pSvr)
 {
-	clog::Log( clog::LOG_F_N_O, "StartServer port: %d", port );
+	clog::Log( clog::LOG_F_N_O, "StartServer port: %d\n", port );
 	return CNetController::Get()->StartServer(port, pSvr);
 }
 
@@ -52,7 +52,7 @@ bool network::StartServer(int port, ServerBasicPtr pSvr)
 bool network::StopServer(ServerBasicPtr pSvr)
 {
 	if (!pSvr) return false;
-	clog::Log( clog::LOG_F_N_O, "StopServer netid: %d", pSvr->GetNetId() );
+	clog::Log( clog::LOG_F_N_O, "StopServer netid: %d\n", pSvr->GetNetId() );
 	return pSvr->Stop();
 //	return CNetController::Get()->StopServer(pSvr);
 }
@@ -70,7 +70,7 @@ ServerBasicPtr network::GetServer(netid serverId)
 //------------------------------------------------------------------------
 bool network::StartClient(const std::string &ip, int port, ClientBasicPtr pClt)
 {
-	clog::Log( clog::LOG_F_N_O, "StartClient %s, %d", ip.c_str(), port);
+	clog::Log( clog::LOG_F_N_O, "StartClient %s, %d\n", ip.c_str(), port);
 	return CNetController::Get()->StartClient(ip, port, pClt);
 }
 
@@ -80,7 +80,7 @@ bool network::StartClient(const std::string &ip, int port, ClientBasicPtr pClt)
 bool network::StopClient(ClientBasicPtr pClt)
 {
 	if (!pClt) return false;
-	clog::Log( clog::LOG_F_N_O, "StopClient netid: %d", pClt->GetNetId() );
+	clog::Log( clog::LOG_F_N_O, "StopClient netid: %d\n", pClt->GetNetId() );
 	return pClt->Stop();
 //	return CNetController::Get()->StopClient(pClt);
 }

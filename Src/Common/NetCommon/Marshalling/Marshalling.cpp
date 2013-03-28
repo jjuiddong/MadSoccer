@@ -103,7 +103,7 @@ CPacket& marshalling::operator<<(CPacket& packet, const _variant_t &rhs)
 	default:
 		{
 			clog::Error( clog::ERROR_PROBLEM, 
-				common::format("marshalling::operator<< %d 에 해당하는 타입의 Append는 없다.", type) );
+				common::format("marshalling::operator<< %d 에 해당하는 타입의 Append는 없다.\n", type) );
 			assert(0);
 		}
 		break;

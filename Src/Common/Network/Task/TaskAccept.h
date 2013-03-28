@@ -44,7 +44,7 @@ namespace network
 				SOCKET remoteSocket = accept(readSockets.fd_array[ i], NULL, NULL);
 				if (remoteSocket == INVALID_SOCKET)
 				{
-					clog::Error( clog::ERROR_CRITICAL, "Client를 Accept하는 도중에 에러가 발생함" );
+					clog::Error( clog::ERROR_CRITICAL, "Client를 Accept하는 도중에 에러가 발생함\n" );
 					return RR_CONTINUE;
 				}
 
@@ -52,7 +52,7 @@ namespace network
 				if (!pSvr)
 				{
 					clog::Error( clog::ERROR_PROBLEM,
-						common::format("%d 소켓에 해당하는 클라이언트를 찾지못함", 
+						common::format("%d 소켓에 해당하는 서버를 찾지못함\n", 
 						readSockets.fd_array[ i]) );
 					return RR_CONTINUE;
 				}
@@ -64,7 +64,9 @@ namespace network
 				getpeername( remoteSocket, (sockaddr*)&addr, &len );
 				std::string ip = inet_ntoa(addr.sin_addr);
 
-				pSvr->AddRemoteClient( remoteSocket, ip );
+				//pSvr->AddRemoteClient( remoteSocket, ip );
+				CPacketQueue::Get()->PushPacket( 
+					CPacketQueue::SPacketData(pSvr->GetNetId(), AcceptPacket(remoteSocket, ip)) );
 			}
 		}
 		return RR_CONTINUE; 

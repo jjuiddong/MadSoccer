@@ -19,7 +19,7 @@ bool netlauncher::LaunchServer(ServerBasicPtr pSvr, int port)
 	int nRet = WSAStartup(wVersionRequested, &wsaData);
 	if(wsaData.wVersion != wVersionRequested)
 	{
-		clog::Error( clog::ERROR_CRITICAL,  "윈속 버전이 틀렸습니다" );
+		clog::Error( clog::ERROR_CRITICAL,  "윈속 버전이 틀렸습니다\n" );
 		return false;
 	}
 
@@ -27,7 +27,7 @@ bool netlauncher::LaunchServer(ServerBasicPtr pSvr, int port)
 	SOCKET svrSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if(svrSocket == INVALID_SOCKET)
 	{
-		clog::Error( clog::ERROR_CRITICAL, "socket() error" );
+		clog::Error( clog::ERROR_CRITICAL, "socket() error\n" );
 		return false;
 	}
 
@@ -42,7 +42,7 @@ bool netlauncher::LaunchServer(ServerBasicPtr pSvr, int port)
 	nRet = bind(svrSocket, (LPSOCKADDR)&saServer, sizeof(struct sockaddr) );
 	if(nRet == SOCKET_ERROR)
 	{
-		clog::Error( clog::ERROR_CRITICAL,  "bind() error" );
+		clog::Error( clog::ERROR_CRITICAL,  "bind() error\n" );
 		closesocket(svrSocket);
 		return false;
 	}
@@ -54,7 +54,7 @@ bool netlauncher::LaunchServer(ServerBasicPtr pSvr, int port)
 	nRet = gethostname( szBuf, sizeof(szBuf) );
 	if (nRet == SOCKET_ERROR)
 	{
-		clog::Error( clog::ERROR_CRITICAL, "gethostname() error" );
+		clog::Error( clog::ERROR_CRITICAL, "gethostname() error\n" );
 		closesocket(svrSocket);
 		return false;
 	}
@@ -64,7 +64,7 @@ bool netlauncher::LaunchServer(ServerBasicPtr pSvr, int port)
 
 	if (nRet == SOCKET_ERROR)
 	{
-		clog::Error( clog::ERROR_CRITICAL, "listen() error" );
+		clog::Error( clog::ERROR_CRITICAL, "listen() error\n" );
 		closesocket(svrSocket);
 		return false;
 	}
@@ -107,7 +107,7 @@ bool	netlauncher::LaunchCoreClient(CoreClientPtr pClient, const std::string &ip,
 	int nRet = WSAStartup(wVersionRequested, &wsaData);
 	if (wsaData.wVersion != wVersionRequested)
 	{
-		clog::Error( clog::ERROR_CRITICAL, "윈속 버전이 틀렸습니다" );
+		clog::Error( clog::ERROR_CRITICAL, "윈속 버전이 틀렸습니다\n" );
 		return false;
 	}
 
@@ -115,7 +115,7 @@ bool	netlauncher::LaunchCoreClient(CoreClientPtr pClient, const std::string &ip,
 	lpHostEntry = gethostbyname(ip.c_str());
 	if(lpHostEntry == NULL)
 	{
-		clog::Error( clog::ERROR_CRITICAL, "gethostbyname() error" );
+		clog::Error( clog::ERROR_CRITICAL, "gethostbyname() error\n" );
 		return false;
 	}
 
@@ -124,7 +124,7 @@ bool	netlauncher::LaunchCoreClient(CoreClientPtr pClient, const std::string &ip,
 	SOCKET clientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (clientSocket == INVALID_SOCKET)
 	{
-		clog::Error( clog::ERROR_CRITICAL, "socket() error" );
+		clog::Error( clog::ERROR_CRITICAL, "socket() error\n" );
 		return false;
 	}
 
@@ -139,7 +139,7 @@ bool	netlauncher::LaunchCoreClient(CoreClientPtr pClient, const std::string &ip,
 	nRet = connect(clientSocket, (LPSOCKADDR)&saServer, sizeof(struct sockaddr) );
 	if(nRet == SOCKET_ERROR)
 	{
-		clog::Error( clog::ERROR_CRITICAL, "connect() error" );
+		clog::Error( clog::ERROR_CRITICAL, "connect() error\n" );
 		closesocket(clientSocket);
 		return false;
 	}

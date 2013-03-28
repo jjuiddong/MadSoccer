@@ -81,38 +81,38 @@ void	CCoreClient::DispatchPacket()
 		return;
 
 	const ProtocolListenerList &listeners = GetProtocolListeners();
+
+	// 모든 패킷을 받아서 처리하는 리스너에게 패킷을 보낸다.
+	all::Dispatcher allDispatcher;
+	allDispatcher.Dispatch(packetData.packet, listeners);
+	// 
+
+	const int protocolId = packetData.packet.GetProtocolId();
+
+	// 기본 프로토콜 처리
+	if (protocolId == 0)
+	{
+		basic_protocol::ClientDispatcher dispatcher;
+		dispatcher.Dispatch( packetData.packet, this );
+		return;
+	}
+
 	if (listeners.empty())
 	{
-		clog::Error( clog::ERROR_CRITICAL, " CClientCore::DispatchPacket() 프로토콜 리스너가 없습니다. netid: %d", GetNetId());
+		clog::Error( clog::ERROR_CRITICAL, " CClientCore::DispatchPacket() 프로토콜 리스너가 없습니다. netid: %d\n", GetNetId());
+		return;
+	}
+
+	IProtocolDispatcher *pDispatcher = CNetController::Get()->GetDispatcher(protocolId);
+	if (!pDispatcher)
+	{
+		clog::Error( clog::ERROR_WARNING, 
+			common::format(" CClientCore::DispatchPacket() %d 에 해당하는 프로토콜 디스패쳐가 없습니다.\n", 
+			protocolId) );
 	}
 	else
 	{
-		// 모든 패킷을 받아서 처리하는 리스너에게 패킷을 보낸다.
-		all::Dispatcher allDispatcher;
-		allDispatcher.Dispatch(packetData.packet, listeners);
-		// 
-
-		const int protocolId = packetData.packet.GetProtocolId();
-
-		// 기본 프로토콜 처리
-		if (protocolId == 0)
-		{
-			basic_protocol::ClientDispatcher dispatcher;
-			dispatcher.Dispatch( packetData.packet, this );
-			return;
-		}
-
-		IProtocolDispatcher *pDispatcher = CNetController::Get()->GetDispatcher(protocolId);
-		if (!pDispatcher)
-		{
-			clog::Error( clog::ERROR_WARNING, 
-				common::format(" CClientCore::DispatchPacket() %d 에 해당하는 프로토콜 디스패쳐가 없습니다.", 
-				protocolId) );
-		}
-		else
-		{
-			pDispatcher->Dispatch(packetData.packet, listeners);
-		}
+		pDispatcher->Dispatch(packetData.packet, listeners);
 	}
 
 }

@@ -13,6 +13,7 @@ namespace network
 	class CPacketQueue : public common::CSingleton<CPacketQueue>
 	{
 	public:
+		friend class CTaskAccept;
 		friend class CTaskLogic;
 		friend class CTaskWork;
 		friend class CTaskWorkClient;

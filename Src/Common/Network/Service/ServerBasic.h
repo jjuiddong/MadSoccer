@@ -51,6 +51,7 @@ namespace network
 		void				OnClientLeave(netid netId);
 
 	protected:
+		bool				AcceptProcess();
 		void				DispatchPacket();
 		bool				SendGroup(GroupPtr pGroup, const CPacket &packet);
 		bool				SendViewer(netid groupId, const SEND_FLAG flag, const CPacket &packet);

@@ -152,8 +152,10 @@ namespace network
 	{
 		PACKETID_CONNECT = 1,
 		PACKETID_DISCONNECT,
+		PACKETID_ACCEPT,
 	};
 
 	CPacket DisconnectPacket(netid disconnectId, int netControllerUniqValue);
+	CPacket AcceptPacket(SOCKET acceptSocket, std::string clientIP );
 
 }

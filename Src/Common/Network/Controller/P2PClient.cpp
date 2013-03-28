@@ -26,8 +26,6 @@ CP2PClient::~CP2PClient()
  */
 bool	CP2PClient::Bind( const int port )
 {
-	Stop();
-
 	m_State = P2P_HOST;
 	const bool result = CreateP2PHost(port);
 	return result;
@@ -40,8 +38,6 @@ bool	CP2PClient::Bind( const int port )
 //------------------------------------------------------------------------
 bool	CP2PClient::Connect( const std::string &ip, const int port )
 {
-	Stop();
-
 	m_State = P2P_CLIENT;
 	const bool result = CreateP2PClient(ip,port);
 	return result;
@@ -129,7 +125,8 @@ bool	CP2PClient::SendAll(const CPacket &packet)
 bool	CP2PClient::CreateP2PHost( const int port )
 {
 	if (m_pP2pHost)
-		CNetController::Get()->StopServer(m_pP2pHost);
+		Close();
+		//CNetController::Get()->StopServer(m_pP2pHost);
 	else
 		m_pP2pHost = new CServerBasic(GetProcessType());
 
@@ -145,7 +142,8 @@ bool	CP2PClient::CreateP2PHost( const int port )
 bool	CP2PClient::CreateP2PClient( const std::string &ip, const int port )
 {
 	if (m_pP2pClient)
-		CNetController::Get()->StopCoreClient(m_pP2pClient);
+		Close();
+		//CNetController::Get()->StopCoreClient(m_pP2pClient);
 	else
 		m_pP2pClient = new CCoreClient(GetProcessType());
 

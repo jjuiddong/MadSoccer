@@ -161,7 +161,7 @@ void CLobbyServer::OnClientJoin(ServerBasicPtr svr, netid netId)
 	pUser->SetNetId(netId);
 	if (!AddUser( pUser ))
 	{
-		clog::Error( clog::ERROR_PROBLEM, "AddUser() Faile!! id = %d", netId);
+		clog::Error( clog::ERROR_PROBLEM, "AddUser() Faile!! id = %d\n", netId);
 		delete pUser;
 	}
 }
@@ -174,7 +174,7 @@ void CLobbyServer::OnClientLeave(ServerBasicPtr svr, netid netId)
 {
 	if (!RemoveUser(netId))
 	{
-		clog::Error(clog::ERROR_PROBLEM,  "RemoveUser() Faile!! id = %d", netId);
+		clog::Error(clog::ERROR_PROBLEM,  "RemoveUser() Faile!! id = %d\n", netId);
 	}
 }
 
