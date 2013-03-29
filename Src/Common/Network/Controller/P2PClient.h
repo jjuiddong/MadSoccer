@@ -39,6 +39,7 @@ namespace network
 		void				SetEventListener(P2PClientEventListenerPtr ptr);
 
 		bool				IsConnect() const;
+		bool				IsHostClient() const;
 
 		// Overriding
 		virtual bool	AddProtocolListener(ProtocolListenerPtr pListener) override;
@@ -71,6 +72,7 @@ namespace network
 	};
 
 	inline bool CP2PClient::IsConnect() const { return true; }
+	inline bool CP2PClient::IsHostClient() const { return m_State == P2P_HOST; }
 	inline void	 CP2PClient::SetEventListener(P2PClientEventListenerPtr ptr) { m_pEventListener = ptr; }
 
 }

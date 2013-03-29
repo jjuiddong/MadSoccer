@@ -125,13 +125,21 @@ bool	CP2PClient::SendAll(const CPacket &packet)
 bool	CP2PClient::CreateP2PHost( const int port )
 {
 	if (m_pP2pHost)
+	{
 		Close();
-		//CNetController::Get()->StopServer(m_pP2pHost);
+	}
 	else
+	{
 		m_pP2pHost = new CServerBasic(GetProcessType());
+		m_pP2pHost->SetEventListener(this);
+		m_pP2pHost->SetParent(this);
 
-	m_pP2pHost->SetEventListener(this);
-	m_pP2pHost->SetParent(this);
+		BOOST_FOREACH(auto &pPrt, GetProtocolListeners())
+		{
+			m_pP2pHost->AddProtocolListener( pPrt );
+		}
+	}
+
 	return CNetController::Get()->StartServer(port, m_pP2pHost);
 }
 
@@ -142,13 +150,21 @@ bool	CP2PClient::CreateP2PHost( const int port )
 bool	CP2PClient::CreateP2PClient( const std::string &ip, const int port )
 {
 	if (m_pP2pClient)
+	{
 		Close();
-		//CNetController::Get()->StopCoreClient(m_pP2pClient);
+	}
 	else
+	{
 		m_pP2pClient = new CCoreClient(GetProcessType());
+		m_pP2pClient->SetEventListener(this);
+		m_pP2pClient->SetParent(this);
 
-	m_pP2pClient->SetEventListener(this);
-	m_pP2pClient->SetParent(this);
+		BOOST_FOREACH(auto &pPrt, GetProtocolListeners())
+		{
+			m_pP2pClient->AddProtocolListener( pPrt );
+		}
+	}
+
 	return CNetController::Get()->StartCoreClient(ip, port, m_pP2pClient);
 }
 

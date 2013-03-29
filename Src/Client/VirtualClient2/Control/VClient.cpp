@@ -7,13 +7,15 @@
 
 #include "NetProtocol/Src/basic_ProtocolListener.cpp"
 #include "NetProtocol/Src/basic_Protocol.cpp"
-
+#include "NetProtocol/Src/p2pComm_ProtocolListener.cpp"
+#include "NetProtocol/Src/p2pComm_Protocol.cpp"
 
 using namespace network;
 
 CVClient::CVClient() : CClient(network::USER_LOOP)
 {
 	RegisterProtocol(&m_Protocol);
+	RegisterProtocol(&m_P2pProtocol);
 	AddProtocolListener(this);
 	SetEventListener(this);
 
@@ -124,3 +126,15 @@ void	CVClient::OnMemberLeave(ClientBasicPtr client, netid clientId)
 	GetConsole()->AddString( "Member Leave" );
 }
 
+
+/**
+ @brief 
+ */
+void CVClient::SendData(netid senderId)
+{
+	// Host 일때, 나머지 클라이언트들에게 패킷을 보낸다.
+	if (IsP2PHostClient())
+	{
+		m_P2pProtocol.SendData( P2P_NETID, SEND_T );
+	}
+}

@@ -20,6 +20,7 @@ namespace network
 		,public ICoreClientEventListener
 		,public IP2PClientEventListener
 	{
+
 		friend class CNetLauncher;
 		friend class CNetController;
 		friend class CBasicS2CProtocolHandler;
@@ -35,6 +36,7 @@ namespace network
 		void					Close();
 
 		bool					IsConnect() const;
+		bool					IsP2PHostClient() const;
 		void					SetEventListener(ClientEventListenerPtr ptr);
 		CoreClientPtr	GetConnectSvrClient() const;
 

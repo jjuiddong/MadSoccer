@@ -172,6 +172,16 @@ bool	CClientBasic::IsConnect() const
 }
 
 
+/**
+ @brief if P2P Host Client is return true, or false
+ */
+bool	CClientBasic::IsP2PHostClient() const
+{
+	RETV(!m_pP2p, false);
+	return m_pP2p->IsHostClient();
+}
+
+
 //------------------------------------------------------------------------
 // Connect Event Handler
 //------------------------------------------------------------------------

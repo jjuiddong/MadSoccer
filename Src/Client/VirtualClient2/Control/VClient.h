@@ -9,12 +9,15 @@ virtualClient 의 Client클래스
 
 #include "NetProtocol/Src/basic_ProtocolListener.h"
 #include "NetProtocol/Src/basic_Protocol.h"
+#include "NetProtocol/Src/p2pComm_ProtocolListener.h"
+#include "NetProtocol/Src/p2pComm_Protocol.h"
 
 DECLARE_TYPE_NAME(CVClient);
 class CVClient : public network::CClient
 						,public network::IClientEventListener
 						,public all::ProtocolListener
 						,public basic::s2c_ProtocolListener
+						,public p2pComm::c2c_ProtocolListener
 						,public common::CSingleton<CVClient>
 						,public memmonitor::Monitor<CVClient, TYPE_NAME(CVClient)>
 {
@@ -24,6 +27,7 @@ public:
 
 protected:
 	all::Protocol		m_Protocol;
+	p2pComm::c2c_Protocol m_P2pProtocol;
 
 public:
 	all::Protocol&		GetProtocol() { return m_Protocol; }
@@ -43,5 +47,8 @@ public:
 
 	// basic
 	virtual void AckGroupList(netid senderId, const network::error::ERROR_CODE &errorCode, const GroupVector &groups) override;
+
+	// p2pComm
+	virtual void SendData(netid senderId) override;
 
 };
