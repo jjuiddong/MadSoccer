@@ -37,6 +37,7 @@ CPropertyWindow::CPropertyWindow(wxWindow *parent)  :
 		wxPG_EX_MULTIPLE_SELECTION;
 	SetExtraStyle(extraStyle);
 	SetColumnCount(3);
+	GetGrid()->SetCellBackgroundColour(wxColour(237,237,237));
 
 	m_Timer.SetOwner(this, ID_REFRESH_TIMER);
 	m_Timer.Start( REFRESH_INTERVAL );
@@ -154,7 +155,7 @@ void	CPropertyWindow::AddProperty( wxPGProperty *pParentProp, wxPGProperty *prop
 		std::string typeName = dia::GetSymbolTypeName(pSymbol->pSym);
 		if (typeName == "NoType") typeName = "";
 		wxPGCell cell( typeName );
-		cell.SetBgCol(wxColour(255,255,255));
+		cell.SetBgCol(wxColour(237,237,237));
 		prop->SetCell(2,  cell);
 		//
 	}
@@ -174,7 +175,7 @@ void CPropertyWindow::OnSize(wxSizeEvent& event)
 	{
 		const wxRect r = GetParent()->GetSize();
 		SetSize(r);
-		RecalculatePositions(r.width, r.height);
+		RecalculatePositions(r.width-20, r.height);
 	}
 	else
 	{
