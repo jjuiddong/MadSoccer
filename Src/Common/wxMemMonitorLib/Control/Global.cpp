@@ -217,7 +217,7 @@ bool	memmonitor::InitMemoryMonitor(const std::string &configFileName)
 		string shareMemoryName = props.get<string>("sharedmemoryname");
 
 		// Pdb Load
-		if (!dia::CDiaWrapper::Get()->Init(pdbPath))
+		if (!dia::Init(pdbPath))
 		{
 			SetErrorMsg(
 				format("%s Pdb 파일이 없습니다.\n", pdbPath.c_str()) );
@@ -266,8 +266,8 @@ bool memmonitor::ReadConfigFile(const std::string &fileName)
 		using std::string;
 		ptree props;
 		boost::property_tree::read_json(fileName.c_str(), props);
-		ptree &children = props.get_child("property");
-		BOOST_FOREACH(ptree::value_type &vt, children)
+		ptree &childs = props.get_child("property");
+		BOOST_FOREACH(ptree::value_type &vt, childs)
 		{
 			const string name = vt.second.get<string>("symbolname");
 			GetFrame()->AddPropertyWindow( name );
@@ -309,8 +309,6 @@ bool memmonitor::RepositioningWindow()
 
 		string mainW  = props.get<string>("main window");
 		wxRect mainR = ParseRect(mainW);
-		if (mainR.GetLeft() < 0 || mainR.GetTop() < 0 || mainR.GetWidth() <= 0)
-			mainR = wxRect(0, 0, 300, 300);
 		GetFrame()->SetSize(mainR);
 
 		const CFrame::PropertyFrames &frames = GetFrame()->GetPropFrames();

@@ -22,11 +22,12 @@ namespace memmonitor
 			//PROPERTY_PARENT,
 			PROPTYPE_CATEGORY,
 			PROPTYPE_ENUM,
+			PROPTYPE_POINTER,
 		};
 
 		CPropertyItemAdapter();
 		CPropertyItemAdapter( wxPGProperty *pProperty );
-		CPropertyItemAdapter( std::string label,  PROPERTY_TYPE type = PROPERTY_STRING );
+		CPropertyItemAdapter( std::string label,  PROPERTY_TYPE type = PROPERTY_STRING, DWORD ptr=0 );
 		CPropertyItemAdapter( const std::string &valueName, 
 			const visualizer::SSymbolInfo &symbol, _variant_t value );
 

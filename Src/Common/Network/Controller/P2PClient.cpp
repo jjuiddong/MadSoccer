@@ -11,6 +11,7 @@ CP2PClient::CP2PClient(PROCESS_TYPE procType) :
 ,	m_pP2pClient(NULL)
 ,	m_pP2pHost(NULL)
 ,	m_pEventListener(NULL)
+,	m_State(P2P_CLIENT)
 {
 
 }

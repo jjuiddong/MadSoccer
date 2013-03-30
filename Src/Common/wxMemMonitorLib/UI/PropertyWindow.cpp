@@ -106,7 +106,7 @@ void CPropertyWindow::CheckSymbol( const wxString &symbolName )
 	std::string tmpStr = symbolName;
 	std::string str = ParseObjectName(tmpStr);
 
-	CComPtr<IDiaSymbol> pSymbol = CDiaWrapper::Get()->FindType(str);
+	CComPtr<IDiaSymbol> pSymbol = dia::FindType(str);
 	if (!pSymbol)
 	{
 		GetLogWindow()->PrintText( 
@@ -136,11 +136,11 @@ void	CPropertyWindow::AddProperty( wxPGProperty *pParentProp, wxPGProperty *prop
 	const visualizer::SSymbolInfo *pSymbol, STypeData *pTypeData )
 {
 	SPropItem *p = new SPropItem;
-	//p->prop = prop;
 	p->typeData = *pTypeData;
 	if (pSymbol)
 	{
 		p->typeName = dia::GetSymbolName(pSymbol->pSym);
+		p->symbolTypeName = dia::GetSymbolTypeName(pSymbol->pSym, false);
 		p->typeData.ptr = pSymbol->mem.ptr;
 	}
 	m_PropList.push_back(p);
@@ -216,14 +216,24 @@ void CPropertyWindow::OnPropertyGridSelect( wxPropertyGridEvent& event )
 	if (pItemData && pItemData->typeData.vt == VT_EMPTY &&
 		pProp->GetChildCount() <= 0)
 	{
-		SSymbolInfo symbol;
-		if (!FindSymbolUpward( pProp, &symbol ))
+		IDiaSymbol *pSym = dia::FindType(pItemData->symbolTypeName);
+		if (!pSym)
 			return;
-		if (visualizer::MakePropertyChild_DefaultForm( this, pProp, symbol))
-		{
+
+		DWORD ptr = (DWORD)pItemData->typeData.ptr;
+		if (SymTagPointerType == pItemData->typeData.symtag)
+			ptr = visualizer::Point2PointValue((DWORD)pItemData->typeData.ptr);
+
+		SSymbolInfo symbol( pSym, memmonitor::SMemInfo("*", (void*)ptr, 0) );
+		visualizer::MakePropertyChild_DefaultForm( this, pProp, symbol );
+			
+		//if (!FindSymbolUpward( pProp, &symbol ))
+		//	return;
+		//if (visualizer::MakePropertyChild_DefaultForm( this, pProp, symbol))
+		//{
 			//pProp->Expand();
 			//AdjustLayout();
-		}
+		//}
 	}
 }
 
@@ -268,7 +278,7 @@ bool	CPropertyWindow::FindSymbolUpward( wxPGProperty *pProp, OUT SSymbolInfo *pO
 		{
 			// 찾기를 실패했다면, 현재 노드에서 찾기를 시도한다.
 			const string typeName = ParseObjectName(searchName);
-			pOut->pSym = CDiaWrapper::Get()->FindType( typeName );
+			pOut->pSym = dia::FindType( typeName );
 			RETV(!pOut->pSym, false);
 			pOut->mem = SMemInfo(pItemData->typeName.c_str(), pItemData->typeData.ptr, 0);
 		}
@@ -276,7 +286,7 @@ bool	CPropertyWindow::FindSymbolUpward( wxPGProperty *pProp, OUT SSymbolInfo *pO
 	else
 	{
 		const string typeName = ParseObjectName(searchName);
-		pOut->pSym = CDiaWrapper::Get()->FindType( typeName );
+		pOut->pSym = dia::FindType( typeName );
 		RETV(!pOut->pSym, false);
 		pOut->mem = SMemInfo(pItemData->typeName.c_str(), pItemData->typeData.ptr, 0); 
 	}

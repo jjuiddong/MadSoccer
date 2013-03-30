@@ -13,10 +13,8 @@ namespace visualizer
 {
 	using namespace parser;
 
-	CPropertyWindow *g_pProperty = NULL;
-
 	// make property
-	void		MakeProperty_Root(wxPGProperty *pParentProp, const SSymbolInfo &symbol, const int depth );
+	void		MakeProperty_Root(wxPGProperty *pParentProp, const SSymbolInfo &symbol, const int depth  );
 
 	bool		MakeProperty_Child(  wxPGProperty *pParentProp,  const SSymbolInfo &symbol, const int depth );
 
@@ -50,6 +48,8 @@ namespace visualizer
 
 	_variant_t GetValue(IDiaSymbol *pSymbol, void *pMemPtr);
 
+	CPropertyWindow *g_pProperty = NULL;
+	bool g_IsApplyVisualizer = true;
 }
 
 using namespace dia;
@@ -65,7 +65,7 @@ bool visualizer::MakeProperty_DefaultForm( CPropertyWindow *pProperties,  const 
 {
 	const std::string str = ParseObjectName(symbolName);
 
-	IDiaSymbol *pSymbol = CDiaWrapper::Get()->FindType(str);
+	IDiaSymbol *pSymbol = dia::FindType(str);
 	RETV(!pSymbol, false);
 
 	SMemInfo memInfo;
@@ -81,25 +81,29 @@ bool visualizer::MakeProperty_DefaultForm( CPropertyWindow *pProperties,  const 
 }
 
 
-//------------------------------------------------------------------------
-// 
-//------------------------------------------------------------------------
-bool visualizer::MakeProperty_DefaultForm(  CPropertyWindow *pProperties, 
-								 wxPGProperty *pParentProp,  const string &symbolName )
-{
-
-	return true;
-}
+////------------------------------------------------------------------------
+//// 
+////------------------------------------------------------------------------
+//bool visualizer::MakeProperty_DefaultForm(  CPropertyWindow *pProperties, 
+//								 wxPGProperty *pParentProp,  const string &symbolName )
+//{
+//
+//	return true;
+//}
 
 
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
 bool visualizer::MakeProperty_DefaultForm(  CPropertyWindow *pProperties,
-				wxPGProperty *pParentProp,  
-				 const SSymbolInfo &symbol )
+				wxPGProperty *pParentProp,  const SSymbolInfo &symbol,
+				bool IsApplyVisualizer ) // IsApplyVisualizer
 {
+	if (!symbol.mem.ptr)
+		return true;
+
 	g_pProperty = pProperties;
+	g_IsApplyVisualizer = IsApplyVisualizer;
 	MakeProperty_Root(pParentProp, symbol, 2);
 	return true;
 }
@@ -109,10 +113,19 @@ bool visualizer::MakeProperty_DefaultForm(  CPropertyWindow *pProperties,
 //  symbol.pSym 의 자식을 pParentProp에 추가한다.
 //------------------------------------------------------------------------
 bool	 visualizer::MakePropertyChild_DefaultForm(  CPropertyWindow *pProperties, 
-												   wxPGProperty *pParentProp,  const SSymbolInfo &symbol)
+												   wxPGProperty *pParentProp,  const SSymbolInfo &symbol, 
+												   bool IsApplyVisualizer) // , IsApplyVisualizer = true
 {
+	if (!symbol.mem.ptr)
+		return true;
+
 	g_pProperty = pProperties;
-	const bool isVisualizerType = visualizer::MakeVisualizerProperty( pProperties, pParentProp, symbol );
+	g_IsApplyVisualizer = IsApplyVisualizer;
+
+	bool isVisualizerType = false;
+	if (g_IsApplyVisualizer)
+		isVisualizerType = visualizer::MakeVisualizerProperty( pProperties, pParentProp, symbol );
+
 	if (!isVisualizerType)
 		MakeProperty_Child(pParentProp, symbol, 2);
 	return true;
@@ -466,7 +479,7 @@ wxPGProperty* visualizer::MakeProperty_PointerData(
 
 	if (SymTagUDT == baseSymTag)
 	{
-		ss << symbol.mem.name << " 0x" << newPtr;
+		ss << symbol.mem.name;// << " 0x" << newPtr;
 		ss << (char*)(CheckValidAddress(newPtr)? " " : " not shared memory");
 		//ss << " (" << typeName << ")";
 	}
@@ -479,19 +492,19 @@ wxPGProperty* visualizer::MakeProperty_PointerData(
 		// char* 타입이라면 스트링을 출력한다.
 		if (btChar == btype)
 		{
-			ss << symbol.mem.name << " 0x" << newPtr << " {\"";
+			ss << symbol.mem.name;// << " 0x" << newPtr << " {\"";
 			ss << (char*)(CheckValidAddress(newPtr)? newPtr : " not shared memory")  << "\"}";
 		}
 	}
 
 	if (ss.str().empty()) // default pointer 작업
 	{
-		ss << symbol.mem.name << " 0x" << newPtr;
+		ss << symbol.mem.name;// << " 0x" << newPtr;
 		ss << (char*)(CheckValidAddress(newPtr)? " " : " not shared memory");
 		//ss << " (" << typeName << ")";
 	}
 
-	CPropertyItemAdapter prop( ss.str() );
+	CPropertyItemAdapter prop( ss.str(), CPropertyItemAdapter::PROPTYPE_POINTER, (DWORD)newPtr );
 	AddProperty( pParentProp, prop.GetProperty(), &symbol, &STypeData(SymTagPointerType, VT_EMPTY, NULL));
 
 	return prop.GetProperty();
@@ -502,7 +515,7 @@ wxPGProperty* visualizer::MakeProperty_PointerData(
 // UDT type Preview
 //------------------------------------------------------------------------
 wxPGProperty* visualizer::MakeProperty_UDTData(
-	wxPGProperty *pParentProp, const SSymbolInfo &symbol )
+	wxPGProperty *pParentProp, const SSymbolInfo &symbol ) //  IsApplyVisualizer = true
 {
 	const string typeName = dia::GetSymbolTypeName(symbol.pSym);
 
@@ -515,8 +528,12 @@ wxPGProperty* visualizer::MakeProperty_UDTData(
 	CPropertyItemAdapter prop( ss.str());//,  CPropertyItemAdaptor::PROPERTY_PARENT);
 	AddProperty(pParentProp, prop.GetProperty(), &symbol, &STypeData(SymTagUDT, VT_EMPTY, symbol.mem.ptr));
 
-	const bool isVisualizerType = visualizer::MakeVisualizerProperty( g_pProperty, 
-		prop.GetProperty(), symbol.mem,  symbol.mem.name);
+	bool isVisualizerType = false;
+	if (g_IsApplyVisualizer)
+	{
+		isVisualizerType = visualizer::MakeVisualizerProperty( g_pProperty, 
+			prop.GetProperty(), symbol );//  symbol.mem,  symbol.mem.name);
+	}
 	
 	return (isVisualizerType)? NULL : prop.GetProperty();
 }
