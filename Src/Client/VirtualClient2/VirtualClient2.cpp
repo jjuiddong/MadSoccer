@@ -44,7 +44,6 @@ BOOL CVirtualClient2App::InitInstance()
 	SetRegistryKey(_T("로컬 응용 프로그램 마법사에서 생성된 응용 프로그램"));
 
 	common::dump::InstallSelfMiniDump();
-	memmonitor::Init(memmonitor::INNER_PROCESS, m_hInstance, "virtualclient2_monitor.json" );
 
 	CVirtualClient2Dlg *pdlg = new CVirtualClient2Dlg();
 	m_pMainWnd = pdlg;
@@ -52,6 +51,8 @@ BOOL CVirtualClient2App::InitInstance()
 
 	config::RepositionWindow();
 	pdlg->ShowWindow(SW_SHOW);
+
+	memmonitor::Init(memmonitor::INNER_PROCESS, m_hInstance, "virtualclient2_monitor.json" );
 
 	bool bDoingBackgroundProcessing = true;
 	while ( bDoingBackgroundProcessing ) 
@@ -76,6 +77,7 @@ BOOL CVirtualClient2App::InitInstance()
 		Sleep(0);
 	}
 
+	CVClient::Get()->Stop();
 	CVClient::Release();
 	network::Clear();
 	config::SaveWindowPosition();

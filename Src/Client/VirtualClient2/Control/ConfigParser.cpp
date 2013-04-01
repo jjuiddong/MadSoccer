@@ -35,7 +35,7 @@ bool	 config::OpenConfigFile()
 	}
 	catch (std::exception &e)
 	{
-		g_ErrorMsg = common::format("\"%s\" json script Err!! [%s]",  
+		g_ErrorMsg = common::format("\"%s\" json script Err!! [ %s ]",  
 			configFileName.c_str(), e.what());
 		return false;
 	}

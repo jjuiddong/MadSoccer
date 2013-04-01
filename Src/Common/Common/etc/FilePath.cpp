@@ -9,6 +9,17 @@ using namespace common;
 //	_splitpath(findFilePath.c_str(), drive, dir, NULL,NULL); 함수로 파일명을 분리할 수 있다.
 
 
+/**
+ @brief fileName의 디렉토리 경로를 제외한 파일이름과 확장자를 리턴한다.
+ */
+std::string common::GetFileName(const std::string &fileName)
+{
+	char srcFileName[ MAX_PATH];
+	strcpy_s(srcFileName, MAX_PATH, fileName.c_str() );
+	char *name = PathFindFileNameA(srcFileName);
+	return name;
+}
+
 //------------------------------------------------------------------------
 // fileName의 경로와 확장자를 제외한 파일이름만을 리턴한다.
 //------------------------------------------------------------------------

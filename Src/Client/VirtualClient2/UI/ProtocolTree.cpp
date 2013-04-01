@@ -30,19 +30,18 @@ BEGIN_MESSAGE_MAP(CProtocolTree, CTreeCtrlBase)
 END_MESSAGE_MAP()
 
 
-//------------------------------------------------------------------------
-// 클래스 초기화
-// protocol 파일을 읽어서 TreeCtrl 화면에 출력한다.
-// Tree 뷰 구조
-// *.prt file name1
-//		rmi name 1
-//			-> protocols
-//			-> ...
-// *.prt file name2 
-//		rmi name 2
-//			-> protocols
-//			-> ...
-//------------------------------------------------------------------------
+/**
+ @brief protocol 파일을 읽어서 TreeCtrl 화면에 출력한다.
+ Tree 뷰 구조
+ *.prt file name1
+		rmi name 1
+			-> protocols
+			-> ...
+ *.prt file name2 
+		rmi name 2
+			-> protocols
+			-> ...
+ */
 bool CProtocolTree::Init()
 {
 	if (!config::OpenConfigFile())
@@ -53,6 +52,19 @@ bool CProtocolTree::Init()
 	std::string protocolDir = config::GetProtocolDirectory();
 	protocolDir += "\\*.prt";
 	std::list<std::string> fileList = common::FindFileList( protocolDir );
+	if (fileList.empty())
+	{
+		GetConsole()->AddString( "[ " + protocolDir + " ] protocol file not found" );
+	}
+
+	/// print protocol file list
+	BOOST_FOREACH(std::string &str, fileList)
+	{
+		const std::string protocolFileName = common::GetFileName(str);
+		GetConsole()->AddString( "[ " + protocolFileName + " ]" + " read  protocol file" );
+	}
+
+	/// make properties
 	BOOST_FOREACH(std::string &str, fileList)
 	{
 		CProtocolParser *pParser = new CProtocolParser();
