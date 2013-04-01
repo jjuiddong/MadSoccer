@@ -129,9 +129,9 @@ void CPropertyWindow::CheckSymbol( const wxString &symbolName )
 }
 
 
-//------------------------------------------------------------------------
-// 
-//------------------------------------------------------------------------
+/**
+ @brief 
+ */
 void	CPropertyWindow::AddProperty( wxPGProperty *pParentProp, wxPGProperty *prop, 
 	const visualizer::SSymbolInfo *pSymbol, STypeData *pTypeData )
 {
@@ -151,11 +151,18 @@ void	CPropertyWindow::AddProperty( wxPGProperty *pParentProp, wxPGProperty *prop
 	{
 		AppendIn( pParentProp, prop );
 
+		// set background color
+		wxColour bgColor = pParentProp->GetCell(2).GetBgCol();
+		wxColour childColor = wxColour(bgColor.Red()-10, bgColor.Green()-10, bgColor.Blue()-10);
+		if (childColor.Red() < 100)
+			childColor = wxColour(100,100,100);
+		prop->SetBackgroundColour(childColor);
+
 		// insert type column cell
 		std::string typeName = dia::GetSymbolTypeName(pSymbol->pSym);
 		if (typeName == "NoType") typeName = "";
 		wxPGCell cell( typeName );
-		cell.SetBgCol(wxColour(237,237,237));
+		cell.SetBgCol(childColor);
 		prop->SetCell(2,  cell);
 		//
 	}
@@ -175,7 +182,7 @@ void CPropertyWindow::OnSize(wxSizeEvent& event)
 	{
 		const wxRect r = GetParent()->GetSize();
 		SetSize(r);
-		RecalculatePositions(r.width-20, r.height);
+		RecalculatePositions(r.width-20, r.height-20);
 	}
 	else
 	{
@@ -226,6 +233,7 @@ void CPropertyWindow::OnPropertyGridSelect( wxPropertyGridEvent& event )
 
 		SSymbolInfo symbol( pSym, memmonitor::SMemInfo("*", (void*)ptr, 0) );
 		visualizer::MakePropertyChild_DefaultForm( this, pProp, symbol );
+
 			
 		//if (!FindSymbolUpward( pProp, &symbol ))
 		//	return;
@@ -381,4 +389,3 @@ void CPropertyWindow::OnKeyDown(wxKeyEvent& event)
 			RefreshPropertyItem( it.GetProperty() );
 	}
 }
-

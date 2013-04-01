@@ -14,8 +14,12 @@ namespace visualizer
 
 	struct SMakerData
 	{
+		// $e
 		std::string origSymbolName;
 		SMemInfo origMem;
+		int index;	/// $i
+		int rank; /// $r
+		int count; ///
 		CPropertyWindow *propertyWindow;
 		wxPGProperty *parentProperty;
 		SSymbolInfo symbol; /// current symbol
@@ -25,6 +29,10 @@ namespace visualizer
 			if (this != &rhs) {
 				origSymbolName = rhs.origSymbolName;
 				origMem = rhs.origMem;
+				index = rhs.index;
+				rank = rhs.rank;
+				count = rhs.count;
+
 				propertyWindow = rhs.propertyWindow;
 				parentProperty = rhs.parentProperty;
 				symbol = rhs.symbol;
@@ -56,17 +64,34 @@ namespace visualizer
 	void MakePropertyIteratorStmt( SVisBracketIterator_Stmt *pItor_stmt, 
 		const SMakerData &makerData );
 
+	void MakePropertyIteratorStmt_List( SVisBracketIterator_Stmt *pItor_stmt, 
+		const SMakerData &makerData );
+
+	void MakePropertyIteratorStmt_Array( SVisBracketIterator_Stmt *pItor_stmt, 
+		const SMakerData &makerData );
+
+	void MakePropertyIteratorStmt_Tree( SVisBracketIterator_Stmt *pItor_stmt, 
+		const SMakerData &makerData );
+
 	bool MakePropertyElifStmt( SElif_Stmt *pelif_stmt, const SMakerData &makerData );
 
 
 	// evaluate
-	_variant_t Eval_Expression( SExpression *pexp, const SMakerData &makerData );
+	_variant_t Eval_Expression( SExpression *pexp, const SMakerData &makerData,
+		OUT SSymbolInfo *pOut=NULL);
 
-	_variant_t Eval_Variable( SExpression *pexp, const SMakerData &makerData );
+	_variant_t Eval_Variable( SExpression *pexp, const SMakerData &makerData, 
+		OUT SSymbolInfo *pOut=NULL );
 
 
 	// Find
+	bool Find_Expression( SExpression *pexp, 
+		IN const SMakerData &makerData, OUT SSymbolInfo *pOut);
+
 	bool Find_Variable( SExpression *pexp, 
+		IN const SMakerData &makerData, OUT SSymbolInfo *pOut );
+
+	bool Find_Indirect( SExpression *pexp, 
 		IN const SMakerData &makerData, OUT SSymbolInfo *pOut );
 
 	bool Find_Variable_FromId( const std::string &varId, 
@@ -89,6 +114,8 @@ namespace visualizer
 	// Visualizer Script Parsing
 	visualizer::parser::SVisualizerScript *g_pVisScr = NULL;
 
+	/// dia basetype 용 임시 변수
+	int g_BaseTypeInt = 0;
 }
 
 
@@ -171,6 +198,7 @@ bool	visualizer::MakeVisualizerProperty( CPropertyWindow *pPropertiesWnd,
 		catch (VisualizerScriptError &e)
 		{
 			GetLogWindow()->PrintText( e.m_Msg );
+			GetLogWindow()->PrintText( "\n" );
 		}
 		return true;
 	}
@@ -189,7 +217,7 @@ bool	visualizer::MakeVisualizerProperty( CPropertyWindow *pPropertiesWnd,
 {
 	// 타입심볼을 얻는다.
 	dia::SymbolState symState;
-	IDiaSymbol *pBaseType = dia::GetBaseTypeSymbol(symbol.pSym, symState);
+	IDiaSymbol *pBaseType = dia::GetBaseTypeSymbol(symbol.pSym, 0, symState);
 	RETV(!pBaseType, false);
 
 	string typeName = dia::GetSymbolName(pBaseType);
@@ -289,80 +317,258 @@ void visualizer::MakePropertyIfStmt( SIf_Stmt *pif_stmt, const SMakerData &maker
 }
 
 
-//------------------------------------------------------------------------
-// 반복 명령문 처리
-//------------------------------------------------------------------------
+/**
+ @brief 반복 명령문 처리
+ */
 void visualizer::MakePropertyIteratorStmt( SVisBracketIterator_Stmt *pitor_stmt,
 							  const SMakerData &makerData )
 {
 	RET(!pitor_stmt);
 	RET(!pitor_stmt->stmts);
-
+	
 	switch (pitor_stmt->kind)
 	{
-	case Iter_Array: break;
-
-	case Iter_List:
-		{
-			CheckError( pitor_stmt->stmts->head && pitor_stmt->stmts->next, makerData, "#list head, next not setting" );
-			CheckError( pitor_stmt->stmts->expr || pitor_stmt->disp_stmt , makerData, "#list expr, disp_stmt not setting" );
-
-			// size 설정, IDiaSymbol
-			_variant_t size_v;
-			if (pitor_stmt->stmts->size)
-			{
-				size_v = Eval_Variable(pitor_stmt->stmts->size, makerData);
-				CheckError( size_v.vt != VT_EMPTY, makerData, "#list size expression error" );
-			}
-			int size = (int)size_v;
-			if (!pitor_stmt->stmts->size)
-				size = 100; // default
-
-			_variant_t skip;
-			if (pitor_stmt->stmts->skip)
-			{
-				skip = Eval_Variable(pitor_stmt->stmts->skip, makerData);
-				CheckError( skip.vt != VT_EMPTY, makerData, "#list skip expression error" );
-			}
-			const DWORD skipPtr = Point2PointValue((DWORD)skip);
-
-			const _variant_t node = Eval_Variable(pitor_stmt->stmts->head, makerData);
-			CheckError( node.vt != VT_EMPTY, makerData, "#list head expression error" );
-			DWORD nodePtr = Point2PointValue((DWORD)node);
-
-			SSymbolInfo each;
-			SMakerData eachMakerData = makerData;
-			const bool result = Find_Variable(pitor_stmt->stmts->head, makerData, &each);
- 			CheckError( result, makerData, "#list head expression error, $e not found" );
-
-			int count = 0;
-			while (nodePtr 
-				&& (!skipPtr || (skipPtr && nodePtr != skipPtr))
-				&& (count < size))
-			{
-				std::stringstream ss;
-				ss << "[" << count << "]";
-				const std::string title = ss.str();
-
-				eachMakerData.symbol = each;
-
-				MakePropertyExpression( pitor_stmt->stmts->expr, eachMakerData, title ); /// display
-				MakePropertyStatements( pitor_stmt->disp_stmt, eachMakerData, title ); /// display
-
-				const bool result = Find_Variable(pitor_stmt->stmts->next, eachMakerData, &each);
-				CheckError( result, makerData, "#list head expression error, $e not found" );
-
-				nodePtr = Point2PointValue((DWORD)each.mem.ptr);
-				++count;
-			}
-
-			eachMakerData.symbol.isNotRelease = true;
-		}
+	case Iter_Array: 
+		MakePropertyIteratorStmt_Array(pitor_stmt, makerData);
 		break;
 
-	case Iter_Tree: break;
-	}
+	case Iter_List:
+		MakePropertyIteratorStmt_List(pitor_stmt, makerData);
+		break;
 
+	case Iter_Tree: 
+		MakePropertyIteratorStmt_Tree(pitor_stmt, makerData);
+		break;
+	}
+}
+
+
+/**
+ @brief execute List Command
+ */
+void visualizer::MakePropertyIteratorStmt_List( SVisBracketIterator_Stmt *pitor_stmt,
+	const SMakerData &makerData )
+{
+	CheckError( pitor_stmt->stmts->head && pitor_stmt->stmts->next, makerData, "#list head, next not setting" );
+	CheckError( pitor_stmt->stmts->expr || pitor_stmt->disp_stmt , makerData, "#list expr, disp_stmt not setting" );
+
+	// size 설정, IDiaSymbol
+	_variant_t size_v;
+	if (pitor_stmt->stmts->size)
+	{
+		size_v = Eval_Expression(pitor_stmt->stmts->size, makerData);
+		CheckError( size_v.vt != VT_EMPTY, makerData, "#list size expression error" );
+	}
+	int size = (int)size_v;
+	if (!pitor_stmt->stmts->size)
+		size = 100; // default
+
+	_variant_t skip;
+	if (pitor_stmt->stmts->skip)
+	{
+		skip = Eval_Expression(pitor_stmt->stmts->skip, makerData);
+		CheckError( skip.vt != VT_EMPTY, makerData, "#list skip expression error" );
+	}
+	const DWORD skipPtr = (DWORD)skip;//Point2PointValue((DWORD)skip);
+
+	const _variant_t node = Eval_Expression(pitor_stmt->stmts->head, makerData);
+	CheckError( node.vt != VT_EMPTY, makerData, "#list head expression error" );
+	DWORD nodePtr = Point2PointValue((DWORD)node);
+
+	SSymbolInfo head;
+	SMakerData eachMakerData = makerData;
+	eachMakerData.count = 0;
+	const bool result = Find_Variable(pitor_stmt->stmts->head, makerData, &head);
+	CheckError( result, makerData, "#list head expression error, $e not found" );
+
+	eachMakerData.symbol = head;
+	eachMakerData.symbol.isNotRelease = true;
+	int count = 0;
+
+	while (nodePtr 
+		&& (!skipPtr || (skipPtr && nodePtr != skipPtr))
+		&& (count < size))
+	{
+		std::stringstream ss;
+		ss << "[" << count << "]";
+		const std::string title = ss.str();
+		
+		MakePropertyExpression( pitor_stmt->stmts->expr, eachMakerData, title ); /// display
+		MakePropertyStatements( pitor_stmt->disp_stmt, eachMakerData, title ); /// display
+		
+		SSymbolInfo next;
+		const bool result = Find_Variable(pitor_stmt->stmts->next, eachMakerData, &next);
+		CheckError( result, makerData, "#list next expression error, $e not found" );
+
+		nodePtr = Point2PointValue((DWORD)next.mem.ptr);
+		SAFE_RELEASE(eachMakerData.symbol.pSym);
+		eachMakerData.symbol = next;
+		++count;
+	}
+}
+
+
+/**
+ @brief Execute vector command
+ */
+void visualizer::MakePropertyIteratorStmt_Array( SVisBracketIterator_Stmt *pitor_stmt, 
+	const SMakerData &makerData )
+{
+	CheckError( pitor_stmt->stmts->expr || pitor_stmt->disp_stmt , makerData, "#array expr, disp_stmt not setting" );
+
+	// size 설정, IDiaSymbol
+	_variant_t size_v;
+	if (pitor_stmt->stmts->size)
+	{
+		size_v = Eval_Expression(pitor_stmt->stmts->size, makerData);
+		CheckError( size_v.vt != VT_EMPTY, makerData, "#array size expression error" );
+	}
+	int size = (int)size_v;
+	if (!pitor_stmt->stmts->size)
+		size = 100; // default
+
+	SMakerData arrayMakeData = makerData;
+	arrayMakeData.index = 0;
+	arrayMakeData.symbol.isNotRelease = true;
+	for(arrayMakeData.index=0; arrayMakeData.index < size; ++arrayMakeData.index)
+	{
+		std::stringstream ss;
+		ss << "[" << arrayMakeData.index << "]";
+		const std::string title = ss.str();
+
+		MakePropertyExpression( pitor_stmt->stmts->expr, arrayMakeData, title ); /// display
+		MakePropertyStatements( pitor_stmt->disp_stmt, arrayMakeData, title ); /// display
+	}
+}
+
+
+/**
+ @brief 
+ */
+void MakePropertyTree_Traverse(SVisBracketIterator_Stmt *pitor_stmt, SMakerData &makerData, 
+	DWORD skipPtr, const int displaySize)
+{
+	DWORD nodePtr = Point2PointValue((DWORD)makerData.symbol.mem.ptr);
+	if (!nodePtr)
+		return;
+	if (makerData.count >= displaySize)
+		return;	
+	if (skipPtr && (skipPtr == nodePtr))
+		return;
+
+	std::stringstream ss;
+	ss << "[" << makerData.count << "]";
+	const std::string title = ss.str();
+	MakePropertyStatements( pitor_stmt->disp_stmt, makerData, title ); /// display
+
+	++makerData.count;
+
+	SSymbolInfo left;
+	const bool leftResult = Find_Variable(pitor_stmt->stmts->left, makerData, &left);
+	CheckError( leftResult, makerData, "#tree left expression error, $e not found" );
+
+	SMakerData leftMakerData = makerData;
+	leftMakerData.symbol = left;
+	leftMakerData.symbol.isNotRelease = true;
+	MakePropertyTree_Traverse(pitor_stmt, leftMakerData, skipPtr, displaySize);
+
+
+	SSymbolInfo right;
+	const bool rightResult = Find_Variable(pitor_stmt->stmts->right, makerData, &right);
+	CheckError( rightResult, makerData, "#tree right expression error, $e not found" );
+
+	SMakerData rightMakerData = makerData;
+	rightMakerData.count = leftMakerData.count;
+	rightMakerData.symbol = right;
+	rightMakerData.symbol.isNotRelease = true;
+	MakePropertyTree_Traverse(pitor_stmt, rightMakerData, skipPtr, displaySize);
+
+	makerData.count = rightMakerData.count;
+}
+
+
+/**
+ @brief 
+ */
+void visualizer::MakePropertyIteratorStmt_Tree( SVisBracketIterator_Stmt *pitor_stmt, 
+	const SMakerData &makerData )
+{
+	CheckError( pitor_stmt->stmts->head != NULL, makerData, "#tree head, next not setting" );
+	CheckError( pitor_stmt->stmts->left && pitor_stmt->stmts->right, makerData, "#tree left, right not setting" );
+	CheckError( pitor_stmt->stmts->expr || pitor_stmt->disp_stmt , makerData, "#tree expr, disp_stmt not setting" );
+
+	// size 설정, IDiaSymbol
+	_variant_t size_v;
+	if (pitor_stmt->stmts->size)
+	{
+		size_v = Eval_Expression(pitor_stmt->stmts->size, makerData);
+		CheckError( size_v.vt != VT_EMPTY, makerData, "#tree size expression error" );
+	}
+	int size = (int)size_v;
+	if (!pitor_stmt->stmts->size)
+		size = 100; // default
+
+	_variant_t skip;
+	if (pitor_stmt->stmts->skip)
+	{
+		skip = Eval_Expression(pitor_stmt->stmts->skip, makerData);
+		CheckError( skip.vt != VT_EMPTY, makerData, "#tree skip expression error" );
+	}
+	const DWORD skipPtr = (DWORD)skip;// Point2PointValue((DWORD)skip);
+
+	SSymbolInfo head;
+	SMakerData eachMakerData = makerData;
+	const bool result = Find_Variable(pitor_stmt->stmts->head, makerData, &head);
+	CheckError( result, makerData, "#tree head expression error, $e not found" );
+
+	eachMakerData.count = 0;
+	eachMakerData.symbol = head;
+	eachMakerData.symbol.isNotRelease = true;
+
+	MakePropertyTree_Traverse(pitor_stmt, eachMakerData, skipPtr, size);
+}
+
+
+/**
+ @brief process '[' ']' indirect operator
+ */
+bool visualizer::Find_Indirect( SExpression *pexp, IN const SMakerData &makerData, 
+	OUT SSymbolInfo *pOut )
+{
+	RETV(!pexp, false);
+
+	// process [ 'index' ]
+	_variant_t val = Eval_Expression(pexp->lhs, makerData);
+	if( (int)val < 0)
+		return false;
+
+	HRESULT hr;
+	DWORD ptr = Point2PointValue((DWORD)makerData.symbol.mem.ptr);
+	//int size = dia::GetSymbolLength(makerData.symbol.pSym);
+
+	ULONGLONG length = dia::GetSymbolLength(makerData.symbol.pSym);
+	DWORD next = ptr + ((int)val * length);
+
+	// get indirect type
+	// 첨자연산은 해당 타입의 타입이 된다. 원본데이타가 데이타일경우 두번 계산해야한다.
+	IDiaSymbol *pSymType;
+	hr = makerData.symbol.pSym->get_type(&pSymType);
+	enum SymTagEnum symTag;
+	hr = pSymType->get_symTag((DWORD*)&symTag);
+	if (SymTagData == symTag)
+	{
+		IDiaSymbol *pRealSymType;
+		hr = pSymType->get_type(&pRealSymType);
+		pSymType->Release();
+		pSymType = pRealSymType;
+	}
+	IDiaSymbol *pIndirectType;
+	hr = pSymType->get_type(&pIndirectType);
+	//
+
+	pOut->pSym = pIndirectType;
+	pOut->mem = SMemInfo(makerData.symbol.mem.name.c_str(), (void*)next, 0);	
+	return true;
 }
 
 
@@ -410,7 +616,6 @@ void visualizer::MakePropertyExpression( SExpression *pexp, const SMakerData &ma
 			CheckError(result, makerData, " variable expression error!!, undetected" );
 			if (!title.empty())
 				findSymbol.mem.name = title;
-			//visualizer::MakeProperty_DefaultForm( g_pPropertiesCtrl, g_pParentProperty, findSymbol);
 			visualizer::MakeProperty_DefaultForm( makerData.propertyWindow, makerData.parentProperty, findSymbol);
 		}
 		break;
@@ -629,7 +834,8 @@ void visualizer::Disp_Expression( SExpression *pexp )
 //------------------------------------------------------------------------
 // SExpression 값을 리턴한다.
 //------------------------------------------------------------------------
-_variant_t visualizer::Eval_Expression( SExpression *pexp, const SMakerData &makerData )
+_variant_t visualizer::Eval_Expression( SExpression *pexp, const SMakerData &makerData,
+	OUT SSymbolInfo *pOut) // pOut=NULL
 {
 	_variant_t reval;
 	RETV(!pexp, reval);
@@ -640,33 +846,93 @@ _variant_t visualizer::Eval_Expression( SExpression *pexp, const SMakerData &mak
 		{
 			switch (pexp->op)
 			{
-			case LT: reval = ((float)Eval_Expression(pexp->lhs, makerData) < (float)Eval_Expression(pexp->rhs, makerData)); break;
-			case RT: reval = ((float)Eval_Expression(pexp->lhs, makerData) > (float)Eval_Expression(pexp->rhs, makerData)); break;
+			case LT: 
+				reval = ((float)Eval_Expression(pexp->lhs, makerData,pOut) < (float)Eval_Expression(pexp->rhs, makerData, pOut)); 
+				break;
+			case RT: 
+				reval = ((float)Eval_Expression(pexp->lhs, makerData, pOut) > (float)Eval_Expression(pexp->rhs, makerData, pOut)); 
+				break;
 			case LTEQ: /* <= */
-				reval = ((float)Eval_Expression(pexp->lhs, makerData) < (float)Eval_Expression(pexp->rhs, makerData)) 
-					|| ((float)Eval_Expression(pexp->lhs, makerData) == (float)Eval_Expression(pexp->rhs, makerData));
+				reval = ((float)Eval_Expression(pexp->lhs, makerData, pOut) < (float)Eval_Expression(pexp->rhs, makerData, pOut)) 
+					|| ((float)Eval_Expression(pexp->lhs, makerData, pOut) == (float)Eval_Expression(pexp->rhs, makerData, pOut));
 				break;
 			case RTEQ:	/* >= */
-				reval = ((float)Eval_Expression(pexp->lhs, makerData) > (float)Eval_Expression(pexp->rhs, makerData)) 
-					|| ((float)Eval_Expression(pexp->lhs, makerData) == (float)Eval_Expression(pexp->rhs, makerData));
+				reval = ((float)Eval_Expression(pexp->lhs, makerData, pOut) > (float)Eval_Expression(pexp->rhs, makerData, pOut)) 
+					|| ((float)Eval_Expression(pexp->lhs, makerData, pOut) == (float)Eval_Expression(pexp->rhs, makerData, pOut));
 				break;
-			case NEQ:	reval = ((int)Eval_Expression(pexp->lhs, makerData) != (int)Eval_Expression(pexp->rhs, makerData)); break; /* != */
-			case EQ:	reval = ((int)Eval_Expression(pexp->lhs, makerData) == (int)Eval_Expression(pexp->rhs, makerData)); break; /* == */
-			case OR: reval = ((int)Eval_Expression(pexp->lhs, makerData).llVal || (int)Eval_Expression(pexp->rhs, makerData).llVal); break; /* || */
-			case AND: reval = ((int)Eval_Expression(pexp->lhs, makerData).llVal && (int)Eval_Expression(pexp->rhs, makerData).llVal); break; /* && */
-			case NEG: reval = (!(int)Eval_Expression(pexp->lhs, makerData).llVal); break;
+			case NEQ: /* != */
+				reval = ((int)Eval_Expression(pexp->lhs, makerData, pOut) != (int)Eval_Expression(pexp->rhs, makerData, pOut)); 
+				break; 
+			case EQ:	/* == */
+				reval = ((int)Eval_Expression(pexp->lhs, makerData, pOut) == (int)Eval_Expression(pexp->rhs, makerData, pOut)); 
+				break; 
+			case OR: /* || */
+				reval = ((int)Eval_Expression(pexp->lhs, makerData, pOut).llVal || (int)Eval_Expression(pexp->rhs, makerData, pOut).llVal); 
+				break; 
+			case AND: /* && */
+				reval = ((int)Eval_Expression(pexp->lhs, makerData, pOut).llVal && (int)Eval_Expression(pexp->rhs, makerData, pOut).llVal); 
+				break; 
+			case NEG: 
+				reval = (!(int)Eval_Expression(pexp->lhs, makerData, pOut).llVal); 
+				break;
 			}
 		}	
 		break;
 
 	case AddTermK: 
+		{
+			SSymbolInfo lhsSymbol;
+			SSymbolInfo rhsSymbol;
+			if (pexp->op == PLUS)
+				reval = ((float)Eval_Expression(pexp->lhs, makerData, &lhsSymbol) + (float)Eval_Expression(pexp->rhs, makerData, &rhsSymbol));
+			else if(pexp->op == MINUS)
+				reval = ((float)Eval_Expression(pexp->lhs, makerData, &lhsSymbol) - (float)Eval_Expression(pexp->rhs, makerData, &rhsSymbol));
+
+			// pointer 계산시 데이타크기를 감안해서 계산되어야 한다.
+			if (lhsSymbol.pSym && rhsSymbol.pSym)
+			{
+				SymbolState lhsState;
+				IDiaSymbol* pLhsTypeSym = GetBaseTypeSymbol(lhsSymbol.pSym, 1, lhsState);
+				if (!pLhsTypeSym)
+					break;
+				
+				SymbolState rhsState;
+				IDiaSymbol* pRhsTypeSym = GetBaseTypeSymbol(rhsSymbol.pSym, 1, rhsState);
+				if (!pRhsTypeSym)
+					break;
+
+				enum SymTagEnum lhsSymTag;					 
+				HRESULT hr = pLhsTypeSym->get_symTag((DWORD*)&lhsSymTag);
+				enum SymTagEnum rhsSymTag;					 
+				hr = pRhsTypeSym->get_symTag((DWORD*)&rhsSymTag);
+
+				// 이항 모두 포인터 타입일 때 계산
+				if  (((lhsSymTag == SymTagPointerType) || (lhsSymTag == SymTagArrayType)) &&
+					((rhsSymTag == SymTagPointerType) || (rhsSymTag == SymTagArrayType)))
+				{
+					// left 를 우선으로 계산한다.
+					ULONGLONG length = 0;
+					hr = pLhsTypeSym->get_length(&length);
+
+					if (length > 0)
+						reval = (int)reval / (int)length;
+				}
+
+				if (NEW_SYMBOL == lhsState)
+					SAFE_RELEASE(pLhsTypeSym);
+				if (NEW_SYMBOL == rhsState)
+					SAFE_RELEASE(pRhsTypeSym);
+			}
+		}
+		break;
+
 	case MulTermK:
 		//reval =  visualizer::VariantCalc(GetAsciiFromTokentype(pexp->op), 
 		//	Eval_Expression(pexp->lhs, makerData), Eval_Expression(pexp->rhs, makerData)); 
 		break;
 
 	case VariableK:
-		reval = Eval_Variable(pexp, makerData);
+		reval = Eval_Variable(pexp, makerData, pOut);
 		break;
 
 	case IndirectK:
@@ -683,7 +949,8 @@ _variant_t visualizer::Eval_Expression( SExpression *pexp, const SMakerData &mak
 //------------------------------------------------------------------------
 // Variable 을 추적한다.
 //------------------------------------------------------------------------
-_variant_t visualizer::Eval_Variable( SExpression *pexp, const SMakerData &makerData )
+_variant_t visualizer::Eval_Variable( SExpression *pexp, const SMakerData &makerData, 
+	OUT SSymbolInfo *pOut ) //pOut = NULL
 {
 	_variant_t reval;
 	RETV(!pexp, reval);
@@ -705,7 +972,7 @@ _variant_t visualizer::Eval_Variable( SExpression *pexp, const SMakerData &maker
 
 	if (reval.vt == VT_EMPTY)
 		reval = dia::GetValueFromSymbol( findSymbol.mem.ptr, findSymbol.pSym);
-		
+
 	// 나중에 처리
 	switch (pexp->prefix_op)
 	{
@@ -720,25 +987,85 @@ _variant_t visualizer::Eval_Variable( SExpression *pexp, const SMakerData &maker
 		break;
 	}
 
+	if (pOut)
+	{
+		*pOut = findSymbol;
+		findSymbol.isNotRelease = true; // pOut에게 객체소거를 넘긴다.
+	}
+
 	return reval;
+}
+
+
+/**
+ @brief 
+ */
+bool visualizer::Find_Expression( SExpression *pexp, 
+	IN const SMakerData &makerData, OUT SSymbolInfo *pOut)
+{
+	bool reval = false;
+	RETV(!pexp, false);
+
+	switch (pexp->kind)
+	{
+	case CondExprK:
+	case AddTermK:
+	case MulTermK:
+		break;
+
+	case VariableK: 
+		reval = Find_Variable(pexp, makerData, pOut); 
+		break;
+
+	case IndirectK:
+		{
+			SSymbolInfo newSymbol;
+			reval = Find_Indirect(pexp, makerData, &newSymbol);
+			if (!reval)
+				break;
+			if (pexp->rhs)
+			{
+				SMakerData indirectMakerData = makerData;
+				indirectMakerData.symbol = newSymbol;
+				indirectMakerData.symbol.isNotRelease = true;
+				reval = Find_Expression(pexp->rhs, indirectMakerData, pOut);
+			}
+			else
+			{
+				if (pOut)
+				{
+					*pOut = newSymbol;
+					newSymbol.isNotRelease = true;
+				}
+			}
+		}
+		break;
+
+	case NumberK:
+	case StringK:
+	case DispFormatK:
+		break;
+	}
+
+	return true;
 }
 
 
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-bool visualizer::Find_Variable( SExpression *pexp, 
-							  IN const SMakerData &makerData, OUT SSymbolInfo *pOut)
+bool visualizer::Find_Variable( SExpression *pexp, IN const SMakerData &makerData, 
+	OUT SSymbolInfo *pOut )
 {
 	bool reval = false;
 	RETV(!pexp, false);
-	RETV(pexp->kind != VariableK, false);
+	RETV((pexp->kind != VariableK), false);
 
 	if (pexp->str == "$e")
 	{
 		if (pexp->rhs)
 		{
-			reval = Find_Variable(pexp->rhs, makerData, pOut);
+			reval = Find_Expression(pexp->rhs, makerData, pOut);
 		}
 		else
 		{
@@ -746,7 +1073,6 @@ bool visualizer::Find_Variable( SExpression *pexp,
 			{
 				pOut->isNotRelease = true; // symbol의 복사본이므로 release해선 안됨
 				pOut->pSym = makerData.symbol.pSym;
-				//pOut->mem = SMemInfo( g_SymbolName.c_str(), g_MemInfo.ptr, 0 );
 				pOut->mem = SMemInfo( makerData.origSymbolName.c_str(), makerData.origMem.ptr, 0 );
 				reval = true;
 			}
@@ -758,7 +1084,14 @@ bool visualizer::Find_Variable( SExpression *pexp,
 	}
 	else if (pexp->str == "$i")
 	{
-
+		if (pOut)
+		{
+			 pOut->pSym = dia::FindType("visualizer::g_BaseTypeInt");
+			if (!pOut->pSym)
+				return false;
+			pOut->mem = SMemInfo("int", (void*)&makerData.index, 0);
+			reval = true;
+		}
 	}
 	else
 	{
@@ -771,7 +1104,7 @@ bool visualizer::Find_Variable( SExpression *pexp,
 			SMakerData childMakerData = makerData;
 			childMakerData.symbol = childSymbol;
 			const string childName = dia::GetSymbolName(childSymbol.pSym);
-			reval = Find_Variable(pexp->rhs, childMakerData, pOut);
+			reval = Find_Expression(pexp->rhs, childMakerData, pOut);
 			childMakerData.symbol.isNotRelease = true;
 		}
 		else

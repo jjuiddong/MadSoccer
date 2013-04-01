@@ -7,8 +7,6 @@
 
 namespace dia
 {
-	ULONGLONG		GetSymbolLength(IDiaSymbol *pSymbol);
-
 	IDiaDataSource	*m_pDiaDataSource = NULL;
 	IDiaSession		*m_pDiaSession = NULL;
 	IDiaSymbol		*m_pGlobalSymbol = NULL;
@@ -131,17 +129,34 @@ IDiaSymbol* dia::FindType(const std::string &typeName)
 ULONGLONG dia::GetSymbolLength(IDiaSymbol *pSymbol)
 {
 	ULONGLONG len = 0;
-	CComPtr<IDiaSymbol> psymType;
-	if (pSymbol->get_type(&psymType) == S_OK)
+
+	SymbolState state;
+	IDiaSymbol *pTypeSymbol = GetBaseTypeSymbol(pSymbol, 1, state);
+	if (!pTypeSymbol)
+		return 0;
+
+	enum SymTagEnum symTag;
+	HRESULT hr = pTypeSymbol->get_symTag((DWORD*)&symTag);
+
+	switch (symTag)
 	{
-		HRESULT hr = psymType->get_length(&len);
-		assert( hr == S_OK );
+	case SymTagPointerType:
+	case SymTagArrayType:
+		{
+			IDiaSymbol *pBaseType;
+			hr = pTypeSymbol->get_type(&pBaseType);
+
+			if (NEW_SYMBOL == state)
+				SAFE_RELEASE(pTypeSymbol);
+			pTypeSymbol = pBaseType;
+		}
+		break;
 	}
-	else
-	{
-		HRESULT hr = pSymbol->get_length(&len);
-		assert( hr == S_OK );
-	}
+
+	hr = pTypeSymbol->get_length(&len);
+
+	if (NEW_SYMBOL == state)
+		SAFE_RELEASE(pTypeSymbol);
 	return len;
 }
 
@@ -765,17 +780,24 @@ IDiaSymbol* dia::FindChildSymbol( const std::string &symbolName,
 }
 
 
-//------------------------------------------------------------------------
-// pSymbol 의 타입 심볼을 리턴한다.
-// UDT, BaseClass, Data, TypeDef 타입일 경우 타입심볼을 
-// 리턴한다.
-// 그 밖에 pointer, array 타입 등은 NULL 을 리턴한다.
-//
-// pSymbol 자신일 경우 result = PARAM_SYMBOL 
-// 새 심볼을 생성해서 리턴할 경우 result = NEW_SYMBOL
-// 찾지 못했을 경우 NULL을 리턴한다.
-//------------------------------------------------------------------------
-IDiaSymbol* dia::GetBaseTypeSymbol( IDiaSymbol *pSymbol, OUT SymbolState &result  )
+/**
+ @brief pSymbol 의 타입 심볼을 리턴한다.
+
+ UDT, BaseClass, Data, TypeDef 타입일 경우 타입심볼을 
+리턴한다.
+
+그 밖에 타입은 option에 따라 결정된다.
+option = 0:
+	pointer, array 타입 등은 NULL 을 리턴한다.
+option = 1:
+	pointer, array 타입을 리턴한다.
+ 
+pSymbol 자신일 경우 result = PARAM_SYMBOL 
+새 심볼을 생성해서 리턴할 경우 result = NEW_SYMBOL
+찾지 못했을 경우 NULL을 리턴한다.
+
+ */
+IDiaSymbol* dia::GetBaseTypeSymbol( IDiaSymbol *pSymbol, DWORD option, OUT SymbolState &result  )
 {
 	RETV(!pSymbol, NULL);
 
@@ -793,6 +815,19 @@ IDiaSymbol* dia::GetBaseTypeSymbol( IDiaSymbol *pSymbol, OUT SymbolState &result
 		result = PARAM_SYMBOL;
 		break;
 
+	case SymTagPointerType:
+	case SymTagArrayType:
+		if (0 == option)
+		{
+			// nothing
+		}
+		else if (1 == option)
+		{
+			pRet = pSymbol;
+			result = PARAM_SYMBOL;
+		}
+		break;
+
 	case SymTagTypedef:
 	case SymTagData:
 		{
@@ -801,7 +836,7 @@ IDiaSymbol* dia::GetBaseTypeSymbol( IDiaSymbol *pSymbol, OUT SymbolState &result
 			ASSERT_RETV(S_OK == hr, NULL);
 
 			SymbolState rs;
-			pRet = GetBaseTypeSymbol(pBaseType, rs);
+			pRet = GetBaseTypeSymbol(pBaseType, option, rs);
 			if (!pRet)
 				break;
 

@@ -196,6 +196,10 @@ void visualizer::MakeProperty_Root(wxPGProperty *pParentProp, const SSymbolInfo 
 	wxPGProperty *pProp = NULL;
 	switch (symtag)
 	{
+	case SymTagBaseType:
+		MakeProperty_BaseType(pParentProp, symbol.mem.name, symbol);
+		break;
+
 	case SymTagData: 
 		MakeProperty_Data(pParentProp, symbol, depth);
 		break;
