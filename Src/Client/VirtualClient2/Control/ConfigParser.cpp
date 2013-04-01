@@ -109,6 +109,10 @@ void	config::RepositionWindow()
 			std::stringstream ss(rectStr);
 			ss >> wr.left >> wr.top >> wr.right >> wr.bottom;
 
+			int width = GetSystemMetrics(SM_CXSCREEN);
+			int height= GetSystemMetrics(SM_CYSCREEN);
+			if (wr.right > width || wr.bottom > height)
+				wr = CRect(0,0,300,400);
 			GetMainDlg()->MoveWindow( wr );
 		}
 	}
