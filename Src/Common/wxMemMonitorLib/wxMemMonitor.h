@@ -41,7 +41,6 @@ namespace memmonitor
 	};
 
 	bool Init(EXECUTE_TYPE type, HINSTANCE hInst, const std::string configFileName);
-	void Loop(MSG &msg);
 	void Cleanup();
 	
 	// Error Report

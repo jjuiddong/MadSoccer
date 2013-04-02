@@ -82,6 +82,9 @@
   <ItemGroup>
     <ClCompile Include="Algorithm\GroupTraverse.cpp" />
     <ClCompile Include="Marshalling\MarshallingGroup.cpp" />
+    <ClCompile Include="MultiNetwork\MultiNetwork.cpp" />
+    <ClCompile Include="MultiNetwork\NetGroupController.cpp" />
+    <ClCompile Include="MultiNetwork\NetGroupDelegation.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="ProtocolHandler\BasicC2SProtocolHandler.cpp" />
     <ClCompile Include="ProtocolHandler\BasicProtocolDispatcher.cpp" />
@@ -114,6 +117,9 @@
     <ClInclude Include="Interface\P2PClientEventListener.h" />
     <ClInclude Include="Interface\ServerEventListener.h" />
     <ClInclude Include="Marshalling\MarshallingGroup.h" />
+    <ClInclude Include="MultiNetwork\MultiNetwork.h" />
+    <ClInclude Include="MultiNetwork\NetGroupController.h" />
+    <ClInclude Include="MultiNetwork\NetGroupDelegation.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="NetworkDef.h" />
     <ClInclude Include="NetworkUtility.h" />

@@ -124,19 +124,12 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common\Common.vcxproj">
       <Project>{f3998dc9-8441-45d0-a8f0-719c0a06c955}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="..\..\Common\Graphics\Graphics.vcxproj">
       <Project>{3719bbed-e2d0-4528-896c-597809475c5a}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="..\..\Common\NetCommon\NetCommon.vcxproj">
-      <Project>{252866dc-6504-4eba-93e6-d827f07ed669}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Common\Network\Network.vcxproj">
-      <Project>{dfec316a-4224-4e50-abb0-1fdebe77461f}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    <ProjectReference Include="..\Controller\Controller.vcxproj">
+      <Project>{d18ab381-26d3-4142-963a-61ffdefc8104}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

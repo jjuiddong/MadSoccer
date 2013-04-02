@@ -13,9 +13,13 @@
 
 namespace memmonitor
 {
-	EXECUTE_TYPE g_Type = OUTER_PROCESS;
+	//EXECUTE_TYPE g_Type = OUTER_PROCESS;
+	EXECUTE_TYPE g_Type = INNER_PROCESS;
 	std::string g_ErrorMsg;
 	std::string g_ConfigFileName;
+
+	// memory map
+	MapType *g_pMemMap = NULL;
 }
 
 using namespace memmonitor;
@@ -364,3 +368,17 @@ void memmonitor::WriteWindowPosition()
 	}
 }
 
+
+/**
+ @brief Memory Map Clear
+ */
+void	memmonitor::Clear()
+{
+	SAFE_DELETE(g_pMemMap);
+}
+MapType& memmonitor::GetMemoryMap()
+{
+	if (!g_pMemMap)
+		g_pMemMap = new MapType;
+	return *g_pMemMap;
+}

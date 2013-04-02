@@ -201,5 +201,5 @@ std::string CLobbyServer::ToString()
 //------------------------------------------------------------------------
 void CLobbyServer::ReqLogIn(netid senderId, const std::string &id, const std::string &password)
 {
-	m_LoginProtocol.AckLogIn(senderId, SEND_TARGET, id, 1 );
+	m_LoginProtocol.AckLogIn(senderId, SEND_TARGET, error::ERR_SUCCESS, id, senderId);
 }

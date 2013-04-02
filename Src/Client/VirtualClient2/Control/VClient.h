@@ -9,14 +9,18 @@ virtualClient 의 Client클래스
 
 #include "NetProtocol/Src/basic_ProtocolListener.h"
 #include "NetProtocol/Src/basic_Protocol.h"
+#include "NetProtocol/Src/login_ProtocolListener.h"
+#include "NetProtocol/Src/login_Protocol.h"
 #include "NetProtocol/Src/p2pComm_ProtocolListener.h"
 #include "NetProtocol/Src/p2pComm_Protocol.h"
+
 
 DECLARE_TYPE_NAME(CVClient);
 class CVClient : public network::CClient
 						,public network::IClientEventListener
 						,public all::ProtocolListener
 						,public basic::s2c_ProtocolListener
+						,public login::s2c_ProtocolListener
 						,public p2pComm::c2c_ProtocolListener
 						,public common::CSingleton<CVClient>
 						,public memmonitor::Monitor<CVClient, TYPE_NAME(CVClient)>
@@ -25,12 +29,8 @@ public:
 	CVClient();
 	virtual ~CVClient();
 
-protected:
-	all::Protocol		m_Protocol;
-	p2pComm::c2c_Protocol m_P2pProtocol;
-
-public:
-	all::Protocol&		GetProtocol() { return m_Protocol; }
+	netid				GetHeroId() const;
+	all::Protocol&	GetProtocol() { return m_Protocol; }
 
 	// Client Event Handler
 	virtual void		OnClientConnect(ClientBasicPtr client) override;
@@ -48,7 +48,17 @@ public:
 	// basic
 	virtual void AckGroupList(netid senderId, const network::error::ERROR_CODE &errorCode, const GroupVector &groups) override;
 
+	// login
+	virtual void AckLogIn(netid senderId, const network::error::ERROR_CODE &errorCode, const std::string &id, const netid &netId) override;
+
 	// p2pComm
 	virtual void SendData(netid senderId) override;
 
+private:
+	netid				m_heroId;
+	all::Protocol		m_Protocol;
+	p2pComm::c2c_Protocol m_P2pProtocol;
+
 };
+
+netid CVClient::GetHeroId() const { return m_heroId; }

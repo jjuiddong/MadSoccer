@@ -42,6 +42,9 @@
     <Filter Include="Lib\ProtocolHandler">
       <UniqueIdentifier>{0a45ec0b-5b81-40cd-b4e5-ed8a71f44e66}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lib\MultiNetwork">
+      <UniqueIdentifier>{7dc2aa02-2618-4d8d-8726-2aa3e345f931}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Network.cpp">
@@ -109,6 +112,15 @@
     </ClCompile>
     <ClCompile Include="ProtocolHandler\BasicProtocolDispatcher.cpp">
       <Filter>Lib\ProtocolHandler</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiNetwork\MultiNetwork.cpp">
+      <Filter>Lib\MultiNetwork</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiNetwork\NetGroupController.cpp">
+      <Filter>Lib\MultiNetwork</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiNetwork\NetGroupDelegation.cpp">
+      <Filter>Lib\MultiNetwork</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -231,6 +243,15 @@
     </ClInclude>
     <ClInclude Include="ProtocolHandler\BasicProtocolDispatcher.h">
       <Filter>Lib\ProtocolHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiNetwork\NetGroupController.h">
+      <Filter>Lib\MultiNetwork</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiNetwork\MultiNetwork.h">
+      <Filter>Lib\MultiNetwork</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiNetwork\NetGroupDelegation.h">
+      <Filter>Lib\MultiNetwork</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

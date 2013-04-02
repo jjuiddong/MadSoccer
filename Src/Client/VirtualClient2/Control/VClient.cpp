@@ -4,11 +4,14 @@
 #include "../VirtualClient2.h"
 #include "../UI/DlgLog.h"
 #include "../UI/ProtocolTree.h"
+#include "../ui/VirtualClient2Dlg.h"
 
 #include "NetProtocol/Src/basic_ProtocolListener.cpp"
 #include "NetProtocol/Src/basic_Protocol.cpp"
 #include "NetProtocol/Src/p2pComm_ProtocolListener.cpp"
 #include "NetProtocol/Src/p2pComm_Protocol.cpp"
+#include "NetProtocol/Src/login_Protocol.cpp"
+#include "NetProtocol/Src/login_ProtocolListener.cpp"
 
 using namespace network;
 
@@ -136,5 +139,24 @@ void CVClient::SendData(netid senderId)
 	if (IsP2PHostClient())
 	{
 		m_P2pProtocol.SendData( P2P_NETID, SEND_T );
+	}
+}
+
+
+/**
+ @brief Acknowledge
+ */
+void CVClient::AckLogIn(netid senderId, const network::error::ERROR_CODE &errorCode, 
+	const std::string &id, const netid &netId)
+{
+	if (errorCode == error::ERR_SUCCESS)
+	{
+		m_heroId = netId;
+		theApp.GetMainDlg()->SetWindowText( 
+			common::formatw( "netid = %d", netId).c_str() );			
+	}
+	else
+	{
+		theApp.GetMainDlg()->SetWindowText( _T("Login Fail") );
 	}
 }

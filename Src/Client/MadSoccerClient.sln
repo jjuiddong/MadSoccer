@@ -13,13 +13,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Common", "..\Common\Common\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Graphics", "..\Common\Graphics\Graphics.vcxproj", "{3719BBED-E2D0-4528-896C-597809475C5A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Network", "..\Common\Network\Network.vcxproj", "{DFEC316A-4224-4E50-ABB0-1FDEBE77461F}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VirtualClient2", "VirtualClient2\VirtualClient2.vcxproj", "{A6BE4A4B-AF6A-4B20-A56C-BD0C5CF36E84}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxMemMonitorLib", "..\Common\wxMemMonitorLib\wxMemMonitorLib.vcxproj", "{20D4FC42-81E1-469F-8697-705005321531}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetProtocol", "..\Common\NetProtocol\NetProtocol.vcxproj", "{413DE339-8DD0-4015-A5FF-CCF226F1C417}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Network", "..\Common\Network\Network.vcxproj", "{DFEC316A-4224-4E50-ABB0-1FDEBE77461F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,10 +51,6 @@ Global
 		{3719BBED-E2D0-4528-896C-597809475C5A}.Debug|Win32.Build.0 = Debug|Win32
 		{3719BBED-E2D0-4528-896C-597809475C5A}.Release|Win32.ActiveCfg = Release|Win32
 		{3719BBED-E2D0-4528-896C-597809475C5A}.Release|Win32.Build.0 = Release|Win32
-		{DFEC316A-4224-4E50-ABB0-1FDEBE77461F}.Debug|Win32.ActiveCfg = Debug|Win32
-		{DFEC316A-4224-4E50-ABB0-1FDEBE77461F}.Debug|Win32.Build.0 = Debug|Win32
-		{DFEC316A-4224-4E50-ABB0-1FDEBE77461F}.Release|Win32.ActiveCfg = Release|Win32
-		{DFEC316A-4224-4E50-ABB0-1FDEBE77461F}.Release|Win32.Build.0 = Release|Win32
 		{A6BE4A4B-AF6A-4B20-A56C-BD0C5CF36E84}.Debug|Win32.ActiveCfg = Debug|Win32
 		{A6BE4A4B-AF6A-4B20-A56C-BD0C5CF36E84}.Debug|Win32.Build.0 = Debug|Win32
 		{A6BE4A4B-AF6A-4B20-A56C-BD0C5CF36E84}.Release|Win32.ActiveCfg = Release|Win32
@@ -67,6 +63,10 @@ Global
 		{413DE339-8DD0-4015-A5FF-CCF226F1C417}.Debug|Win32.Build.0 = Debug|Win32
 		{413DE339-8DD0-4015-A5FF-CCF226F1C417}.Release|Win32.ActiveCfg = Release|Win32
 		{413DE339-8DD0-4015-A5FF-CCF226F1C417}.Release|Win32.Build.0 = Release|Win32
+		{DFEC316A-4224-4E50-ABB0-1FDEBE77461F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DFEC316A-4224-4E50-ABB0-1FDEBE77461F}.Debug|Win32.Build.0 = Debug|Win32
+		{DFEC316A-4224-4E50-ABB0-1FDEBE77461F}.Release|Win32.ActiveCfg = Release|Win32
+		{DFEC316A-4224-4E50-ABB0-1FDEBE77461F}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

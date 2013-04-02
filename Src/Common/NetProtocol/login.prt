@@ -1,9 +1,8 @@
 
-
 protocol s2c 100
 {
-	AckLogIn( std::string id, int result );
-	AckLogOut( std::string id, int result );
+	AckLogIn( network::error::ERROR_CODE errorCode, std::string id, netid netId  );
+	AckLogOut( network::error::ERROR_CODE errorCode, std::string id, int result );
 }
 
 protocol c2s 200

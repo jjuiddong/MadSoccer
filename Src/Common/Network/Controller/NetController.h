@@ -10,7 +10,9 @@
 
 namespace network
 {
+	DECLARE_TYPE_NAME_SCOPE(network, CNetController)
 	class CNetController : public common::CSingleton<CNetController>
+										, public memmonitor::Monitor<CNetController, TYPE_NAME(network::CNetController)>
 	{
 	public:
 		CNetController();
