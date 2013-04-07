@@ -23,6 +23,21 @@ CPacket network::DisconnectPacket(netid disconnectId, int netControllerUniqValue
 
 
 /**
+ @brief Client Disconnect 패킷을 리턴한다.
+ @param netid: disconnect 된 netid
+ */
+CPacket network::ClientDisconnectPacket(netid disconnectId, int netControllerUniqValue)
+{
+	CPacket packet;
+	packet.SetProtocolId(0); // basic_protocol
+	packet.SetPacketId(PACKETID_CLIENT_DISCONNECT);
+	packet << netControllerUniqValue; // packet 을 검증하기 위한 용도로 쓰인다.
+	packet << disconnectId;
+	return packet;
+}
+
+
+/**
  @brief return the AcceptPacket
  */
 CPacket network::AcceptPacket(SOCKET acceptSocket, std::string clientIP )
@@ -32,6 +47,32 @@ CPacket network::AcceptPacket(SOCKET acceptSocket, std::string clientIP )
 	packet.SetPacketId(PACKETID_ACCEPT);
 	packet << acceptSocket;
 	packet << clientIP;
+	return packet;
+}
+
+
+/**
+ @brief return the Member Join Packet
+ */
+CPacket network::P2PMemberJoin(netid joinMemberId )
+{
+	CPacket packet;
+	packet.SetProtocolId(0); // basic_protocol
+	packet.SetPacketId(PACKETID_P2P_MEMBER_JOIN);
+	packet << joinMemberId;
+	return packet;
+}
+
+
+/**
+ @brief return the Member Leave Packet
+ */
+CPacket network::P2PMemberLeave(netid leaveMemberId )
+{
+	CPacket packet;
+	packet.SetProtocolId(0); // basic_protocol
+	packet.SetPacketId(PACKETID_P2P_MEMBER_LEAVE);
+	packet << leaveMemberId;
 	return packet;
 }
 

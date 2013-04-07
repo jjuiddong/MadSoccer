@@ -6,7 +6,7 @@ Date:    3/17/2013
 */
 #pragma once
 
-#include "ClientBasic.h"
+#include "../Controller/ClientBasic.h"
 
 namespace network
 {

@@ -9,7 +9,7 @@ using namespace network;
 CBasicS2CProtocolHandler::CBasicS2CProtocolHandler( CClient &client ) :
 	m_Client(client)
 {
-	m_BasicProtocol.SetNetConnector(&client);
+	client.RegisterProtocol(&m_BasicProtocol);
 }
 
 CBasicS2CProtocolHandler::~CBasicS2CProtocolHandler()

@@ -1,13 +1,13 @@
-//------------------------------------------------------------------------
-// Name:    Server.h
-// Author:  jjuiddong
-// Date:    2013-03-12
-// 
-// Group Management
-//------------------------------------------------------------------------
+/**
+Name:   Server.h
+Author:  jjuiddong
+Date:    2013-03-12
+
+Group Management
+*/
 #pragma once
 
-#include "ServerBasic.h"
+#include "../Controller/ServerBasic.h"
 
 namespace basic { class s2c_Protocol; }
 
@@ -23,9 +23,11 @@ namespace network
 		virtual ~CServer();
 
 	protected:
-		// Network Handler
+		// Network Event Handler
+		void OnClientJoin(CNetEvent &event);
+		void OnClientLeave(CNetEvent &event);
 
-	protected:
+	private:
 		// protocols
 		basic::s2c_Protocol		*m_pBasicProtocol;
 		CBasicC2SProtocolHandler *m_pBasicPrtHandler;

@@ -32,6 +32,14 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Src\%(Filename)_Protocol.h;Src\%(Filename)_Protocol.cpp;Src\%(Filename)_ProtocolListener.h;Src\%(Filename)_ProtocolListener.cpp;</Outputs>
     </CustomBuild>
   </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="farm.prt">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(BIN)\ProtocolCompiler.exe %(FullPath)</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename) protocol Compile...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Src\%(Filename)_Protocol.h;Src\%(Filename)_Protocol.cpp;Src\%(Filename)_ProtocolListener.h;Src\%(Filename)_ProtocolListener.cpp;</Outputs>
+    </CustomBuild>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{413DE339-8DD0-4015-A5FF-CCF226F1C417}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

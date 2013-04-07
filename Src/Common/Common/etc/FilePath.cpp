@@ -20,6 +20,17 @@ std::string common::GetFileName(const std::string &fileName)
 	return name;
 }
 
+
+/**
+ @brief  fileName에서 확장자를 리턴한다.
+ */
+std::string common::GetFileExt(const std::string &fileName)
+{
+	char *ext = PathFindExtensionA(fileName.c_str());
+	return ext;
+}
+
+
 //------------------------------------------------------------------------
 // fileName의 경로와 확장자를 제외한 파일이름만을 리턴한다.
 //------------------------------------------------------------------------

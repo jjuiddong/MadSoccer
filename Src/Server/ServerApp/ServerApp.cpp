@@ -61,10 +61,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		return FALSE;
 	}
 
-	//sharedmemory::Init("MadSoccerServer", sharedmemory::SHARED_SERVER, 20480 );
 	memmonitor::Init(memmonitor::INNER_PROCESS, hInstance, "madsoccer_server_monitor.json" );
 
-	CServerLauncher::Get()->Launcher( "script/serverstartconfig.txt" );
+	serverlauncher::Launcher( "script/serverstartconfig.txt" );
 	network::Init(1);
 
 	g_pChatServer = new CChatServer();
@@ -105,29 +104,14 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	g_pLobbyServer->Stop();
 
 	network::Clear();
-	delete g_pLobbyServer;
-	delete g_pChatServer;
-	//sharedmemory::Release();
+	SAFE_DELETE(g_pLobbyServer);
+	SAFE_DELETE(g_pChatServer);
 	memmonitor::Cleanup();
 
 	return (int) msg.wParam;
 }
 
 
-
-//
-//  함수: MyRegisterClass()
-//
-//  목적: 창 클래스를 등록합니다.
-//
-//  설명:
-//
-//    Windows 95에서 추가된 'RegisterClassEx' 함수보다 먼저
-//    해당 코드가 Win32 시스템과 호환되도록
-//    하려는 경우에만 이 함수를 사용합니다. 이 함수를 호출해야
-//    해당 응용 프로그램에 연결된
-//    '올바른 형식의' 작은 아이콘을 가져올 수 있습니다.
-//
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
 	WNDCLASSEX wcex;
@@ -149,16 +133,6 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	return RegisterClassEx(&wcex);
 }
 
-//
-//   함수: InitInstance(HINSTANCE, int)
-//
-//   목적: 인스턴스 핸들을 저장하고 주 창을 만듭니다.
-//
-//   설명:
-//
-//        이 함수를 통해 인스턴스 핸들을 전역 변수에 저장하고
-//        주 프로그램 창을 만든 다음 표시합니다.
-//
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    HWND hWnd;

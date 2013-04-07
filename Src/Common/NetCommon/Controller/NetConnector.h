@@ -10,7 +10,7 @@ Date:    12/25/2012
 
 namespace network
 {
-	class CNetConnector
+	class CNetConnector : public CEventHandler
 	{
 	public:
 		CNetConnector(PROCESS_TYPE procType);
@@ -35,13 +35,12 @@ namespace network
 		virtual bool	Send(netid netId, const SEND_FLAG flag, const CPacket &packet) = 0;
 		virtual bool	SendAll(const CPacket &packet) = 0;
 
-	protected:
+	private:
 		netid						m_Id;
 		SOCKET					m_Socket; 
 		NetConnectorPtr		m_pParent;				// CNetConnector 소유자
-		ProtocolListenerList m_ProtocolListeners;
+		ProtocolListenerList m_ProtocolListeners;		
 		HANDLE					m_hThread;				// 소속된 스레드 핸들, 없다면 NULL
-	private:
 		PROCESS_TYPE		m_ProcessType;
 	};
 

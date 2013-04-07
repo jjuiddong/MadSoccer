@@ -10,6 +10,7 @@
 namespace common
 {
 	std::string GetFileName(const std::string &fileName);
+	std::string GetFileExt(const std::string &fileName);
 	std::string GetFileNameExceptExt(const std::string &fileName);
 	std::string GetFilePathExceptFileName(const std::string &fileName);
 

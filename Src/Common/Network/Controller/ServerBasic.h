@@ -7,18 +7,15 @@
 //------------------------------------------------------------------------
 #pragma once
 
-#include "../interface/ServerEventListener.h"
 
 namespace network
 {
-	class IServerEventListener;
 	class CServerBasic : public CNetConnector
 	{
 		friend class CNetLauncher;
 		friend class CNetController;
 		friend class CTaskLogic;
 		friend class CP2PClient;
-		typedef common::ReferencePtr<IServerEventListener> ServerEventListenerPtr;
 
 	public:
 		CServerBasic(PROCESS_TYPE procType);
@@ -29,6 +26,9 @@ namespace network
 		bool				RemoveRemoteClient(netid netId);
 		bool				RemoveRemoteClientSocket(netid netId);
 		RemoteClientItor	RemoveRemoteClientInLoop(netid netId);
+		CGroup&		GetRootGroup();
+		RemoteClientMap& GetRemoteClients();
+		common::CriticalSection& GetCS();
 		netid			GetNetIdFromSocket(SOCKET sock);
 		bool				IsExist(netid netId);
 		void				Clear();
@@ -38,7 +38,6 @@ namespace network
 		void				Disconnect();
 		void				Close();
 		bool				IsServerOn() const;
-		void				SetEventListener(ServerEventListenerPtr ptr) { m_pEventListener = ptr; }
 		void				MakeFDSET( SFd_Set *pfdset);
 		void				SetPort(int port);
 
@@ -51,6 +50,7 @@ namespace network
 		void				OnClientLeave(netid netId);
 
 	protected:
+		void				InitRootGroup();
 		bool				AcceptProcess();
 		void				DispatchPacket();
 		bool				SendGroup(GroupPtr pGroup, const CPacket &packet);
@@ -60,18 +60,21 @@ namespace network
 		RemoteClientItor	RemoveClientProcess(RemoteClientItor it);
 		RemoteClientItor	FindRemoteClientBySocket(SOCKET sock);
 
-	protected:
+	private:
 		int								m_ServerPort;
 		bool								m_IsServerOn;			// 서버가 정상적으로 실행이 되었다면 true
 		RemoteClientMap		m_RemoteClients;		// 서버와 연결된 클라이언트 정보리스트
 		common::CriticalSection  m_CS;
-		ServerEventListenerPtr m_pEventListener;
 
 		CGroup							m_RootGroup;
 		netid							m_WaitGroupId;			// waiting place before join concrete group
 	};
 
+
 	inline bool CServerBasic::IsServerOn() const { return m_IsServerOn; }
 	inline void	 CServerBasic::SetPort(int port) { m_ServerPort = port; }
+	inline CGroup&	CServerBasic::GetRootGroup() { return m_RootGroup; }
+	inline common::CriticalSection& CServerBasic::GetCS() { return m_CS; }
+	inline RemoteClientMap& CServerBasic::GetRemoteClients() { return m_RemoteClients; }
 
 };

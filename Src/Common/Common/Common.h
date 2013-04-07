@@ -7,6 +7,7 @@
 #include <map>
 #include <vector>
 #include <algorithm>
+#include <iterator>
 #include <string>
 #include <sstream>
 #include <fstream>
@@ -108,6 +109,9 @@ typedef unsigned short u_short;
 #include "etc/Dump.h"
 #include "CodeGen.h"
 #include "container/VectorMap.h"
+
+#include "event/Event.h"
+#include "event/EventHandler.h"
 
 
 

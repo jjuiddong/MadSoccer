@@ -20,6 +20,8 @@ typedef int netid;
 
 namespace network
 {
+	using namespace common;
+
 	class CNetConnector;
 	class IProtocol;
 	class IProtocolListener;
@@ -56,6 +58,14 @@ namespace network
 		SEND_T_V = SEND_TARGET_VIEWER,
 	};
 
+
+
+	struct SHostInfo
+	{
+		std::string ip;
+		int portnum;
+	};
+
 }
 
 
@@ -71,12 +81,12 @@ typedef std::map<int,ProtocolPtr> ProtocolMap;
 typedef ProtocolMap::iterator ProtocolItor;
 
 
-
 #include "DataStructure/Packet.h"
 #include "DataStructure/PacketQueue.h"
 #include "Marshalling/Marshalling.h"
 
 #include "Controller/NetConnector.h"
+#include "Controller/NetConnectorLinker.h"
 
 #include "Interface/Protocol.h"
 #include "Interface/ProtocolDispatcher.h"
@@ -85,3 +95,5 @@ typedef ProtocolMap::iterator ProtocolItor;
 #include "PrtCompiler/ProtocolDefine.h"
 #include "PrtCompiler/ProtocolParser.h"
 #include "PrtCompiler/ProtocolMacro.h"
+
+#include "Event/NetEvent.h"

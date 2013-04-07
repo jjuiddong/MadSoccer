@@ -152,10 +152,16 @@ namespace network
 	{
 		PACKETID_CONNECT = 1,
 		PACKETID_DISCONNECT,
+		PACKETID_CLIENT_DISCONNECT,
 		PACKETID_ACCEPT,
+		PACKETID_P2P_MEMBER_JOIN,
+		PACKETID_P2P_MEMBER_LEAVE,
 	};
 
 	CPacket DisconnectPacket(netid disconnectId, int netControllerUniqValue);
+	CPacket ClientDisconnectPacket(netid disconnectId, int netControllerUniqValue);
 	CPacket AcceptPacket(SOCKET acceptSocket, std::string clientIP );
+	CPacket P2PMemberJoin(netid joinMemberId );
+	CPacket P2PMemberLeave(netid leaveMemberId );
 
 }

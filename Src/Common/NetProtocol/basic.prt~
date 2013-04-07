@@ -9,6 +9,8 @@ protocol s2c 100
 	JoinMember( netid toGroupId, netid fromGroupId, netid userId );
 
 	AckP2PConnect( network::error::ERROR_CODE errorCode, network::P2P_STATE state, std::string ip, int port );
+	P2PMemberJoin( netid clientId );
+	P2PMemberLeave( netid clientId );
 
 }
 

@@ -374,7 +374,14 @@ void memmonitor::WriteWindowPosition()
  */
 void	memmonitor::Clear()
 {
-	SAFE_DELETE(g_pMemMap);
+	if (g_pMemMap)
+	{
+		BOOST_FOREACH(auto &it, *g_pMemMap)
+		{
+			delete it.second.ptr;
+		}
+		SAFE_DELETE(g_pMemMap);
+	}
 }
 MapType& memmonitor::GetMemoryMap()
 {

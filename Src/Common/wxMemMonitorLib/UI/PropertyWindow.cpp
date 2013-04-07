@@ -46,7 +46,7 @@ CPropertyWindow::CPropertyWindow(wxWindow *parent)  :
 		wxPropertyGridEventHandler(CPropertyWindow::OnPropertyGridChange) );
 	Connect(GetId(), wxEVT_PG_SELECTED,
 		wxPropertyGridEventHandler(CPropertyWindow::OnPropertyGridSelect) );	
-	Connect(wxEVT_CHAR_HOOK, wxKeyEventHandler(CPropertyWindow::OnKeyDown));
+	Connect(wxEVT_CHAR_HOOK, wxKeyEventHandler(CPropertyWindow::OnKeyDown)); 
 }
 
 CPropertyWindow::~CPropertyWindow() 

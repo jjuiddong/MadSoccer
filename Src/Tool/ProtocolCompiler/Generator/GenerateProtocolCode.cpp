@@ -157,6 +157,9 @@ bool compiler::WriteFirstProtocolClassHeader(sRmi *rmi)
 	fs << "#pragma once\n";
 	fs << endl;
 	fs << "namespace " << g_protocolName << " {\n";
+	fs << endl;
+	fs << "using namespace network;\n";
+	fs << "using namespace marshalling;\n";
 
 	WriteProtocolClassHeader(fs, rmi);
 
@@ -209,6 +212,9 @@ bool compiler::WriteFirstListenerHeader(sRmi *rmi)
 	fs << "#pragma once\n";
 	fs << endl;
 	fs << "namespace " << g_protocolName << " {\n";
+	fs << endl;
+	fs << "using namespace network;\n";
+	fs << "using namespace marshalling;\n";
 
 	WriteListenerHeader(fs, rmi);
 
@@ -280,8 +286,8 @@ bool compiler::WriteFirstListenerCpp(sRmi *rmi, bool IsAddStdafxHeader)
 	fs << "#include \"" << headerFileName << "\"\n";
 	fs << "#include \"Network/Controller/NetController.h\"\n";
 	fs << endl;
-	fs << "using namespace network;\n";
-	fs << "using namespace marshalling;\n";
+	//fs << "using namespace network;\n";
+	//fs << "using namespace marshalling;\n";
 	fs << "using namespace " << g_protocolName << ";\n";
 	fs << endl;
 
@@ -370,7 +376,7 @@ void compiler::WriteFirstArg(ofstream &fs, sArg*p, bool isTarget)
 	if (isTarget)
 	{
 		fs <<"netid targetId";
-		fs << ", const network::SEND_FLAG flag";
+		fs << ", const SEND_FLAG flag";
 	}
 	else
 	{
@@ -449,8 +455,8 @@ bool compiler::WriteFirstProtocolCpp(sRmi *rmi, bool IsAddStdafxHeader)
 	if (IsAddStdafxHeader)
 		fs << "#include \"stdafx.h\"\n";
 	fs << "#include \"" << headerFileName << "\"\n";
-	fs << "using namespace network;\n";
-	fs << "using namespace marshalling;\n";
+	//fs << "using namespace network;\n";
+	//fs << "using namespace marshalling;\n";
 	fs << "using namespace " << g_protocolName << ";\n";
 	fs << endl;
 

@@ -21,6 +21,9 @@
     <Filter Include="Container">
       <UniqueIdentifier>{ed834417-7dd4-4102-bad7-20768e9c3c82}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Event">
+      <UniqueIdentifier>{c6d01237-9f84-4e81-a34a-15e4bada43b2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -79,6 +82,12 @@
     </ClCompile>
     <ClCompile Include="thread\Thread.cpp">
       <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="event\Event.cpp">
+      <Filter>Event</Filter>
+    </ClCompile>
+    <ClCompile Include="event\EventHandler.cpp">
+      <Filter>Event</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -177,6 +186,12 @@
     </ClInclude>
     <ClInclude Include="etc\AutoLock.h">
       <Filter>Etc</Filter>
+    </ClInclude>
+    <ClInclude Include="event\Event.h">
+      <Filter>Event</Filter>
+    </ClInclude>
+    <ClInclude Include="event\EventHandler.h">
+      <Filter>Event</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

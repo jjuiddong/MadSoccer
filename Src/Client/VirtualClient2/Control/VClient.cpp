@@ -20,31 +20,18 @@ CVClient::CVClient() : CClient(network::USER_LOOP)
 	RegisterProtocol(&m_Protocol);
 	RegisterProtocol(&m_P2pProtocol);
 	AddProtocolListener(this);
-	SetEventListener(this);
 
+	EVENT_CONNECT( EVT_CONNECT, CVClient, CVClient::OnConnect );
+	EVENT_CONNECT( EVT_DISCONNECT, CVClient, CVClient::OnDisconnect );
+	EVENT_CONNECT( EVT_P2P_CONNECT, CVClient, CVClient::OnP2PConnect);
+	EVENT_CONNECT( EVT_P2P_DISCONNECT, CVClient, CVClient::OnP2PDisconnect);
+	EVENT_CONNECT( EVT_MEMBER_JOIN, CVClient, CVClient::OnMemberJoin);
+	EVENT_CONNECT( EVT_MEMBER_LEAVE, CVClient, CVClient::OnMemberLeave);	
 }
 
 CVClient::~CVClient()
 {
 
-}
-
-
-//------------------------------------------------------------------------
-// 
-//------------------------------------------------------------------------
-void CVClient::OnClientConnect(ClientBasicPtr client)
-{
-	GetConsole()->AddString( "Connect" );
-}
-
-
-//------------------------------------------------------------------------
-// 
-//------------------------------------------------------------------------
-void CVClient::OnClientDisconnect(ClientBasicPtr client)
-{
-	GetConsole()->AddString( "DisConnect" );
 }
 
 
@@ -94,10 +81,29 @@ void CVClient::AckGroupList(netid senderId, const network::error::ERROR_CODE &er
 }
 
 
+
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
+void CVClient::OnConnect(network::CNetEvent &event)
+{
+	GetConsole()->AddString( "Connect" );
+}
+
+
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
+void CVClient::OnDisconnect(network::CNetEvent &event)
+{
+	GetConsole()->AddString( "DisConnect" );
+}
+
+
 /**
  @brief 
  */
-void	CVClient::OnP2PConnect(ClientBasicPtr client)
+void	CVClient::OnP2PConnect(network::CNetEvent &event)
 {
 	GetConsole()->AddString( "P2P Connect" );
 }
@@ -106,7 +112,7 @@ void	CVClient::OnP2PConnect(ClientBasicPtr client)
 /**
  @brief 
  */
-void	CVClient::OnP2PDisconnect(ClientBasicPtr client)
+void	CVClient::OnP2PDisconnect(network::CNetEvent &event)
 {
 	GetConsole()->AddString( "P2P Disconnect" );
 }
@@ -115,7 +121,7 @@ void	CVClient::OnP2PDisconnect(ClientBasicPtr client)
 /**
  @brief 
  */
-void	CVClient::OnMemberJoin(ClientBasicPtr client, netid clientId)
+void	CVClient::OnMemberJoin(network::CNetEvent &event)
 {
 	GetConsole()->AddString( "Member Join" );
 }
@@ -124,7 +130,7 @@ void	CVClient::OnMemberJoin(ClientBasicPtr client, netid clientId)
 /**
  @brief 
  */
-void	CVClient::OnMemberLeave(ClientBasicPtr client, netid clientId)
+void	CVClient::OnMemberLeave(network::CNetEvent &event)
 {
 	GetConsole()->AddString( "Member Leave" );
 }

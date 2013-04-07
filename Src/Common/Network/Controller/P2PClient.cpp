@@ -10,7 +10,6 @@ CP2PClient::CP2PClient(PROCESS_TYPE procType) :
 	CNetConnector(procType)
 ,	m_pP2pClient(NULL)
 ,	m_pP2pHost(NULL)
-,	m_pEventListener(NULL)
 ,	m_State(P2P_CLIENT)
 {
 
@@ -132,8 +131,11 @@ bool	CP2PClient::CreateP2PHost( const int port )
 	else
 	{
 		m_pP2pHost = new CServerBasic(GetProcessType());
-		m_pP2pHost->SetEventListener(this);
 		m_pP2pHost->SetParent(this);
+		m_pP2pHost->EventConnect( this, EVT_LISTEN, NetEventHandler(CP2PClient::OnListen) );
+		m_pP2pHost->EventConnect( this, EVT_DISCONNECT, NetEventHandler(CP2PClient::OnDisconnect) );
+		m_pP2pHost->EventConnect( this, EVT_CLIENT_JOIN, NetEventHandler(CP2PClient::OnClientJoin) );
+		m_pP2pHost->EventConnect( this, EVT_CLIENT_LEAVE, NetEventHandler(CP2PClient::OnClientLeave) );
 
 		BOOST_FOREACH(auto &pPrt, GetProtocolListeners())
 		{
@@ -157,8 +159,9 @@ bool	CP2PClient::CreateP2PClient( const std::string &ip, const int port )
 	else
 	{
 		m_pP2pClient = new CCoreClient(GetProcessType());
-		m_pP2pClient->SetEventListener(this);
 		m_pP2pClient->SetParent(this);
+		m_pP2pClient->EventConnect( this, EVT_CONNECT, NetEventHandler(CP2PClient::OnConnect) );
+		m_pP2pClient->EventConnect( this, EVT_DISCONNECT, NetEventHandler(CP2PClient::OnDisconnect) );
 
 		BOOST_FOREACH(auto &pPrt, GetProtocolListeners())
 		{
@@ -227,59 +230,49 @@ bool	CP2PClient::RemoveProtocolListener(ProtocolListenerPtr pListener)
 /**
  @brief P2P Host Event Handler , P2P host Listen
  */
-void	CP2PClient::OnListen(ServerBasicPtr svr)
+void	CP2PClient::OnListen(CNetEvent &event)
 {
-	if (m_pEventListener)
-		m_pEventListener->OnP2PCreate(this);
+	SearchEventTable( CNetEvent(EVT_CONNECT, this));
+}
+
+
+/**
+ @brief P2P Host Event Handler , P2P connect
+ */
+void	CP2PClient::OnConnect(CNetEvent &event)
+{
+	SearchEventTable( CNetEvent(EVT_CONNECT, this));
 }
 
 
 /**
  @brief P2P Host Event Handler , P2P disconnect
  */
-void	CP2PClient::OnServerDisconnect(ServerBasicPtr svr)
+void	CP2PClient::OnDisconnect(CNetEvent &event)
 {
-	if (m_pEventListener)
-		m_pEventListener->OnP2PDisconnect(this);
+	SearchEventTable( CNetEvent(EVT_DISCONNECT, this));
 }
 
 
 /**
  @brief P2P Host Event Handler , P2P Client join
  */
-void	CP2PClient::OnClientJoin(ServerBasicPtr svr, netid netId)
+void	CP2PClient::OnClientJoin(CNetEvent &event)
 {
-	if (m_pEventListener)
-		m_pEventListener->OnMemberJoin(this, netId);
+	if (m_State == P2P_HOST)
+		SendAll( P2PMemberJoin(event.GetNetId()) );
+
+	SearchEventTable( CNetEvent(EVT_MEMBER_JOIN, this, event.GetNetId()));
 }
 
 
 /**
  @brief P2P Host Event Handler , P2P Client leave
  */
-void	CP2PClient::OnClientLeave(ServerBasicPtr svr, netid netId)
+void	CP2PClient::OnClientLeave(CNetEvent &event)
 {
-	if (m_pEventListener)
-		m_pEventListener->OnMemberLeave(this, netId);
+	if (m_State == P2P_HOST)
+		SendAll( P2PMemberLeave(event.GetNetId()) );
+
+	SearchEventTable( CNetEvent(EVT_MEMBER_LEAVE, this, event.GetNetId()));
 }
-
-
-/**
- @brief P2P Client Event Handler, P2P Client Connect
- */
-void	CP2PClient::OnCoreClientConnect(CoreClientPtr client)
-{
-	if (m_pEventListener)
-		m_pEventListener->OnP2PCreate(this);
-}
-
-
-/**
- @brief P2P Client Event Handler, P2P Client Disconnect
- */
-void	CP2PClient::OnClientDisconnect(CoreClientPtr client)
-{
-	if (m_pEventListener)
-		m_pEventListener->OnP2PDisconnect(this);
-}
-

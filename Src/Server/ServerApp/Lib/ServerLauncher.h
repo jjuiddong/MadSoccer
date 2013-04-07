@@ -9,10 +9,10 @@
 #pragma once
 
 
-class CServerLauncher : public common::CSingleton<CServerLauncher>
+namespace serverlauncher
 {
-public:
+
 	bool Launcher( std::string configFileName );
 
 
-};
+}

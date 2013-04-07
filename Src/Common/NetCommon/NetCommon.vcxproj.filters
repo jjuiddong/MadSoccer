@@ -24,6 +24,9 @@
     <Filter Include="Marshalling">
       <UniqueIdentifier>{30c414f4-9889-41ae-a162-6481b1e1c7a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Event">
+      <UniqueIdentifier>{34aaa631-1444-41d4-9876-e74281fb9b31}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -70,6 +73,15 @@
     </ClInclude>
     <ClInclude Include="Marshalling\Marshalling.h">
       <Filter>Marshalling</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\NetConnectorLinker.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Event\NetEvent.h">
+      <Filter>Event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\event\FastDelegate.h">
+      <Filter>Event</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

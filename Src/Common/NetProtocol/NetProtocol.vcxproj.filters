@@ -15,5 +15,8 @@
     <CustomBuild Include="p2pComm.prt">
       <Filter>Protocol</Filter>
     </CustomBuild>
+    <CustomBuild Include="farm.prt">
+      <Filter>Protocol</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

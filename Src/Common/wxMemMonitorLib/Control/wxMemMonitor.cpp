@@ -97,31 +97,29 @@ void memmonitor::Cleanup()
 	{
 		wxCriticalSectionLocker lock(gs_wxStartupCS);
 
-		if ( !gs_wxMainThread )
-			return;
-
-		// If wx main thread is running, we need to stop it. To accomplish this,
-		// send a message telling it to terminate the app.
-		if (wxApp::GetInstance())
+		if ( gs_wxMainThread )
 		{
-			wxThreadEvent *event =
-				new wxThreadEvent(wxEVT_THREAD, CMD_TERMINATE);
-			wxQueueEvent(wxApp::GetInstance(), event);
-		}
+			// If wx main thread is running, we need to stop it. To accomplish this,
+			// send a message telling it to terminate the app.
+			if (wxApp::GetInstance())
+			{
+				wxThreadEvent *event =
+					new wxThreadEvent(wxEVT_THREAD, CMD_TERMINATE);
+				wxQueueEvent(wxApp::GetInstance(), event);
+			}
 
-		// We must then wait for the thread to actually terminate.
-		WaitForSingleObject(gs_wxMainThread, INFINITE);
-		CloseHandle(gs_wxMainThread);
-		gs_wxMainThread = NULL;
+			// We must then wait for the thread to actually terminate.
+			WaitForSingleObject(gs_wxMainThread, INFINITE);
+			CloseHandle(gs_wxMainThread);
+			gs_wxMainThread = NULL;
+		}	
 	}
-	else
+
+	if (INNER_PROCESS == GetExecuteType())
 	{
-		if (INNER_PROCESS == GetExecuteType())
-		{
-			if ( wxTheApp )
-				wxTheApp->OnExit();
-			wxEntryCleanup();
-		}
+		if ( wxTheApp )
+			wxTheApp->OnExit();
+		wxEntryCleanup();
 	}
 
 	memmonitor::Clear();

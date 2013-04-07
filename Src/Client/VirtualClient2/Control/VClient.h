@@ -17,7 +17,6 @@ virtualClient 의 Client클래스
 
 DECLARE_TYPE_NAME(CVClient);
 class CVClient : public network::CClient
-						,public network::IClientEventListener
 						,public all::ProtocolListener
 						,public basic::s2c_ProtocolListener
 						,public login::s2c_ProtocolListener
@@ -33,13 +32,12 @@ public:
 	all::Protocol&	GetProtocol() { return m_Protocol; }
 
 	// Client Event Handler
-	virtual void		OnClientConnect(ClientBasicPtr client) override;
-	virtual void		OnClientDisconnect(ClientBasicPtr client) override;
-
-	virtual void		OnP2PConnect(ClientBasicPtr client) override;
-	virtual void		OnP2PDisconnect(ClientBasicPtr client) override;
-	virtual void		OnMemberJoin(ClientBasicPtr client, netid clientId) override;
-	virtual void		OnMemberLeave(ClientBasicPtr client, netid clientId) override;
+	void		OnConnect(network::CNetEvent &event);
+	void		OnDisconnect(network::CNetEvent &event);
+	void		OnP2PConnect(network::CNetEvent &event);
+	void		OnP2PDisconnect(network::CNetEvent &event);
+	void		OnMemberJoin(network::CNetEvent &event);
+	void		OnMemberLeave(network::CNetEvent &event);
 
 	// network
 	// all::protocol

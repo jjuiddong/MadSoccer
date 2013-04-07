@@ -13,10 +13,13 @@ CServer::CServer(PROCESS_TYPE procType) :
 ,	m_pBasicPrtHandler(NULL)
 {
 	m_pBasicProtocol = new basic::s2c_Protocol();
-	m_pBasicProtocol->SetNetConnector(this);
+	RegisterProtocol(m_pBasicProtocol);
 
 	m_pBasicPrtHandler = new CBasicC2SProtocolHandler(*this);
 	AddProtocolListener(m_pBasicPrtHandler);
+
+	EVENT_CONNECT(EVT_CLIENT_JOIN, CServer, CServer::OnClientJoin);
+	EVENT_CONNECT(EVT_CLIENT_LEAVE, CServer, CServer::OnClientLeave);
 
 }
 
@@ -24,7 +27,28 @@ CServer::~CServer()
 {
 	RemoveProtocolListener(m_pBasicPrtHandler);
 	SAFE_DELETE(m_pBasicPrtHandler);
-
 	SAFE_DELETE(m_pBasicProtocol);
+}
+
+
+/**
+ @brief Join Client Event
+ */
+void CServer::OnClientJoin(CNetEvent &event)
+{
+
+}
+
+
+/**
+ @brief Leave Client Event
+ */
+void CServer::OnClientLeave(CNetEvent &event)
+{
+	GroupPtr pGroup = GetRootGroup().GetChildFromUser( event.GetNetId() );
+	RET(!pGroup);
+
+	m_pBasicProtocol->JoinMember(pGroup->GetId(), SEND_T_V, INVALID_NETID, 
+		pGroup->GetId(), event.GetNetId() );	
 }
 

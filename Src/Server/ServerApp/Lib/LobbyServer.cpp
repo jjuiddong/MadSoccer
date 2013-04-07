@@ -1,8 +1,8 @@
 
 #include "stdafx.h"
 #include "LobbyServer.h"
-#include <boost/smart_ptr.hpp>
 #include "../DataStructure/UserLobby.h"
+
 
 using namespace network;
 
@@ -11,8 +11,9 @@ CLobbyServer::CLobbyServer() : CServer(SERVICE_EXCLUSIVE_THREAD)
 	RegisterProtocol(&m_LoginProtocol);
 	RegisterProtocol(&m_BasicProtocol);
 	AddProtocolListener( this );
-	SetEventListener(this);
 
+	EVENT_CONNECT( EVT_CLIENT_JOIN, CLobbyServer, CLobbyServer::OnClientJoin );
+	EVENT_CONNECT( EVT_CLIENT_LEAVE, CLobbyServer, CLobbyServer::OnClientLeave );
 }
 
 CLobbyServer::~CLobbyServer() 
@@ -155,13 +156,13 @@ void CLobbyServer::SendUsers(netid userId)
 //------------------------------------------------------------------------
 // 클라이언트가 서버에 붙었을 때 호출된다.
 //------------------------------------------------------------------------
-void CLobbyServer::OnClientJoin(ServerBasicPtr svr, netid netId)
+void CLobbyServer::OnClientJoin(CNetEvent &event)
 {
 	CUserLobby *pUser = new CUserLobby();
-	pUser->SetNetId(netId);
+	pUser->SetNetId(event.GetNetId());
 	if (!AddUser( pUser ))
 	{
-		clog::Error( clog::ERROR_PROBLEM, "AddUser() Faile!! id = %d\n", netId);
+		clog::Error( clog::ERROR_PROBLEM, "AddUser() Faile!! id = %d\n", event.GetNetId());
 		delete pUser;
 	}
 }
@@ -170,11 +171,11 @@ void CLobbyServer::OnClientJoin(ServerBasicPtr svr, netid netId)
 //------------------------------------------------------------------------
 // 클라이언트가 서버로 부터 떨어져 나갔을 때 호출된다.
 //------------------------------------------------------------------------
-void CLobbyServer::OnClientLeave(ServerBasicPtr svr, netid netId)
+void CLobbyServer::OnClientLeave(CNetEvent &event)
 {
-	if (!RemoveUser(netId))
+	if (!RemoveUser(event.GetNetId()))
 	{
-		clog::Error(clog::ERROR_PROBLEM,  "RemoveUser() Faile!! id = %d\n", netId);
+		clog::Error(clog::ERROR_PROBLEM,  "RemoveUser() Faile!! id = %d\n", event.GetNetId());
 	}
 }
 
@@ -184,11 +185,11 @@ void CLobbyServer::OnClientLeave(ServerBasicPtr svr, netid netId)
 //------------------------------------------------------------------------
 std::string CLobbyServer::ToString()
 {
-	common::AutoCSLock cs(m_CS);
+	common::AutoCSLock cs(GetCS());
 
 	std::stringstream ss;
-	ss << "RemoteClient: " << m_RemoteClients.size() << std::endl;
-	BOOST_FOREACH(RemoteClientMap::value_type &kv, m_RemoteClients)
+	ss << "RemoteClient: " << GetRemoteClients().size() << std::endl;
+	BOOST_FOREACH(RemoteClientMap::value_type &kv, GetRemoteClients())
 	{
 		ss << "netid: " << kv.second->GetId() << ", sock: " << kv.second->GetSocket() << std::endl;			
 	}

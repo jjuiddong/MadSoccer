@@ -38,6 +38,19 @@ void basic_protocol::ServerDispatcher::Dispatch(CPacket &packet, ServerBasicPtr 
 		}
 		break;
 
+	case PACKETID_CLIENT_DISCONNECT:
+		{
+			int uniqueValue = 0;
+			newPacket >> uniqueValue;
+			if (CNetController::Get()->GetUniqueValue() != uniqueValue) // 패킷 검증
+				return;
+
+			netid disconnectId = INVALID_NETID;
+			newPacket >> disconnectId;
+			pSvr->RemoveRemoteClient(disconnectId);
+		}
+		break;
+
 	case PACKETID_ACCEPT:
 		{
 			SOCKET remoteClientSock;
@@ -47,6 +60,7 @@ void basic_protocol::ServerDispatcher::Dispatch(CPacket &packet, ServerBasicPtr 
 			pSvr->AddRemoteClient(remoteClientSock, ip);
 		}
 		break;
+
 	}
 }
 
@@ -69,6 +83,22 @@ void basic_protocol::ClientDispatcher::Dispatch(CPacket &packet, CoreClientPtr p
 				return;
 
 			pClt->Disconnect();
+		}
+		break;
+
+	case PACKETID_P2P_MEMBER_JOIN:
+		{
+			netid netId;
+			newPacket >> netId;
+			pClt->OnMemberJoin( netId );
+		}
+		break;
+
+	case PACKETID_P2P_MEMBER_LEAVE:
+		{
+			netid netId;
+			newPacket >> netId;
+			pClt->OnMemberLeave( netId );
 		}
 		break;
 	}

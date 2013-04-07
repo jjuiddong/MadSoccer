@@ -140,7 +140,7 @@ _variant_t network::GetTypeStr2Type(const std::string &typeStr)
 int	network::GetPacketID(sRmi *rmi, sProtocol *packet)
 {
 	if (!rmi) return 0;
-	if (!packet) return 0;
+	if (!packet) return rmi->number;
 
 	int id = rmi->number + 1;
 	sProtocol *p = rmi->protocol;
@@ -160,7 +160,10 @@ int	network::GetPacketID(sRmi *rmi, sProtocol *packet)
 //------------------------------------------------------------------------
 std::string network::Packet2String(const CPacket &packet, sProtocol *protocol)
 {
-	if (!protocol) return "";
+	if (!protocol)
+	{
+		return format( " protocol id = %d, packet id = %d", packet.GetProtocolId(), packet.GetPacketId() );
+	}
 
 	std::stringstream ss;
 	CPacket tempPacket = packet;

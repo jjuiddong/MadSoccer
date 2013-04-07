@@ -67,7 +67,7 @@ namespace network
 
 					CPacketQueue::Get()->PushPacket( 
 						CPacketQueue::SPacketData(m_ServerId, 
-							DisconnectPacket(senderId, CNetController::Get()->GetUniqueValue()) ));
+							ClientDisconnectPacket(senderId, CNetController::Get()->GetUniqueValue()) ));
 				}
 				else
 				{

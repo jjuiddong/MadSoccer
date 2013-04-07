@@ -14,7 +14,6 @@
 
 DECLARE_TYPE_NAME(CChatServer)
 class CChatServer : public network::CServer
-								,public network::IServerEventListener
 								,public memmonitor::Monitor<CChatServer, TYPE_NAME(CChatServer)>
 {
 public:

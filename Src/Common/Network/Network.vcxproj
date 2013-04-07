@@ -50,7 +50,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalOptions>-Zm200 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-Zm200 /vmm %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
@@ -59,6 +59,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Lib>
       <AdditionalDependencies>wsock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -81,16 +82,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Algorithm\GroupTraverse.cpp" />
+    <ClCompile Include="Controller\ClientBasic.cpp" />
+    <ClCompile Include="Controller\ServerBasic.cpp" />
     <ClCompile Include="Marshalling\MarshallingGroup.cpp" />
     <ClCompile Include="MultiNetwork\MultiNetwork.cpp" />
+    <ClCompile Include="MultiNetwork\MultiNetworkUtillity.cpp" />
     <ClCompile Include="MultiNetwork\NetGroupController.cpp" />
     <ClCompile Include="MultiNetwork\NetGroupDelegation.cpp" />
+    <ClCompile Include="MultiNetwork\FarmServerConnector.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="ProtocolHandler\BasicC2SProtocolHandler.cpp" />
     <ClCompile Include="ProtocolHandler\BasicProtocolDispatcher.cpp" />
     <ClCompile Include="ProtocolHandler\BasicS2CProtocolHandler.cpp" />
-    <ClCompile Include="Service\ClientBasic.cpp" />
-    <ClCompile Include="Service\ServerBasic.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -111,23 +114,21 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Algorithm\GroupTraverse.h" />
+    <ClInclude Include="Controller\ClientBasic.h" />
+    <ClInclude Include="Controller\ServerBasic.h" />
     <ClInclude Include="ErrReport\ErrorCode.h" />
-    <ClInclude Include="Interface\ClientEventListener.h" />
-    <ClInclude Include="Interface\CoreClientEventListener.h" />
-    <ClInclude Include="Interface\P2PClientEventListener.h" />
-    <ClInclude Include="Interface\ServerEventListener.h" />
     <ClInclude Include="Marshalling\MarshallingGroup.h" />
     <ClInclude Include="MultiNetwork\MultiNetwork.h" />
+    <ClInclude Include="MultiNetwork\MultiNetworkUtillity.h" />
     <ClInclude Include="MultiNetwork\NetGroupController.h" />
     <ClInclude Include="MultiNetwork\NetGroupDelegation.h" />
+    <ClInclude Include="MultiNetwork\FarmServerConnector.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="NetworkDef.h" />
     <ClInclude Include="NetworkUtility.h" />
     <ClInclude Include="ProtocolHandler\BasicC2SProtocolHandler.h" />
     <ClInclude Include="ProtocolHandler\BasicProtocolDispatcher.h" />
     <ClInclude Include="ProtocolHandler\BasicS2CProtocolHandler.h" />
-    <ClInclude Include="Service\ClientBasic.h" />
-    <ClInclude Include="Service\ServerBasic.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Algorithm\BindCore.h" />

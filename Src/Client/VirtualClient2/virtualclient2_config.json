@@ -9,6 +9,7 @@
 
 	"collapse" : [
 		"basic::s2c",  
-		"login::s2c"
+		"login::s2c",
+		"farm"		
 	]
 }

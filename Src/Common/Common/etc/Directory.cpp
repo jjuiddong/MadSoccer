@@ -29,10 +29,10 @@ list<string> common::FindFileList( const string &findFilePath )
 	BOOL bResult = TRUE;
 	while (bResult) 
 	{
-		if (!(wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+		if (!(wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))  // 폴더가 아닐때만 추가
 		{
-			// 폴더가 아닐때만 추가
-			fileList.push_back( string(drive)+dir+wfd.cFileName);
+			if (GetFileExt(wfd.cFileName) == ext)
+				fileList.push_back( string(drive)+dir+wfd.cFileName);
 		}
 		bResult = FindNextFileA(hSrch,&wfd);
 	}

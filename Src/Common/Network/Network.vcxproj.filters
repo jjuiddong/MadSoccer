@@ -95,14 +95,8 @@
     <ClCompile Include="Marshalling\MarshallingGroup.cpp">
       <Filter>Lib\Marshalling</Filter>
     </ClCompile>
-    <ClCompile Include="Service\ServerBasic.cpp">
-      <Filter>Lib\Service</Filter>
-    </ClCompile>
     <ClCompile Include="Algorithm\GroupTraverse.cpp">
       <Filter>Lib\Algorithm</Filter>
-    </ClCompile>
-    <ClCompile Include="Service\ClientBasic.cpp">
-      <Filter>Lib\Service</Filter>
     </ClCompile>
     <ClCompile Include="ProtocolHandler\BasicC2SProtocolHandler.cpp">
       <Filter>Lib\ProtocolHandler</Filter>
@@ -120,6 +114,18 @@
       <Filter>Lib\MultiNetwork</Filter>
     </ClCompile>
     <ClCompile Include="MultiNetwork\NetGroupDelegation.cpp">
+      <Filter>Lib\MultiNetwork</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiNetwork\MultiNetworkUtillity.cpp">
+      <Filter>Lib\MultiNetwork</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller\ServerBasic.cpp">
+      <Filter>Lib\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller\ClientBasic.cpp">
+      <Filter>Lib\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiNetwork\FarmServerConnector.cpp">
       <Filter>Lib\MultiNetwork</Filter>
     </ClCompile>
   </ItemGroup>
@@ -196,23 +202,8 @@
     <ClInclude Include="Task\TaskWorkClient.h">
       <Filter>Lib\Task</Filter>
     </ClInclude>
-    <ClInclude Include="Interface\CoreClientEventListener.h">
-      <Filter>Lib\Interface</Filter>
-    </ClInclude>
-    <ClInclude Include="Interface\ServerEventListener.h">
-      <Filter>Lib\Interface</Filter>
-    </ClInclude>
-    <ClInclude Include="Interface\P2PClientEventListener.h">
-      <Filter>Lib\Interface</Filter>
-    </ClInclude>
-    <ClInclude Include="Interface\ClientEventListener.h">
-      <Filter>Lib\Interface</Filter>
-    </ClInclude>
     <ClInclude Include="Marshalling\MarshallingGroup.h">
       <Filter>Lib\Marshalling</Filter>
-    </ClInclude>
-    <ClInclude Include="Service\ServerBasic.h">
-      <Filter>Lib\Service</Filter>
     </ClInclude>
     <ClInclude Include="Algorithm\GroupTraverse.h">
       <Filter>Lib\Algorithm</Filter>
@@ -228,9 +219,6 @@
     </ClInclude>
     <ClInclude Include="Utillity\Utillity.h">
       <Filter>Lib\Utillity</Filter>
-    </ClInclude>
-    <ClInclude Include="Service\ClientBasic.h">
-      <Filter>Lib\Service</Filter>
     </ClInclude>
     <ClInclude Include="Utillity\ClientUserAccess.h">
       <Filter>Lib\Utillity</Filter>
@@ -251,6 +239,18 @@
       <Filter>Lib\MultiNetwork</Filter>
     </ClInclude>
     <ClInclude Include="MultiNetwork\NetGroupDelegation.h">
+      <Filter>Lib\MultiNetwork</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiNetwork\MultiNetworkUtillity.h">
+      <Filter>Lib\MultiNetwork</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\ClientBasic.h">
+      <Filter>Lib\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\ServerBasic.h">
+      <Filter>Lib\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiNetwork\FarmServerConnector.h">
       <Filter>Lib\MultiNetwork</Filter>
     </ClInclude>
   </ItemGroup>

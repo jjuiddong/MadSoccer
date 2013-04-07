@@ -13,7 +13,7 @@ using namespace network::error;
 CBasicC2SProtocolHandler::CBasicC2SProtocolHandler( CServer &svr ) :
 	m_Server(svr)
 {
-	m_BasicProtocol.SetNetConnector(&svr);
+	svr.RegisterProtocol(&m_BasicProtocol);
 }
 
 CBasicC2SProtocolHandler::~CBasicC2SProtocolHandler()
@@ -29,11 +29,11 @@ void CBasicC2SProtocolHandler::ReqGroupList(netid senderId, const netid &groupid
 	GroupPtr pGroup = NULL;
 	if (ROOT_GROUP_NETID == groupid)
 	{
-		pGroup = &m_Server.m_RootGroup;
+		pGroup = &m_Server.GetRootGroup();
 	}
 	else
 	{
-		pGroup = m_Server.m_RootGroup.GetChildandThis(groupid);
+		pGroup = m_Server.GetRootGroup().GetChildandThis(groupid);
 	}
 
 	GroupVector gv;
@@ -54,8 +54,8 @@ void CBasicC2SProtocolHandler::ReqGroupList(netid senderId, const netid &groupid
 //------------------------------------------------------------------------
 void CBasicC2SProtocolHandler::ReqGroupJoin(netid senderId, const netid &groupid)
 {
-	GroupPtr pTo = (groupid == INVALID_NETID)? &m_Server.m_RootGroup : m_Server.m_RootGroup.GetChildandThis(groupid);
-	GroupPtr pFrom = m_Server.m_RootGroup.GetChildFromUser( senderId );
+	GroupPtr pTo = (groupid == INVALID_NETID)? &m_Server.GetRootGroup() : m_Server.GetRootGroup().GetChildandThis(groupid);
+	GroupPtr pFrom = m_Server.GetRootGroup().GetChildFromUser( senderId );
 	if (pTo && pFrom)
 	{
 		if (pTo->GetId() == pFrom->GetId())
@@ -137,7 +137,7 @@ bool	CBasicC2SProtocolHandler::CreateBlankGroup(
 	OUT GroupPtr &pParent, OUT GroupPtr &pFrom, OUT GroupPtr &pNew )
 {
 	GroupPtr pParentGroup = 
-		(parentGroupId == INVALID_NETID)? &m_Server.m_RootGroup : m_Server.m_RootGroup.GetChildandThis(parentGroupId);
+		(parentGroupId == INVALID_NETID)? &m_Server.GetRootGroup() : m_Server.GetRootGroup().GetChildandThis(parentGroupId);
 	if (!pParentGroup)
 	{ // Error!!
 		m_BasicProtocol.AckGroupCreate( senderId, SEND_TARGET, 
@@ -152,7 +152,7 @@ bool	CBasicC2SProtocolHandler::CreateBlankGroup(
 		return false;
 	}
 
-	GroupPtr pFromGroup = m_Server.m_RootGroup.GetChildFromUser( senderId );
+	GroupPtr pFromGroup = m_Server.GetRootGroup().GetChildFromUser( senderId );
 	if (!pFromGroup)
 	{ // Error!!
 		m_BasicProtocol.AckGroupCreate( senderId, SEND_TARGET, ERR_NOT_FOUND_USER, 
@@ -195,7 +195,7 @@ void CBasicC2SProtocolHandler::ReqP2PConnect(netid senderId)
 		return;
 	}
 
-	GroupPtr pGroup = m_Server.m_RootGroup.GetChildFromUser(senderId);
+	GroupPtr pGroup = m_Server.GetRootGroup().GetChildFromUser(senderId);
 	if (!pGroup)
 	{
 		clog::Error( clog::ERROR_PROBLEM, "not found group from user id: %d\n", senderId );

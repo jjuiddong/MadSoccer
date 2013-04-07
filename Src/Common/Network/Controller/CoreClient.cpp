@@ -4,13 +4,14 @@
 #include "../Service/AllProtocolListener.h"
 #include "NetController.h"
 #include "../ProtocolHandler/BasicProtocolDispatcher.h"
+#include <boost/bind.hpp>
 
 
 using namespace network;
 
 CCoreClient::CCoreClient(PROCESS_TYPE procType) :
 	CNetConnector(procType)
-,	m_pEventListener(NULL)
+//,	m_pEventListener(NULL)
 {
 	m_ServerIP = "127.0.0.1";
 	m_ServerPort = 2333;
@@ -45,7 +46,7 @@ bool CCoreClient::Proc()
 	const timeval t = {0, 0}; // 0 millisecond
 	fd_set readSockets;
 	readSockets.fd_count = 1;
-	readSockets.fd_array[ 0] = m_Socket;
+	readSockets.fd_array[ 0] = GetSocket();
 	const int ret = select( readSockets.fd_count, &readSockets, NULL, NULL, &t);
 	if (ret != 0 && ret != SOCKET_ERROR)
 	{
@@ -156,7 +157,7 @@ void CCoreClient::Clear()
 bool	CCoreClient::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
 {
 	// send(연결된 소켓, 보낼 버퍼, 버퍼의 길이, 상태값)
-	const int result = send(m_Socket, packet.GetData(), CPacket::MAX_PACKETSIZE, 0);
+	const int result = send(GetSocket(), packet.GetData(), CPacket::MAX_PACKETSIZE, 0);
 	if (result == INVALID_SOCKET)
 	{
 		Disconnect();
@@ -176,21 +177,37 @@ bool CCoreClient::SendAll(const CPacket &packet)
 }
 
 
-//------------------------------------------------------------------------
-// Event Connect, call from launcer
-//------------------------------------------------------------------------
+/**
+ @brief Event Connect, call from launcer
+ */
 void	CCoreClient::OnConnect()
 {
-	RET(!m_pEventListener);
-	m_pEventListener->OnCoreClientConnect(this);
+	SearchEventTable( CNetEvent(EVT_CONNECT, this) );
 }
 
 
-//------------------------------------------------------------------------
-// Event Disconnect
-//------------------------------------------------------------------------
+/**
+ @brief Disconnect
+ */
 void	CCoreClient::OnDisconnect()
 {
-	RET(!m_pEventListener);
-	m_pEventListener->OnClientDisconnect(this);
+	SearchEventTable( CNetEvent(EVT_DISCONNECT, this) );
+}
+
+
+/**
+ @brief P2P member join
+ */
+void	CCoreClient::OnMemberJoin(netid netId)
+{
+	SearchEventTable( CNetEvent(EVT_MEMBER_JOIN, this, netId) );
+}
+
+
+/**
+ @brief P2P member leave
+ */
+void	CCoreClient::OnMemberLeave(netid netId)
+{
+	SearchEventTable( CNetEvent(EVT_MEMBER_LEAVE, this, netId) );
 }

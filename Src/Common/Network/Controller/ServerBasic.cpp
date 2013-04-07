@@ -15,15 +15,26 @@ CServerBasic::CServerBasic(PROCESS_TYPE procType) :
 {
 	m_ServerPort = 2333;
 
-	CGroup *pWaitGroup = new CGroup(NULL,"Waiting Group");
-	pWaitGroup->AddViewer(m_RootGroup.GetId()); /// root group is viewer to waitting group
-	m_WaitGroupId = pWaitGroup->GetId();
-	m_RootGroup.AddChild( pWaitGroup );
+	InitRootGroup();
 }
 
 CServerBasic::~CServerBasic()
 {
 	Clear();
+}
+
+
+/**
+ @brief 
+ */
+void	CServerBasic::InitRootGroup()
+{
+	m_RootGroup.Clear();
+
+	CGroup *pWaitGroup = new CGroup(NULL,"Waiting Group");
+	pWaitGroup->AddViewer(m_RootGroup.GetId()); /// root group is viewer to waitting group
+	m_WaitGroupId = pWaitGroup->GetId();
+	m_RootGroup.AddChild( pWaitGroup );
 }
 
 
@@ -56,7 +67,7 @@ void	CServerBasic::Proc()
 
 				CPacketQueue::Get()->PushPacket( 
 					CPacketQueue::SPacketData(GetNetId(), 
-						DisconnectPacket(senderId, CNetController::Get()->GetUniqueValue()) ));
+						ClientDisconnectPacket(senderId, CNetController::Get()->GetUniqueValue()) ));
 			}
 			else
 			{
@@ -325,13 +336,13 @@ RemoteClientItor CServerBasic::RemoveClientProcess(RemoteClientItor it)
 void CServerBasic::Clear()
 {
 	m_IsServerOn = false;
-	Sleep(100);
-
 	BOOST_FOREACH( RemoteClientMap::value_type &kv, m_RemoteClients)
 	{
 		delete kv.second;
 	}
 	m_RemoteClients.clear();
+
+	m_RootGroup.Clear();
 
 	ClearConnection();
 }
@@ -379,12 +390,10 @@ bool CServerBasic::SendAll(const CPacket &packet)
 		const int result = send(it->second->GetSocket(), packet.GetData(), CPacket::MAX_PACKETSIZE, 0);
 		if (result == INVALID_SOCKET)
 		{
-			it = RemoveRemoteClientInLoop(it->second->GetId());
+			Send(GetNetId(), SEND_T, 
+				ClientDisconnectPacket(CNetController::Get()->GetUniqueValue(), it->second->GetId()) );
 		}
-		else
-		{
-			++it;
-		}
+		++it;
 	}
 
 	return true;
@@ -402,7 +411,6 @@ bool	CServerBasic::Send(netid netId, const SEND_FLAG flag, const CPacket &packet
 		RemoteClientItor it = m_RemoteClients.find(netId);
 		if (m_RemoteClients.end() != it) // Send To Client
 		{
-			//const int result = send(it->second->GetSocket(), packet.GetData(), packet.GetPacketSize(), 0);
 			const int result = send(it->second->GetSocket(), packet.GetData(), CPacket::MAX_PACKETSIZE, 0);
 			if (result == INVALID_SOCKET)
 			{
@@ -420,6 +428,10 @@ bool	CServerBasic::Send(netid netId, const SEND_FLAG flag, const CPacket &packet
 				const bool result = SendGroup(pGroup, packet);
 				if (!result)
 					sendResult = false;
+			}
+			else if (GetNetId() == netId) // 서버 자신에게 보내는 패킷
+			{
+				CPacketQueue::Get()->PushPacket( CPacketQueue::SPacketData(GetNetId(), packet) );
 			}
 			else
 			{
@@ -527,6 +539,8 @@ void	CServerBasic::Disconnect()
 {
 	Close();
 	CNetController::Get()->RemoveServer(this);
+	Clear();
+	InitRootGroup();
 }
 
 
@@ -539,14 +553,14 @@ void	CServerBasic::Close()
 	ClearConnection();
 }
 
+
 //------------------------------------------------------------------------
 // Event Listen
 //------------------------------------------------------------------------
 void	CServerBasic::OnListen()
 {
 	m_IsServerOn = true;
-	RET(!m_pEventListener);
-	m_pEventListener->OnListen(this);
+	SearchEventTable( CNetEvent(EVT_LISTEN, this) );
 }
 
 //------------------------------------------------------------------------
@@ -554,8 +568,7 @@ void	CServerBasic::OnListen()
 //------------------------------------------------------------------------
 void	CServerBasic::OnClientJoin(netid netId)
 {
-	RET(!m_pEventListener);
-	m_pEventListener->OnClientJoin(this, netId);
+	SearchEventTable( CNetEvent(EVT_CLIENT_JOIN, this, netId) );
 }
 
 //------------------------------------------------------------------------
@@ -563,7 +576,5 @@ void	CServerBasic::OnClientJoin(netid netId)
 //------------------------------------------------------------------------
 void	CServerBasic::OnClientLeave(netid netId)
 {
-	RET(!m_pEventListener);
-	m_pEventListener->OnClientLeave(this, netId);
+	SearchEventTable( CNetEvent(EVT_CLIENT_LEAVE, this, netId) );
 }
-

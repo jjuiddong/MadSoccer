@@ -1,0 +1,17 @@
+{
+	¡°type¡± : ¡°loginsvr¡±,
+	¡°parent server ip¡± : ¡°127.0.0.1¡±,
+	¡°parent server port¡± : ¡°1234¡±,
+
+	¡°p2pC¡± : [
+		"certifysvr"
+	],
+	¡°input link¡± : [
+		"lobbysvr"
+	],
+	¡°ouput link¡± : [
+		"lobbysvr",
+		"relaysvr"		
+	]
+}
+

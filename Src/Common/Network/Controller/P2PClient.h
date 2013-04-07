@@ -7,10 +7,6 @@ P2P 통신을 하는 클래스다.
 */
 #pragma once
 
-#include "../interface/CoreClientEventListener.h"
-#include "../interface/ServerEventListener.h"
-#include "../interface/P2PClientEventListener.h"
-
 namespace network
 {
 	class CServerBasic;
@@ -18,13 +14,10 @@ namespace network
 
 	DECLARE_TYPE_NAME_SCOPE(network, CP2PClient)
 	class CP2PClient : public CNetConnector
-								, public ICoreClientEventListener
-								, public IServerEventListener
 								, public memmonitor::Monitor<CP2PClient, TYPE_NAME(CP2PClient)>
 	{
 		friend class CNetController;
 		friend class CClient;
-		typedef common::ReferencePtr<IP2PClientEventListener> P2PClientEventListenerPtr;
 
 	public:
 		CP2PClient(PROCESS_TYPE procType);
@@ -36,7 +29,6 @@ namespace network
 		bool				Stop();
 		void				Disconnect();
 		void				Close();
-		void				SetEventListener(P2PClientEventListenerPtr ptr);
 
 		bool				IsConnect() const;
 		bool				IsHostClient() const;
@@ -55,24 +47,21 @@ namespace network
 		bool				CreateP2PClient(const std::string &ip, const int port);
 
 		// P2P Client Event Handler
-		virtual void	OnCoreClientConnect(CoreClientPtr client) override;
-		virtual void	OnClientDisconnect(CoreClientPtr client) override;
+		void				OnConnect(CNetEvent &event);
+		void				OnDisconnect(CNetEvent &event);
 
 		// P2P Host Event Handler;
-		virtual void	OnListen(ServerBasicPtr svr) override;
-		virtual void	OnServerDisconnect(ServerBasicPtr svr) override;
-		virtual void	OnClientJoin(ServerBasicPtr svr, netid netId) override;
-		virtual void	OnClientLeave(ServerBasicPtr svr, netid netId) override;
+		void				OnListen(CNetEvent &event);
+		void				OnClientJoin(CNetEvent &event);
+		void				OnClientLeave(CNetEvent &event);
 
 	protected:
 		P2P_STATE		m_State;
 		CCoreClient		*m_pP2pClient;
 		CServerBasic	*m_pP2pHost;
-		P2PClientEventListenerPtr m_pEventListener;
 	};
 
 	inline bool CP2PClient::IsConnect() const { return true; }
 	inline bool CP2PClient::IsHostClient() const { return m_State == P2P_HOST; }
-	inline void	 CP2PClient::SetEventListener(P2PClientEventListenerPtr ptr) { m_pEventListener = ptr; }
 
 }

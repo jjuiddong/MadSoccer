@@ -35,8 +35,6 @@ typedef common::ReferencePtr<network::CCoreClient> CoreClientPtr;
 typedef common::ReferencePtr<network::CCharacter> CharacterPtr;
 
 
-
-
 #include "ErrReport/ErrorCode.h"
 #include "Controller/RemoteClient.h"
 #include "Algorithm/BindCore.h"
@@ -86,6 +84,15 @@ typedef common::ReferencePtr<network::CRoom> RoomPtr;
 typedef std::vector<network::CGroup> GroupVector;
 
 
+namespace network { namespace multinetwork {
+
+	class CNetGroupController;
+	class CNetGroupDelegation;
+
+}}
+
+typedef common::ReferencePtr<network::multinetwork::CNetGroupController> NetGroupControllerPtr;
+typedef common::ReferencePtr<network::multinetwork::CNetGroupDelegation> NetGroupDelegationPtr;
 
 
 

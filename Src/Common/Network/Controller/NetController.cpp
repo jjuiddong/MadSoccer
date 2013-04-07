@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "NetController.h"
 #include "NetLauncher.h"
-#include "../Service/ServerBasic.h"
+#include "ServerBasic.h"
 #include "../Service/Server.h"
 #include "../Service/Client.h"
 #include "CoreClient.h"

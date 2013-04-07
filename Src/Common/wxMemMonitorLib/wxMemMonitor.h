@@ -20,6 +20,7 @@
 #include "wx/wx.h"
 #endif
 
+
 // using memory monitor inner process
 #define MEMORYMONITOR_INNER_PROCESS()			\
 	DECLARE_APP(memmonitor::CApp)							\

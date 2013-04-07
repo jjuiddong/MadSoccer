@@ -1,10 +1,10 @@
-//------------------------------------------------------------------------
-// Name:    LobbyServer.h
-// Author:  jjuiddong
-// Date:    12/29/2012
-// 
-// 로비 서버
-//------------------------------------------------------------------------
+/**
+Name:   LobbyServer.h
+Author:  jjuiddong
+Date:    12/29/2012
+
+로비 서버
+*/
 #pragma once
 
 #include "NetProtocol/Src/login_Protocol.h"
@@ -14,7 +14,6 @@
 
 DECLARE_TYPE_NAME(CLobbyServer)
 class CLobbyServer : public network::CServer
-					, public network::IServerEventListener
 					, public login::c2s_ProtocolListener
 					//, public basic::c2s_ProtocolListener
 					, public memmonitor::Monitor<CLobbyServer, TYPE_NAME(CLobbyServer)>
@@ -46,9 +45,10 @@ protected:
 	void			SendRooms(netid userId);
 	void			SendUsers(netid userId);
 
-	// ServerEvent
-	virtual void	OnClientJoin(ServerBasicPtr svr, netid netId) override;
-	virtual void	OnClientLeave(ServerBasicPtr svr, netid netId) override;
+	// Network Event Handler
+	void			OnClientJoin(network::CNetEvent &event);
+	void			OnClientLeave(network::CNetEvent &event);
+	void			OnClientLeave2(network::CEvent &event) {}
 
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////

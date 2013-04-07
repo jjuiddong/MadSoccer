@@ -13,6 +13,7 @@ namespace visualizer {
 	struct SSymbolInfo;
 }
 
+
 namespace memmonitor
 {
 	class CPropertyWindow : public wxPropertyGridManager
