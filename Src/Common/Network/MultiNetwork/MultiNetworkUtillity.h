@@ -11,6 +11,7 @@ namespace network { namespace multinetwork {
 	struct SSvrConfigData
 	{
 		std::string svrType;
+		int port;
 		std::string parentSvrIp;
 		int parentSvrPort;
 		std::vector<std::string> p2pC;

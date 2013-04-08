@@ -7,9 +7,9 @@
 //------------------------------------------------------------------------
 #pragma once
 
-
 namespace network
 {
+
 	class CServerBasic : public CNetConnector
 	{
 		friend class CNetLauncher;
@@ -28,7 +28,10 @@ namespace network
 		RemoteClientItor	RemoveRemoteClientInLoop(netid netId);
 		CGroup&		GetRootGroup();
 		RemoteClientMap& GetRemoteClients();
-		common::CriticalSection& GetCS();
+		void				SetRemoteClientFactory( IRemoteClientFactory *ptr );
+		void				SetGroupFactory( IGroupFactory *ptr );
+
+		common::CriticalSection& GetCS();		
 		netid			GetNetIdFromSocket(SOCKET sock);
 		bool				IsExist(netid netId);
 		void				Clear();
@@ -64,6 +67,8 @@ namespace network
 		int								m_ServerPort;
 		bool								m_IsServerOn;			// 서버가 정상적으로 실행이 되었다면 true
 		RemoteClientMap		m_RemoteClients;		// 서버와 연결된 클라이언트 정보리스트
+		IRemoteClientFactory	*m_pRemoteClientFactory;
+		IGroupFactory			    *m_pGroupFactory;
 		common::CriticalSection  m_CS;
 
 		CGroup							m_RootGroup;

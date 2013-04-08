@@ -11,7 +11,8 @@ using namespace network;
 using namespace network::multinetwork;
 
 
-CMultiNetwork::CMultiNetwork()
+CMultiNetwork::CMultiNetwork() :
+	m_pFarmSvrConnector(NULL)
 {
 	m_Config.clear();
 
@@ -31,19 +32,27 @@ bool	CMultiNetwork::Init( const std::string &configFileName )
 	if (!ReadServerConfigFile(configFileName, m_Config))
 		return false;
 
-	// create farmsvr connector, and delegation
-	if (!m_Config.parentSvrIp.empty())
+	if ("farmsvr" == m_Config.svrType)
 	{
-		CNetGroupController *pCtrl = new CNetGroupController(CLIENT, 
-			m_Config.svrType, "farmsvr");
-		if (!AddController(pCtrl))
+		// Launch FarmServer
+		CNetGroupController *pMainCtrl = new CNetGroupController(SERVER, m_Config.svrType, "client");
+		if (!AddController(pMainCtrl))
 			return false;
+//		pMainCtrl->Start("localhost", m_Config.port);
+	}
+	else
+	{
+		// create farmsvr connector, and delegation
+		if (!m_Config.parentSvrIp.empty())
+		{
+			CNetGroupController *pCtrl = new CNetGroupController(CLIENT, m_Config.svrType, "farmsvr");
+			if (!AddController(pCtrl))
+				return false;
 
-		CFarmServerConnector *pDelegation = new CFarmServerConnector( m_Config.svrType );
-		if (!ConnectDelegation("farmsvr", pDelegation))
-			return false;
-
-		pDelegation->Start( m_Config.parentSvrIp, m_Config.parentSvrPort, m_Config );
+			m_pFarmSvrConnector = new CFarmServerConnector( m_Config.svrType );
+			if (!ConnectDelegation("farmsvr", m_pFarmSvrConnector))
+				return false;
+		}
 	}
 
 	return true;
@@ -61,19 +70,21 @@ void	CMultiNetwork::Cleanup()
 	}
 	m_Controllers.clear();
 
+	SAFE_DELETE( m_pFarmSvrConnector );
+
 }
 
 
 /**
  @brief 
  */
-bool	CMultiNetwork::ConnectDelegation( const std::string &connectSvrType, NetGroupDelegationPtr ptr)
+bool	CMultiNetwork::ConnectDelegation( const std::string &linkSvrType, NetGroupDelegationPtr ptr)
 {
 	RETV(!ptr, false);
 
-	auto it = m_Controllers.find( connectSvrType );
-	if (m_Controllers.end() != it)
-		return false; // already exist
+	auto it = m_Controllers.find( linkSvrType );
+	if (m_Controllers.end() == it)
+		return false; // not exist
 
 	ptr->SetConnector( it->second );
 	return true;
@@ -86,6 +97,17 @@ bool	CMultiNetwork::ConnectDelegation( const std::string &connectSvrType, NetGro
  */
 bool	CMultiNetwork::Start()
 {
+	if ("farmsvr" == m_Config.svrType)
+	{
+		NetGroupControllerPtr ptr  = GetController("client");
+		if (!ptr) return false;
+		ptr->Start("localhost", m_Config.port);
+	}
+	else
+	{
+		if (m_pFarmSvrConnector)
+			m_pFarmSvrConnector->Start( m_Config.parentSvrIp, m_Config.parentSvrPort, m_Config );
+	}	
 
 	return true;
 }
@@ -130,13 +152,13 @@ bool	CMultiNetwork::AddController( CNetGroupController *ptr )
 /**
  @brief Remove NetGroupController Object
  */
-bool	CMultiNetwork::RemoveController( const std::string &svrType )
+bool	CMultiNetwork::RemoveController( const std::string &linkSvrType )
 {
-	auto it = m_Controllers.find( svrType );
+	auto it = m_Controllers.find( linkSvrType );
 	if (m_Controllers.end() == it)
 		return false; // not exist
 
-	m_Controllers.remove( svrType );
+	m_Controllers.remove( linkSvrType );
 	return true;
 }
 
@@ -144,9 +166,9 @@ bool	CMultiNetwork::RemoveController( const std::string &svrType )
 /**
  @brief Get NetGroupController Object
  */
-NetGroupControllerPtr CMultiNetwork::GetController( const std::string &svrType )
+NetGroupControllerPtr CMultiNetwork::GetController( const std::string &linkSvrType )
 {
-	auto it = m_Controllers.find( svrType );
+	auto it = m_Controllers.find( linkSvrType );
 	if (m_Controllers.end() == it)
 		return NULL; // not exist
 	return it->second;

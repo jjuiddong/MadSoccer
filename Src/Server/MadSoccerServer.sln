@@ -19,6 +19,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetProtocol", "..\Common\Ne
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetCommon", "..\Common\NetCommon\NetCommon.vcxproj", "{B2CB8551-B147-4C4D-86AB-A04309AF20DE}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FarmServerApp", "FarmServerApp\FarmServerApp.vcxproj", "{FD78AD5E-E4B5-49BE-83BD-AE78AF4E3C70}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -49,6 +51,10 @@ Global
 		{B2CB8551-B147-4C4D-86AB-A04309AF20DE}.Debug|Win32.Build.0 = Debug|Win32
 		{B2CB8551-B147-4C4D-86AB-A04309AF20DE}.Release|Win32.ActiveCfg = Release|Win32
 		{B2CB8551-B147-4C4D-86AB-A04309AF20DE}.Release|Win32.Build.0 = Release|Win32
+		{FD78AD5E-E4B5-49BE-83BD-AE78AF4E3C70}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FD78AD5E-E4B5-49BE-83BD-AE78AF4E3C70}.Debug|Win32.Build.0 = Debug|Win32
+		{FD78AD5E-E4B5-49BE-83BD-AE78AF4E3C70}.Release|Win32.ActiveCfg = Release|Win32
+		{FD78AD5E-E4B5-49BE-83BD-AE78AF4E3C70}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

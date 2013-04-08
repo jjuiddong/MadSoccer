@@ -17,8 +17,15 @@ namespace network { namespace multinetwork {
 		CNetGroupDelegation( const std::string svrType );
 		virtual ~CNetGroupDelegation();
 
-		void							SetConnector(NetGroupControllerPtr ptr);
+		void		SetConnector(NetGroupControllerPtr ptr);
 		NetGroupControllerPtr		GetConnector() const;
+
+		CServerBasic* GetServer();
+		CCoreClient*	GetClient();
+
+	protected:
+		// Event 
+		virtual void	OnConnectNetGroupController() { }
 
 	private:
 		std::string				m_SvrType;

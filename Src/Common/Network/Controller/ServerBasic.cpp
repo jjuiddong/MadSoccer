@@ -12,6 +12,8 @@ CServerBasic::CServerBasic(PROCESS_TYPE procType) :
 	CNetConnector(procType)
 ,	m_IsServerOn(false)
 ,	m_RootGroup(NULL, "root")
+,	m_pRemoteClientFactory(new CRemoteClientFactory()) // defalut 
+,	m_pGroupFactory(new CGroupFactory()) // default
 {
 	m_ServerPort = 2333;
 
@@ -21,6 +23,27 @@ CServerBasic::CServerBasic(PROCESS_TYPE procType) :
 CServerBasic::~CServerBasic()
 {
 	Clear();
+	SAFE_DELETE(m_pRemoteClientFactory);
+	SAFE_DELETE(m_pGroupFactory);
+}
+
+
+/**
+ @brief SetRemoteClientFactory
+ */
+void	CServerBasic::SetRemoteClientFactory( IRemoteClientFactory *ptr ) 
+{ 
+	SAFE_DELETE(m_pRemoteClientFactory);
+	m_pRemoteClientFactory = ptr; 
+}
+
+
+/**
+ @brief SetGroupFactory
+ */
+void	 CServerBasic::SetGroupFactory( IGroupFactory *ptr )
+{
+
 }
 
 
@@ -31,7 +54,8 @@ void	CServerBasic::InitRootGroup()
 {
 	m_RootGroup.Clear();
 
-	CGroup *pWaitGroup = new CGroup(NULL,"Waiting Group");
+	CGroup *pWaitGroup = m_pGroupFactory->New(); //new CGroup(NULL,"Waiting Group");
+	pWaitGroup->SetName("Waiting Group");
 	pWaitGroup->AddViewer(m_RootGroup.GetId()); /// root group is viewer to waitting group
 	m_WaitGroupId = pWaitGroup->GetId();
 	m_RootGroup.AddChild( pWaitGroup );
@@ -183,13 +207,15 @@ bool CServerBasic::Stop()
 //------------------------------------------------------------------------
 bool CServerBasic::AddRemoteClient(SOCKET sock, const std::string &ip)
 {
+	RETV(!m_pRemoteClientFactory, false);
+
 	common::AutoCSLock cs(m_CS);
 
 	RemoteClientItor it = FindRemoteClientBySocket(sock);
 	if (m_RemoteClients.end() != it)
 		return false; // 이미존재한다면 실패
 
-	CRemoteClient *pNewRemoteClient = new CRemoteClient();
+	CRemoteClient *pNewRemoteClient = m_pRemoteClientFactory->New();// new CRemoteClient();
 	pNewRemoteClient->SetSocket(sock);
 	pNewRemoteClient->SetIp(ip);
 

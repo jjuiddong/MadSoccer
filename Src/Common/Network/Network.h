@@ -23,8 +23,12 @@ namespace network
 	bool		StopClient(ClientBasicPtr pClt);
 	ClientBasicPtr	GetClient(netid clientId);
 
+	// Multi Network
+	bool		StartMultiNetwork();
+	bool		ConnectDelegation( const std::string &linkSvrType, NetGroupDelegationPtr ptr);
+
 	// Common
-	bool		Init(int logicThreadCount);
+	bool		Init(int logicThreadCount, const std::string &svrConfigFileName="");
 	void		Proc();
 	void		Clear();
 

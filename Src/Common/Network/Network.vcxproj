@@ -84,7 +84,6 @@
     <ClCompile Include="Algorithm\GroupTraverse.cpp" />
     <ClCompile Include="Controller\ClientBasic.cpp" />
     <ClCompile Include="Controller\ServerBasic.cpp" />
-    <ClCompile Include="Marshalling\MarshallingGroup.cpp" />
     <ClCompile Include="MultiNetwork\MultiNetwork.cpp" />
     <ClCompile Include="MultiNetwork\MultiNetworkUtillity.cpp" />
     <ClCompile Include="MultiNetwork\NetGroupController.cpp" />
@@ -99,14 +98,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="DataStructure\Character.cpp" />
-    <ClCompile Include="DataStructure\Group.cpp" />
     <ClCompile Include="DataStructure\Room.cpp" />
     <ClCompile Include="DataStructure\User.cpp" />
     <ClCompile Include="Controller\CoreClient.cpp" />
     <ClCompile Include="Controller\NetController.cpp" />
     <ClCompile Include="Controller\NetLauncher.cpp" />
     <ClCompile Include="Controller\P2PClient.cpp" />
-    <ClCompile Include="Controller\RemoteClient.cpp" />
     <ClCompile Include="Service\AllProtocol.cpp" />
     <ClCompile Include="Service\AllProtocolListener.cpp" />
     <ClCompile Include="Service\Client.cpp" />
@@ -117,7 +114,6 @@
     <ClInclude Include="Controller\ClientBasic.h" />
     <ClInclude Include="Controller\ServerBasic.h" />
     <ClInclude Include="ErrReport\ErrorCode.h" />
-    <ClInclude Include="Marshalling\MarshallingGroup.h" />
     <ClInclude Include="MultiNetwork\MultiNetwork.h" />
     <ClInclude Include="MultiNetwork\MultiNetworkUtillity.h" />
     <ClInclude Include="MultiNetwork\NetGroupController.h" />
@@ -133,7 +129,6 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Algorithm\BindCore.h" />
     <ClInclude Include="DataStructure\Character.h" />
-    <ClInclude Include="DataStructure\Group.h" />
     <ClInclude Include="DataStructure\Room.h" />
     <ClInclude Include="DataStructure\User.h" />
     <ClInclude Include="Task\TaskAccept.h" />
@@ -144,7 +139,6 @@
     <ClInclude Include="Controller\NetController.h" />
     <ClInclude Include="Controller\NetLauncher.h" />
     <ClInclude Include="Controller\P2PClient.h" />
-    <ClInclude Include="Controller\RemoteClient.h" />
     <ClInclude Include="Service\AllProtocol.h" />
     <ClInclude Include="Service\AllProtocolListener.h" />
     <ClInclude Include="Service\Client.h" />

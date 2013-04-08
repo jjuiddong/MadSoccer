@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "Network.h"
 #include "Controller/NetController.h"
+#include "MultiNetwork/MultiNetwork.h"
 #include <MMSystem.h>
 
 
@@ -16,13 +17,19 @@ using namespace network;
 //------------------------------------------------------------------------
 // 네트워크에 관련된 클래스들을 초기화 한다.
 //------------------------------------------------------------------------
-bool network::Init(int logicThreadCount)
+bool network::Init(int logicThreadCount, const std::string &svrConfigFileName) // svrConfigFileName=""
 {
 	srand( timeGetTime() );
 	clog::Log( clog::LOG_F_N_O, "Network Init\n" );
 
 	common::InitRandNoDuplicate();
-	const bool result = CNetController::Get()->Init(logicThreadCount);
+	bool result = CNetController::Get()->Init(logicThreadCount);
+
+	if (result)
+	{
+		result = multinetwork::CMultiNetwork::Get()->Init( svrConfigFileName );
+	}
+
 	return result;
 }
 
@@ -34,6 +41,7 @@ void network::Clear()
 {
 	dbg::Print( "Network Clear" );
 	CNetController::Release();
+	multinetwork::CMultiNetwork::Release();
 }
 
 
@@ -54,7 +62,6 @@ bool network::StopServer(ServerBasicPtr pSvr)
 	if (!pSvr) return false;
 	clog::Log( clog::LOG_F_N_O, "StopServer netid: %d\n", pSvr->GetNetId() );
 	return pSvr->Stop();
-//	return CNetController::Get()->StopServer(pSvr);
 }
 
 //------------------------------------------------------------------------
@@ -82,7 +89,24 @@ bool network::StopClient(ClientBasicPtr pClt)
 	if (!pClt) return false;
 	clog::Log( clog::LOG_F_N_O, "StopClient netid: %d\n", pClt->GetNetId() );
 	return pClt->Stop();
-//	return CNetController::Get()->StopClient(pClt);
+}
+
+
+/**
+ @brief Connect Delegation to multinetwork 
+ */
+bool	network::ConnectDelegation( const std::string &linkSvrType, NetGroupDelegationPtr ptr)
+{
+	return multinetwork::CMultiNetwork::Get()->ConnectDelegation( linkSvrType, ptr );
+}
+
+
+/**
+ @brief multinetwork Start
+ */
+bool	network::StartMultiNetwork()
+{
+	return multinetwork::CMultiNetwork::Get()->Start();
 }
 
 

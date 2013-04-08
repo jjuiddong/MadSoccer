@@ -23,6 +23,9 @@ namespace network
 	using namespace common;
 
 	class CNetConnector;
+	class CGroup;
+	class CRemoteClient;
+	class CPacket;
 	class IProtocol;
 	class IProtocolListener;
 
@@ -69,7 +72,27 @@ namespace network
 }
 
 
+typedef std::list<SOCKET> SocketList;
+typedef SocketList::iterator SockItor;
+
+typedef std::list<netid> NetIdList;
+typedef NetIdList::iterator NetIdItor;
+typedef std::vector<netid> NetIdes;
+
+typedef std::list<network::CPacket> PacketList;
+typedef PacketList::iterator PacketItor;
+typedef PacketList::const_iterator PacketCItor;
+
 typedef common::ReferencePtr<network::CNetConnector> NetConnectorPtr;
+
+typedef std::map<netid,network::CRemoteClient*> RemoteClientMap;
+typedef RemoteClientMap::iterator RemoteClientItor;
+typedef common::ReferencePtr<network::CRemoteClient> RemoteClientPtr;
+
+typedef std::list<network::CGroup*> GroupList;
+typedef GroupList::iterator GroupItor;
+typedef common::ReferencePtr<network::CGroup> GroupPtr;
+typedef common::VectorMap<netid, network::CGroup*> Groups;
 
 typedef common::ReferencePtr<network::IProtocol> ProtocolPtr;
 typedef common::ReferencePtr<network::IProtocolListener> ProtocolListenerPtr;
@@ -81,9 +104,13 @@ typedef std::map<int,ProtocolPtr> ProtocolMap;
 typedef ProtocolMap::iterator ProtocolItor;
 
 
+
 #include "DataStructure/Packet.h"
 #include "DataStructure/PacketQueue.h"
+#include "DataStructure/RemoteClient.h"
+#include "DataStructure/Group.h"
 #include "Marshalling/Marshalling.h"
+#include "Marshalling/MarshallingGroup.h"
 
 #include "Controller/NetConnector.h"
 #include "Controller/NetConnectorLinker.h"
@@ -91,9 +118,12 @@ typedef ProtocolMap::iterator ProtocolItor;
 #include "Interface/Protocol.h"
 #include "Interface/ProtocolDispatcher.h"
 #include "Interface/ProtocolListener.h"
+#include "Interface/Factory.h"
 
 #include "PrtCompiler/ProtocolDefine.h"
 #include "PrtCompiler/ProtocolParser.h"
 #include "PrtCompiler/ProtocolMacro.h"
 
 #include "Event/NetEvent.h"
+
+

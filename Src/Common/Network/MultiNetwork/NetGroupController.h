@@ -11,7 +11,9 @@ Date:    4/1/2013
 namespace network { namespace multinetwork {
 
 	///  네트워크 그룹에 접근하는 Server/Client/P2p 를 관리하는 클래스.
+	DECLARE_TYPE_NAME_SCOPE(network::multinetwork, CNetGroupController)
 	class CNetGroupController : public CNetConnector
+												, public memmonitor::Monitor<CNetGroupController, TYPE_NAME(network::multinetwork::CNetGroupController)>
 	{
 	public:
 		enum STATE {
@@ -33,7 +35,11 @@ namespace network { namespace multinetwork {
 
 		const std::string& GetSvrType() const;
 		const std::string& GetConnectSvrType() const;
+		void				SetRemoteClientFactory( IRemoteClientFactory *ptr );
+		void				SetGroupFactory( IGroupFactory *ptr );
 		SERVICE_TYPE GetServiceType() const;
+		CServerBasic* GetServer();
+		CCoreClient* GetClient();
 
 	protected:
 		bool				Connect( SERVICE_TYPE type, const std::string &ip, const int port );
@@ -52,6 +58,8 @@ namespace network { namespace multinetwork {
 		CServerBasic *m_pServer;
 		CP2PClient *m_pP2p;
 		Clients m_Clients;
+		IRemoteClientFactory *m_pRemoteClientFactory;
+		IGroupFactory *m_pGroupFactory;
 		
 	};
 
@@ -59,5 +67,7 @@ namespace network { namespace multinetwork {
 	inline const std::string& CNetGroupController::GetSvrType() const { return m_svrType; }
 	inline const std::string& CNetGroupController::GetConnectSvrType() const { return m_connectSvrType; }
 	inline SERVICE_TYPE CNetGroupController::GetServiceType() const { return m_ServiceType; }
+	inline CServerBasic* CNetGroupController::GetServer() { return m_pServer; }
+	inline CCoreClient* CNetGroupController::GetClient() { return m_pClient; }
 
 }}

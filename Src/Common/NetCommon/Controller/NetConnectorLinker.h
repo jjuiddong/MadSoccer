@@ -64,6 +64,11 @@ namespace network
 	inline void	CNetConnectorLinker::SetNetConnector( NetConnectorPtr ptr ) { m_pNetCon = ptr; }
 	inline NetConnectorPtr CNetConnectorLinker::GetNetConnector() const { return m_pNetCon; }
 	inline void	 CNetConnectorLinker::SetSocket(SOCKET sock) { if (m_pNetCon) m_pNetCon->SetSocket(sock); }
+
+	inline bool CNetConnectorLinker::RegisterProtocol(ProtocolPtr protocol) { if (m_pNetCon) return m_pNetCon->RegisterProtocol(protocol); return false; }
+	inline bool CNetConnectorLinker::AddProtocolListener(ProtocolListenerPtr pListener) { if (m_pNetCon) return m_pNetCon->AddProtocolListener(pListener); return false; }
+	inline bool CNetConnectorLinker::RemoveProtocolListener(ProtocolListenerPtr pListener) { if (m_pNetCon) return m_pNetCon->RemoveProtocolListener(pListener); return false;}
+
 	inline const ProtocolListenerList&	 CNetConnectorLinker::GetProtocolListeners() const { return (m_pNetCon!=NULL? m_pNetCon->GetProtocolListeners() : s_emptyListeners); }
 	inline netid CNetConnectorLinker::GetNetId() const { return (m_pNetCon!=NULL? m_pNetCon->GetNetId() : INVALID_NETID); }
 	inline SOCKET CNetConnectorLinker::GetSocket() const { return (m_pNetCon!=NULL? m_pNetCon->GetSocket() : 0); }

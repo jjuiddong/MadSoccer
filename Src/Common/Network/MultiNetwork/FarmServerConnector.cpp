@@ -55,12 +55,8 @@ bool	CFarmServerConnector::MakeupInputOutputLink()
 		CreateSubController( SERVER, true, m_Config.svrType, bindSubSvrType );
 	}
 
-	// Client 를 받기위한 서버 생성 (input link, output link 를 통해 클라이언트가 
-	// 접속하는 서버만 생성한다.)
-	if (m_Config.inputLink.size() > 0 || m_Config.outputLink.size() > 0)
-	{
-		CreateSubController( SERVER, false, m_Config.svrType, "client" );
-	}
+	// 자신의 서버객체 생성
+	CreateSubController( SERVER, false, m_Config.svrType, "client" );
 
 	return true;
 }

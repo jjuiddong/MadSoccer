@@ -56,9 +56,6 @@
     <ClCompile Include="DataStructure\Character.cpp">
       <Filter>Lib\DataStructure</Filter>
     </ClCompile>
-    <ClCompile Include="DataStructure\Group.cpp">
-      <Filter>Lib\DataStructure</Filter>
-    </ClCompile>
     <ClCompile Include="DataStructure\Room.cpp">
       <Filter>Lib\DataStructure</Filter>
     </ClCompile>
@@ -77,9 +74,6 @@
     <ClCompile Include="Controller\P2PClient.cpp">
       <Filter>Lib\Controller</Filter>
     </ClCompile>
-    <ClCompile Include="Controller\RemoteClient.cpp">
-      <Filter>Lib\Controller</Filter>
-    </ClCompile>
     <ClCompile Include="Service\AllProtocol.cpp">
       <Filter>Lib\Service</Filter>
     </ClCompile>
@@ -91,9 +85,6 @@
     </ClCompile>
     <ClCompile Include="Service\Server.cpp">
       <Filter>Lib\Service</Filter>
-    </ClCompile>
-    <ClCompile Include="Marshalling\MarshallingGroup.cpp">
-      <Filter>Lib\Marshalling</Filter>
     </ClCompile>
     <ClCompile Include="Algorithm\GroupTraverse.cpp">
       <Filter>Lib\Algorithm</Filter>
@@ -151,9 +142,6 @@
     <ClInclude Include="DataStructure\Character.h">
       <Filter>Lib\DataStructure</Filter>
     </ClInclude>
-    <ClInclude Include="DataStructure\Group.h">
-      <Filter>Lib\DataStructure</Filter>
-    </ClInclude>
     <ClInclude Include="DataStructure\Room.h">
       <Filter>Lib\DataStructure</Filter>
     </ClInclude>
@@ -181,9 +169,6 @@
     <ClInclude Include="Controller\P2PClient.h">
       <Filter>Lib\Controller</Filter>
     </ClInclude>
-    <ClInclude Include="Controller\RemoteClient.h">
-      <Filter>Lib\Controller</Filter>
-    </ClInclude>
     <ClInclude Include="Service\AllProtocol.h">
       <Filter>Lib\Service</Filter>
     </ClInclude>
@@ -201,9 +186,6 @@
     </ClInclude>
     <ClInclude Include="Task\TaskWorkClient.h">
       <Filter>Lib\Task</Filter>
-    </ClInclude>
-    <ClInclude Include="Marshalling\MarshallingGroup.h">
-      <Filter>Lib\Marshalling</Filter>
     </ClInclude>
     <ClInclude Include="Algorithm\GroupTraverse.h">
       <Filter>Lib\Algorithm</Filter>

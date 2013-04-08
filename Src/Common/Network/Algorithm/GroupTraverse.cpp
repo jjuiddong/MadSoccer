@@ -2,7 +2,6 @@
 #include "stdafx.h"
 #include "GroupTraverse.h"
 #include "BindCore.h"
-#include "../DataStructure/Group.h"
 #include <boost/bind.hpp>
 
 using namespace network;

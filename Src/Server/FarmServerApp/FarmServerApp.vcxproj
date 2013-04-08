@@ -11,18 +11,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{B2CB8551-B147-4C4D-86AB-A04309AF20DE}</ProjectGuid>
+    <ProjectGuid>{FD78AD5E-E4B5-49BE-83BD-AE78AF4E3C70}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>NetCommon</RootNamespace>
+    <RootNamespace>FarmServerApp</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
@@ -31,31 +31,31 @@
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="CommonPropertySheet.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="CommonPropertySheet.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(LIBOUT)</OutDir>
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(BIN)\</OutDir>
     <IntDir>$(OUT)</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>-Zm200 /vmm %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
-    <Lib>
-      <AdditionalDependencies>wsock32.lib</AdditionalDependencies>
-    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -64,7 +64,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -74,49 +74,49 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="FarmServerApp.ico" />
     <None Include="ReadMe.txt" />
+    <None Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Common\event\FastDelegate.h" />
-    <ClInclude Include="Controller\NetConnector.h" />
-    <ClInclude Include="Controller\NetConnectorLinker.h" />
-    <ClInclude Include="DataStructure\Group.h" />
-    <ClInclude Include="DataStructure\Packet.h" />
-    <ClInclude Include="DataStructure\PacketQueue.h" />
-    <ClInclude Include="DataStructure\RemoteClient.h" />
-    <ClInclude Include="Event\NetEvent.h" />
-    <ClInclude Include="Interface\Factory.h" />
-    <ClInclude Include="Interface\Protocol.h" />
-    <ClInclude Include="Interface\ProtocolDispatcher.h" />
-    <ClInclude Include="Interface\ProtocolListener.h" />
-    <ClInclude Include="Marshalling\Marshalling.h" />
-    <ClInclude Include="Marshalling\MarshallingGroup.h" />
-    <ClInclude Include="NetCommon.h" />
-    <ClInclude Include="PrtCompiler\ProtocolDefine.h" />
-    <ClInclude Include="PrtCompiler\ProtocolMacro.h" />
-    <ClInclude Include="PrtCompiler\ProtocolParser.h" />
-    <ClInclude Include="PrtCompiler\ProtocolScanner.h" />
+    <ClInclude Include="FarmServerApp.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="Src\FarmServer.h" />
+    <ClInclude Include="Src\LinkState.h" />
+    <ClInclude Include="Src\RemoteSubServer.h" />
+    <ClInclude Include="Src\SubServerGroup.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Controller\NetConnector.cpp" />
-    <ClCompile Include="DataStructure\Group.cpp" />
-    <ClCompile Include="DataStructure\Packet.cpp" />
-    <ClCompile Include="DataStructure\RemoteClient.cpp" />
-    <ClCompile Include="Marshalling\Marshalling.cpp" />
-    <ClCompile Include="Marshalling\MarshallingGroup.cpp" />
-    <ClCompile Include="PrtCompiler\ProtocolDefine.cpp" />
-    <ClCompile Include="PrtCompiler\ProtocolParser.cpp" />
-    <ClCompile Include="PrtCompiler\ProtocolScanner.cpp" />
+    <ClCompile Include="FarmServerApp.cpp" />
+    <ClCompile Include="Src\FarmServer.cpp" />
+    <ClCompile Include="Src\LinkState.cpp" />
+    <ClCompile Include="Src\RemoteSubServer.cpp" />
+    <ClCompile Include="Src\SubServerGroup.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common\Common.vcxproj">
+    <ResourceCompile Include="FarmServerApp.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common\Common.vcxproj">
       <Project>{f3998dc9-8441-45d0-a8f0-719c0a06c955}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\NetCommon\NetCommon.vcxproj">
+      <Project>{b2cb8551-b147-4c4d-86ab-a04309af20de}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\NetProtocol\NetProtocol.vcxproj">
+      <Project>{413de339-8dd0-4015-a5ff-ccf226f1c417}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Network\Network.vcxproj">
+      <Project>{dfec316a-4224-4e50-abb0-1fdebe77461f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\wxMemMonitorLib\wxMemMonitorLib.vcxproj">
+      <Project>{20d4fc42-81e1-469f-8697-705005321531}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

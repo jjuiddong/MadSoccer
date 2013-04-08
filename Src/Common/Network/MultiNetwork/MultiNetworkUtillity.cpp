@@ -40,6 +40,8 @@ bool multinetwork::ReadServerConfigFile( const std::string &fileName, OUT SSvrCo
 		config.parentSvrIp = props.get<string>("parent server ip", "");
 		string port = props.get<string>("parent server port","");
 		config.parentSvrPort = atoi(port.c_str());
+		port = props.get<string>("port","");
+		config.port = atoi(port.c_str());
 
 		ReadChildStringType(props, "p2pC", config.p2pC);
 		ReadChildStringType(props, "p2pS", config.p2pS);

@@ -20,7 +20,10 @@ CNetGroupController::CNetGroupController( SERVICE_TYPE type, const std::string &
 ,	m_pClient(NULL)
 ,	m_pServer(NULL)
 ,	m_pP2p(NULL)
+,	m_pRemoteClientFactory(NULL)
+,	m_pGroupFactory(NULL)
 {
+
 }
 
 CNetGroupController::~CNetGroupController()
@@ -28,6 +31,8 @@ CNetGroupController::~CNetGroupController()
 	SAFE_DELETE(m_pClient);
 	SAFE_DELETE(m_pServer);
 	SAFE_DELETE(m_pP2p);
+	SAFE_DELETE(m_pRemoteClientFactory);
+	SAFE_DELETE(m_pGroupFactory);
 }
 
 
@@ -101,11 +106,22 @@ bool	CNetGroupController::Connect( SERVICE_TYPE type, const std::string &ip, con
 	switch (type)
 	{
 	case SERVER:
-		if (m_pServer)
-			m_pServer->Disconnect();
-		else
-			m_pServer = new CServerBasic(SERVICE_EXCLUSIVE_THREAD);
-		CNetController::Get()->StartServer(port, m_pServer);
+		{
+			m_Ip = "localhost";
+			m_Port = port;
+
+			if (m_pServer)
+			{
+				m_pServer->Disconnect();
+			}
+			else
+			{
+				m_pServer = new CServerBasic(SERVICE_EXCLUSIVE_THREAD);
+				if (m_pRemoteClientFactory)
+					m_pServer->SetRemoteClientFactory(m_pRemoteClientFactory->Clone());
+			}
+			CNetController::Get()->StartServer(port, m_pServer);
+		}
 		break;
 
 	case CLIENT:
@@ -113,9 +129,32 @@ bool	CNetGroupController::Connect( SERVICE_TYPE type, const std::string &ip, con
 			CCoreClient *pClient = new CCoreClient(SERVICE_SEPERATE_THREAD);
 			CNetController::Get()->StartCoreClient(ip, port, pClient);
 			m_Clients.insert( Clients::value_type(pClient->GetNetId(), pClient) );
+
+			m_Ip = ip;
+			m_Port = port;
 		}
 		break;
 	}
 
 	return true;
+}
+
+
+/**
+ @brief 
+ */
+void	CNetGroupController::SetRemoteClientFactory( IRemoteClientFactory *ptr )
+{
+	SAFE_DELETE(m_pRemoteClientFactory);
+	m_pRemoteClientFactory = ptr;
+}
+
+
+/**
+ @brief 
+ */
+void	CNetGroupController::SetGroupFactory( IGroupFactory *ptr )
+{
+	SAFE_DELETE(m_pGroupFactory);
+	m_pGroupFactory = ptr;
 }
