@@ -19,6 +19,8 @@ public:
 	CFarmServer();
 	virtual ~CFarmServer();
 
+	SubServerGroupPtr FindGroup(const std::string &svrType);
+
 private:
 	// Event Handling
 	virtual void	OnConnectNetGroupController() override;
@@ -33,5 +35,9 @@ private:
 	virtual void ReqToBindInnerPort(netid senderId, const std::string &bindSubServerSvrType) override;
 	virtual void ReqSubServerBindComplete(netid senderId, const std::string &subServerSvrType) override;
 	virtual void ReqSubClientConnectComplete(netid senderId, const std::string &subClientSvrType) override;
+
+private:
+	farm::s2c_Protocol m_Protocol;
+	ServerBasicPtr m_pServer;
 
 };

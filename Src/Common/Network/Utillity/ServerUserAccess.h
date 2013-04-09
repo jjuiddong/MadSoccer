@@ -7,7 +7,6 @@ adapter class for server user map access
 */
 #pragma once
 
-#include "UserAccess.h"
 #include "../Controller/ServerBasic.h"
 
 namespace network

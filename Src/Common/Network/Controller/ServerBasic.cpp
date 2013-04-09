@@ -43,7 +43,8 @@ void	CServerBasic::SetRemoteClientFactory( IRemoteClientFactory *ptr )
  */
 void	 CServerBasic::SetGroupFactory( IGroupFactory *ptr )
 {
-
+	SAFE_DELETE(m_pGroupFactory);
+	m_pGroupFactory = ptr;
 }
 
 

@@ -26,3 +26,10 @@
 // 긴이름을 짧게..
 namespace dbg = common::dbg;
 namespace clog = common::log;
+
+
+class CSubServerGroup;
+class CRemoteSubServer;
+
+typedef common::ReferencePtr<CSubServerGroup> SubServerGroupPtr;
+typedef common::ReferencePtr<CRemoteSubServer> RemoteSubServerPtr;

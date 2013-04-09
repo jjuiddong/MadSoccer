@@ -63,6 +63,27 @@ bool	CFarmServerConnector::MakeupInputOutputLink()
 
 
 /**
+ @brief P2PServer, P2PClient  傅农甫 积己茄促.
+ */
+bool CFarmServerConnector::MakeupP2PLink()
+{
+	// P2P Client Link 积己
+	BOOST_FOREACH(auto &bindSubSvrType, m_Config.p2pC)
+	{
+		CreateSubController( CLIENT, true, m_Config.svrType, bindSubSvrType );
+	}
+
+	// P2P Server Link 积己
+	BOOST_FOREACH(auto &bindSubSvrType, m_Config.p2pS)
+	{
+		CreateSubController( SERVER, true, m_Config.svrType, bindSubSvrType );
+	}
+
+	return true;
+}
+
+
+/**
  @brief NetGroupController 积己
  @param IsInnerBind : true: to Bind Inner Space Network
 									 false: to Bind Outer Space Network
@@ -163,6 +184,7 @@ void CFarmServerConnector::AckSendSubServerOutputLink(netid senderId, const erro
 	}
 
 	MakeupInputOutputLink();
+	MakeupP2PLink();
 }
 
 

@@ -193,9 +193,6 @@
     <ClInclude Include="ErrReport\ErrorCode.h">
       <Filter>Lib\ErrReport</Filter>
     </ClInclude>
-    <ClInclude Include="Utillity\UserAccess.h">
-      <Filter>Lib\Utillity</Filter>
-    </ClInclude>
     <ClInclude Include="Utillity\ServerUserAccess.h">
       <Filter>Lib\Utillity</Filter>
     </ClInclude>

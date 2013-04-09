@@ -15,6 +15,25 @@ class CRemoteSubServer : public network::CRemoteClient
 public:
 	typedef std::vector<SLinkState> Links;
 
+	CRemoteSubServer();
+	void		SetP2PLink( const std::vector<std::string> &v );	
+	void		SetInputLink( const std::vector<std::string> &v );
+	void		SetOutputLink( const std::vector<std::string> &v );
+
+	void		GetLinkInfo( const std::string &linkSvrType, OUT std::vector<network::SHostInfo> &v );
+
+	int		GetToBindInnerPort(int basePort);
+	int		GetToBindOuterPort(int basePort);
+
+	void		SetInnerBindPort( const std::string &linkSvrType, int bindPort );
+	void		SetOuterBindPort( const std::string &linkSvrType, int bindPort );
+
+protected:
+	void		GetLinkInfo( const Links &linkServers,  const std::string &linkSvrType, OUT std::vector<network::SHostInfo> &v );
+	bool		IsBindPort( const Links &linkServers, int port );
+	SLinkState* GetLinkState( network::SERVICE_TYPE type, const std::string &linkSvrType );
+	SLinkState* GetLinkState( Links &links, network::SERVICE_TYPE type, const std::string &linkSvrType );
+
 private:
 	int m_OuterPort;
 	Links m_InputLink;

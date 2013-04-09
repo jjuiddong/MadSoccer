@@ -1,11 +1,11 @@
-//------------------------------------------------------------------------
-// Name:    Group.h
-// Author:  jjuiddong
-// Date:    12/29/2012
-// 
-// 그룹을 관리하는 그룹, 여러명의 유저를 관리한다.
-// 소멸자에서 자식으로 가지는 그룹들을 모두 제거한다.
-//------------------------------------------------------------------------
+/**
+Name:   Group.h
+Author:  jjuiddong
+Date:    12/29/2012
+
+ 그룹을 관리하는 그룹, 여러명의 유저를 관리한다.
+ 소멸자에서 자식으로 가지는 그룹들을 모두 제거한다.
+*/
 #pragma once
 
 namespace network { 
@@ -19,6 +19,8 @@ namespace network {
 
 namespace network
 {
+	class IGroupFactory;
+
 	class CGroup
 	{
 		friend CPacket& (marshalling::operator<<(CPacket& packet, const CGroup &rhs));
@@ -37,6 +39,7 @@ namespace network
 
 		// Group
 		bool				AddChild( CGroup *pGroup );
+		CGroup*		AddChild( IGroupFactory *pFactory );
 		bool				RemoveChild( netid groupId );
 		GroupPtr		GetChild( netid groupId );
 		GroupPtr		GetChildandThis( netid groupId );
@@ -77,7 +80,7 @@ namespace network
 		bool				RemoveUser(netid userId);
 		bool				RemoveUserNApplyParent(GroupPtr pGroup, netid userId);
 
-	protected:
+	private:
 		netid			m_Id;
 		netid			m_ParentId;
 		std::string	m_Name;
@@ -88,6 +91,7 @@ namespace network
 		NetIdes		m_Viewers;
 		Groups			m_Children;
 	};
+
 
 	inline netid CGroup::GetId() const { return m_Id; }
 	inline const std::string& CGroup::GetName() const { return m_Name; }

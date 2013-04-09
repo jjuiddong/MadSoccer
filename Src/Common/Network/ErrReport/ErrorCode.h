@@ -14,13 +14,16 @@ namespace network { namespace error {
 		ERR_SUCCESS = 0,
 		ERR_NO_ERROR = ERR_SUCCESS,
 
-		// general
+		// common
 		ERR_NOT_FOUND_GROUP,
 		ERR_NOT_FOUND_USER,
 
 		// group
+		ERR_NO_CREATE_GROUP,
+		ERR_NOT_JOIN_GROUP,
+
 		// group list
-		ERR_GROUPLIST_NOT_FOUND_GROUP,
+		ERR_GROUPLIST_NOT_FOUND_GROUP,		
 
 		// create group
 		ERR_GROUPCREATE_NOT_FOUND_PARENT_GROUP,

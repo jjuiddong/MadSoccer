@@ -146,7 +146,6 @@
     <ClInclude Include="Task\TaskWorkServer.h" />
     <ClInclude Include="Utillity\ClientUserAccess.h" />
     <ClInclude Include="Utillity\ServerUserAccess.h" />
-    <ClInclude Include="Utillity\UserAccess.h" />
     <ClInclude Include="Utillity\Utillity.h" />
   </ItemGroup>
   <ItemGroup>

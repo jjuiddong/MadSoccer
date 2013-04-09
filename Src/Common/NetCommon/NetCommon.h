@@ -126,4 +126,5 @@ typedef ProtocolMap::iterator ProtocolItor;
 
 #include "Event/NetEvent.h"
 
+#include "Utillity/UserAccess.h"
 

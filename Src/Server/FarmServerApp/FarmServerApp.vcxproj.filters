@@ -51,6 +51,9 @@
     <ClInclude Include="Src\LinkState.h">
       <Filter>Src</Filter>
     </ClInclude>
+    <ClInclude Include="Src\FarmServerUtillity.h">
+      <Filter>Src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -69,6 +72,9 @@
       <Filter>Src</Filter>
     </ClCompile>
     <ClCompile Include="Src\LinkState.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\FarmServerUtillity.cpp">
       <Filter>Src</Filter>
     </ClCompile>
   </ItemGroup>

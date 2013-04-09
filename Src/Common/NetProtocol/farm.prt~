@@ -14,6 +14,7 @@ protocol s2c 2000
 	AckSubServerBindComplete(  error::ERROR_CODE errorCode, std::string subServerSvrType );
 	AckSubClientConnectComplete(  error::ERROR_CODE errorCode, std::string subClientSvrType );
 
+
 }
 
 protocol c2s 2100

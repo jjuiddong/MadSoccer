@@ -30,6 +30,8 @@ namespace network
 		RemoteClientMap& GetRemoteClients();
 		void				SetRemoteClientFactory( IRemoteClientFactory *ptr );
 		void				SetGroupFactory( IGroupFactory *ptr );
+		IRemoteClientFactory* GetRemoteClientFactory() const;
+		IGroupFactory* GetGroupFactory() const;
 
 		common::CriticalSection& GetCS();		
 		netid			GetNetIdFromSocket(SOCKET sock);
@@ -81,5 +83,7 @@ namespace network
 	inline CGroup&	CServerBasic::GetRootGroup() { return m_RootGroup; }
 	inline common::CriticalSection& CServerBasic::GetCS() { return m_CS; }
 	inline RemoteClientMap& CServerBasic::GetRemoteClients() { return m_RemoteClients; }
+	inline IRemoteClientFactory* CServerBasic::GetRemoteClientFactory() const { return m_pRemoteClientFactory; }
+	inline IGroupFactory* CServerBasic::GetGroupFactory() const { return m_pGroupFactory; }
 
 };

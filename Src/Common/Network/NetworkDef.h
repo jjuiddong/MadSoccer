@@ -47,7 +47,6 @@ typedef RoomMap::iterator RoomItor;
 typedef common::ReferencePtr<network::CRoom> RoomPtr;
 
 
-#include "Utillity/UserAccess.h"
 #include "Utillity/Utillity.h"
 
 #include "DataStructure/Room.h"

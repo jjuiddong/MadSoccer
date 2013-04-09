@@ -27,6 +27,9 @@
     <Filter Include="Event">
       <UniqueIdentifier>{34aaa631-1444-41d4-9876-e74281fb9b31}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utillity">
+      <UniqueIdentifier>{881cff24-bc1d-4751-9094-be053a633700}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -94,6 +97,9 @@
     </ClInclude>
     <ClInclude Include="DataStructure\Group.h">
       <Filter>DataStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="Utillity\UserAccess.h">
+      <Filter>Utillity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -11,7 +11,6 @@ using namespace network;
 
 CCoreClient::CCoreClient(PROCESS_TYPE procType) :
 	CNetConnector(procType)
-//,	m_pEventListener(NULL)
 {
 	m_ServerIP = "127.0.0.1";
 	m_ServerPort = 2333;

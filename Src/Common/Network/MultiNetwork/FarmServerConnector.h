@@ -30,6 +30,7 @@ namespace network { namespace multinetwork {
 
 	protected:
 		bool		MakeupInputOutputLink();
+		bool		MakeupP2PLink();
 		bool		CreateSubController( SERVICE_TYPE serviceType, bool IsInnerBind,
 			const std::string &connectSubSvrType, const std::string &bindSubSvrType );
 

@@ -23,6 +23,8 @@ CNetGroupController::CNetGroupController( SERVICE_TYPE type, const std::string &
 ,	m_pRemoteClientFactory(NULL)
 ,	m_pGroupFactory(NULL)
 {
+	if (SERVER == type)
+		m_pServer = new CServerBasic( SERVICE_EXCLUSIVE_THREAD );
 
 }
 
@@ -109,17 +111,8 @@ bool	CNetGroupController::Connect( SERVICE_TYPE type, const std::string &ip, con
 		{
 			m_Ip = "localhost";
 			m_Port = port;
-
-			if (m_pServer)
-			{
+			if (m_pServer->IsServerOn())
 				m_pServer->Disconnect();
-			}
-			else
-			{
-				m_pServer = new CServerBasic(SERVICE_EXCLUSIVE_THREAD);
-				if (m_pRemoteClientFactory)
-					m_pServer->SetRemoteClientFactory(m_pRemoteClientFactory->Clone());
-			}
 			CNetController::Get()->StartServer(port, m_pServer);
 		}
 		break;
@@ -147,6 +140,8 @@ void	CNetGroupController::SetRemoteClientFactory( IRemoteClientFactory *ptr )
 {
 	SAFE_DELETE(m_pRemoteClientFactory);
 	m_pRemoteClientFactory = ptr;
+	if (m_pServer)
+		m_pServer->SetRemoteClientFactory(m_pRemoteClientFactory->Clone());
 }
 
 
@@ -157,4 +152,6 @@ void	CNetGroupController::SetGroupFactory( IGroupFactory *ptr )
 {
 	SAFE_DELETE(m_pGroupFactory);
 	m_pGroupFactory = ptr;
+	if (m_pServer && ptr)
+		m_pServer->SetGroupFactory( ptr->Clone() );
 }

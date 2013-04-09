@@ -145,12 +145,12 @@ bool	CBasicC2SProtocolHandler::CreateBlankGroup(
 		return false;
 	}
 
-	if (pParentGroup->IsTerminal())
-	{// Error!!
-		m_BasicProtocol.AckGroupCreate( senderId, SEND_TARGET, 
-			ERR_GROUPCREATE_PARENT_TERMINALNODE, senderId, 0, parentGroupId, groupName );
-		return false;
-	}
+	//if (pParentGroup->IsTerminal())
+	//{// Error!!
+	//	m_BasicProtocol.AckGroupCreate( senderId, SEND_TARGET, 
+	//		ERR_GROUPCREATE_PARENT_TERMINALNODE, senderId, 0, parentGroupId, groupName );
+	//	return false;
+	//}
 
 	GroupPtr pFromGroup = m_Server.GetRootGroup().GetChildFromUser( senderId );
 	if (!pFromGroup)
@@ -160,13 +160,22 @@ bool	CBasicC2SProtocolHandler::CreateBlankGroup(
 		return false;
 	}
 
-	CGroup *pNewGroup = new CGroup(pParentGroup, groupName);
-	const bool result = pParentGroup->AddChild( pNewGroup );
-	if (!result) 
+	CGroup *pNewGroup = pParentGroup->AddChild( m_Server.GetGroupFactory() );
+	//CGroup *pNewGroup = new CGroup(pParentGroup, groupName);
+	//const bool result = pParentGroup->AddChild( pNewGroup );
+	//if (!result) 
+	if (!pNewGroup)
 	{ // Error!!
-		SAFE_DELETE(pNewGroup);
-		m_BasicProtocol.AckGroupCreate( senderId, SEND_TARGET, ERR_GROUPCREATE_NOR_MORE_CREATE_GROUP, 
-			senderId, 0, parentGroupId, groupName );
+		if (pParentGroup->IsTerminal())
+		{
+				m_BasicProtocol.AckGroupCreate( senderId, SEND_TARGET, 
+					ERR_GROUPCREATE_PARENT_TERMINALNODE, senderId, 0, parentGroupId, groupName );
+		}
+		else
+		{
+			m_BasicProtocol.AckGroupCreate( senderId, SEND_TARGET, ERR_GROUPCREATE_NOR_MORE_CREATE_GROUP, 
+				senderId, 0, parentGroupId, groupName );
+		}
 		return false;
 	}
 

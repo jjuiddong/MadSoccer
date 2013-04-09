@@ -1,6 +1,7 @@
 
 #include "stdafx.h"
 #include "Group.h"
+#include "../Interface/Factory.h"
 
 using namespace network;
 
@@ -47,6 +48,32 @@ bool	CGroup::AddChild( CGroup *pGroup )
 		AddUserNApplyParent(this, userid);
 	}
 	return true;
+}
+
+
+/**
+ @brief 비어있는 Group을 생성한다.
+
+ 이미 group에 유저가 있으면 group이 자식으로 group을 생성할 수 없다.
+ 만약 이렇게 하려면, group에 소속된 멤버들을 새 그룹에 소속시키고, 
+ 현재 group의 자식으로 추가해야 한다. 
+
+ 즉, 간단히 말하면,
+ 단말 노드에는 그룹을 추가할 수 없다.
+ 단말 노드에만 유저가 소속될 수 있다. 
+ */
+CGroup* CGroup::AddChild( IGroupFactory *pFactory )
+{
+	RETV(!pFactory, NULL);
+	if (IsTerminal())
+		return NULL;
+	CGroup *pNewGroup = pFactory->New();
+	if (!AddChild(pNewGroup))
+	{
+		delete pNewGroup;
+		return NULL;
+	}
+	return pNewGroup;
 }
 
 
