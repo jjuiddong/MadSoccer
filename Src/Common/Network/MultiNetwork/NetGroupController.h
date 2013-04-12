@@ -18,6 +18,7 @@ namespace network { namespace multinetwork {
 	public:
 		enum STATE {
 			WAIT,
+			CONNECT, // try connect
 			RUN, // after connect
 			END, // after call Stop()
 		};
@@ -38,11 +39,23 @@ namespace network { namespace multinetwork {
 		void				SetRemoteClientFactory( IRemoteClientFactory *ptr );
 		void				SetGroupFactory( IGroupFactory *ptr );
 		SERVICE_TYPE GetServiceType() const;
+		bool				IsConnect() const;
+		bool				IsTryConnect() const;
+		void				SetTryConnect();
 		CServerBasic* GetServer();
 		CCoreClient* GetClient();
 
 	protected:
 		bool				Connect( SERVICE_TYPE type, const std::string &ip, const int port );
+
+	private:
+		// overriding
+		virtual bool	AddProtocolListener(ProtocolListenerPtr pListener);
+		virtual bool	RemoveProtocolListener(ProtocolListenerPtr pListener);
+
+		// Event Handler
+		void				OnConnect( CNetEvent &event );
+		void				OnDisconnect( CNetEvent &event );
 
 	private:
 		typedef common::VectorMap<netid, CCoreClient*> Clients;
@@ -69,5 +82,8 @@ namespace network { namespace multinetwork {
 	inline SERVICE_TYPE CNetGroupController::GetServiceType() const { return m_ServiceType; }
 	inline CServerBasic* CNetGroupController::GetServer() { return m_pServer; }
 	inline CCoreClient* CNetGroupController::GetClient() { return m_pClient; }
+	inline bool CNetGroupController::IsConnect() const { return (m_State == RUN) || (m_State == CONNECT); }
+	inline bool CNetGroupController::IsTryConnect() const { return (m_State == CONNECT); }
+	inline void	CNetGroupController::SetTryConnect() { m_State = CONNECT; }
 
 }}

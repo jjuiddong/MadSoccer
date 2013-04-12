@@ -20,7 +20,7 @@ namespace network
 	(EventFunction)static_cast<NetEventFunction>(&fn)
 
 
-
+	// 컴파일 워닝을 없애기위한 매크로
 #define EVENT_CONNECT_TO( to, handler, eventType, classname, fn )\
 	{\
 	void (classname::*evt_handler)(CNetEvent &) = &fn;\

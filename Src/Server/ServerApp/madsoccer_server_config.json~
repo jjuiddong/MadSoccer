@@ -1,17 +1,18 @@
 {
-	¡°type¡± : ¡°loginsvr¡±,
-	¡°parent server ip¡± : ¡°127.0.0.1¡±,
-	¡°parent server port¡± : ¡°1234¡±,
+	"type" : "lobbysvr",
+	"parent server ip" : "127.0.0.1",
+	"parent server port" : "2300",
 
-	¡°p2pC¡± : [
+	"p2pS" : [
 		"certifysvr"
 	],
-	¡°input link¡± : [
-		"lobbysvr"
+
+	"input link" : [
+		"loginsvr"
 	],
-	¡°ouput link¡± : [
-		"lobbysvr",
-		"relaysvr"		
+
+	"output link" : [
+		"gamesvr",
 	]
 }
 

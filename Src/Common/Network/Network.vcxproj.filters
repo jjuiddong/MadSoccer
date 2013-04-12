@@ -119,6 +119,9 @@
     <ClCompile Include="MultiNetwork\FarmServerConnector.cpp">
       <Filter>Lib\MultiNetwork</Filter>
     </ClCompile>
+    <ClCompile Include="ProtocolHandler\AllProtocolDisplayer.cpp">
+      <Filter>Lib\ProtocolHandler</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Network.h">
@@ -231,6 +234,9 @@
     </ClInclude>
     <ClInclude Include="MultiNetwork\FarmServerConnector.h">
       <Filter>Lib\MultiNetwork</Filter>
+    </ClInclude>
+    <ClInclude Include="ProtocolHandler\AllProtocolDisplayer.h">
+      <Filter>Lib\ProtocolHandler</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

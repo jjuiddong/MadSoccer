@@ -4,6 +4,9 @@
 
 	"property" : [
 
+		{
+			"symbolname" : "CLobbyServer#1"
+		}
 	]
 
 }

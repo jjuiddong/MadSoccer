@@ -13,10 +13,10 @@ Date:    12/29/2012
 #include "NetProtocol/Src/basic_ProtocolListener.h"
 
 DECLARE_TYPE_NAME(CLobbyServer)
-class CLobbyServer : public network::CServer
-					, public login::c2s_ProtocolListener
-					//, public basic::c2s_ProtocolListener
-					, public memmonitor::Monitor<CLobbyServer, TYPE_NAME(CLobbyServer)>
+class CLobbyServer //: public network::CServer
+									: public network::multinetwork::CNetGroupDelegation
+									, public login::c2s_ProtocolListener
+									, public memmonitor::Monitor<CLobbyServer, TYPE_NAME(CLobbyServer)>
 {
 public:
 	CLobbyServer();

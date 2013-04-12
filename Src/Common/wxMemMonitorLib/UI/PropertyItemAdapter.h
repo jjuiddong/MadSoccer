@@ -27,7 +27,7 @@ namespace memmonitor
 
 		CPropertyItemAdapter();
 		CPropertyItemAdapter( wxPGProperty *pProperty );
-		CPropertyItemAdapter( std::string label,  PROPERTY_TYPE type = PROPERTY_STRING, DWORD ptr=0 );
+		CPropertyItemAdapter( std::string label,  PROPERTY_TYPE type = PROPERTY_STRING, DWORD ptr=0, std::string strVal="" );
 		CPropertyItemAdapter( const std::string &valueName, 
 			const visualizer::SSymbolInfo &symbol, _variant_t value );
 

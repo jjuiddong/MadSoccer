@@ -442,6 +442,8 @@ wxPGProperty* visualizer::MakeProperty_ArrayData(wxPGProperty *pParentProp,
 
 	const string typeName = dia::GetSymbolTypeName(symbol.pSym);
 	stringstream ss;
+	string stringVal;
+	ss << symbol.mem.name;
 
 	if (//SymTagData == elemSymTag ||
 		SymTagBaseType == elemSymTag) // BaseType Array
@@ -449,20 +451,28 @@ wxPGProperty* visualizer::MakeProperty_ArrayData(wxPGProperty *pParentProp,
 		BasicType btype;
 		hr = pElementType->get_baseType((DWORD*)&btype);
 		ASSERT_RETV(S_OK == hr, pProp);
-
+		
 		// char*, char[] 타입이라면 스트링을 출력한다.
 		if (btChar == btype)
-			ss << symbol.mem.name << " {\"" << (char*)symbol.mem.ptr << "\"}";
-		else
-			ss << symbol.mem.name << " " << symbol.mem.ptr; // << " (" << typeName << ")";
-	}
-	else // UDT Array
-	{
-		ss << symbol.mem.name; // << " (" << typeName << ")";
+			stringVal = (char*)symbol.mem.ptr;
 	}
 
-	CPropertyItemAdapter prop( ss.str() );
-	//pProp->SetValue( wxVariant(ss.str(), ss.str()) );
+	// todo : 나중에 preview visualizer 로 통합해야 한다.
+	// string 타입일 때, 출력
+	if (pParentProp)
+	{
+		CPropertyWindow::SPropItem *pItemData = 
+			(CPropertyWindow::SPropItem*)pParentProp->GetClientData();
+		if (pItemData)
+		{
+			if (!strncmp(pItemData->symbolTypeName.c_str(),  "std::basic_string",17 ))
+			{
+				pParentProp->SetValue( stringVal.c_str() );
+			}
+		}
+	}
+
+	CPropertyItemAdapter prop( ss.str(), CPropertyItemAdapter::PROPERTY_STRING, 0, stringVal );
 	AddProperty(pParentProp, prop.GetProperty(), &symbol,  &STypeData(SymTagArrayType, VT_EMPTY, NULL) );
 
 	return prop.GetProperty();
@@ -542,17 +552,20 @@ wxPGProperty* visualizer::MakeProperty_UDTData(
 	// 최상위 UDT가 아닐때만 타입을 출력한다.
 	stringstream ss;
 	ss << symbol.mem.name;
-	//if (pParentProp)
-	//	ss << "  (" << typeName << ")";
 
-	CPropertyItemAdapter prop( ss.str());//,  CPropertyItemAdaptor::PROPERTY_PARENT);
+	CPropertyItemAdapter prop( ss.str());
 	AddProperty(pParentProp, prop.GetProperty(), &symbol, &STypeData(SymTagUDT, VT_EMPTY, symbol.mem.ptr));
 
 	bool isVisualizerType = false;
-	if (g_IsApplyVisualizer)
+	// todo: visualizer preview 작업이 끝나면 없애야한다.
+	if (!strncmp(typeName.c_str(),  "std::basic_string",17 ))
 	{
-		isVisualizerType = visualizer::MakeVisualizerProperty( g_pProperty, 
-			prop.GetProperty(), symbol );//  symbol.mem,  symbol.mem.name);
+		isVisualizerType = visualizer::MakeVisualizerProperty( g_pProperty, prop.GetProperty(), symbol );
+		prop.GetProperty()->SetExpanded(false);
+	}
+	else if (g_IsApplyVisualizer)
+	{
+		isVisualizerType = visualizer::MakeVisualizerProperty( g_pProperty, prop.GetProperty(), symbol );
 	}
 	
 	return (isVisualizerType)? NULL : prop.GetProperty();

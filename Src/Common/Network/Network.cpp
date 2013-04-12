@@ -117,7 +117,10 @@ ClientBasicPtr network::GetClient(netid clientId)
 {
 	return CNetController::Get()->GetClient(clientId);
 }
-
+CoreClientPtr network::GetCoreClient(netid clientId)
+{
+	return CNetController::Get()->GetCoreClient(clientId);
+}
 
 //------------------------------------------------------------------------
 // 

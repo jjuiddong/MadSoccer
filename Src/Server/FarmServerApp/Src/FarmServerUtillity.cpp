@@ -6,6 +6,7 @@
 #include "SubServerGroup.h"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include <boost/config.hpp>
 
 using namespace farmsvr;
 
@@ -32,6 +33,7 @@ void ReadSubServerConfig( boost::property_tree::ptree &props, CFarmServer &farmS
 		return;
 
 	pNewGroup->SetName( svrType );
+	pNewGroup->SetSvrType( svrType );
 
 	string port = props.get<string>("inner port");
 	pNewGroup->SetInnerPortBase( atoi(port.c_str()) );
@@ -73,8 +75,8 @@ bool	farmsvr::ReadServerGrouprConfig( const std::string &fileName, CFarmServer &
 	}
 	catch (std::exception &)
 	{
-		result  = false;
+		return false;
 	}
 
-	return result;
+	return true;
 }

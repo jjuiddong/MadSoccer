@@ -8,15 +8,12 @@
 
 using namespace network;
 
-CFarmServer::CFarmServer() : 
-	network::multinetwork::CNetGroupDelegation("farmsvr")
+CFarmServer::CFarmServer() 
 {
-
 }
 
 CFarmServer::~CFarmServer()
 {
-
 }
 
 
@@ -25,10 +22,12 @@ CFarmServer::~CFarmServer()
  */
 void	CFarmServer::OnConnectNetGroupController()
 {
+	RegisterProtocol( &m_Protocol );
+	AddProtocolListener(this);
 	GetConnector()->SetRemoteClientFactory( new CRemoteSubServerFactory() );
 	GetConnector()->SetGroupFactory( new CSubServerGroupFactory() );
+
 	m_pServer = GetServer();
-	GetConnector()->RegisterProtocol( &m_Protocol );
 
 	if (!farmsvr::ReadServerGrouprConfig( "servergroup_config.json", *this))
 	{ // Error!!
@@ -62,7 +61,7 @@ void CFarmServer::ReqSubServerLogin(netid senderId, const std::string &svrType)
 	GroupPtr pFromGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
 	if (!pFromGroup)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "ReqSubServerLogin Error!!, not exist group user id = %d", senderId );
+		clog::Error( log::ERROR_PROBLEM, "ReqSubServerLogin Error!!, not exist group user id = %d\n\n", senderId );
 		m_Protocol.AckSubServerLogin( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP);
 		return;
 	}
@@ -74,7 +73,7 @@ void CFarmServer::ReqSubServerLogin(netid senderId, const std::string &svrType)
 		//	GetServer()->GetRootGroup().AddChild( GetServer()->GetGroupFactory()) );
 		//if (!pNewGroup)
 		{// Error!!
-			clog::Error( log::ERROR_PROBLEM, "ReqSubServerLogin Error!!, no create group" );
+			clog::Error( log::ERROR_PROBLEM, "ReqSubServerLogin Error!!, not exist group %s \n\n", svrType.c_str() );
 			m_Protocol.AckSubServerLogin( senderId, SEND_T, error::ERR_NO_CREATE_GROUP);
 			return;
 		}
@@ -87,7 +86,7 @@ void CFarmServer::ReqSubServerLogin(netid senderId, const std::string &svrType)
 	{ // Error!!
 		pFromGroup->AddUser(pFromGroup->GetId(), senderId); // º¹±¸
 
-		clog::Error( log::ERROR_PROBLEM, "ReqSubServerLogin Error!!, not join group" );		
+		clog::Error( log::ERROR_PROBLEM, "ReqSubServerLogin Error!!, not join group\n" );
 		m_Protocol.AckSubServerLogin( senderId, SEND_T, error::ERR_NOT_JOIN_GROUP);
 		return;
 	}
@@ -105,7 +104,7 @@ void CFarmServer::SendSubServerP2PLink(netid senderId, const std::vector<std::st
 	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
 	if (!pGroup)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "SendSubServerP2PLink Error!!, not exist group user id = %d", senderId );
+		clog::Error( log::ERROR_PROBLEM, "SendSubServerP2PLink Error!!, not exist group user id = %d\n", senderId );
 		m_Protocol.AckSendSubServerP2PLink( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP);
 		return;
 	}	
@@ -114,7 +113,7 @@ void CFarmServer::SendSubServerP2PLink(netid senderId, const std::vector<std::st
 		GetServer()->GetRemoteClient(senderId));
 	if (!pClient)
 	{
-		clog::Error( log::ERROR_PROBLEM, "SendSubServerP2PLink Error!!, not exist user id = %d", senderId );
+		clog::Error( log::ERROR_PROBLEM, "SendSubServerP2PLink Error!!, not exist user id = %d\n", senderId );
 		m_Protocol.AckSendSubServerP2PLink( senderId, SEND_T, error::ERR_NOT_FOUND_USER );
 		return;
 	}
@@ -132,7 +131,7 @@ void CFarmServer::SendSubServerInputLink(netid senderId, const std::vector<std::
 	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
 	if (!pGroup)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "SendSubServerInputLink Error!!, not exist group user id = %d", senderId );
+		clog::Error( log::ERROR_PROBLEM, "SendSubServerInputLink Error!!, not exist group user id = %d\n", senderId );
 		m_Protocol.AckSendSubServerInputLink( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP);
 		return;
 	}	
@@ -141,7 +140,7 @@ void CFarmServer::SendSubServerInputLink(netid senderId, const std::vector<std::
 		GetServer()->GetRemoteClient(senderId));
 	if (!pClient)
 	{
-		clog::Error( log::ERROR_PROBLEM, "SendSubServerInputLink Error!!, not exist user id = %d", senderId );
+		clog::Error( log::ERROR_PROBLEM, "SendSubServerInputLink Error!!, not exist user id = %d\n", senderId );
 		m_Protocol.AckSendSubServerInputLink( senderId, SEND_T, error::ERR_NOT_FOUND_USER );
 		return;
 	}
@@ -159,7 +158,7 @@ void CFarmServer::SendSubServerOutputLink(netid senderId, const std::vector<std:
 	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
 	if (!pGroup)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "SendSubServerOutputLink Error!!, not exist group user id = %d", senderId );
+		clog::Error( log::ERROR_PROBLEM, "SendSubServerOutputLink Error!!, not exist group user id = %d\n", senderId );
 		m_Protocol.AckSendSubServerOutputLink(senderId, SEND_T, error::ERR_NOT_FOUND_GROUP);
 		return;
 	}	
@@ -168,7 +167,7 @@ void CFarmServer::SendSubServerOutputLink(netid senderId, const std::vector<std:
 		GetServer()->GetRemoteClient(senderId));
 	if (!pClient)
 	{
-		clog::Error( log::ERROR_PROBLEM, "SendSubServerOutputLink Error!!, not exist user id = %d", senderId );
+		clog::Error( log::ERROR_PROBLEM, "SendSubServerOutputLink Error!!, not exist user id = %d\n", senderId );
 		m_Protocol.AckSendSubServerOutputLink( senderId, SEND_T, error::ERR_NOT_FOUND_USER );
 		return;
 	}
@@ -187,7 +186,7 @@ void CFarmServer::ReqServerInfoList(netid senderId, const std::string &clientSvr
 	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
 	if (!pGroup)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "ReqServerInfoList Error!!, not exist group user id = %d", senderId );
+		clog::Error( log::ERROR_PROBLEM, "ReqServerInfoList Error!!, not exist group user id = %d\n", senderId );
 		m_Protocol.AckServerInfoList( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, clientSvrType, serverSvrType, hostInfo);
 		return;
 	}
@@ -195,7 +194,7 @@ void CFarmServer::ReqServerInfoList(netid senderId, const std::string &clientSvr
 	SubServerGroupPtr pServerGroup = FindGroup( serverSvrType );
 	if (!pServerGroup)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "ReqServerInfoList Error!!, not exist serverSvrType group = %s", serverSvrType.c_str() );
+		clog::Error( log::ERROR_PROBLEM, "ReqServerInfoList Error!!, not exist serverSvrType group = %s\n", serverSvrType.c_str() );
 		m_Protocol.AckServerInfoList( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, clientSvrType, serverSvrType, hostInfo);
 		return;
 	}
@@ -214,7 +213,7 @@ void CFarmServer::ReqToBindOuterPort(netid senderId, const std::string &bindSubS
 	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
 	if (!pGroup)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "ReqToBindOuterPort Error!!, not exist group user id = %d", senderId );
+		clog::Error( log::ERROR_PROBLEM, "ReqToBindOuterPort Error!!, not exist group user id = %d\n", senderId );
 		m_Protocol.AckToBindOuterPort( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, bindSubServerSvrType, 0);
 		return;
 	}
@@ -222,7 +221,7 @@ void CFarmServer::ReqToBindOuterPort(netid senderId, const std::string &bindSubS
 	SubServerGroupPtr pSubSvrGroup = dynamic_cast<CSubServerGroup*>(pGroup.Get());
 	if (!pSubSvrGroup)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "ReqToBindOuterPort Error!!, not convert group user id = %d", senderId );
+		clog::Error( log::ERROR_PROBLEM, "ReqToBindOuterPort Error!!, not convert group user id = %d\n", senderId );
 		m_Protocol.AckToBindOuterPort( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, bindSubServerSvrType, 0);
 		return;
 	}
@@ -233,7 +232,7 @@ void CFarmServer::ReqToBindOuterPort(netid senderId, const std::string &bindSubS
 		GetServer()->GetRemoteClient(senderId));
 	if (!pSubServer)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "ReqToBindOuterPort Error!!, not found user user id = %d", senderId );
+		clog::Error( log::ERROR_PROBLEM, "ReqToBindOuterPort Error!!, not found user user id = %d\n", senderId );
 		m_Protocol.AckToBindOuterPort( senderId, SEND_T, error::ERR_NOT_FOUND_USER, bindSubServerSvrType, 0);
 		return;
 	}
@@ -251,7 +250,7 @@ void CFarmServer::ReqToBindInnerPort(netid senderId, const std::string &bindSubS
 	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
 	if (!pGroup)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "ReqToBindInnerPort Error!!, not exist group user id = %d", senderId );
+		clog::Error( log::ERROR_PROBLEM, "ReqToBindInnerPort Error!!, not exist group user id = %d\n", senderId );
 		m_Protocol.AckToBindOuterPort( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, bindSubServerSvrType, 0);
 		return;
 	}
@@ -259,7 +258,7 @@ void CFarmServer::ReqToBindInnerPort(netid senderId, const std::string &bindSubS
 	SubServerGroupPtr pSubSvrGroup = dynamic_cast<CSubServerGroup*>(pGroup.Get());
 	if (!pSubSvrGroup)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "ReqToBindInnerPort Error!!, not convert group user id = %d", senderId );
+		clog::Error( log::ERROR_PROBLEM, "ReqToBindInnerPort Error!!, not convert group user id = %d\n", senderId );
 		m_Protocol.AckToBindOuterPort( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, bindSubServerSvrType, 0);
 		return;
 	}
@@ -270,7 +269,7 @@ void CFarmServer::ReqToBindInnerPort(netid senderId, const std::string &bindSubS
 		GetServer()->GetRemoteClient(senderId));
 	if (!pSubServer)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "ReqToBindInnerPort Error!!, not found user user id = %d", senderId );
+		clog::Error( log::ERROR_PROBLEM, "ReqToBindInnerPort Error!!, not found user user id = %d\n", senderId );
 		m_Protocol.AckToBindOuterPort( senderId, SEND_T, error::ERR_NOT_FOUND_USER, bindSubServerSvrType, 0);
 		return;
 	}

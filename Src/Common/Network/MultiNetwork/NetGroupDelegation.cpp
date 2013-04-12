@@ -7,8 +7,8 @@ using namespace network;
 using namespace network::multinetwork;
 
 
-CNetGroupDelegation::CNetGroupDelegation( const std::string svrType ) :
-	m_SvrType(svrType)
+CNetGroupDelegation::CNetGroupDelegation()
+	//m_SvrType(svrType)
 {
 }
 

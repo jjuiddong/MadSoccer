@@ -50,7 +50,7 @@ bool multinetwork::ReadServerConfigFile( const std::string &fileName, OUT SSvrCo
 	}
 	catch (std::exception &)
 	{
-		result  = false;
+		return false;
 	}
 
 	return result;

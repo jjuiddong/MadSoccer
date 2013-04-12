@@ -300,7 +300,7 @@ bool CNetController::StartCoreClient(const std::string &ip, int port, CoreClient
 	{ /// Sync
 		common::AutoCSLock cs(m_CS); 	/// Sync
 		CoreClients::iterator it = m_CoreClients.find( pClt->GetNetId());
-		if (m_CoreClients.end() != it)
+		if (m_CoreClients.end() == it)
 			m_CoreClients.insert( CoreClients::value_type(pClt->GetNetId(), pClt) );
 	}
 

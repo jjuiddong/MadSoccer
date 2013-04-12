@@ -22,6 +22,7 @@ namespace network
 	bool		StartClient(const std::string &ip, int port, ClientBasicPtr pClt);
 	bool		StopClient(ClientBasicPtr pClt);
 	ClientBasicPtr	GetClient(netid clientId);
+	CoreClientPtr	GetCoreClient(netid clientId);
 
 	// Multi Network
 	bool		StartMultiNetwork();

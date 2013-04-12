@@ -90,6 +90,7 @@
     <ClCompile Include="MultiNetwork\NetGroupDelegation.cpp" />
     <ClCompile Include="MultiNetwork\FarmServerConnector.cpp" />
     <ClCompile Include="Network.cpp" />
+    <ClCompile Include="ProtocolHandler\AllProtocolDisplayer.cpp" />
     <ClCompile Include="ProtocolHandler\BasicC2SProtocolHandler.cpp" />
     <ClCompile Include="ProtocolHandler\BasicProtocolDispatcher.cpp" />
     <ClCompile Include="ProtocolHandler\BasicS2CProtocolHandler.cpp" />
@@ -122,6 +123,7 @@
     <ClInclude Include="Network.h" />
     <ClInclude Include="NetworkDef.h" />
     <ClInclude Include="NetworkUtility.h" />
+    <ClInclude Include="ProtocolHandler\AllProtocolDisplayer.h" />
     <ClInclude Include="ProtocolHandler\BasicC2SProtocolHandler.h" />
     <ClInclude Include="ProtocolHandler\BasicProtocolDispatcher.h" />
     <ClInclude Include="ProtocolHandler\BasicS2CProtocolHandler.h" />

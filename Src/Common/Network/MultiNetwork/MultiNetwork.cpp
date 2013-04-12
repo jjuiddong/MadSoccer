@@ -34,11 +34,9 @@ bool	CMultiNetwork::Init( const std::string &configFileName )
 
 	if ("farmsvr" == m_Config.svrType)
 	{
-		// Launch FarmServer
 		CNetGroupController *pMainCtrl = new CNetGroupController(SERVER, m_Config.svrType, "client");
 		if (!AddController(pMainCtrl))
 			return false;
-//		pMainCtrl->Start("localhost", m_Config.port);
 	}
 	else
 	{
@@ -49,7 +47,7 @@ bool	CMultiNetwork::Init( const std::string &configFileName )
 			if (!AddController(pCtrl))
 				return false;
 
-			m_pFarmSvrConnector = new CFarmServerConnector( m_Config.svrType );
+			m_pFarmSvrConnector = new CFarmServerConnector( m_Config.svrType, m_Config );
 			if (!ConnectDelegation("farmsvr", m_pFarmSvrConnector))
 				return false;
 		}
@@ -106,7 +104,7 @@ bool	CMultiNetwork::Start()
 	else
 	{
 		if (m_pFarmSvrConnector)
-			m_pFarmSvrConnector->Start( m_Config.parentSvrIp, m_Config.parentSvrPort, m_Config );
+			m_pFarmSvrConnector->Start( m_Config.parentSvrIp, m_Config.parentSvrPort );
 	}	
 
 	return true;

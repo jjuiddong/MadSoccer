@@ -36,13 +36,23 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		return FALSE;
 	}
 
-	memmonitor::Init(memmonitor::INNER_PROCESS, hInstance, "farmserver_monitor.json" );
-	if (!network::Init(1, "farmserver_config.json"))
+	if (!memmonitor::Init(memmonitor::INNER_PROCESS, hInstance, "farmserver_monitor.json" ))
+	{
+		clog::Error( clog::ERROR_CRITICAL, "memonitor :: init Fail !!\n" );
 		goto exit;
+	}
+	if (!network::Init(1, "farmserver_config.json"))
+	{
+		clog::Error( clog::ERROR_CRITICAL, "network :: init Fail !!\n" );
+		goto exit;
+	}
 
 	CFarmServer *pFarmSvr = new CFarmServer();
 	if (!network::ConnectDelegation("client", 	pFarmSvr))
+	{
+		clog::Error( clog::ERROR_CRITICAL, "network :: ConnectDelegation Fail !!\n" );
 		goto exit;
+	}
 
 	network::StartMultiNetwork();
 
@@ -95,7 +105,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
 
    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, 300, 300, NULL, NULL, hInstance, NULL);
+      0, 0, 300, 300, NULL, NULL, hInstance, NULL);
 
    if (!hWnd)
    {

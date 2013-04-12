@@ -24,8 +24,13 @@ CNetGroupController::CNetGroupController( SERVICE_TYPE type, const std::string &
 ,	m_pGroupFactory(NULL)
 {
 	if (SERVER == type)
+	{
 		m_pServer = new CServerBasic( SERVICE_EXCLUSIVE_THREAD );
-
+		EVENT_CONNECT_TO( m_pServer, this, EVT_LISTEN, CNetGroupController, CNetGroupController::OnConnect );
+		EVENT_CONNECT_TO( m_pServer, this, EVT_CONNECT, CNetGroupController, CNetGroupController::OnConnect );
+		EVENT_CONNECT_TO( m_pServer, this, EVT_DISCONNECT, CNetGroupController, CNetGroupController::OnDisconnect );
+	}
+	
 }
 
 CNetGroupController::~CNetGroupController()
@@ -35,6 +40,11 @@ CNetGroupController::~CNetGroupController()
 	SAFE_DELETE(m_pP2p);
 	SAFE_DELETE(m_pRemoteClientFactory);
 	SAFE_DELETE(m_pGroupFactory);
+	BOOST_FOREACH(auto &client, m_Clients.m_Seq)
+	{
+		SAFE_DELETE(client);
+	}
+	m_Clients.clear();
 }
 
 
@@ -81,22 +91,50 @@ void	CNetGroupController::Stop()
 
 
 /**
- @brief 
+ @brief Send
  */
 bool	CNetGroupController::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
 {
-
-	return true;
+	switch (m_ServiceType)
+	{
+	case CLIENT:
+		{
+			BOOST_FOREACH(auto &client, m_Clients.m_Seq)
+			{
+				if (client)
+					return client->Send(netId, flag, packet);
+			}
+		}
+		break;
+	case SERVER:
+		if (m_pServer)
+			return m_pServer->Send(netId, flag, packet);
+		break;
+	}
+	return false;
 }
 
 
 /**
- @brief 
+ @brief SendAll
  */
 bool	CNetGroupController::SendAll(const CPacket &packet) 
 {
-
-	return true;
+	switch (m_ServiceType)
+	{
+	case CLIENT:
+		BOOST_FOREACH(auto &client, m_Clients.m_Seq)
+		{
+			if (client)
+				return client->SendAll(packet);
+		}
+		break;
+	case SERVER:
+		if (m_pServer)
+			return m_pServer->SendAll(packet);
+		break;
+	}
+	return false;
 }
 
 
@@ -119,12 +157,19 @@ bool	CNetGroupController::Connect( SERVICE_TYPE type, const std::string &ip, con
 
 	case CLIENT:
 		{
-			CCoreClient *pClient = new CCoreClient(SERVICE_SEPERATE_THREAD);
-			CNetController::Get()->StartCoreClient(ip, port, pClient);
-			m_Clients.insert( Clients::value_type(pClient->GetNetId(), pClient) );
-
 			m_Ip = ip;
 			m_Port = port;
+
+			CCoreClient *pClient = new CCoreClient(SERVICE_SEPERATE_THREAD);
+			EVENT_CONNECT_TO( pClient, this, EVT_CONNECT, CNetGroupController, CNetGroupController::OnConnect );
+			EVENT_CONNECT_TO( pClient, this, EVT_DISCONNECT, CNetGroupController, CNetGroupController::OnDisconnect );
+			BOOST_FOREACH(auto &protocol, GetProtocolListeners())
+			{
+				pClient->AddProtocolListener(protocol);
+			}
+			m_Clients.insert( Clients::value_type(pClient->GetNetId(), pClient) );
+
+			CNetController::Get()->StartCoreClient(ip, port, pClient);
 		}
 		break;
 	}
@@ -146,7 +191,7 @@ void	CNetGroupController::SetRemoteClientFactory( IRemoteClientFactory *ptr )
 
 
 /**
- @brief 
+ @brief SetGroupFactory
  */
 void	CNetGroupController::SetGroupFactory( IGroupFactory *ptr )
 {
@@ -154,4 +199,57 @@ void	CNetGroupController::SetGroupFactory( IGroupFactory *ptr )
 	m_pGroupFactory = ptr;
 	if (m_pServer && ptr)
 		m_pServer->SetGroupFactory( ptr->Clone() );
+}
+
+
+/**
+ @brief OnConnect
+ */
+void	CNetGroupController::OnConnect( CNetEvent &event )
+{
+	m_State = RUN;
+	SearchEventTable(event);// Event Propagate
+}
+
+
+/**
+ @brief OnDisconnect
+ */
+void	CNetGroupController::OnDisconnect( CNetEvent &event )
+{
+	if (m_ServiceType == SERVER)
+		m_State = END;
+	SearchEventTable(event); // Event Propagate
+}
+
+
+/**
+ @brief AddProtocolListener
+ */
+bool	CNetGroupController::AddProtocolListener(ProtocolListenerPtr pListener)
+{
+	CNetConnector::AddProtocolListener(pListener);
+	if (m_pServer)
+		m_pServer->AddProtocolListener(pListener);
+	BOOST_FOREACH(auto &client, m_Clients.m_Seq)
+	{
+		client->AddProtocolListener(pListener);
+	}
+	return true;
+}
+
+
+/**
+ @brief RemoveProtocolListener
+ */
+bool	CNetGroupController::RemoveProtocolListener(ProtocolListenerPtr pListener)
+{
+	CNetConnector::RemoveProtocolListener(pListener);
+	if (m_pServer)
+		m_pServer->RemoveProtocolListener(pListener);
+	BOOST_FOREACH(auto &client, m_Clients.m_Seq)
+	{
+		client->RemoveProtocolListener(pListener);
+	}
+	return true;
 }

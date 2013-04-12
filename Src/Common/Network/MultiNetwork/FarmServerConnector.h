@@ -23,18 +23,22 @@ namespace network { namespace multinetwork {
 													,public farm::s2c_ProtocolListener
 	{
 	public:
-		CFarmServerConnector( const std::string &svrType );
+		CFarmServerConnector( const std::string &svrType, const SSvrConfigData &config );
 		virtual ~CFarmServerConnector() {}
 
-		bool		Start( const std::string &ip, const int port, const SSvrConfigData &config );
-
-	protected:
-		bool		MakeupInputOutputLink();
-		bool		MakeupP2PLink();
-		bool		CreateSubController( SERVICE_TYPE serviceType, bool IsInnerBind,
-			const std::string &connectSubSvrType, const std::string &bindSubSvrType );
+		bool		Start( const std::string &ip, const int port );
 
 	private:
+		void		CreateLink();
+		void		ConnectLink();
+		bool		CreateSubController( SERVICE_TYPE serviceType, bool IsInnerBind,
+			const std::string &connectSubSvrType, const std::string &bindSubSvrType );
+		void		ConnectSubController(SERVICE_TYPE serviceType, bool IsInnerBind,
+			const std::string &connectSubSvrType, const std::string &bindSubSvrType );
+
+		// Event Handling
+		virtual void	OnConnectNetGroupController() override;
+
 		// network event handler
 		void OnConnect(CNetEvent &event);
 

@@ -24,15 +24,15 @@ namespace memmonitor
 			REFRESH_INTERVAL = 1000,
 		};
 
+	public:
 		struct SPropItem
 		{
-			std::string typeName;		// dia symbol type name
+			std::string typeName;		// symbol type name
 			std::string symbolTypeName;		// dia symbol type name
 			STypeData typeData;
 		};
 		typedef std::list<SPropItem*> PropList;
 
-	public:
 		CPropertyWindow(wxWindow *parent);
 		virtual ~CPropertyWindow();
 
@@ -57,7 +57,7 @@ namespace memmonitor
 		void OnRefreshTimer(wxTimerEvent& event);
 		void OnKeyDown(wxKeyEvent& event);
 
-	protected:
+	private:
 		wxString	m_CurrentSymbolName;
 		wxTimer	m_Timer;
 		PropList	m_PropList;

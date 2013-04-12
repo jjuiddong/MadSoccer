@@ -3,6 +3,7 @@
 #include "FarmServerConnector.h"
 #include "NetGroupController.h"
 #include "MultiNetwork.h"
+#include "Network/Controller/CoreClient.h"
 
 #include "NetProtocol/Src/farm_Protocol.cpp"
 #include "NetProtocol/Src/farm_ProtocolListener.cpp"
@@ -11,27 +12,32 @@ using namespace network;
 using namespace network::multinetwork;
 
 
-CFarmServerConnector::CFarmServerConnector(const std::string &svrType) :
-	CNetGroupDelegation(svrType)
-,	m_IsDetectedSendConfig(false)
+CFarmServerConnector::CFarmServerConnector(const std::string &svrType, const SSvrConfigData &config) :
+	m_IsDetectedSendConfig(false)
 {
+	m_Config = config;
+	CreateLink();
+}
 
+
+/**
+@brief OnConnectNetGroupController
+*/
+void	CFarmServerConnector::OnConnectNetGroupController()
+{
+	EVENT_CONNECT(EVT_CONNECT, CFarmServerConnector, CFarmServerConnector::OnConnect );
+	AddProtocolListener(this);
+	RegisterProtocol( &m_Protocol );
 }
 
 
 /**
  @brief 
  */
-bool CFarmServerConnector::Start( const std::string &ip, const int port, const SSvrConfigData &config )
+bool CFarmServerConnector::Start( const std::string &ip, const int port )
 {
 	if (!GetConnector())
 		return false;
-
-	AddProtocolListener(this);
-	EVENT_CONNECT(EVT_CONNECT, CFarmServerConnector, CFarmServerConnector::OnConnect );
-
-	RegisterProtocol( &m_Protocol );
-	m_Config = config;
 
 	GetConnector()->Start(ip, port);
 	return true;
@@ -39,9 +45,9 @@ bool CFarmServerConnector::Start( const std::string &ip, const int port, const S
 
 
 /**
- @brief input link , output link 甫 积己茄促.
+ @brief P2P, Input_lin, Output_link 按眉甫 积己茄促.
  */
-bool	CFarmServerConnector::MakeupInputOutputLink()
+void	CFarmServerConnector::CreateLink()
 {
 	// Input Link 积己
 	BOOST_FOREACH(auto &bindSubSvrType, m_Config.inputLink)
@@ -55,31 +61,40 @@ bool	CFarmServerConnector::MakeupInputOutputLink()
 		CreateSubController( SERVER, true, m_Config.svrType, bindSubSvrType );
 	}
 
-	// 磊脚狼 辑滚按眉 积己
-	CreateSubController( SERVER, false, m_Config.svrType, "client" );
-
-	return true;
-}
-
-
-/**
- @brief P2PServer, P2PClient  傅农甫 积己茄促.
- */
-bool CFarmServerConnector::MakeupP2PLink()
-{
 	// P2P Client Link 积己
-	BOOST_FOREACH(auto &bindSubSvrType, m_Config.p2pC)
+	BOOST_FOREACH(auto &bindSubSvrType, m_Config.p2pS)
 	{
 		CreateSubController( CLIENT, true, m_Config.svrType, bindSubSvrType );
 	}
 
-	// P2P Server Link 积己
-	BOOST_FOREACH(auto &bindSubSvrType, m_Config.p2pS)
+	// 扁夯 辑滚 积己 
+	CreateSubController( SERVER, false, m_Config.svrType,  "client" );
+
+}
+
+
+/**
+ @brief ConnectLink
+ */
+void	CFarmServerConnector::ConnectLink()
+{
+	// Input Link 积己
+	BOOST_FOREACH(auto &bindSubSvrType, m_Config.inputLink)
 	{
-		CreateSubController( SERVER, true, m_Config.svrType, bindSubSvrType );
+		ConnectSubController( CLIENT, true, m_Config.svrType, bindSubSvrType );
 	}
 
-	return true;
+	// Output Link 积己
+	BOOST_FOREACH(auto &bindSubSvrType, m_Config.outputLink)
+	{
+		ConnectSubController( SERVER, true, m_Config.svrType, bindSubSvrType );
+	}
+
+	// P2P Client Link 积己
+	BOOST_FOREACH(auto &bindSubSvrType, m_Config.p2pS)
+	{
+		ConnectSubController( CLIENT, true, m_Config.svrType, bindSubSvrType );
+	}
 }
 
 
@@ -91,16 +106,39 @@ bool CFarmServerConnector::MakeupP2PLink()
 bool	CFarmServerConnector::CreateSubController( SERVICE_TYPE serviceType, bool IsInnerBind,
 	const std::string &connectSubSvrType, const std::string &bindSubSvrType )
 {
+	if (connectSubSvrType == bindSubSvrType)
+		return false;
+
 	NetGroupControllerPtr ptr = CMultiNetwork::Get()->GetController(bindSubSvrType);
 	if (ptr)
-	{
-		clog::Error( clog::ERROR_WARNING, "%s svrType Already Exist", bindSubSvrType.c_str() );
-		return false; // already exist  then continue;
-	}
+		return true;
 
 	CNetGroupController *pctrl = new CNetGroupController(serviceType, connectSubSvrType, bindSubSvrType);
-	CMultiNetwork::Get()->AddController(pctrl);
+	if (!CMultiNetwork::Get()->AddController(pctrl))
+	{
+		clog::Error(log::ERROR_CRITICAL, "Not Create NetGroupController !!" );
+		delete pctrl;
+		return false;
+	}
 
+	return true;
+}
+
+
+/**
+@brief ConnectSubController
+*/
+void	CFarmServerConnector::ConnectSubController(SERVICE_TYPE serviceType, bool IsInnerBind,
+	const std::string &connectSubSvrType, const std::string &bindSubSvrType )
+{
+	NetGroupControllerPtr ptr = CMultiNetwork::Get()->GetController(bindSubSvrType);
+	if (!ptr)
+		return;
+
+	if (ptr->IsConnect())
+		return;
+
+	ptr->SetTryConnect();
 	if (CLIENT == serviceType)
 	{
 		m_Protocol.ReqServerInfoList( SERVER_NETID, SEND_T, connectSubSvrType,
@@ -113,8 +151,6 @@ bool	CFarmServerConnector::CreateSubController( SERVICE_TYPE serviceType, bool I
 		else
 			m_Protocol.ReqToBindOuterPort( SERVER_NETID, SEND_T, bindSubSvrType );
 	}
-
-	return true;
 }
 
 
@@ -183,8 +219,19 @@ void CFarmServerConnector::AckSendSubServerOutputLink(netid senderId, const erro
 		return;
 	}
 
-	MakeupInputOutputLink();
-	MakeupP2PLink();
+	ConnectLink();
+	//MakeupInputOutputLink();
+	//MakeupP2PLink();
+
+	//// 磊脚狼 辑滚按眉 积己
+	//std::string bindSubSvrType;
+	//if (m_Config.inputLink.size() > 0 || m_Config.outputLink.size() > 0)
+	//	bindSubSvrType = "client";		
+	//else if (m_Config.p2pC.size() > 0)
+	//	bindSubSvrType = "p2p";
+	//else
+	//	bindSubSvrType = "none";
+	//CreateSubController( SERVER, false, m_Config.svrType, bindSubSvrType );
 }
 
 

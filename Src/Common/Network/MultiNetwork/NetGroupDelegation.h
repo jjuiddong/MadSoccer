@@ -14,7 +14,7 @@ namespace network { namespace multinetwork {
 	class CNetGroupDelegation : public CNetConnectorLinker
 	{
 	public:
-		CNetGroupDelegation( const std::string svrType );
+		CNetGroupDelegation();
 		virtual ~CNetGroupDelegation();
 
 		void		SetConnector(NetGroupControllerPtr ptr);

@@ -6,7 +6,7 @@
 
 using namespace network;
 
-CLobbyServer::CLobbyServer() : CServer(SERVICE_EXCLUSIVE_THREAD)
+CLobbyServer::CLobbyServer() //: CServer(SERVICE_EXCLUSIVE_THREAD)
 {
 	RegisterProtocol(&m_LoginProtocol);
 	RegisterProtocol(&m_BasicProtocol);
@@ -185,11 +185,11 @@ void CLobbyServer::OnClientLeave(CNetEvent &event)
 //------------------------------------------------------------------------
 std::string CLobbyServer::ToString()
 {
-	common::AutoCSLock cs(GetCS());
+	common::AutoCSLock cs(GetServer()->GetCS());
 
 	std::stringstream ss;
-	ss << "RemoteClient: " << GetRemoteClients().size() << std::endl;
-	BOOST_FOREACH(RemoteClientMap::value_type &kv, GetRemoteClients())
+	ss << "RemoteClient: " << GetServer()->GetRemoteClients().size() << std::endl;
+	BOOST_FOREACH(RemoteClientMap::value_type &kv, GetServer()->GetRemoteClients())
 	{
 		ss << "netid: " << kv.second->GetId() << ", sock: " << kv.second->GetSocket() << std::endl;			
 	}

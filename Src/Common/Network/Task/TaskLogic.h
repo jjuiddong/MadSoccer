@@ -24,6 +24,7 @@ namespace network
 		CTaskLogic();
 		virtual ~CTaskLogic();
 		virtual RUN_RESULT	Run() override;
+		CNetConnector* GetReceiveConnector(netid netId, OUT CONNECTOR_TYPE &type);
 	};
 
 
@@ -36,6 +37,25 @@ namespace network
 	{
 	}
 
+	CNetConnector* CTaskLogic::GetReceiveConnector(netid netId, OUT CONNECTOR_TYPE &type)
+	{
+		CNetConnector *pCon = GetServer(netId);
+		if (pCon) 
+			type = CON_SERVER;
+		if (!pCon) 
+		{
+			pCon = GetClient(netId);
+			if (pCon) 
+				type = CON_CLIENT;
+		}
+		if (!pCon) 
+		{
+			pCon = GetCoreClient(netId);
+			if (pCon) type = CON_CORECLIENT;
+		}
+		return pCon;
+	}
+
 	//------------------------------------------------------------------------
 	// Run
 	//------------------------------------------------------------------------
@@ -45,16 +65,17 @@ namespace network
 		if (!CPacketQueue::Get()->PopPacket(packetData))
 			return RR_CONTINUE;
 
-		CServerBasic *pSvr = GetServer(packetData.rcvNetId);
-		if (!pSvr)
+		CONNECTOR_TYPE type;
+		CNetConnector *pCon = GetReceiveConnector(packetData.rcvNetId, type);
+		if (!pCon)
 		{
 			clog::Error( clog::ERROR_PROBLEM,
-				common::format("CTaskLogic:: netid: %d 에 해당하는 서버가 없습니다.\n", 
+				common::format("CTaskLogic:: netid: %d 에 해당하는 NetConnector가 없습니다.\n", 
 				packetData.rcvNetId) );
 			return RR_CONTINUE;
 		}
 
-		const ProtocolListenerList &listeners = pSvr->GetProtocolListeners();
+		const ProtocolListenerList &listeners = pCon->GetProtocolListeners();
 
 		// 모든 패킷을 받아서 처리하는 리스너에게 패킷을 보낸다.
 		all::Dispatcher allDispatcher;
@@ -66,8 +87,20 @@ namespace network
 		// 기본 프로토콜 처리
 		if (protocolId == 0)
 		{
-			basic_protocol::ServerDispatcher dispatcher;
-			dispatcher.Dispatch( packetData.packet, pSvr );
+			switch (type)
+			{
+			case CON_SERVER:
+				{
+					basic_protocol::ServerDispatcher dispatcher;
+					dispatcher.Dispatch( packetData.packet, dynamic_cast<CServerBasic*>(pCon) );
+				}
+			case CON_CORECLIENT:
+				{
+					basic_protocol::ClientDispatcher dispatcher;
+					dispatcher.Dispatch( packetData.packet, dynamic_cast<CCoreClient*>(pCon) );
+				}
+				break;
+			}
 			return RR_CONTINUE;
 		}
 
@@ -75,7 +108,7 @@ namespace network
 		{
 			clog::Error( clog::ERROR_CRITICAL,
 				common::format("CTaskLogic %d NetConnector의 프로토콜 리스너가 없습니다.\n", 
-				pSvr->GetNetId()) );
+				pCon->GetNetId()) );
 			return RR_CONTINUE;
 		}
 

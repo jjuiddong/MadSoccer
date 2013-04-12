@@ -13,13 +13,13 @@ CPropertyItemAdapter::CPropertyItemAdapter() :
 {
 }
 
-CPropertyItemAdapter::CPropertyItemAdapter( std::string label,  PROPERTY_TYPE type, DWORD ptr ) :
-	m_pProperty(NULL)
+CPropertyItemAdapter::CPropertyItemAdapter( std::string label,  PROPERTY_TYPE type, DWORD ptr, std::string strVal ) :
+	m_pProperty(NULL) // ptr = 0, strVal = ""
 {
 	switch (type)
 	{
 	case PROPERTY_STRING:
-		m_pProperty = new wxStringProperty(label, wxPG_LABEL, "" );
+		m_pProperty = new wxStringProperty(label, wxPG_LABEL, strVal );
 		break;
 	case PROPTYPE_CATEGORY:
 		m_pProperty = new wxPropertyCategory(label, wxPG_LABEL );

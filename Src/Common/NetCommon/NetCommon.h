@@ -36,6 +36,13 @@ namespace network
 		SERVER,
 	};
 
+	enum CONNECTOR_TYPE
+	{
+		CON_CLIENT,
+		CON_CORECLIENT,
+		CON_SERVER,
+	};
+
 	enum PROCESS_TYPE
 	{
 		USER_LOOP,									// 유저의 쓰레드에서 처리

@@ -71,9 +71,6 @@
     <ClCompile Include="Src\RemoteSubServer.cpp">
       <Filter>Src</Filter>
     </ClCompile>
-    <ClCompile Include="Src\LinkState.cpp">
-      <Filter>Src</Filter>
-    </ClCompile>
     <ClCompile Include="Src\FarmServerUtillity.cpp">
       <Filter>Src</Filter>
     </ClCompile>

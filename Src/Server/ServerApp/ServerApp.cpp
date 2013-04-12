@@ -16,14 +16,11 @@
 #include "Lib/ServerLauncher.h"
 #include "Lib/LobbyServer.h"
 
-
 #include "wxMemMonitorLib/wxMemMonitor.h"
 MEMORYMONITOR_INNER_PROCESS();
 
-
-CChatServer *g_pChatServer;
+//CChatServer *g_pChatServer;
 CLobbyServer *g_pLobbyServer;
-
 
 // 전역 변수:
 #define MAX_LOADSTRING 100
@@ -45,12 +42,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
-
- 	// TODO: 여기에 코드를 입력합니다.
-	MSG msg;
-	HACCEL hAccelTable;
-
-	// 전역 문자열을 초기화합니다.
 	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
 	LoadString(hInstance, IDC_SERVERAPP, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
@@ -61,24 +52,32 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		return FALSE;
 	}
 
-	memmonitor::Init(memmonitor::INNER_PROCESS, hInstance, "madsoccer_server_monitor.json" );
-
-	serverlauncher::Launcher( "script/serverstartconfig.txt" );
-	network::Init(1);
-
-	g_pChatServer = new CChatServer();
+	if (!memmonitor::Init( memmonitor::INNER_PROCESS, hInstance, "madsoccer_server_monitor.json" ))
+	{
+		clog::Error(log::ERROR_CRITICAL, "memmonitor::init() fail !!\n" );
+		goto exit;
+	}
+	if (!network::Init(1, "madsoccer_server_config.json"))
+	{
+		clog::Error(log::ERROR_CRITICAL, "network::init() fail !!\n" );
+		goto exit;
+	}
 	g_pLobbyServer = new CLobbyServer();
+	if (!network::ConnectDelegation( "client", g_pLobbyServer ))
+	{
+		clog::Error(log::ERROR_CRITICAL, "network::ConnectDelegation() fail !!\n" );
+		goto exit;
+	}
+	
+	network::StartMultiNetwork();
 
-	network::StartServer( 2333, g_pChatServer );
-	network::StartServer( 2334, g_pLobbyServer );
-
+	MSG msg;
+	HACCEL hAccelTable;
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_SERVERAPP));
-
 	int tick = GetTickCount();
 	bool bDoingBackgroundProcessing = true;
 	while ( bDoingBackgroundProcessing ) 
 	{ 
-		//MSG msg;
 		while ( ::PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) ) 
 		{ 
 			if ( !GetMessage(&msg, NULL, 0, 0)) 
@@ -101,14 +100,13 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		}
 	}
 
-	g_pLobbyServer->Stop();
-
+exit:
 	network::Clear();
 	SAFE_DELETE(g_pLobbyServer);
-	SAFE_DELETE(g_pChatServer);
+	//SAFE_DELETE(g_pChatServer);
 	memmonitor::Cleanup();
 
-	return (int) msg.wParam;
+	return 0;
 }
 
 
@@ -140,7 +138,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
 
    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      0, 0, 300, 300, NULL, NULL, hInstance, NULL);
+      0, 300, 300, 300, NULL, NULL, hInstance, NULL);
    g_Hwnd = hWnd;
 
    if (!hWnd)
@@ -217,9 +215,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 			case VK_ESCAPE:
 				PostQuitMessage(0);
-				break;
-			case VK_F5:
-				g_pLobbyServer->Stop();
 				break;
 			}
 		}

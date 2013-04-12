@@ -45,7 +45,7 @@ void log::Log_char( const char *label, const char *msg )
 
 	ofstream fs("Log.log", ios_base::app);
 	if (!fs.is_open()) return;
-	fs << label << "   [" << common::GetTimeString() << "]  " << msg;
+	fs << label << "   [" << common::GetTimeString() << "]  " << msg << endl;
 }
 
 
@@ -59,7 +59,7 @@ void log::ErrorLog_char( const char *label, const char *msg )
 
 	ofstream fs("ErrLog.log", ios_base::app);
 	if (!fs.is_open()) return;
-	fs << label << "   [" << common::GetTimeString() << "]  " << msg;
+	fs << label << "   [" << common::GetTimeString() << "]  " << msg << endl;
 }
 
 
@@ -70,6 +70,7 @@ void log::Output_char( const char *label, const char *msg )
 {
 	string str = string(label) + " " + msg;
 	::OutputDebugStringA( str.c_str() );
+	::OutputDebugStringA( "\n" );
 }
 
 
@@ -83,7 +84,7 @@ void log::Log(const std::string &str)
 	ofstream fs("Log.log", ios_base::out);
 	if (!fs.is_open()) return;
 
-	fs << "[" << common::GetTimeString() << "]	" << str;
+	fs << "[" << common::GetTimeString() << "]	" << str << endl;
 }
 
 
@@ -100,7 +101,7 @@ void log::Log( const char* fmt, ...)
 
 	ofstream fs("Log.log", ios_base::out);
 	if (!fs.is_open()) return;
-	fs << "[" << common::GetTimeString() << "]	" << textString;
+	fs << "[" << common::GetTimeString() << "]	" << textString << endl;
 }
 
 
