@@ -51,8 +51,9 @@ namespace visualizer
 	wxPGProperty* MakeProperty_BaseClassData(wxPGProperty *pParentProp, 
 		const SSymbolInfo &symbol);
 
-	void		AddProperty(wxPGProperty *pParentProp, 
-		wxPGProperty *prop,  const SSymbolInfo *pSymbol, STypeData *pTypeData);
+	wxPGProperty*  AddProperty(wxPGProperty *pParentProp, 
+		CPropertyItemAdapter &propAdapter,  const SSymbolInfo *pSymbol, 
+		STypeData *pTypeData);
 
 	_variant_t GetValue(IDiaSymbol *pSymbol, void *pMemPtr);
 
@@ -68,12 +69,22 @@ using namespace memmonitor;
 
 //------------------------------------------------------------------------
 // 기본형식으로 property창에 심볼을 출력한다.
-// symbolName : 공유메모리에 저장된 심볼이름
+// symbolName : 심볼 이름  {symbolname#count}
 //------------------------------------------------------------------------
 bool visualizer::MakeProperty_DefaultForm( CPropertyWindow *pProperties,  const string &symbolName )
 {
-	const std::string str = ParseObjectName(symbolName);
+	return MakeProperty_DefaultForm(pProperties, NULL, symbolName);
+}
 
+
+/**
+@brief  property창에 심볼을 출력한다.
+@param symbolName : {symbolName#count} 메모리 정보를 얻어올 수 있는 형태
+*/
+bool	visualizer::MakeProperty_DefaultForm( CPropertyWindow *pProperties,  wxPGProperty *pParentProp,
+	const std::string &symbolName )
+{
+	const std::string str = ParseObjectName(symbolName);
 	IDiaSymbol *pSymbol = dia::FindType(str);
 	RETV(!pSymbol, false);
 
@@ -85,7 +96,7 @@ bool visualizer::MakeProperty_DefaultForm( CPropertyWindow *pProperties,  const 
 	}
 
 	memInfo.name = symbolName;
-	MakeProperty_DefaultForm(pProperties, NULL, SSymbolInfo(pSymbol, memInfo));
+	MakeProperty_DefaultForm(pProperties, pParentProp, SSymbolInfo(pSymbol, memInfo));
 	return true;
 }
 
@@ -261,7 +272,7 @@ wxPGProperty* visualizer::MakeProperty_BaseClassData(
 	wxPGProperty *pParentProp, const SSymbolInfo &symbol)
 {
 	CPropertyItemAdapter prop( symbol.mem.name );
-	AddProperty(pParentProp, prop.GetProperty(), &symbol, 
+	AddProperty(pParentProp, prop, &symbol, 
 		&STypeData(SymTagBaseClass, VT_EMPTY, NULL));
 	return prop.GetProperty();
 }
@@ -372,7 +383,7 @@ void visualizer ::MakeProperty_Data(wxPGProperty *pParentProp, const SSymbolInfo
 			std::string valueTypeName =  symbol.mem.name;// + " (" +  typeName + ")";
 
 			CPropertyItemAdapter prop( valueTypeName,  CPropertyItemAdapter::PROPTYPE_ENUM ); 
-			AddProperty(pParentProp, prop.GetProperty(), &symbol, &STypeData(baseSymTag, VT_UI4, symbol.mem.ptr));
+			AddProperty(pParentProp, prop, &symbol, &STypeData(baseSymTag, VT_UI4, symbol.mem.ptr));
 
 			CComPtr<IDiaEnumSymbols> pEnumChildren;
 			IDiaSymbol *pChild;
@@ -473,7 +484,7 @@ wxPGProperty* visualizer::MakeProperty_ArrayData(wxPGProperty *pParentProp,
 	}
 
 	CPropertyItemAdapter prop( ss.str(), CPropertyItemAdapter::PROPERTY_STRING, 0, stringVal );
-	AddProperty(pParentProp, prop.GetProperty(), &symbol,  &STypeData(SymTagArrayType, VT_EMPTY, NULL) );
+	AddProperty(pParentProp, prop, &symbol,  &STypeData(SymTagArrayType, VT_EMPTY, NULL) );
 
 	return prop.GetProperty();
 }
@@ -535,7 +546,7 @@ wxPGProperty* visualizer::MakeProperty_PointerData(
 	}
 
 	CPropertyItemAdapter prop( ss.str(), CPropertyItemAdapter::PROPTYPE_POINTER, (DWORD)newPtr );
-	AddProperty( pParentProp, prop.GetProperty(), &symbol, &STypeData(SymTagPointerType, VT_EMPTY, NULL));
+	AddProperty( pParentProp, prop, &symbol, &STypeData(SymTagPointerType, VT_EMPTY, NULL));
 
 	return prop.GetProperty();
 }
@@ -554,7 +565,7 @@ wxPGProperty* visualizer::MakeProperty_UDTData(
 	ss << symbol.mem.name;
 
 	CPropertyItemAdapter prop( ss.str());
-	AddProperty(pParentProp, prop.GetProperty(), &symbol, &STypeData(SymTagUDT, VT_EMPTY, symbol.mem.ptr));
+	AddProperty(pParentProp, prop, &symbol, &STypeData(SymTagUDT, VT_EMPTY, symbol.mem.ptr));
 
 	bool isVisualizerType = false;
 	// todo: visualizer preview 작업이 끝나면 없애야한다.
@@ -625,7 +636,7 @@ void visualizer ::MakeProperty_Array(wxPGProperty *pParentProp,
 			SSymbolInfo arraySymbol(pElementType, arrayElem, false);
 
  			CPropertyItemAdapter prop( valueName );
-			AddProperty( pParentProp, prop.GetProperty(), &arraySymbol, &STypeData(SymTagUDT,VT_EMPTY,NULL));
+			AddProperty( pParentProp, prop, &arraySymbol, &STypeData(SymTagUDT,VT_EMPTY,NULL));
 
 			MakeProperty_Root(prop.GetProperty(), arraySymbol, IsUdtExpand, depth);
 		}
@@ -647,7 +658,7 @@ wxPGProperty* visualizer ::MakeProperty_BaseType(
 	_variant_t value = dia::GetValueFromSymbol(symbol.mem.ptr, symbol.pSym);
 
 	CPropertyItemAdapter prop( valueName, symbol, value );
-	AddProperty(pParentProp, prop.GetProperty(), &symbol, 
+	AddProperty(pParentProp, prop, &symbol, 
 		&STypeData(SymTagData, (prop.IsEnabled()? value.vt : VT_EMPTY), symbol.mem.ptr));
 
 	return prop.GetProperty();
@@ -657,14 +668,13 @@ wxPGProperty* visualizer ::MakeProperty_BaseType(
 //------------------------------------------------------------------------
 // Property추가
 //------------------------------------------------------------------------
-void visualizer ::AddProperty(
+wxPGProperty* visualizer ::AddProperty(
 								 wxPGProperty *pParentProp, 
-								 wxPGProperty *prop, 
+								 CPropertyItemAdapter &propAdapter,
 								 const SSymbolInfo *pSymbol,
 								 STypeData *typeData)
 {
-	RET(!prop);
-	RET(!g_pProperty);
+	RETV(!g_pProperty, NULL);
 
-	g_pProperty->AddProperty(pParentProp, prop,  pSymbol, typeData);
+	return g_pProperty->AddProperty(pParentProp, propAdapter,  pSymbol, typeData);
 }

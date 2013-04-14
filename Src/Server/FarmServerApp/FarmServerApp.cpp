@@ -36,6 +36,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		return FALSE;
 	}
 
+	CFarmServer *pFarmSvr = NULL;
 	if (!memmonitor::Init(memmonitor::INNER_PROCESS, hInstance, "farmserver_monitor.json" ))
 	{
 		clog::Error( clog::ERROR_CRITICAL, "memonitor :: init Fail !!\n" );
@@ -47,7 +48,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		goto exit;
 	}
 
-	CFarmServer *pFarmSvr = new CFarmServer();
+	pFarmSvr = new CFarmServer();
 	if (!network::ConnectDelegation("client", 	pFarmSvr))
 	{
 		clog::Error( clog::ERROR_CRITICAL, "network :: ConnectDelegation Fail !!\n" );

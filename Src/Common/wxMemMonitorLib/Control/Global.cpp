@@ -3,6 +3,7 @@
 #include "../wxMemMonitor.h"
 #include "Global.h"
 #include "../ui/Frame.h"
+#include "../ui/MemoryTree.h"
 #include "../ui/LogWindow.h"
 #include "../dia/DiaWrapper.h"
 #include "../visualizer/PropertyMaker.h"
@@ -315,6 +316,13 @@ bool memmonitor::RepositioningWindow()
 		wxRect mainR = ParseRect(mainW);
 		GetFrame()->SetSize(mainR);
 
+		string memW  = props.get<string>("memory tree", "");
+		if (!memW.empty())
+		{
+			wxRect memR = ParseRect(memW);
+			GetFrame()->UpdatePaneSize(GetMemoryTree(), memR.GetWidth(), memR.GetHeight());
+		}
+
 		const CFrame::PropertyFrames &frames = GetFrame()->GetPropFrames();
 		BOOST_FOREACH(auto &frame, frames)
 		{
@@ -350,6 +358,9 @@ void memmonitor::WriteWindowPosition()
 		wxRect mainW = GetFrame()->GetRect();
 		props.add( "main window", 
 			format("%d %d %d %d", mainW.x, mainW.y, mainW.width, mainW.height) );
+		wxRect memW = GetMemoryTree()->GetRect();
+		props.add( "memory tree", 
+			format("%d %d %d %d", memW.x, memW.y, memW.width, memW.height) );
 
 		const CFrame::PropertyFrames &frames = GetFrame()->GetPropFrames();
 		BOOST_FOREACH(auto &frame, frames)

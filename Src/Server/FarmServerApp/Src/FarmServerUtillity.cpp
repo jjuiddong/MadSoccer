@@ -73,8 +73,9 @@ bool	farmsvr::ReadServerGrouprConfig( const std::string &fileName, CFarmServer &
 			++it;
 		}
 	}
-	catch (std::exception &)
+	catch (std::exception &e)
 	{
+		clog::Error(clog::ERROR_CRITICAL, "ReadServerGrouprConfig func error!! %s", e.what());
 		return false;
 	}
 

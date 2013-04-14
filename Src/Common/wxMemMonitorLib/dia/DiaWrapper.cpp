@@ -791,6 +791,9 @@ option = 0:
 	pointer, array 타입 등은 NULL 을 리턴한다.
 option = 1:
 	pointer, array 타입을 리턴한다.
+option = 2:
+	pointer, array 타입이라면, 실제 한번 더 baseType을 구해
+	포인터가 가르키는 데이타를 리턴하게 한다.
  
 pSymbol 자신일 경우 result = PARAM_SYMBOL 
 새 심볼을 생성해서 리턴할 경우 result = NEW_SYMBOL
@@ -825,6 +828,22 @@ IDiaSymbol* dia::GetBaseTypeSymbol( IDiaSymbol *pSymbol, DWORD option, OUT Symbo
 		{
 			pRet = pSymbol;
 			result = PARAM_SYMBOL;
+		}
+		else if (2 == option)
+		{
+			IDiaSymbol *pBaseType;
+			hr = pSymbol->get_type(&pBaseType);
+			ASSERT_RETV(S_OK == hr, NULL);
+
+			SymbolState rs;
+			pRet = GetBaseTypeSymbol(pBaseType, 1, rs);
+			if (!pRet)
+				break;
+
+			if (PARAM_SYMBOL != rs)
+				pBaseType->Release();
+
+			result = NEW_SYMBOL;
 		}
 		break;
 

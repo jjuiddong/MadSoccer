@@ -33,6 +33,8 @@ namespace memmonitor
 
 		virtual ~CPropertyItemAdapter();
 
+		void SetProperty(wxPGProperty* prop);
+		wxPGProperty* GetProperty();
 		void SetValue(const wxVariant &var);
 		void SetVariant(const _variant_t &var);
 		void SetExpanded(bool expand);
@@ -40,8 +42,6 @@ namespace memmonitor
 		void Enable(bool enable);
 		bool IsEnabled();
 		void AddChoice(const std::string &name, const int value=wxPG_INVALID_VALUE );
-
-		wxPGProperty* GetProperty();
 
 	protected:
 		bool CreateProperty( const std::string &valueName, 
@@ -51,6 +51,8 @@ namespace memmonitor
 		wxPGProperty *m_pProperty;
 	};
 
+
+	inline void CPropertyItemAdapter::SetProperty(wxPGProperty* prop) { m_pProperty = prop; }
 	inline wxPGProperty* CPropertyItemAdapter::GetProperty() { return m_pProperty; }
 
 }

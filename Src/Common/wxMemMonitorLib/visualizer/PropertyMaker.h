@@ -1,10 +1,10 @@
-//------------------------------------------------------------------------
-// Name:    VisualizerPropertyMaker.h
-// Author:  jjuiddong
-// Date:    1/29/2013
-// 
-// make property attribute with visualizer autoexp.txt script
-//------------------------------------------------------------------------
+/**
+Name:    PropertyMaker.h
+Author:  jjuiddong
+Date:    1/29/2013
+
+make property attribute with visualizer autoexp.txt script
+*/
 #ifndef __VISUALIZERPROPERTYMAKER_H__
 #define __VISUALIZERPROPERTYMAKER_H__
 

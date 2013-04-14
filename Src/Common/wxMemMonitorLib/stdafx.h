@@ -44,6 +44,8 @@
 #define ASSERT_RET(exp)		{assert(exp); RET(!(exp) ); }
 #define ASSERT_RETV(exp,val)		{assert(exp); RETV(!(exp),val ); }
 
+#pragma comment(lib, "../../../Lib/Vld/Win32/vld.lib")
+#include "../../../Lib/Vld/vld.h"
 
 #include <list>
 #include <map>

@@ -19,6 +19,10 @@
 #include "wxMemMonitorLib/wxMemMonitor.h"
 MEMORYMONITOR_INNER_PROCESS();
 
+#pragma comment(lib, "../../../Lib/Vld/Win32/vld.lib")
+#include "../../../Lib/Vld/vld.h"
+
+
 //CChatServer *g_pChatServer;
 CLobbyServer *g_pLobbyServer;
 
@@ -134,11 +138,9 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    HWND hWnd;
-
-   hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
-
+   hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다
    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      0, 300, 300, 300, NULL, NULL, hInstance, NULL);
+      300, 0, 300, 300, NULL, NULL, hInstance, NULL);
    g_Hwnd = hWnd;
 
    if (!hWnd)
@@ -148,7 +150,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
-
    return TRUE;
 }
 

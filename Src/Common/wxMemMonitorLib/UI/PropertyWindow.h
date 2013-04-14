@@ -16,6 +16,7 @@ namespace visualizer {
 
 namespace memmonitor
 {
+	class CPropertyItemAdapter;
 	class CPropertyWindow : public wxPropertyGridManager
 	{
 		enum  {
@@ -38,7 +39,7 @@ namespace memmonitor
 
 		void UpdateSymbol( const wxString &symbolName );
 
-		void	AddProperty(wxPGProperty *pParentProp, wxPGProperty *prop, 
+		wxPGProperty*	AddProperty(wxPGProperty *pParentProp, CPropertyItemAdapter &propAdapter, 
 			const visualizer::SSymbolInfo *pSymbol, STypeData *pTypeData);
 
 	protected:

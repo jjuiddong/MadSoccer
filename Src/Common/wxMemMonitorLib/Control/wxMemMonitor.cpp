@@ -27,13 +27,13 @@ using namespace memmonitor;
 
 CApp::CApp()
 {
-	Connect(CMD_TERMINATE,
-		wxEVT_THREAD,
+	Connect(CMD_TERMINATE, wxEVT_THREAD,
 		wxThreadEventHandler(CApp::OnTerminate));
 }
 void CApp::OnTerminate(wxThreadEvent& WXUNUSED(event))
 {
 	ExitMainLoop();
+	OnExit();
 }
 
 //------------------------------------------------------------------------

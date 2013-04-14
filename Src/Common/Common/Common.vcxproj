@@ -35,7 +35,7 @@
     <Import Project="..\..\CommonPropertySheet.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
-    <Import Project="CommonPropertySheet.props" />
+    <Import Project="..\..\..\..\..\Users\jjuiddong\AppData\Local\Microsoft\MSBuild\v4.0\Microsoft.Cpp.Win32.user.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>

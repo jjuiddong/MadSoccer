@@ -21,6 +21,9 @@ namespace visualizer
 
 	bool		MakeProperty_DefaultForm( CPropertyWindow *pProperties,  const std::string &symbolName );
 
+	bool		MakeProperty_DefaultForm( CPropertyWindow *pProperties,  wxPGProperty *pParentProp,
+		const std::string &symbolName );
+
 	bool		MakeProperty_DefaultForm(  CPropertyWindow *pProperties, wxPGProperty *pParentProp,  
 		const SSymbolInfo &symbol, bool IsApplyVisualizer=true );
 

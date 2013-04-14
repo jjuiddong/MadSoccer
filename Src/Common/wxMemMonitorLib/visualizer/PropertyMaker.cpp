@@ -288,7 +288,6 @@ void visualizer::MakePropertySimpleExpression( SSimpleExp *pexp, const SMakerDat
 	
 	const bool isApplyVisualizer = (pexp->format != Disp_Auto);
 	findVar.mem.name = pexp->text->str;
-	//MakeProperty_DefaultForm( g_pPropertiesCtrl, g_pParentProperty, findVar, isApplyVisualizer );
 	MakeProperty_DefaultForm( makerData.propertyWindow, makerData.parentProperty, findVar, isApplyVisualizer );
 }
 
@@ -616,7 +615,7 @@ void visualizer::MakePropertyExpression( SExpression *pexp, const SMakerData &ma
 			CheckError(result, makerData, " variable expression error!!, undetected" );
 			if (!title.empty())
 				findSymbol.mem.name = title;
-			visualizer::MakeProperty_DefaultForm( makerData.propertyWindow, makerData.parentProperty, findSymbol);
+			MakeProperty_DefaultForm( makerData.propertyWindow, makerData.parentProperty, findSymbol);
 		}
 		break;
 
@@ -910,12 +909,21 @@ _variant_t visualizer::Eval_Expression( SExpression *pexp, const SMakerData &mak
 				if  (((lhsSymTag == SymTagPointerType) || (lhsSymTag == SymTagArrayType)) &&
 					((rhsSymTag == SymTagPointerType) || (rhsSymTag == SymTagArrayType)))
 				{
-					// left 를 우선으로 계산한다.
+					// left 를 우선으로 계산한다. 포인터가 가르키는 데이타의 크기를 가져오기 위해, 다시 
+					// 타입을 계산한다.
+					SymbolState typeState;
+					IDiaSymbol* pRealTypeSym = GetBaseTypeSymbol(lhsSymbol.pSym, 2, typeState);
+					if (!pRealTypeSym)
+						break;
+
 					ULONGLONG length = 0;
-					hr = pLhsTypeSym->get_length(&length);
+					hr = pRealTypeSym->get_length(&length);
 
 					if (length > 0)
 						reval = (int)reval / (int)length;
+
+					if (NEW_SYMBOL == typeState)
+						SAFE_RELEASE(pRealTypeSym);
 				}
 
 				if (NEW_SYMBOL == lhsState)

@@ -31,10 +31,10 @@
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="CommonPropertySheet.props" />
+    <Import Project="..\..\..\..\..\Users\jjuiddong\AppData\Local\Microsoft\MSBuild\v4.0\Microsoft.Cpp.Win32.user.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="CommonPropertySheet.props" />
+    <Import Project="..\..\..\..\..\Users\jjuiddong\AppData\Local\Microsoft\MSBuild\v4.0\Microsoft.Cpp.Win32.user.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
