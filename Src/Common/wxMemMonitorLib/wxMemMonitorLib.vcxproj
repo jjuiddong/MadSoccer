@@ -49,6 +49,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>-Zm200 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -96,7 +97,6 @@
     <ClInclude Include="UI\PropertyWindow.h" />
     <ClInclude Include="visualizer\DefaultPropertyMaker.h" />
     <ClInclude Include="visualizer\PropertyMaker.h" />
-    <ClInclude Include="visualizer\Variant.h" />
     <ClInclude Include="visualizer\VisualizerDefine.h" />
     <ClInclude Include="visualizer\VisualizerGlobal.h" />
     <ClInclude Include="visualizer\VisualizerParser.h" />
@@ -124,7 +124,6 @@
     <ClCompile Include="UI\PropertyWindow.cpp" />
     <ClCompile Include="visualizer\DefaultPropertyMaker.cpp" />
     <ClCompile Include="visualizer\PropertyMaker.cpp" />
-    <ClCompile Include="visualizer\Variant.cpp" />
     <ClCompile Include="visualizer\VisualizerDefine.cpp" />
     <ClCompile Include="visualizer\VisualizerGlobal.cpp" />
     <ClCompile Include="visualizer\VisualizerParser.cpp" />

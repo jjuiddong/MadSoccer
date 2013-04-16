@@ -107,9 +107,6 @@
     <ClInclude Include="visualizer\PropertyMaker.h">
       <Filter>Src\visualizer</Filter>
     </ClInclude>
-    <ClInclude Include="visualizer\Variant.h">
-      <Filter>Src\visualizer</Filter>
-    </ClInclude>
     <ClInclude Include="visualizer\VisualizerDefine.h">
       <Filter>Src\visualizer</Filter>
     </ClInclude>
@@ -176,9 +173,6 @@
       <Filter>Src\visualizer</Filter>
     </ClCompile>
     <ClCompile Include="visualizer\PropertyMaker.cpp">
-      <Filter>Src\visualizer</Filter>
-    </ClCompile>
-    <ClCompile Include="visualizer\Variant.cpp">
       <Filter>Src\visualizer</Filter>
     </ClCompile>
     <ClCompile Include="visualizer\VisualizerDefine.cpp">
