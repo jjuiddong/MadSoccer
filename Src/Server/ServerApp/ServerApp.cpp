@@ -19,8 +19,8 @@
 #include "wxMemMonitorLib/wxMemMonitor.h"
 MEMORYMONITOR_INNER_PROCESS();
 
-#pragma comment(lib, "../../../Lib/Vld/Win32/vld.lib")
-#include "../../../Lib/Vld/vld.h"
+//#pragma comment(lib, "../../../Lib/Vld/Win32/vld.lib")
+//#include "../../../Lib/Vld/vld.h"
 
 
 //CChatServer *g_pChatServer;
