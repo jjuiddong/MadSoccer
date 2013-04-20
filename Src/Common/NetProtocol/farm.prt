@@ -2,7 +2,8 @@
 protocol s2c 2000
 {
 	AckSubServerLogin( error::ERROR_CODE errorCode );
-	AckSendSubServerP2PLink( error::ERROR_CODE errorCode );
+	AckSendSubServerP2PCLink( error::ERROR_CODE errorCode );
+	AckSendSubServerP2PSLink( error::ERROR_CODE errorCode );
 	AckSendSubServerInputLink( error::ERROR_CODE errorCode );
 	AckSendSubServerOutputLink( error::ERROR_CODE errorCode );
 
@@ -11,8 +12,10 @@ protocol s2c 2000
 	AckToBindOuterPort(  error::ERROR_CODE errorCode, std::string bindSubServerSvrType, int port );
 	AckToBindInnerPort(  error::ERROR_CODE errorCode, std::string bindSubServerSvrType, int port );
 
-	AckSubServerBindComplete(  error::ERROR_CODE errorCode, std::string subServerSvrType );
-	AckSubClientConnectComplete(  error::ERROR_CODE errorCode, std::string subClientSvrType );
+	AckSubServerBindComplete(  error::ERROR_CODE errorCode, std::string bindSubServerSvrType );
+	AckSubClientConnectComplete(  error::ERROR_CODE errorCode, std::string bindSubServerSvrType );
+
+	BindSubServer( std::string bindSubSvrType, std::string ip, int port );
 
 }
 
@@ -20,7 +23,8 @@ protocol c2s 2100
 {
 	ReqSubServerLogin( std::string svrType );
 
-	SendSubServerP2PLink( std::vector<std::string> v);
+	SendSubServerP2PCLink( std::vector<std::string> v);
+	SendSubServerP2PSLink( std::vector<std::string> v);
 	SendSubServerInputLink( std::vector<std::string> v);
 	SendSubServerOutputLink( std::vector<std::string> v);
 
@@ -29,8 +33,8 @@ protocol c2s 2100
 	ReqToBindOuterPort( std::string bindSubServerSvrType );
 	ReqToBindInnerPort( std::string bindSubServerSvrType );
 
-	ReqSubServerBindComplete( std::string subServerSvrType );
-	ReqSubClientConnectComplete( std::string subClientSvrType );
+	ReqSubServerBindComplete( std::string bindSubServerSvrType );
+	ReqSubClientConnectComplete( std::string bindSubServerSvrType );
 
 }
 

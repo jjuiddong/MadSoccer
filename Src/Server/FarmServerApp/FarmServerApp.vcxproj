@@ -84,7 +84,7 @@
     <ClInclude Include="FarmServerApp.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Src\FarmServer.h" />
-    <ClInclude Include="Src\FarmServerUtillity.h" />
+    <ClInclude Include="Src\FarmServerUtility.h" />
     <ClInclude Include="Src\LinkState.h" />
     <ClInclude Include="Src\RemoteSubServer.h" />
     <ClInclude Include="Src\SubServerGroup.h" />
@@ -94,7 +94,7 @@
   <ItemGroup>
     <ClCompile Include="FarmServerApp.cpp" />
     <ClCompile Include="Src\FarmServer.cpp" />
-    <ClCompile Include="Src\FarmServerUtillity.cpp" />
+    <ClCompile Include="Src\FarmServerUtility.cpp" />
     <ClCompile Include="Src\RemoteSubServer.cpp" />
     <ClCompile Include="Src\SubServerGroup.cpp" />
     <ClCompile Include="stdafx.cpp">

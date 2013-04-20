@@ -5,6 +5,10 @@ Date:    4/1/2013
 
 하나 이상의 서버군들에게 접속하는 클래스다.
 	Server/Clients/P2p 를 관리한다.
+
+	Propagate NetEvent
+		- EVT_CONNECT
+		- EVT_DISCONNECT
 */
 #pragma once
 
@@ -18,7 +22,7 @@ namespace network { namespace multinetwork {
 	public:
 		enum STATE {
 			WAIT,
-			CONNECT, // try connect
+			TRYCONNECT, // try connect
 			RUN, // after connect
 			END, // after call Stop()
 		};
@@ -71,6 +75,7 @@ namespace network { namespace multinetwork {
 		CServerBasic *m_pServer;
 		CP2PClient *m_pP2p;
 		Clients m_Clients;
+		Clients m_RemoveClients;
 		IRemoteClientFactory *m_pRemoteClientFactory;
 		IGroupFactory *m_pGroupFactory;
 		
@@ -82,8 +87,8 @@ namespace network { namespace multinetwork {
 	inline SERVICE_TYPE CNetGroupController::GetServiceType() const { return m_ServiceType; }
 	inline CServerBasic* CNetGroupController::GetServer() { return m_pServer; }
 	inline CCoreClient* CNetGroupController::GetClient() { return m_pClient; }
-	inline bool CNetGroupController::IsConnect() const { return (m_State == RUN) || (m_State == CONNECT); }
-	inline bool CNetGroupController::IsTryConnect() const { return (m_State == CONNECT); }
-	inline void	CNetGroupController::SetTryConnect() { m_State = CONNECT; }
+	inline bool CNetGroupController::IsConnect() const { return (m_State == RUN) || (m_State == TRYCONNECT); }
+	inline bool CNetGroupController::IsTryConnect() const { return (m_State == TRYCONNECT); }
+	inline void	CNetGroupController::SetTryConnect() { m_State = TRYCONNECT; }
 
 }}

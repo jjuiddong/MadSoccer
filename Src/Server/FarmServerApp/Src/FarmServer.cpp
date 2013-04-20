@@ -3,8 +3,8 @@
 #include "FarmServer.h"
 #include "RemoteSubServer.h"
 #include "SubServerGroup.h"
-#include "Network/Utillity/ServerUserAccess.h"
-#include "FarmServerUtillity.h"
+#include "Network/Utility/ServerUserAccess.h"
+#include "FarmServerUtility.h"
 
 using namespace network;
 
@@ -97,15 +97,42 @@ void CFarmServer::ReqSubServerLogin(netid senderId, const std::string &svrType)
 
 
 /**
- @brief SendSubServerP2PLink
+ @brief SendSubServerP2PCLink
  */
-void CFarmServer::SendSubServerP2PLink(netid senderId, const std::vector<std::string> &v)
+void CFarmServer::SendSubServerP2PCLink(netid senderId, const std::vector<std::string> &v)
 {
 	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
 	if (!pGroup)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "SendSubServerP2PLink Error!!, not exist group user id = %d\n", senderId );
-		m_Protocol.AckSendSubServerP2PLink( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP);
+		clog::Error( log::ERROR_PROBLEM, "SendSubServerP2PCLink Error!!, not exist group user id = %d\n", senderId );
+		m_Protocol.AckSendSubServerP2PCLink( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP);
+		return;
+	}
+
+	RemoteSubServerPtr pClient = dynamic_cast<CRemoteSubServer*>(
+		GetServer()->GetRemoteClient(senderId));
+	if (!pClient)
+	{
+		clog::Error( log::ERROR_PROBLEM, "SendSubServerP2PCLink Error!!, not exist user id = %d\n", senderId );
+		m_Protocol.AckSendSubServerP2PCLink( senderId, SEND_T, error::ERR_NOT_FOUND_USER );
+		return;
+	}
+
+	pClient->SetP2PCLink( v );
+	m_Protocol.AckSendSubServerP2PCLink( senderId, SEND_T, error::ERR_SUCCESS );
+}
+
+
+/**
+ @brief SendSubServerP2PSLink
+ */
+void CFarmServer::SendSubServerP2PSLink(netid senderId, const std::vector<std::string> &v)
+{
+	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
+	if (!pGroup)
+	{// Error!!
+		clog::Error( log::ERROR_PROBLEM, "SendSubServerP2PSLink Error!!, not exist group user id = %d\n", senderId );
+		m_Protocol.AckSendSubServerP2PSLink( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP);
 		return;
 	}	
 
@@ -113,13 +140,13 @@ void CFarmServer::SendSubServerP2PLink(netid senderId, const std::vector<std::st
 		GetServer()->GetRemoteClient(senderId));
 	if (!pClient)
 	{
-		clog::Error( log::ERROR_PROBLEM, "SendSubServerP2PLink Error!!, not exist user id = %d\n", senderId );
-		m_Protocol.AckSendSubServerP2PLink( senderId, SEND_T, error::ERR_NOT_FOUND_USER );
+		clog::Error( log::ERROR_PROBLEM, "SendSubServerP2PSLink Error!!, not exist user id = %d\n", senderId );
+		m_Protocol.AckSendSubServerP2PSLink( senderId, SEND_T, error::ERR_NOT_FOUND_USER );
 		return;
 	}
 
-	pClient->SetP2PLink( v );
-	m_Protocol.AckSendSubServerP2PLink( senderId, SEND_T, error::ERR_SUCCESS );
+	pClient->SetP2PSLink( v );
+	m_Protocol.AckSendSubServerP2PSLink( senderId, SEND_T, error::ERR_SUCCESS );
 }
 
 
@@ -200,8 +227,10 @@ void CFarmServer::ReqServerInfoList(netid senderId, const std::string &clientSvr
 	}
 
 	hostInfo.reserve(10);
-	pServerGroup->GetServerInfo(clientSvrType, serverSvrType, CServerUserAccess(GetServer()), hostInfo);
-	m_Protocol.AckServerInfoList( senderId, SEND_T, error::ERR_SUCCESS, clientSvrType, serverSvrType, hostInfo );
+	pServerGroup->GetServerInfoCorrespondClient(clientSvrType, serverSvrType, CServerUserAccess(GetServer()), hostInfo);
+	m_Protocol.AckServerInfoList( senderId, SEND_T, 
+		(hostInfo.size() <= 0)? error::ERR_REQSERVERINFO_NOTFOUND_SERVER : error::ERR_SUCCESS, 
+		clientSvrType, serverSvrType, hostInfo );
 }
 
 
@@ -280,19 +309,101 @@ void CFarmServer::ReqToBindInnerPort(netid senderId, const std::string &bindSubS
 
 
 /**
- @brief 
+ @brief ReqSubServerBindComplete
  */
-void CFarmServer::ReqSubServerBindComplete(netid senderId, const std::string &subServerSvrType)
+void CFarmServer::ReqSubServerBindComplete(netid senderId, const std::string &bindSubServerSvrType)
 {
+	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
+	if (!pGroup)
+	{// Error!!
+		clog::Error( log::ERROR_PROBLEM, "ReqSubServerBindComplete Error!!, not exist group user id = %d\n", senderId );
+		m_Protocol.AckSubServerBindComplete( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, bindSubServerSvrType );
+		return;
+	}
 
+	SubServerGroupPtr pSubSvrGroup = dynamic_cast<CSubServerGroup*>(pGroup.Get());
+	if (!pSubSvrGroup)
+	{// Error!!
+		clog::Error( log::ERROR_PROBLEM, "ReqSubServerBindComplete Error!!, not convert group user id = %d\n", senderId );
+		m_Protocol.AckSubServerBindComplete( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, bindSubServerSvrType );
+		return;
+	}
+
+	RemoteSubServerPtr pClient = dynamic_cast<CRemoteSubServer*>(
+		GetServer()->GetRemoteClient(senderId));
+	if (!pClient)
+	{
+		clog::Error( log::ERROR_PROBLEM, "AckSubServerBindComplete Error!!, not exist user id = %d\n", senderId );
+		m_Protocol.AckSubServerBindComplete( senderId, SEND_T, error::ERR_NOT_FOUND_USER, bindSubServerSvrType );
+		return;
+	}
+
+	pClient->SetBindComplete(bindSubServerSvrType);
+	m_Protocol.AckSubServerBindComplete( senderId, SEND_T, error::ERR_SUCCESS, bindSubServerSvrType );
+
+	if (bindSubServerSvrType == "client")
+		return;
+
+	// pClient 에 p2p link 가 있거나, input_link 가 있는 서버에게 메세지를 보낸다.
+	// 다시 해석하면 pClient에게 p2pS link, output_link 인 서버에게 메세지를 보낸다.
+	std::vector<network::SHostInfo> bindInfo;
+	bindInfo.reserve(10);
+	pClient->GetServerInfoCorrespondClientLink(bindSubServerSvrType, bindInfo);
+	if (bindInfo.empty())
+	{
+		clog::Error( clog::ERROR_PROBLEM, "Not Found Bind Server binSvrType : %s", bindSubServerSvrType.c_str() );
+		return;
+	}
+	if (bindInfo.size() > 1)
+	{
+		clog::Error( clog::ERROR_CRITICAL, "Too Many Bind Server Found binSvrType : %s", bindSubServerSvrType.c_str() );
+		return;
+	}
+
+	std::vector<std::string> links;
+	pSubSvrGroup->GetCorrespondClientInfo( CServerUserAccess(GetServer()), links );
+	BOOST_FOREACH(auto &svrType, links)
+	{
+		SubServerGroupPtr pGroup = FindGroup(svrType);
+		if (!pGroup)
+			continue;
+		m_Protocol.BindSubServer( pGroup->GetId(), SEND_T, pSubSvrGroup->GetSvrType(), 
+			bindInfo.front().ip, bindInfo.front().portnum );
+	}
 }
 
 
 /**
- @brief 
+ @brief ReqSubClientConnectComplete
  */
-void CFarmServer::ReqSubClientConnectComplete(netid senderId, const std::string &subClientSvrType)
+void CFarmServer::ReqSubClientConnectComplete(netid senderId, const std::string &bindSubServerSvrType)
 {
+	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
+	if (!pGroup)
+	{// Error!!
+		clog::Error( log::ERROR_PROBLEM, "AckSubClientConnectComplete Error!!, not exist group user id = %d\n", senderId );
+		m_Protocol.AckSubClientConnectComplete( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, bindSubServerSvrType );
+		return;
+	}
 
+	SubServerGroupPtr pSubSvrGroup = dynamic_cast<CSubServerGroup*>(pGroup.Get());
+	if (!pSubSvrGroup)
+	{// Error!!
+		clog::Error( log::ERROR_PROBLEM, "AckSubClientConnectComplete Error!!, not convert group user id = %d\n", senderId );
+		m_Protocol.AckSubClientConnectComplete( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, bindSubServerSvrType );
+		return;
+	}
+
+	RemoteSubServerPtr pClient = dynamic_cast<CRemoteSubServer*>(
+		GetServer()->GetRemoteClient(senderId));
+	if (!pClient)
+	{
+		clog::Error( log::ERROR_PROBLEM, "AckSubClientConnectComplete Error!!, not exist user id = %d\n", senderId );
+		m_Protocol.AckSubClientConnectComplete( senderId, SEND_T, error::ERR_NOT_FOUND_USER, bindSubServerSvrType );
+		return;
+	}
+
+	pClient->SetConnectComplete(bindSubServerSvrType);
+	m_Protocol.AckSubClientConnectComplete( senderId, SEND_T, error::ERR_SUCCESS, bindSubServerSvrType );
 }
 

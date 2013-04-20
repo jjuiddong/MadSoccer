@@ -101,6 +101,9 @@
     <ClInclude Include="Utillity\UserAccess.h">
       <Filter>Utillity</Filter>
     </ClInclude>
+    <ClInclude Include="Marshalling\MarshallingEtc.h">
+      <Filter>Marshalling</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -132,6 +135,9 @@
     </ClCompile>
     <ClCompile Include="DataStructure\Group.cpp">
       <Filter>DataStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="Marshalling\MarshallingEtc.cpp">
+      <Filter>Marshalling</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -21,6 +21,7 @@ namespace network { namespace multinetwork {
 	struct SSvrConfigData;
 	class CFarmServerConnector : public CNetGroupDelegation
 													,public farm::s2c_ProtocolListener
+													,public AllProtocolDisplayer
 	{
 	public:
 		CFarmServerConnector( const std::string &svrType, const SSvrConfigData &config );
@@ -41,10 +42,13 @@ namespace network { namespace multinetwork {
 
 		// network event handler
 		void OnConnect(CNetEvent &event);
+		void OnConnectLink(CNetEvent &event);
+		void OnDisconnectLink(CNetEvent &event);
 
 		// network packet handler
 		virtual void AckSubServerLogin(netid senderId, const error::ERROR_CODE &errorCode) override;
-		virtual void AckSendSubServerP2PLink(netid senderId, const error::ERROR_CODE &errorCode) override;
+		virtual void AckSendSubServerP2PSLink(netid senderId, const error::ERROR_CODE &errorCode) override;
+		virtual void AckSendSubServerP2PCLink(netid senderId, const error::ERROR_CODE &errorCode) override;
 		virtual void AckSendSubServerInputLink(netid senderId, const error::ERROR_CODE &errorCode) override;
 		virtual void AckSendSubServerOutputLink(netid senderId, const error::ERROR_CODE &errorCode) override;
 		virtual void AckServerInfoList(netid senderId, const error::ERROR_CODE &errorCode, const std::string &clientSvrType, const std::string &serverSvrType, const std::vector<SHostInfo> &v) override;
@@ -52,6 +56,7 @@ namespace network { namespace multinetwork {
 		virtual void AckToBindInnerPort(netid senderId, const error::ERROR_CODE &errorCode, const std::string &bindSubServerSvrType, const int &port)override;
 		virtual void AckSubServerBindComplete(netid senderId, const error::ERROR_CODE &errorCode, const std::string &subServerSvrType) override;
 		virtual void AckSubClientConnectComplete(netid senderId, const error::ERROR_CODE &errorCode, const std::string &subClientSvrType) override;
+		virtual void BindSubServer(netid senderId, const std::string &bindSubSvrType, const std::string &ip, const int &port) override;
 
 	private:
 		farm::c2s_Protocol m_Protocol;

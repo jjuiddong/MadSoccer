@@ -21,6 +21,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetCommon", "..\Common\NetC
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FarmServerApp", "FarmServerApp\FarmServerApp.vcxproj", "{FD78AD5E-E4B5-49BE-83BD-AE78AF4E3C70}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameServerApp", "GameServerApp\GameServerApp.vcxproj", "{EE4C60E3-10FD-4E86-B9B4-70B5D4B3913F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CertifyServerApp", "CertifyServerApp\CertifyServerApp.vcxproj", "{874DA835-AE04-4482-92CD-41FC487CF369}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -55,6 +59,14 @@ Global
 		{FD78AD5E-E4B5-49BE-83BD-AE78AF4E3C70}.Debug|Win32.Build.0 = Debug|Win32
 		{FD78AD5E-E4B5-49BE-83BD-AE78AF4E3C70}.Release|Win32.ActiveCfg = Release|Win32
 		{FD78AD5E-E4B5-49BE-83BD-AE78AF4E3C70}.Release|Win32.Build.0 = Release|Win32
+		{EE4C60E3-10FD-4E86-B9B4-70B5D4B3913F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EE4C60E3-10FD-4E86-B9B4-70B5D4B3913F}.Debug|Win32.Build.0 = Debug|Win32
+		{EE4C60E3-10FD-4E86-B9B4-70B5D4B3913F}.Release|Win32.ActiveCfg = Release|Win32
+		{EE4C60E3-10FD-4E86-B9B4-70B5D4B3913F}.Release|Win32.Build.0 = Release|Win32
+		{874DA835-AE04-4482-92CD-41FC487CF369}.Debug|Win32.ActiveCfg = Debug|Win32
+		{874DA835-AE04-4482-92CD-41FC487CF369}.Debug|Win32.Build.0 = Debug|Win32
+		{874DA835-AE04-4482-92CD-41FC487CF369}.Release|Win32.ActiveCfg = Release|Win32
+		{874DA835-AE04-4482-92CD-41FC487CF369}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

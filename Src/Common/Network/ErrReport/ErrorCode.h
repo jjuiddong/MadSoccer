@@ -40,6 +40,11 @@ namespace network { namespace error {
 		ERR_P2PCONNECTION_HOSTCLIENT_DISAPPEAR,
 		
 
+		// farm  server
+
+		// request server info
+		ERR_REQSERVERINFO_NOTFOUND_SERVER,
+
 	};
 
 }}

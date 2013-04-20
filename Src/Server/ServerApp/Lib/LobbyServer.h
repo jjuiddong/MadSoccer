@@ -16,6 +16,7 @@ DECLARE_TYPE_NAME(CLobbyServer)
 class CLobbyServer //: public network::CServer
 									: public network::multinetwork::CNetGroupDelegation
 									, public login::c2s_ProtocolListener
+									, public network::AllProtocolDisplayer
 									, public memmonitor::Monitor<CLobbyServer, TYPE_NAME(CLobbyServer)>
 {
 public:

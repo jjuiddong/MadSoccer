@@ -10,7 +10,7 @@ using namespace network;
  v 에 저장해 리턴한다.
  serverSvrType 타입의 서버가 bind 중일 때만 저장한다.
  */
-bool CSubServerGroup::GetServerInfo( const std::string &clientSvrType, const std::string &serverSvrType, 
+bool CSubServerGroup::GetServerInfoCorrespondClient( const std::string &clientSvrType, const std::string &serverSvrType, 
 	IUserAccess &userAccess, OUT std::vector<SHostInfo> &v)
 {
 	BOOST_FOREACH(auto &netId, GetUsers())
@@ -19,8 +19,37 @@ bool CSubServerGroup::GetServerInfo( const std::string &clientSvrType, const std
 			userAccess.GetUser(netId).Get());
 		if (!pSubServer)
 			continue;
-		pSubServer->GetLinkInfo( clientSvrType, v );
+		pSubServer->GetServerInfoCorrespondClientLink( clientSvrType, v );
 	}
+	return true;
+}
+
+
+/**
+@brief 선택된 그룹에 Client로 접속하는 서버타입을 리턴한다.
+            output_link, p2pS 에 등록된 서버타입을 리턴한다.
+
+			svrTypes 의 기존 정보는 모두 초기화 된다.
+*/
+bool CSubServerGroup::GetCorrespondClientInfo( IUserAccess &userAccess, OUT std::vector<std::string> &svrTypes )
+{
+	svrTypes.clear();
+	svrTypes.reserve(32);
+
+	BOOST_FOREACH(auto &netId, GetUsers())
+	{
+		RemoteSubServerPtr pSubServer = dynamic_cast<CRemoteSubServer*>(
+			userAccess.GetUser(netId).Get());
+		if (!pSubServer)
+			continue;
+
+		pSubServer->GetOutputLink( svrTypes );
+		pSubServer->GetP2PSLink( svrTypes );
+	}
+
+	// 중복된 스트링 제거
+	auto it = std::unique(svrTypes.begin(), svrTypes.end());
+	svrTypes.erase(it, svrTypes.end());
 	return true;
 }
 

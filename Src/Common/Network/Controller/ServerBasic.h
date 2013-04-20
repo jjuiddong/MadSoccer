@@ -1,10 +1,10 @@
-//------------------------------------------------------------------------
-// Name:    ServerBasic.h
-// Author:  jjuiddong
-// Date:    2012-11-27
-// 
-// 클라이언트가 접속할 Server를 표현한다.
-//------------------------------------------------------------------------
+/**
+Name:   ServerBasic.h
+Author:  jjuiddong
+Date:    2012-11-27
+
+클라이언트가 접속할 Server를 표현한다.
+*/
 #pragma once
 
 namespace network
@@ -33,7 +33,7 @@ namespace network
 		IRemoteClientFactory* GetRemoteClientFactory() const;
 		IGroupFactory* GetGroupFactory() const;
 
-		common::CriticalSection& GetCS();		
+		common::CriticalSection& GetCS();
 		netid			GetNetIdFromSocket(SOCKET sock);
 		bool				IsExist(netid netId);
 		void				Clear();
@@ -51,6 +51,7 @@ namespace network
 
 		// Event Handler
 		void				OnListen();
+		void				OnDisconnect();
 		void				OnClientJoin(netid netId);
 		void				OnClientLeave(netid netId);
 

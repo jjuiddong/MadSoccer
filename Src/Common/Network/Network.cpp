@@ -4,15 +4,10 @@
 #include "Controller/NetController.h"
 #include "MultiNetwork/MultiNetwork.h"
 #include <MMSystem.h>
+#include "Utility/Protocols.h"
 
-
-namespace network
-{
-	// 아직아무것도없음
-};
 
 using namespace network;
-
 
 //------------------------------------------------------------------------
 // 네트워크에 관련된 클래스들을 초기화 한다.
@@ -23,6 +18,8 @@ bool network::Init(int logicThreadCount, const std::string &svrConfigFileName) /
 	clog::Log( clog::LOG_F_N_O, "Network Init\n" );
 
 	common::InitRandNoDuplicate();
+	protocols::Init();
+
 	bool result = CNetController::Get()->Init(logicThreadCount);
 
 	if (result)
@@ -40,6 +37,7 @@ bool network::Init(int logicThreadCount, const std::string &svrConfigFileName) /
 void network::Clear()
 {
 	dbg::Print( "Network Clear" );
+	protocols::Cleanup();
 	CNetController::Release();
 	multinetwork::CMultiNetwork::Release();
 }

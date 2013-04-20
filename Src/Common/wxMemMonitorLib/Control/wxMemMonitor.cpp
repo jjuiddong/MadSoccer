@@ -6,8 +6,7 @@
 #include "Global.h"
 #include "../ui/LogWindow.h"
 #include "../dia/DiaWrapper.h"
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
+
 
 namespace memmonitor
 {
@@ -45,6 +44,7 @@ bool memmonitor::Init(EXECUTE_TYPE type, HINSTANCE hInst, const std::string conf
 {
 	SetExecuteType(type);
 	SetConfigFileName(configFileName);
+	SethInstance(hInst);
 
 	if (IsThreadRunning)
 	{

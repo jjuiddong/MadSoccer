@@ -36,14 +36,14 @@
     <Filter Include="Lib\Marshalling">
       <UniqueIdentifier>{353524c7-21d1-419f-a714-be2bfc3dc60a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Lib\Utillity">
-      <UniqueIdentifier>{648cc939-3b3c-4290-bd49-501ada6af3e2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Lib\ProtocolHandler">
       <UniqueIdentifier>{0a45ec0b-5b81-40cd-b4e5-ed8a71f44e66}</UniqueIdentifier>
     </Filter>
     <Filter Include="Lib\MultiNetwork">
       <UniqueIdentifier>{7dc2aa02-2618-4d8d-8726-2aa3e345f931}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Utility">
+      <UniqueIdentifier>{648cc939-3b3c-4290-bd49-501ada6af3e2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -122,6 +122,9 @@
     <ClCompile Include="ProtocolHandler\AllProtocolDisplayer.cpp">
       <Filter>Lib\ProtocolHandler</Filter>
     </ClCompile>
+    <ClCompile Include="Utility\Protocols.cpp">
+      <Filter>Lib\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Network.h">
@@ -196,15 +199,6 @@
     <ClInclude Include="ErrReport\ErrorCode.h">
       <Filter>Lib\ErrReport</Filter>
     </ClInclude>
-    <ClInclude Include="Utillity\ServerUserAccess.h">
-      <Filter>Lib\Utillity</Filter>
-    </ClInclude>
-    <ClInclude Include="Utillity\Utillity.h">
-      <Filter>Lib\Utillity</Filter>
-    </ClInclude>
-    <ClInclude Include="Utillity\ClientUserAccess.h">
-      <Filter>Lib\Utillity</Filter>
-    </ClInclude>
     <ClInclude Include="ProtocolHandler\BasicC2SProtocolHandler.h">
       <Filter>Lib\ProtocolHandler</Filter>
     </ClInclude>
@@ -237,6 +231,18 @@
     </ClInclude>
     <ClInclude Include="ProtocolHandler\AllProtocolDisplayer.h">
       <Filter>Lib\ProtocolHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\ClientUserAccess.h">
+      <Filter>Lib\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\Protocols.h">
+      <Filter>Lib\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\ServerUserAccess.h">
+      <Filter>Lib\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\Utility.h">
+      <Filter>Lib\Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

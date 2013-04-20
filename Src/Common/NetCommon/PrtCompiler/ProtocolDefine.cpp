@@ -190,3 +190,60 @@ std::string network::Packet2String(const CPacket &packet, sProtocol *protocol)
 
 	return ss.str();
 }
+
+
+/**
+ @brief 
+ */
+void network::ReleaseRmi(sRmi *p)
+{
+	if (!p) return;
+	ReleaseProtocol(p->protocol);
+	ReleaseRmi(p->next);
+	delete p;
+}
+
+
+/**
+ @brief ReleaseRmiOnly
+ */
+void network::ReleaseRmiOnly(sRmi *p)
+{
+	if (!p) return;
+	ReleaseRmiOnly(p->next);
+	delete p;
+}
+
+/**
+ @brief 
+ */
+void network::ReleaseProtocol(sProtocol *p)
+{
+	if (!p) return;
+	ReleaseArg(p->argList);
+	ReleaseProtocol(p->next);
+	delete p;
+}
+
+
+/**
+ @brief 
+ */
+void network::ReleaseCurrentProtocol(sProtocol *p)
+{
+	if (!p) return;
+	ReleaseArg(p->argList);
+	delete p;
+}
+
+
+/**
+ @brief 
+ */
+void network::ReleaseArg(sArg *p)
+{
+	if (!p) return;
+	if (p->var) delete p->var;
+	ReleaseArg(p->next);
+	delete p;
+}

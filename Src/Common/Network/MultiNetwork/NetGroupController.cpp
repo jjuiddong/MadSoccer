@@ -45,6 +45,11 @@ CNetGroupController::~CNetGroupController()
 		SAFE_DELETE(client);
 	}
 	m_Clients.clear();
+	BOOST_FOREACH(auto &client, m_RemoveClients.m_Seq)
+	{
+		SAFE_DELETE(client);
+	}
+	m_RemoveClients.clear();
 }
 
 
@@ -101,7 +106,7 @@ bool	CNetGroupController::Send(netid netId, const SEND_FLAG flag, const CPacket 
 		{
 			BOOST_FOREACH(auto &client, m_Clients.m_Seq)
 			{
-				if (client)
+				if (client && client->IsConnect())
 					return client->Send(netId, flag, packet);
 			}
 		}
@@ -208,7 +213,7 @@ void	CNetGroupController::SetGroupFactory( IGroupFactory *ptr )
 void	CNetGroupController::OnConnect( CNetEvent &event )
 {
 	m_State = RUN;
-	SearchEventTable(event);// Event Propagate
+	SearchEventTable(CNetEvent(EVT_CONNECT, this));// Event Propagate
 }
 
 
@@ -219,7 +224,21 @@ void	CNetGroupController::OnDisconnect( CNetEvent &event )
 {
 	if (m_ServiceType == SERVER)
 		m_State = END;
-	SearchEventTable(event); // Event Propagate
+	SearchEventTable(CNetEvent(EVT_DISCONNECT, this)); // Event Propagate
+
+	// disconnect 된 client 제거
+	if (CLIENT == m_ServiceType)
+	{
+		auto it = m_Clients.find(event.GetHandler()->GetNetId());
+		if (m_Clients.end() == it)
+			return;
+
+		it->second->Stop();
+		m_Clients.remove( event.GetHandler()->GetNetId() );
+
+		// 제거 clients 로 옮겨져서, 나중에 지워진다.
+		m_RemoveClients.insert( Clients::value_type(event.GetHandler()->GetNetId(), (CCoreClient*)event.GetHandler().Get() ) );
+	}
 }
 
 
