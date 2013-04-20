@@ -18,6 +18,7 @@ namespace memmonitor
 	EXECUTE_TYPE g_Type = INNER_PROCESS;
 	std::string g_ErrorMsg;
 	std::string g_ConfigFileName;
+	HINSTANCE g_hInstance;
 
 	// memory map
 	MapType *g_pMemMap = NULL;
@@ -50,7 +51,14 @@ void memmonitor::SetConfigFileName(const std::string &fileName)
 {
 	g_ConfigFileName = fileName;
 }
-
+void	memmonitor::SethInstance(HINSTANCE hInstance)
+{
+	g_hInstance = hInstance;	
+}
+HINSTANCE	memmonitor::GethInstance()
+{
+	return g_hInstance;
+}
 
 MemTreePtr memmonitor::GetMemoryTree()
 {
