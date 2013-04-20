@@ -7,6 +7,7 @@
 #include <atlcomcli.h>
 #include "../Control/Global.h"
 #include "../ui/LogWindow.h"
+#include "../ui/PropertyWindow.h"
 
 namespace visualizer
 {
@@ -23,6 +24,7 @@ namespace visualizer
 		CPropertyWindow *propertyWindow;
 		wxPGProperty *parentProperty;
 		SSymbolInfo symbol; /// current symbol
+		int depth;
 
 		SMakerData() {}
 		SMakerData(const SMakerData &rhs) {
@@ -171,7 +173,7 @@ void visualizer::Release()
 //------------------------------------------------------------------------
 bool	visualizer::MakeVisualizerProperty( CPropertyWindow *pPropertiesWnd, 
 											   wxPGProperty *pParentProp, 
-											   const SMemInfo &memInfo, const string &symbolName )
+											   const SMemInfo &memInfo, const string &symbolName, const int depth )
 {
 	const std::string str = ParseObjectName(symbolName);
 	SVisualizerScript *pVisScript = FindVisualizer(str);
@@ -187,6 +189,7 @@ bool	visualizer::MakeVisualizerProperty( CPropertyWindow *pPropertiesWnd,
 		makerData.parentProperty = pParentProp;
 		makerData.symbol.pSym = pSymbol;
 		makerData.symbol.mem = SMemInfo(symbolName.c_str(), memInfo.ptr,0);
+		makerData.depth = depth;
 
 		try
 		{
@@ -213,7 +216,7 @@ bool	visualizer::MakeVisualizerProperty( CPropertyWindow *pPropertiesWnd,
 // 
 //------------------------------------------------------------------------
 bool	visualizer::MakeVisualizerProperty( CPropertyWindow *pPropertiesWnd, 
-	wxPGProperty *pParentProp, const SSymbolInfo &symbol )
+	wxPGProperty *pParentProp, const SSymbolInfo &symbol, const int depth )
 {
 	// 타입심볼을 얻는다.
 	dia::SymbolState symState;
@@ -222,7 +225,7 @@ bool	visualizer::MakeVisualizerProperty( CPropertyWindow *pPropertiesWnd,
 
 	string typeName = dia::GetSymbolName(pBaseType);
 	const bool result = MakeVisualizerProperty(pPropertiesWnd, pParentProp, 
-		symbol.mem, typeName);
+		symbol.mem, typeName, depth);
 
 	if (dia::NEW_SYMBOL == symState)
 		pBaseType->Release();
@@ -236,7 +239,18 @@ bool	visualizer::MakeVisualizerProperty( CPropertyWindow *pPropertiesWnd,
 void visualizer::MakeProperty_Visualizer( SVisualizer *pvis, const SMakerData &makerData )
 {
 	RET(!pvis);
-	// 일단 preview만 출력 
+
+	//todo : iterator 구문이 있는 경우 모두 이 방식대로 자식들을 제거해야 한다.
+	// list, map, vector 의 경우만 예외적으로 자식들을 모두제거해서 리프레쉬한다.
+	if ((pvis->matchType->type->id == "std::list") || 
+		(pvis->matchType->type->id == "std::map") ||
+		(pvis->matchType->type->id == "std::vector"))
+	{
+		if (makerData.propertyWindow && makerData.parentProperty)
+			makerData.propertyWindow->RemoveChildProperty(makerData.parentProperty);		
+	}
+
+	// 일단 preview만 출력 	
 	MakePropertyStatements( pvis->preview, makerData );
 }
 
@@ -288,7 +302,7 @@ void visualizer::MakePropertySimpleExpression( SSimpleExp *pexp, const SMakerDat
 	
 	const bool isApplyVisualizer = (pexp->format != Disp_Auto);
 	findVar.mem.name = pexp->text->str;
-	MakeProperty_DefaultForm( makerData.propertyWindow, makerData.parentProperty, findVar, isApplyVisualizer );
+	MakeProperty_DefaultForm( makerData.propertyWindow, makerData.parentProperty, findVar, isApplyVisualizer, makerData.depth );
 }
 
 
@@ -381,7 +395,8 @@ void visualizer::MakePropertyIteratorStmt_List( SVisBracketIterator_Stmt *pitor_
 	CheckError( result, makerData, "#list head expression error, $e not found" );
 
 	eachMakerData.symbol = head;
-	eachMakerData.symbol.isNotRelease = true;
+	head.isNotRelease = true;
+
 	int count = 0;
 
 	while (nodePtr 
@@ -401,7 +416,9 @@ void visualizer::MakePropertyIteratorStmt_List( SVisBracketIterator_Stmt *pitor_
 
 		nodePtr = Point2PointValue((DWORD)next.mem.ptr);
 		SAFE_RELEASE(eachMakerData.symbol.pSym);
+
 		eachMakerData.symbol = next;
+		next.isNotRelease = true;
 		++count;
 	}
 }
@@ -429,6 +446,7 @@ void visualizer::MakePropertyIteratorStmt_Array( SVisBracketIterator_Stmt *pitor
 	SMakerData arrayMakeData = makerData;
 	arrayMakeData.index = 0;
 	arrayMakeData.symbol.isNotRelease = true;
+
 	for(arrayMakeData.index=0; arrayMakeData.index < size; ++arrayMakeData.index)
 	{
 		std::stringstream ss;
@@ -442,7 +460,7 @@ void visualizer::MakePropertyIteratorStmt_Array( SVisBracketIterator_Stmt *pitor
 
 
 /**
- @brief 
+ @brief MakePropertyTree_Traverse
  */
 void MakePropertyTree_Traverse(SVisBracketIterator_Stmt *pitor_stmt, SMakerData &makerData, 
 	DWORD skipPtr, const int displaySize)
@@ -487,7 +505,7 @@ void MakePropertyTree_Traverse(SVisBracketIterator_Stmt *pitor_stmt, SMakerData 
 
 
 /**
- @brief 
+ @brief MakePropertyIteratorStmt_Tree
  */
 void visualizer::MakePropertyIteratorStmt_Tree( SVisBracketIterator_Stmt *pitor_stmt, 
 	const SMakerData &makerData )
@@ -615,7 +633,7 @@ void visualizer::MakePropertyExpression( SExpression *pexp, const SMakerData &ma
 			CheckError(result, makerData, " variable expression error!!, undetected" );
 			if (!title.empty())
 				findSymbol.mem.name = title;
-			MakeProperty_DefaultForm( makerData.propertyWindow, makerData.parentProperty, findSymbol);
+			MakeProperty_DefaultForm( makerData.propertyWindow, makerData.parentProperty, findSymbol, true, makerData.depth );
 		}
 		break;
 

@@ -8,6 +8,8 @@
 #include "../dia/DiaWrapper.h"
 #include "../visualizer/PropertyMaker.h"
 #include "../memory/SharedMemoryMng.h"
+#include <shlwapi.h>
+#pragma comment(lib, "shlwapi")
 
 
 using namespace memmonitor;
@@ -65,6 +67,12 @@ CFrame::CFrame(wxWindow* parent) : wxFrame(parent, -1, _("wxMemMonitor"),
 		ReadConfigFile( GetConfigFileName() );
 		RepositioningWindow();
 	}
+
+	// TitleBar setting
+	char moduleName[ MAX_PATH] = "";  
+	GetModuleFileNameA(GethInstance(), moduleName, MAX_PATH);
+	char *name = PathFindFileNameA(moduleName);
+	SetTitle(name);
 
 }
 
