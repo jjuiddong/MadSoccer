@@ -1,4 +1,5 @@
 
+
 #include "stdafx.h"
 #include "ProtocolParser.h"
 
@@ -10,14 +11,18 @@ CProtocolParser::CProtocolParser()
 	m_pRmiList = NULL;
 	m_bTrace = FALSE;
 	m_bError = FALSE;
+	m_bAutoRemove = TRUE;
 
 }
 
 CProtocolParser::~CProtocolParser()
 {
 	SAFE_DELETE(m_pScan);
-	ReleaseRmi(m_pRmiList);
 
+	if (m_bAutoRemove)
+	{
+		ReleaseRmi(m_pRmiList);
+	}
 }
 
 
@@ -310,29 +315,6 @@ void CProtocolParser::SyntaxError( char *szMsg, ... )
  	printf( "Syntax error at line %s %d: %s", m_FileName, m_pScan->GetLineNo(), buf );
 }
 
-void CProtocolParser::ReleaseRmi(sRmi *p)
-{
-	if (!p) return;
-	ReleaseProtocol(p->protocol);
-	ReleaseRmi(p->next);
-	delete p;
-}
-
-void CProtocolParser::ReleaseProtocol(sProtocol *p)
-{
-	if (!p) return;
-	ReleaseArg(p->argList);
-	ReleaseProtocol(p->next);
-	delete p;
-}
-
-void CProtocolParser::ReleaseArg(sArg *p)
-{
-	if (!p) return;
-	if (p->var) delete p->var;
-	ReleaseArg(p->next);
-	delete p;
-}
 
 void CProtocolParser::WritePIDLMacro(std::string PIDLFileName, sRmi *rmi)
 {

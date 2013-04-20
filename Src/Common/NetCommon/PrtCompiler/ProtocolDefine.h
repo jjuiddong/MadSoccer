@@ -67,6 +67,13 @@ namespace network
 		_sRmi *next;
 	} sRmi;
 
+
+	// Release Protocol Parser Tree
+	void ReleaseRmi(sRmi *p);
+	void ReleaseRmiOnly(sRmi *p);
+	void ReleaseProtocol(sProtocol *p);
+	void ReleaseCurrentProtocol(sProtocol *p);
+	void ReleaseArg(sArg *p);
 	
 	// Functions
 	void PrintToken( Tokentype token, char *szTokenString );

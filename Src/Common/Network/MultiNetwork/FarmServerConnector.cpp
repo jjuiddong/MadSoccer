@@ -62,14 +62,19 @@ void	CFarmServerConnector::CreateLink()
 	}
 
 	// P2P Client Link 积己
-	BOOST_FOREACH(auto &bindSubSvrType, m_Config.p2pS)
+	BOOST_FOREACH(auto &bindSubSvrType, m_Config.p2pC)
 	{
 		CreateSubController( CLIENT, true, m_Config.svrType, bindSubSvrType );
 	}
 
+	// P2P Server Link 积己
+	if (m_Config.p2pS.size() > 0)
+	{
+		CreateSubController( SERVER, true, m_Config.svrType,  "p2p" );
+	}	
+
 	// 扁夯 辑滚 积己 
 	CreateSubController( SERVER, false, m_Config.svrType,  "client" );
-
 }
 
 
@@ -91,10 +96,19 @@ void	CFarmServerConnector::ConnectLink()
 	}
 
 	// P2P Client Link 积己
-	BOOST_FOREACH(auto &bindSubSvrType, m_Config.p2pS)
+	BOOST_FOREACH(auto &bindSubSvrType, m_Config.p2pC)
 	{
 		ConnectSubController( CLIENT, true, m_Config.svrType, bindSubSvrType );
 	}
+
+	// P2P Server Link 积己
+	if (m_Config.p2pS.size() > 0)
+	{
+		ConnectSubController( SERVER, true, m_Config.svrType,  "p2p" );
+	}
+
+	// 扁夯 辑滚 Bind
+	ConnectSubController( SERVER, false, m_Config.svrType,  "client" );
 }
 
 
@@ -121,6 +135,9 @@ bool	CFarmServerConnector::CreateSubController( SERVICE_TYPE serviceType, bool I
 		return false;
 	}
 
+	EVENT_CONNECT_TO( pctrl, this, EVT_CONNECT, CFarmServerConnector, CFarmServerConnector::OnConnectLink );
+	EVENT_CONNECT_TO( pctrl, this, EVT_DISCONNECT, CFarmServerConnector, CFarmServerConnector::OnDisconnectLink );
+
 	return true;
 }
 
@@ -128,7 +145,7 @@ bool	CFarmServerConnector::CreateSubController( SERVICE_TYPE serviceType, bool I
 /**
 @brief ConnectSubController
 */
-void	CFarmServerConnector::ConnectSubController(SERVICE_TYPE serviceType, bool IsInnerBind,
+void	CFarmServerConnector::ConnectSubController( SERVICE_TYPE serviceType, bool IsInnerBind,
 	const std::string &connectSubSvrType, const std::string &bindSubSvrType )
 {
 	NetGroupControllerPtr ptr = CMultiNetwork::Get()->GetController(bindSubSvrType);
@@ -164,32 +181,73 @@ void CFarmServerConnector::OnConnect(CNetEvent &event)
 
 
 /**
- @brief 
+@brief OnConnectLink
  */
-void CFarmServerConnector::AckSubServerLogin(netid senderId, const error::ERROR_CODE &errorCode)
+void CFarmServerConnector::OnConnectLink(CNetEvent &event)
 {
-	if (errorCode == error::ERR_SUCCESS)
-	{
-		std::vector<std::string> v;
-		std::copy( m_Config.p2pC.begin(), m_Config.p2pC.end(), std::back_inserter(v) );
-		std::copy( m_Config.p2pS.begin(), m_Config.p2pS.end(), std::back_inserter(v) );
-		m_Protocol.SendSubServerP2PLink( SERVER_NETID, SEND_T, v );
-		m_Protocol.SendSubServerInputLink( SERVER_NETID, SEND_T, m_Config.inputLink );
-		m_Protocol.SendSubServerOutputLink( SERVER_NETID, SEND_T, m_Config.outputLink );
-	}
+	CNetGroupController *pctrl = dynamic_cast<CNetGroupController*>(event.GetHandler().Get());
+	if (!pctrl)
+		return;
+
+	if (pctrl->GetServiceType() == CLIENT)
+		m_Protocol.ReqSubClientConnectComplete( SERVER_NETID, SEND_T, pctrl->GetConnectSvrType() );
+	else if (pctrl->GetServiceType() == SERVER)
+		m_Protocol.ReqSubServerBindComplete( SERVER_NETID, SEND_T, pctrl->GetConnectSvrType() );
+}
+
+
+/**
+@brief OnDisconnectLink
+ */
+void CFarmServerConnector::OnDisconnectLink(CNetEvent &event)
+{
+	//clog::ErrorMsg( "Err!!! Not Connect or Not Bind NetGroupController" );
 }
 
 
 /**
  @brief 
  */
-void CFarmServerConnector::AckSendSubServerP2PLink(netid senderId, const error::ERROR_CODE &errorCode)
+void CFarmServerConnector::AckSubServerLogin(netid senderId, const error::ERROR_CODE &errorCode)
+{
+	if (errorCode == error::ERR_SUCCESS)
+	{
+		m_Protocol.SendSubServerP2PCLink( SERVER_NETID, SEND_T, m_Config.p2pC );
+		m_Protocol.SendSubServerP2PSLink( SERVER_NETID, SEND_T, m_Config.p2pS );
+		m_Protocol.SendSubServerInputLink( SERVER_NETID, SEND_T, m_Config.inputLink );
+		m_Protocol.SendSubServerOutputLink( SERVER_NETID, SEND_T, m_Config.outputLink );
+	}
+	else
+	{
+		clog::Error( clog::ERROR_CRITICAL, "AckSubServerLogin Error!! errorCode= %d, svrType = %s", errorCode, m_Config.svrType.c_str() );
+		clog::ErrorMsg( common::format( "AckSubServerLogin Error!! errorCode= %d, svrType = %s", errorCode, m_Config.svrType.c_str()) );
+	}
+}
+
+
+/**
+ @brief AckSendSubServerP2PCLink
+ */
+void CFarmServerConnector::AckSendSubServerP2PCLink(netid senderId, const error::ERROR_CODE &errorCode)
 {
 	if (!m_IsDetectedSendConfig)
 		m_IsDetectedSendConfig = (errorCode != error::ERR_SUCCESS);
 
 	if (errorCode != error::ERR_SUCCESS)
-		clog::Error( clog::ERROR_CRITICAL, "P2P Link Error!!" );
+		clog::Error( clog::ERROR_CRITICAL, "P2PC Link Error!!" );
+}
+
+
+/**
+ @brief AckSendSubServerP2PSLink
+ */
+void CFarmServerConnector::AckSendSubServerP2PSLink(netid senderId, const error::ERROR_CODE &errorCode)
+{
+	if (!m_IsDetectedSendConfig)
+		m_IsDetectedSendConfig = (errorCode != error::ERR_SUCCESS);
+
+	if (errorCode != error::ERR_SUCCESS)
+		clog::Error( clog::ERROR_CRITICAL, "P2PS Link Error!!" );
 }
 
 /**
@@ -347,3 +405,22 @@ void CFarmServerConnector::AckSubClientConnectComplete(netid senderId, const err
 
 }
 
+
+/**
+ @brief 
+ */
+void CFarmServerConnector::BindSubServer(netid senderId, const std::string &bindSubSvrType, 
+	const std::string &ip, const int &port)
+{
+	NetGroupControllerPtr ptr = CMultiNetwork::Get()->GetController(bindSubSvrType);	
+	if (!ptr)
+	{
+		clog::Error( clog::ERROR_CRITICAL, "BindSubServer Error!! not found bindSubSvr : %s", bindSubSvrType.c_str() );
+		return;
+	}
+
+	if (!ptr->Start(ip, port))
+	{
+		clog::Error( clog::ERROR_CRITICAL, "BindSubServer Start Error!! ip=%s, port=%d", ip.c_str(), port );
+	}
+}

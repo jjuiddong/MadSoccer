@@ -42,7 +42,7 @@ bool netlauncher::LaunchServer(ServerBasicPtr pSvr, int port)
 	nRet = bind(svrSocket, (LPSOCKADDR)&saServer, sizeof(struct sockaddr) );
 	if(nRet == SOCKET_ERROR)
 	{
-		clog::Error( clog::ERROR_CRITICAL,  "bind() error\n" );
+		clog::Error( clog::ERROR_CRITICAL,  "bind() error port: %d\n", port );
 		closesocket(svrSocket);
 		return false;
 	}
@@ -66,6 +66,7 @@ bool netlauncher::LaunchServer(ServerBasicPtr pSvr, int port)
 	{
 		clog::Error( clog::ERROR_CRITICAL, "listen() error\n" );
 		closesocket(svrSocket);
+		pSvr->OnDisconnect();
 		return false;
 	}
 
@@ -139,8 +140,9 @@ bool	netlauncher::LaunchCoreClient(CoreClientPtr pClient, const std::string &ip,
 	nRet = connect(clientSocket, (LPSOCKADDR)&saServer, sizeof(struct sockaddr) );
 	if(nRet == SOCKET_ERROR)
 	{
-		clog::Error( clog::ERROR_CRITICAL, "connect() error\n" );
+		clog::Error( clog::ERROR_CRITICAL, "connect() error ip=%s, port=%d\n", ip.c_str(), port );
 		closesocket(clientSocket);
+		pClient->OnDisconnect();
 		return false;
 	}
 

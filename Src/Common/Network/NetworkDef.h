@@ -47,7 +47,7 @@ typedef RoomMap::iterator RoomItor;
 typedef common::ReferencePtr<network::CRoom> RoomPtr;
 
 
-#include "Utillity/Utillity.h"
+#include "Utility/Utility.h"
 
 #include "DataStructure/Room.h"
 #include "DataStructure/User.h"
@@ -71,6 +71,8 @@ typedef common::ReferencePtr<network::multinetwork::CNetGroupDelegation> NetGrou
 #include "MultiNetwork/MultiNetwork.h"
 #include "MultiNetwork/NetGroupController.h"
 #include "MultiNetwork/NetGroupDelegation.h"
+
+#include "ProtocolHandler\AllProtocolDisplayer.h"
 
 
 

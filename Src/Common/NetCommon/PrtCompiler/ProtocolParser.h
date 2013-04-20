@@ -18,27 +18,16 @@ namespace network
 		CProtocolParser();
 		virtual ~CProtocolParser();
 
-	protected:
-		CProtocolScanner *m_pScan;
-		sRmi			*m_pRmiList;
-
-		char m_FileName[ MAX_PATH];
-		Tokentype m_Token;
-		BOOL m_bTrace;
-		BOOL m_bError;
-
-	public:
 		sRmi* Parse( const char *szFileName, BOOL bTrace=FALSE );
 		BOOL Parse( BYTE *pFileMem, int nFileSize , BOOL bTrace=FALSE );
 		BOOL IsError() { return m_bError; }
+		void SetAutoRemove(BOOL bAutoRemove) { m_bAutoRemove = bAutoRemove; }
 		void Clear();
+
 
 	private:
 		BOOL Match( Tokentype t );
 		void SyntaxError( char *szMsg, ... );
-		void ReleaseRmi(sRmi *p);
-		void ReleaseProtocol(sProtocol *p);
-		void ReleaseArg(sArg *p);
 
 		void WritePIDLMacro(std::string PIDLFileName, sRmi *p);
 		void WriteRmi(FILE *fp, sRmi *p);
@@ -82,6 +71,15 @@ namespace network
 		std::string number();
 		int num();
 		std::string id();
+
+	private:
+		CProtocolScanner *m_pScan;
+		sRmi	 *m_pRmiList;
+		char m_FileName[ MAX_PATH];
+		Tokentype m_Token;
+		BOOL m_bTrace;
+		BOOL m_bError;
+		BOOL m_bAutoRemove;
 
 	};
 }

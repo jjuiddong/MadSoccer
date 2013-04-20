@@ -219,7 +219,6 @@ bool	memmonitor::InitMemoryMonitor(const std::string &configFileName)
 		ptree props;
 		boost::property_tree::read_json(configFileName.c_str(), props);
 		string pdbPath = props.get<string>("pdbpath");
-		string shareMemoryName = props.get<string>("sharedmemoryname");
 
 		// Pdb Load
 		if (!dia::Init(pdbPath))
@@ -231,6 +230,7 @@ bool	memmonitor::InitMemoryMonitor(const std::string &configFileName)
 
 		if (OUTER_PROCESS == GetExecuteType())
 		{
+			string shareMemoryName = props.get<string>("sharedmemoryname");
 			if (!sharedmemory::Init(shareMemoryName, sharedmemory::SHARED_CLIENT))
 			{
 				SetErrorMsg(

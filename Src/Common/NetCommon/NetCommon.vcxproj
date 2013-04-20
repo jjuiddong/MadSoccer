@@ -90,6 +90,7 @@
     <ClInclude Include="Interface\ProtocolDispatcher.h" />
     <ClInclude Include="Interface\ProtocolListener.h" />
     <ClInclude Include="Marshalling\Marshalling.h" />
+    <ClInclude Include="Marshalling\MarshallingEtc.h" />
     <ClInclude Include="Marshalling\MarshallingGroup.h" />
     <ClInclude Include="NetCommon.h" />
     <ClInclude Include="PrtCompiler\ProtocolDefine.h" />
@@ -106,6 +107,7 @@
     <ClCompile Include="DataStructure\Packet.cpp" />
     <ClCompile Include="DataStructure\RemoteClient.cpp" />
     <ClCompile Include="Marshalling\Marshalling.cpp" />
+    <ClCompile Include="Marshalling\MarshallingEtc.cpp" />
     <ClCompile Include="Marshalling\MarshallingGroup.cpp" />
     <ClCompile Include="PrtCompiler\ProtocolDefine.cpp" />
     <ClCompile Include="PrtCompiler\ProtocolParser.cpp" />

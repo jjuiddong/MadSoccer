@@ -109,6 +109,7 @@
     <ClCompile Include="Service\AllProtocolListener.cpp" />
     <ClCompile Include="Service\Client.cpp" />
     <ClCompile Include="Service\Server.cpp" />
+    <ClCompile Include="Utility\Protocols.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Algorithm\GroupTraverse.h" />
@@ -146,9 +147,10 @@
     <ClInclude Include="Service\Client.h" />
     <ClInclude Include="Service\Server.h" />
     <ClInclude Include="Task\TaskWorkServer.h" />
-    <ClInclude Include="Utillity\ClientUserAccess.h" />
-    <ClInclude Include="Utillity\ServerUserAccess.h" />
-    <ClInclude Include="Utillity\Utillity.h" />
+    <ClInclude Include="Utility\ClientUserAccess.h" />
+    <ClInclude Include="Utility\Protocols.h" />
+    <ClInclude Include="Utility\ServerUserAccess.h" />
+    <ClInclude Include="Utility\Utility.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />

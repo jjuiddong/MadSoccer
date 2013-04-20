@@ -8,13 +8,13 @@ Date:    4/10/2013
 
 namespace network
 {
-	class CAllProtocolDisplayer : public all::ProtocolListener
+	class AllProtocolDisplayer : public all::ProtocolListener
 	{
 	public:
-		CAllProtocolDisplayer(int displayType=0);
+		AllProtocolDisplayer(int displayType=0);
 		virtual void recv(netid senderId, network::CPacket &packet) override;
 	private:
 		int m_DisplayType;
+
 	};
 }
-

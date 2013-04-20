@@ -70,12 +70,15 @@ namespace network
 
 
 
+
 	struct SHostInfo
 	{
 		std::string ip;
 		int portnum;
-	};
 
+		SHostInfo() {}
+		SHostInfo(std::string ip_, int port) : ip(ip_), portnum(port) {}
+	};
 }
 
 
@@ -118,6 +121,7 @@ typedef ProtocolMap::iterator ProtocolItor;
 #include "DataStructure/Group.h"
 #include "Marshalling/Marshalling.h"
 #include "Marshalling/MarshallingGroup.h"
+#include "Marshalling/MarshallingEtc.h"
 
 #include "Controller/NetConnector.h"
 #include "Controller/NetConnectorLinker.h"

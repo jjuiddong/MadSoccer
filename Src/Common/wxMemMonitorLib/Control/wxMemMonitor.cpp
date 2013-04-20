@@ -36,6 +36,7 @@ void CApp::OnTerminate(wxThreadEvent& WXUNUSED(event))
 	OnExit();
 }
 
+
 //------------------------------------------------------------------------
 // load config file
 // init dia library

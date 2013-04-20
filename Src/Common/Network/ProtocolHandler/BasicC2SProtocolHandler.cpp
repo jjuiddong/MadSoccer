@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 #include "BasicC2SProtocolHandler.h"
-#include "../Utillity/ServerUserAccess.h"
+#include "../Utility/ServerUserAccess.h"
 #include "../Algorithm/GroupTraverse.h"
 
 #include "NetProtocol/Src/basic_ProtocolListener.cpp"

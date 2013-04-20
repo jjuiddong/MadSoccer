@@ -590,6 +590,15 @@ void	CServerBasic::OnListen()
 	SearchEventTable( CNetEvent(EVT_LISTEN, this) );
 }
 
+
+/**
+ @brief Bind 실패시 호출된다.
+ */
+void	CServerBasic::OnDisconnect()
+{
+	SearchEventTable( CNetEvent(EVT_DISCONNECT, this) );
+}
+
 //------------------------------------------------------------------------
 // Event Client Join
 //------------------------------------------------------------------------
