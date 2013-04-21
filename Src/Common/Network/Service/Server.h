@@ -14,7 +14,8 @@ namespace basic { class s2c_Protocol; }
 namespace network
 {
 	class CBasicC2SProtocolHandler;
-	class CServer : public CServerBasic
+	class CServer //: public CServerBasic
+		: public network::multinetwork::CNetGroupDelegation
 	{
 		friend class CBasicC2SProtocolHandler;
 
@@ -23,6 +24,9 @@ namespace network
 		virtual ~CServer();
 
 	protected:
+		// Event Handler
+		virtual void	OnConnectNetGroupController() override;
+
 		// Network Event Handler
 		void OnClientJoin(CNetEvent &event);
 		void OnClientLeave(CNetEvent &event);

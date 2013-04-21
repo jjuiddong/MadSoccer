@@ -7,7 +7,9 @@
 using namespace std;
 
 BEGIN_EVENT_TABLE( CPrinter, wxTextCtrl )
+	EVT_CONTEXT_MENU(CPrinter::OnContextMenu)
 	EVT_TIMER(ID_REFRESH_TIMER, CPrinter::OnRefreshTimer)
+	EVT_MENU(MENU_CLEAR, CPrinter::OnMenuClear)
 END_EVENT_TABLE()
 
 
@@ -51,4 +53,27 @@ void CPrinter::OnRefreshTimer(wxTimerEvent& event)
 		m_Pos = m_InputFile.tellg();
 	}	
 	m_InputFile.close();
+}
+
+
+/**
+ @brief 
+ */
+void CPrinter::OnContextMenu(wxContextMenuEvent& event)
+{
+	wxPoint point = event.GetPosition();
+	point = ScreenToClient(point);
+
+	wxMenu menu;
+	menu.Append(MENU_CLEAR, wxT("&Clear"));
+	PopupMenu(&menu, point);
+}
+
+
+/**
+ @brief 
+ */
+void CPrinter::OnMenuClear(wxCommandEvent& event)
+{
+	Clear();
 }

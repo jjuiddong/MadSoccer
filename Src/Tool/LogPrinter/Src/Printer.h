@@ -10,8 +10,9 @@ Date:    4/20/2013
 class CPrinter : public wxTextCtrl
 {
 	enum  {
+		MENU_CLEAR = 100,
 		ID_REFRESH_TIMER = 100,
-		REFRESH_INTERVAL = 1000,
+		REFRESH_INTERVAL = 1000,		
 	};
 
 public:
@@ -22,6 +23,8 @@ protected:
 	// Event Handler
 	DECLARE_EVENT_TABLE()
 	void OnRefreshTimer(wxTimerEvent& event);
+	void OnContextMenu(wxContextMenuEvent& event);
+	void OnMenuClear(wxCommandEvent& event);
 
 private:
 	wxTimer	m_Timer;

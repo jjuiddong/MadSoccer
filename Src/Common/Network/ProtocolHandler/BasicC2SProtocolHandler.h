@@ -15,7 +15,7 @@ namespace network
 	class CBasicC2SProtocolHandler : public basic::c2s_ProtocolListener
 	{
 	public:
-		CBasicC2SProtocolHandler( CServer &svr );
+		CBasicC2SProtocolHandler( CServerBasic &svr );
 		virtual ~CBasicC2SProtocolHandler();
 
 		// Network Protocol Handler
@@ -30,7 +30,7 @@ namespace network
 			OUT GroupPtr &pParent, OUT GroupPtr &pFrom, OUT GroupPtr &pNew );
 
 	protected:
-		CServer						&m_Server;		/// CServer Reference 
+		CServerBasic				&m_Server;		/// CServer Reference 
 		basic::s2c_Protocol		m_BasicProtocol;
 	};
 }

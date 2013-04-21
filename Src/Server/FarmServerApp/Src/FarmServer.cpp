@@ -228,6 +228,12 @@ void CFarmServer::ReqServerInfoList(netid senderId, const std::string &clientSvr
 
 	hostInfo.reserve(10);
 	pServerGroup->GetServerInfoCorrespondClient(clientSvrType, serverSvrType, CServerUserAccess(GetServer()), hostInfo);
+
+	if (hostInfo.empty())
+	{// Error!!
+		clog::Error( log::ERROR_PROBLEM, "ReqServerInfoList Error!!, not found ServerInfo svrType = %s\n", clientSvrType.c_str() );
+	}
+
 	m_Protocol.AckServerInfoList( senderId, SEND_T, 
 		(hostInfo.size() <= 0)? error::ERR_REQSERVERINFO_NOTFOUND_SERVER : error::ERR_SUCCESS, 
 		clientSvrType, serverSvrType, hostInfo );

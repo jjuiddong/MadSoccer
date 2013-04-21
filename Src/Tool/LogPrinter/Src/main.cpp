@@ -15,11 +15,10 @@ class MyFrame : public wxFrame
 public:
 	MyFrame(wxWindow* parent);
 	~MyFrame() { m_mgr.UnInit(); }
-//protected:
+protected:
 	// Event Handler
 	DECLARE_EVENT_TABLE()
 	void OnRefreshTimer(wxTimerEvent& event);
-//private:
 public:
 	wxAuiManager m_mgr;
 	wxTimer	m_Timer;
@@ -46,8 +45,6 @@ MyFrame::MyFrame(wxWindow* parent) : wxFrame(parent, -1, _("LogPrinter"),
 
 	// tell the manager to "commit" all the changes just made
 	m_mgr.Update();
-
-	//m_CmdLine
 
 	m_Timer.SetOwner(this, ID_REFRESH_TIMER);
 	m_Timer.Start( REFRESH_INTERVAL );
@@ -88,9 +85,9 @@ void MyFrame::OnRefreshTimer(wxTimerEvent& event)
 		while (result.end() != it)
 		{
 			CPrinter *prt = new CPrinter(this, *it);
-			m_mgr.AddPane(prt, wxBOTTOM, *it);
+			m_mgr.AddPane(prt, wxLEFT, *it);
 			wxAuiPaneInfo& pane = m_mgr.GetPane(prt);
-			pane.MinSize(0,1000);
+			pane.MinSize(1000,0);
 			it++;
 		}
 		m_mgr.Update();

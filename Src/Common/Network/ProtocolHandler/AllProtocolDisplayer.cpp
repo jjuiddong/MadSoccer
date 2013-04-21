@@ -23,4 +23,5 @@ void AllProtocolDisplayer::recv(netid senderId, network::CPacket &packet)
 	ss << "Recv = ";
 	ss << network::Packet2String(packet, protocol);
 	clog::Log( clog::LOG_OUTPUTWINDOW, ss.str() );
+	clog::Log( clog::LOG_FILE, ss.str() );
 }

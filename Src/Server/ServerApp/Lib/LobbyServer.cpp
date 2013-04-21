@@ -8,16 +8,25 @@ using namespace network;
 
 CLobbyServer::CLobbyServer() //: CServer(SERVICE_EXCLUSIVE_THREAD)
 {
+}
+
+CLobbyServer::~CLobbyServer() 
+{
+
+}
+
+
+/**
+ @brief OnConnectNetGroupController
+ */
+void	CLobbyServer::OnConnectNetGroupController()
+{
 	RegisterProtocol(&m_LoginProtocol);
 	RegisterProtocol(&m_BasicProtocol);
 	AddProtocolListener( this );
 
 	EVENT_CONNECT( EVT_CLIENT_JOIN, CLobbyServer, CLobbyServer::OnClientJoin );
 	EVENT_CONNECT( EVT_CLIENT_LEAVE, CLobbyServer, CLobbyServer::OnClientLeave );
-}
-
-CLobbyServer::~CLobbyServer() 
-{
 
 }
 

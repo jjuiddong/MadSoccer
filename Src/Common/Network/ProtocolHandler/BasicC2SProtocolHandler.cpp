@@ -10,7 +10,7 @@
 using namespace network;
 using namespace network::error;
 
-CBasicC2SProtocolHandler::CBasicC2SProtocolHandler( CServer &svr ) :
+CBasicC2SProtocolHandler::CBasicC2SProtocolHandler( CServerBasic &svr ) :
 	m_Server(svr)
 {
 	svr.RegisterProtocol(&m_BasicProtocol);

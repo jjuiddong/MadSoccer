@@ -13,11 +13,10 @@ Date:    12/29/2012
 #include "NetProtocol/Src/basic_ProtocolListener.h"
 
 DECLARE_TYPE_NAME(CLobbyServer)
-class CLobbyServer //: public network::CServer
-									: public network::multinetwork::CNetGroupDelegation
-									, public login::c2s_ProtocolListener
-									, public network::AllProtocolDisplayer
-									, public memmonitor::Monitor<CLobbyServer, TYPE_NAME(CLobbyServer)>
+class CLobbyServer	: public network::multinetwork::CNetGroupDelegation
+								, public login::c2s_ProtocolListener
+								, public network::AllProtocolDisplayer
+								, public memmonitor::Monitor<CLobbyServer, TYPE_NAME(CLobbyServer)>
 {
 public:
 	CLobbyServer();
@@ -46,6 +45,9 @@ protected:
 	void			SendRooms(netid userId);
 	void			SendUsers(netid userId);
 
+	// Event Handler
+	virtual void	OnConnectNetGroupController() override;
+
 	// Network Event Handler
 	void			OnClientJoin(network::CNetEvent &event);
 	void			OnClientLeave(network::CNetEvent &event);
@@ -56,9 +58,10 @@ protected:
 	// Test
 	virtual void ReqLogIn(netid senderId, const std::string &id, const std::string &password) override;
 
-protected:
+private:
 	UserMap				m_Users;
 	RoomMap			m_Rooms;
+
 	// Protocol
 	login::s2c_Protocol	m_LoginProtocol;
 	basic::s2c_Protocol	m_BasicProtocol;

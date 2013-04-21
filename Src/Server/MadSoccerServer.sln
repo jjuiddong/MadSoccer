@@ -25,6 +25,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameServerApp", "GameServer
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CertifyServerApp", "CertifyServerApp\CertifyServerApp.vcxproj", "{874DA835-AE04-4482-92CD-41FC487CF369}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LoginServerApp", "LoginServerApp\LoginServerApp.vcxproj", "{ADA35EBA-DE0C-4087-8BC6-5FABB41215D4}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RelayServerApp", "RelayServerApp\RelayServerApp.vcxproj", "{D8E78C19-FE37-417C-8EE2-960499C8EFF3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -67,6 +71,14 @@ Global
 		{874DA835-AE04-4482-92CD-41FC487CF369}.Debug|Win32.Build.0 = Debug|Win32
 		{874DA835-AE04-4482-92CD-41FC487CF369}.Release|Win32.ActiveCfg = Release|Win32
 		{874DA835-AE04-4482-92CD-41FC487CF369}.Release|Win32.Build.0 = Release|Win32
+		{ADA35EBA-DE0C-4087-8BC6-5FABB41215D4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{ADA35EBA-DE0C-4087-8BC6-5FABB41215D4}.Debug|Win32.Build.0 = Debug|Win32
+		{ADA35EBA-DE0C-4087-8BC6-5FABB41215D4}.Release|Win32.ActiveCfg = Release|Win32
+		{ADA35EBA-DE0C-4087-8BC6-5FABB41215D4}.Release|Win32.Build.0 = Release|Win32
+		{D8E78C19-FE37-417C-8EE2-960499C8EFF3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D8E78C19-FE37-417C-8EE2-960499C8EFF3}.Debug|Win32.Build.0 = Debug|Win32
+		{D8E78C19-FE37-417C-8EE2-960499C8EFF3}.Release|Win32.ActiveCfg = Release|Win32
+		{D8E78C19-FE37-417C-8EE2-960499C8EFF3}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
