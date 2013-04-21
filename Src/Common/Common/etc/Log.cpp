@@ -2,11 +2,18 @@
 #include "stdafx.h"
 #include "log.h"
 
+
 namespace common { namespace log {
 
 	void Log_char( const char *label, const char *msg );
 	void ErrorLog_char( const char *label, const char *msg );
 	void Output_char( const char *label, const char *msg );
+
+	std::string GetLogFileName();
+	std::string GetErrorLogFileName();
+
+	std::string g_LogFileName;
+	std::string g_ErrorLogFileName;
 }}
 
 using namespace common;
@@ -36,6 +43,28 @@ bool IsCutMessage(const char *msg)
 
 
 /**
+ @brief 로그파일 이름 리턴
+ */
+string log::GetLogFileName()
+{
+	string processName = GetCurrentProcessName();
+	processName += ".Log.log";
+	return processName;
+}
+
+
+/**
+ @brief  에러로그파일 이름 리턴 
+ */
+string log::GetErrorLogFileName()
+{
+	string processName = GetCurrentProcessName();
+	processName += ".ErrLog.log";
+	return processName;
+}
+
+
+/**
  @brief 
  */
 void log::Log_char( const char *label, const char *msg )
@@ -43,7 +72,10 @@ void log::Log_char( const char *label, const char *msg )
 	if (IsCutMessage(msg))
 		return;
 
-	ofstream fs("Log.log", ios_base::app);
+	if (g_LogFileName.empty())
+		g_LogFileName = GetLogFileName();
+
+	ofstream fs(g_LogFileName, ios_base::app);
 	if (!fs.is_open()) return;
 	fs << label << "   [" << common::GetTimeString() << "]  " << msg << endl;
 }
@@ -57,7 +89,10 @@ void log::ErrorLog_char( const char *label, const char *msg )
 	if (IsCutMessage(msg))
 		return;
 
-	ofstream fs("ErrLog.log", ios_base::app);
+	if (g_ErrorLogFileName.empty())
+		g_ErrorLogFileName = GetErrorLogFileName();
+
+	ofstream fs(g_ErrorLogFileName, ios_base::app);
 	if (!fs.is_open()) return;
 	fs << label << "   [" << common::GetTimeString() << "]  " << msg << endl;
 }
@@ -81,7 +116,10 @@ void log::Output_char( const char *label, const char *msg )
 //------------------------------------------------------------------------
 void log::Log(const std::string &str)
 {
-	ofstream fs("Log.log", ios_base::out);
+	if (g_LogFileName.empty())
+		g_LogFileName = GetLogFileName();
+
+	ofstream fs(g_LogFileName, ios_base::out);
 	if (!fs.is_open()) return;
 
 	fs << "[" << common::GetTimeString() << "]	" << str << endl;
@@ -99,7 +137,11 @@ void log::Log( const char* fmt, ...)
 	vsnprintf_s( textString, sizeof(textString), _TRUNCATE, fmt, args );
 	va_end ( args );
 
-	ofstream fs("Log.log", ios_base::out);
+
+	if (g_LogFileName.empty())
+		g_LogFileName = GetLogFileName();
+
+	ofstream fs(g_LogFileName, ios_base::out);
 	if (!fs.is_open()) return;
 	fs << "[" << common::GetTimeString() << "]	" << textString << endl;
 }
@@ -120,7 +162,10 @@ void log::ErrorMsg(const std::string &str)
 //------------------------------------------------------------------------
 void log::ErrorLog(const std::string &str)
 {
-	std::ofstream fs("ErrorLog.log", std::ios_base::out);
+	if (g_ErrorLogFileName.empty())
+		g_ErrorLogFileName = GetErrorLogFileName();
+
+	std::ofstream fs(g_ErrorLogFileName, std::ios_base::out);
 	if (!fs.is_open()) return;
 
 	fs << "[" << common::GetTimeString() << "]	" << str;

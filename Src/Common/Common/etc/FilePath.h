@@ -14,4 +14,5 @@ namespace common
 	std::string GetFileNameExceptExt(const std::string &fileName);
 	std::string GetFilePathExceptFileName(const std::string &fileName);
 
+	std::string GetCurrentProcessName();
 }

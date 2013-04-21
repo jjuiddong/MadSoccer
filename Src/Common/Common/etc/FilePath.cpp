@@ -55,3 +55,16 @@ std::string common::GetFilePathExceptFileName(const std::string &fileName)
 	PathRemoveFileSpecA( srcFileName );
 	return srcFileName;
 }
+
+
+/**
+ @brief 
+ */
+std::string common::GetCurrentProcessName()
+{
+	HMODULE hMod = GetModuleHandle(NULL);
+	char moduleName[ MAX_PATH] = "";  
+	GetModuleFileNameA(hMod, moduleName, MAX_PATH);
+	char *name = PathFindFileNameA(moduleName);
+	return name;
+}
