@@ -105,8 +105,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	}
 
 exit:
-	network::Clear();
 	SAFE_DELETE(g_pLobbyServer);
+	network::Clear();
 	//SAFE_DELETE(g_pChatServer);
 	memmonitor::Cleanup();
 

@@ -17,7 +17,7 @@ class CChatServer : public network::CServer
 								,public memmonitor::Monitor<CChatServer, TYPE_NAME(CChatServer)>
 {
 public:
-	CChatServer() : CServer(network::SERVICE_EXCLUSIVE_THREAD)
+	CChatServer()// : CServer(network::SERVICE_EXCLUSIVE_THREAD)
 	{
 		RegisterProtocol(&m_S2CProtocol);
 		//AddListener( this );

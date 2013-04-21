@@ -20,7 +20,7 @@ namespace network
 		friend class CBasicC2SProtocolHandler;
 
 	public:
-		CServer(PROCESS_TYPE procType);
+		CServer();
 		virtual ~CServer();
 
 	protected:

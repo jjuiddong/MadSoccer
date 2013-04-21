@@ -7,8 +7,7 @@
 
 using namespace network;
 
-CServer::CServer(PROCESS_TYPE procType) :
-	//CServerBasic(procType)
+CServer::CServer() :
 	m_pBasicProtocol(NULL)
 ,	m_pBasicPrtHandler(NULL)
 {
@@ -31,7 +30,7 @@ void	CServer::OnConnectNetGroupController()
 	m_pBasicProtocol = new basic::s2c_Protocol();
 	RegisterProtocol(m_pBasicProtocol);
 
-	//m_pBasicPrtHandler = new CBasicC2SProtocolHandler(*this);
+	m_pBasicPrtHandler = new CBasicC2SProtocolHandler(*GetServer());
 	AddProtocolListener(m_pBasicPrtHandler);
 
 	EVENT_CONNECT(EVT_CLIENT_JOIN, CServer, CServer::OnClientJoin);
@@ -54,10 +53,12 @@ void CServer::OnClientJoin(CNetEvent &event)
  */
 void CServer::OnClientLeave(CNetEvent &event)
 {
-	//GroupPtr pGroup = GetRootGroup().GetChildFromUser( event.GetNetId() );
-	//RET(!pGroup);
+	RET(!GetServer());
 
-	//m_pBasicProtocol->JoinMember(pGroup->GetId(), SEND_T_V, INVALID_NETID, 
-	//	pGroup->GetId(), event.GetNetId() );	
+	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( event.GetNetId() );
+	RET(!pGroup);
+
+	m_pBasicProtocol->JoinMember(pGroup->GetId(), SEND_T_V, INVALID_NETID, 
+		pGroup->GetId(), event.GetNetId() );	
 }
 

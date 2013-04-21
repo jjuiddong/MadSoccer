@@ -21,6 +21,8 @@ CLobbyServer::~CLobbyServer()
  */
 void	CLobbyServer::OnConnectNetGroupController()
 {
+	CServer::OnConnectNetGroupController();
+
 	RegisterProtocol(&m_LoginProtocol);
 	RegisterProtocol(&m_BasicProtocol);
 	AddProtocolListener( this );
