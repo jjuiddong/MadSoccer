@@ -1,14 +1,20 @@
 
 protocol s2c 600
 {
-	AckLogIn( network::error::ERROR_CODE errorCode, std::string id, netid netId  );
-	AckLogOut( network::error::ERROR_CODE errorCode, std::string id, int result );
+	
+	AckLogIn( error::ERROR_CODE errorCode, std::string id, netid userId  );
+	AckLogOut( error::ERROR_CODE errorCode, std::string id, int result );
+
+	AckMoveToServer( error::ERROR_CODE errorCode, std::string serverName );
+
 }
 
 protocol c2s 700
 {
-	ReqLogIn( std::string id, std::string password );
+	ReqLogIn( std::string id, std::string passwd );
 	ReqLogOut( std::string id );
+
+	ReqMoveToServer( std::string serverName );
 
 }
 

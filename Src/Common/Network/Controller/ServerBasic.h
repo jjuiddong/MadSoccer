@@ -23,6 +23,7 @@ namespace network
 
 		bool				AddRemoteClient(SOCKET sock, const std::string &ip);
 		CRemoteClient* GetRemoteClient(netid netId);
+		CRemoteClient* GetRemoteClient(const std::string &clientId);
 		bool				RemoveRemoteClient(netid netId);
 		bool				RemoveRemoteClientSocket(netid netId);
 		RemoteClientItor	RemoveRemoteClientInLoop(netid netId);

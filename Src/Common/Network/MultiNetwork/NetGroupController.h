@@ -49,14 +49,14 @@ namespace network { namespace multinetwork {
 		CServerBasic* GetServer();
 		CCoreClient* GetClient();
 
+		// overriding
+		virtual bool	AddProtocolListener(ProtocolListenerPtr pListener) override;
+		virtual bool	RemoveProtocolListener(ProtocolListenerPtr pListener) override;
+
 	protected:
 		bool				Connect( SERVICE_TYPE type, const std::string &ip, const int port );
 
 	private:
-		// overriding
-		virtual bool	AddProtocolListener(ProtocolListenerPtr pListener);
-		virtual bool	RemoveProtocolListener(ProtocolListenerPtr pListener);
-
 		// Event Handler
 		void				OnConnect( CNetEvent &event );
 		void				OnDisconnect( CNetEvent &event );

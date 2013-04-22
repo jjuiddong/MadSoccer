@@ -18,5 +18,11 @@
     <CustomBuild Include="farm.prt">
       <Filter>Protocol</Filter>
     </CustomBuild>
+    <CustomBuild Include="server_network.prt">
+      <Filter>Protocol</Filter>
+    </CustomBuild>
+    <CustomBuild Include="certify.prt">
+      <Filter>Protocol</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

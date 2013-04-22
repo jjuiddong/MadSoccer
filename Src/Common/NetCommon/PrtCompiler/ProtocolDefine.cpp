@@ -171,7 +171,7 @@ std::string network::Packet2String(const CPacket &packet, sProtocol *protocol)
 	const int protocolID = tempPacket.GetProtocolId();
 	const int packetID = tempPacket.GetPacketId();
 
-	ss << protocol->name << " ";
+	ss << protocol->name << " sender = " << packet.GetSenderId() << " ";
 
 	sArg *arg = protocol->argList;
 	while (arg)

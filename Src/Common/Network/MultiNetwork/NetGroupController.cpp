@@ -12,7 +12,7 @@ using namespace network::multinetwork;
 
 CNetGroupController::CNetGroupController( SERVICE_TYPE type, const std::string &svrType,
 	const std::string &connectSvrType ) :
-	CNetConnector(SERVICE_EXCLUSIVE_THREAD)
+	CNetConnector(SERVICE_SEPERATE_THREAD)
 ,	m_State(WAIT)
 ,	m_ServiceType(type)
 ,	m_svrType(svrType)
@@ -25,7 +25,7 @@ CNetGroupController::CNetGroupController( SERVICE_TYPE type, const std::string &
 {
 	if (SERVER == type)
 	{
-		m_pServer = new CServerBasic( SERVICE_EXCLUSIVE_THREAD );
+		m_pServer = new CServerBasic( SERVICE_SEPERATE_THREAD );
 		EVENT_CONNECT_TO( m_pServer, this, EVT_LISTEN, CNetGroupController, CNetGroupController::OnConnect );
 		EVENT_CONNECT_TO( m_pServer, this, EVT_CONNECT, CNetGroupController, CNetGroupController::OnConnect );
 		EVENT_CONNECT_TO( m_pServer, this, EVT_DISCONNECT, CNetGroupController, CNetGroupController::OnDisconnect );

@@ -49,7 +49,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	}
 
 	pCertifySvr = new CCertifyServer();
-	if (!network::ConnectDelegation("client", 	pCertifySvr))
+	if (!network::ConnectDelegation("p2p", 	pCertifySvr))
 	{
 		clog::Error( clog::ERROR_CRITICAL, "network :: ConnectDelegation Fail !!\n" );
 		goto exit;
@@ -70,7 +70,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	}
 
 exit:
-	//SAFE_DELETE(pGameSvr);
+	SAFE_DELETE(pCertifySvr);
 	network::Clear();
 	memmonitor::Cleanup();
 	return 1;

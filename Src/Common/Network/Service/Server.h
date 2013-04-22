@@ -14,8 +14,7 @@ namespace basic { class s2c_Protocol; }
 namespace network
 {
 	class CBasicC2SProtocolHandler;
-	class CServer //: public CServerBasic
-		: public network::multinetwork::CNetGroupDelegation
+	class CServer : public network::multinetwork::CNetGroupDelegation
 	{
 		friend class CBasicC2SProtocolHandler;
 
@@ -32,7 +31,6 @@ namespace network
 		void OnClientLeave(CNetEvent &event);
 
 	private:
-		// protocols
 		basic::s2c_Protocol		*m_pBasicProtocol;
 		CBasicC2SProtocolHandler *m_pBasicPrtHandler;
 	};

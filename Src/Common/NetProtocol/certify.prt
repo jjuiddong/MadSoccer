@@ -1,0 +1,9 @@
+
+protocol s2s 900
+{
+
+	ReqUserId( std::string id, std::string passwd ); 
+	AckUserId( error::ERROR_CODE errorCode, std::string id, netid userId  );
+
+}
+

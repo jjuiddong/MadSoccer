@@ -250,6 +250,22 @@ CRemoteClient* CServerBasic::GetRemoteClient(netid netId)
 }
 
 
+/**
+ @brief  리모트 클라이언트 얻기
+ */
+CRemoteClient* CServerBasic::GetRemoteClient(const std::string &clientId)
+{
+	BOOST_FOREACH(auto &client, m_RemoteClients)
+	{
+		if (client.second && client.second->GetName() == clientId)
+		{
+			return client.second;
+		}
+	}
+	return NULL;
+}
+
+
 //------------------------------------------------------------------------
 // 소켓번호로 netid 를 얻는다.
 //------------------------------------------------------------------------

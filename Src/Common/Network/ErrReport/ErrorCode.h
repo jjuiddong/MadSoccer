@@ -17,6 +17,7 @@ namespace network { namespace error {
 		// common
 		ERR_NOT_FOUND_GROUP,
 		ERR_NOT_FOUND_USER,
+		ERR_ALREADY_EXIST_USER,
 
 		// group
 		ERR_NO_CREATE_GROUP,
