@@ -51,6 +51,13 @@ namespace network
 		SERVICE_CHILD_THREAD,				// 부모 쓰레드에서 처리한다. 만약 부모가 USER_LOOP 라면, 자식도 USER_LOOP로 동작한다.
 	};
 
+	enum CLIENT_STATE
+	{
+		CLIENTSTATE_DISCONNECT,
+		CLIENTSTATE_LOGIN_WAIT,
+		CLIENTSTATE_LOGIN,
+	};
+
 	enum P2P_STATE
 	{
 		P2P_HOST,

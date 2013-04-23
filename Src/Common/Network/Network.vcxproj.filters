@@ -125,6 +125,9 @@
     <ClCompile Include="Utility\Protocols.cpp">
       <Filter>Lib\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="ErrReport\ErrorCheck.cpp">
+      <Filter>Lib\ErrReport</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Network.h">
@@ -243,6 +246,9 @@
     </ClInclude>
     <ClInclude Include="Utility\Utility.h">
       <Filter>Lib\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="ErrReport\ErrorCheck.h">
+      <Filter>Lib\ErrReport</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

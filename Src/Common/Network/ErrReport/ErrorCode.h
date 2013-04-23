@@ -18,6 +18,14 @@ namespace network { namespace error {
 		ERR_NOT_FOUND_GROUP,
 		ERR_NOT_FOUND_USER,
 		ERR_ALREADY_EXIST_USER,
+		ERR_INVALID_USER,
+
+		// basic protocol
+		
+			// MoveToServer
+			ERR_MOVETOSERVER_INVALID_SERVERNAME,
+			ERR_MOVETOSERVER_NOT_FOUND_SERVER,
+
 
 		// group
 		ERR_NO_CREATE_GROUP,

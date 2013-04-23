@@ -42,6 +42,9 @@
     <ClInclude Include="Src\LoginServer.h">
       <Filter>Src</Filter>
     </ClInclude>
+    <ClInclude Include="Src\BasicC2SProtocolHandler_LoginSvr.h">
+      <Filter>Src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -51,6 +54,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Src\LoginServer.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BasicC2SProtocolHandler_LoginSvr.cpp">
       <Filter>Src</Filter>
     </ClCompile>
   </ItemGroup>

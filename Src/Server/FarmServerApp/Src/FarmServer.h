@@ -27,16 +27,16 @@ private:
 	virtual void	OnConnectNetGroupController() override;
 
 	// Network Packet Handling
-	virtual void ReqSubServerLogin(netid senderId, const std::string &svrType) override;
-	virtual void SendSubServerP2PCLink(netid senderId, const std::vector<std::string> &v) override;
-	virtual void SendSubServerP2PSLink(netid senderId, const std::vector<std::string> &v) override;
-	virtual void SendSubServerInputLink(netid senderId, const std::vector<std::string> &v) override;
-	virtual void SendSubServerOutputLink(netid senderId, const std::vector<std::string> &v) override;
-	virtual void ReqServerInfoList(netid senderId, const std::string &clientSvrType, const std::string &serverSvrType) override;
-	virtual void ReqToBindOuterPort(netid senderId, const std::string &bindSubServerSvrType) override;
-	virtual void ReqToBindInnerPort(netid senderId, const std::string &bindSubServerSvrType) override;
-	virtual void ReqSubServerBindComplete(netid senderId, const std::string &bindSubServerSvrType) override;
-	virtual void ReqSubClientConnectComplete(netid senderId, const std::string &bindSubServerSvrType) override;
+	virtual bool ReqSubServerLogin(netid senderId, const std::string &svrType) override;
+	virtual bool SendSubServerP2PCLink(netid senderId, const std::vector<std::string> &v) override;
+	virtual bool SendSubServerP2PSLink(netid senderId, const std::vector<std::string> &v) override;
+	virtual bool SendSubServerInputLink(netid senderId, const std::vector<std::string> &v) override;
+	virtual bool SendSubServerOutputLink(netid senderId, const std::vector<std::string> &v) override;
+	virtual bool ReqServerInfoList(netid senderId, const std::string &clientSvrType, const std::string &serverSvrType) override;
+	virtual bool ReqToBindOuterPort(netid senderId, const std::string &bindSubServerSvrType) override;
+	virtual bool ReqToBindInnerPort(netid senderId, const std::string &bindSubServerSvrType) override;
+	virtual bool ReqSubServerBindComplete(netid senderId, const std::string &bindSubServerSvrType) override;
+	virtual bool ReqSubClientConnectComplete(netid senderId, const std::string &bindSubServerSvrType) override;
 
 private:
 	farm::s2c_Protocol m_Protocol;

@@ -14,6 +14,7 @@ using namespace marshalling;
 CPacket network::DisconnectPacket(netid disconnectId, int netControllerUniqValue)
 {
 	CPacket packet;
+	packet.SetSenderId(SERVER_NETID);
 	packet.SetProtocolId(0); // basic_protocol
 	packet.SetPacketId(PACKETID_DISCONNECT);
 	packet << netControllerUniqValue; // packet 을 검증하기 위한 용도로 쓰인다.
@@ -29,6 +30,7 @@ CPacket network::DisconnectPacket(netid disconnectId, int netControllerUniqValue
 CPacket network::ClientDisconnectPacket(netid disconnectId, int netControllerUniqValue)
 {
 	CPacket packet;
+	packet.SetSenderId(SERVER_NETID);
 	packet.SetProtocolId(0); // basic_protocol
 	packet.SetPacketId(PACKETID_CLIENT_DISCONNECT);
 	packet << netControllerUniqValue; // packet 을 검증하기 위한 용도로 쓰인다.
@@ -43,6 +45,7 @@ CPacket network::ClientDisconnectPacket(netid disconnectId, int netControllerUni
 CPacket network::AcceptPacket(SOCKET acceptSocket, std::string clientIP )
 {
 	CPacket packet;
+	packet.SetSenderId(SERVER_NETID);
 	packet.SetProtocolId(0); // basic_protocol
 	packet.SetPacketId(PACKETID_ACCEPT);
 	packet << acceptSocket;
@@ -57,6 +60,7 @@ CPacket network::AcceptPacket(SOCKET acceptSocket, std::string clientIP )
 CPacket network::P2PMemberJoin(netid joinMemberId )
 {
 	CPacket packet;
+	packet.SetSenderId(SERVER_NETID);
 	packet.SetProtocolId(0); // basic_protocol
 	packet.SetPacketId(PACKETID_P2P_MEMBER_JOIN);
 	packet << joinMemberId;
@@ -70,6 +74,7 @@ CPacket network::P2PMemberJoin(netid joinMemberId )
 CPacket network::P2PMemberLeave(netid leaveMemberId )
 {
 	CPacket packet;
+	packet.SetSenderId(SERVER_NETID);
 	packet.SetProtocolId(0); // basic_protocol
 	packet.SetPacketId(PACKETID_P2P_MEMBER_LEAVE);
 	packet << leaveMemberId;

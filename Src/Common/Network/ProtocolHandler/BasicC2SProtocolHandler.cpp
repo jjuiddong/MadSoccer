@@ -21,10 +21,65 @@ CBasicC2SProtocolHandler::~CBasicC2SProtocolHandler()
 }
 
 
+/**
+ @brief ReqLogIn
+ */
+bool CBasicC2SProtocolHandler::ReqLogIn(netid senderId, const std::string &id, const std::string &passwd)
+{
+	CRemoteClient *pClient = m_Server.GetRemoteClient(id);
+	if (pClient)
+	{
+		clog::Error( clog::ERROR_PROBLEM, "ReqLogin Error!! client already exist senderId=%d, id=%s",
+			senderId, id.c_str());
+		m_BasicProtocol.AckLogIn(senderId, SEND_T, error::ERR_ALREADY_EXIST_USER, id, 0);
+		return false;
+	}
+
+	pClient = m_Server.GetRemoteClient(senderId);
+	if (!pClient)
+	{
+		clog::Error( clog::ERROR_PROBLEM, "ReqLogin Error!! client not found senderId=%d, id=%s",
+			senderId, id.c_str());
+		m_BasicProtocol.AckLogIn(senderId, SEND_T, error::ERR_NOT_FOUND_USER, id, 0);
+		return false;
+	}
+
+	if (pClient->GetState() != CLIENTSTATE_LOGIN_WAIT)
+	{
+		clog::Error( clog::ERROR_PROBLEM, "ReqLogin Error!! client state error state=%d",
+			pClient->GetState() );
+		m_BasicProtocol.AckLogIn(senderId, SEND_T, error::ERR_INVALID_USER, id, 0);
+		return false;
+	}
+
+	pClient->SetName(id);
+	return true;
+}
+
+
+/**
+ @brief ReqLogOut
+ */
+bool CBasicC2SProtocolHandler::ReqLogOut(netid senderId, const std::string &id)
+{
+
+	return true;
+}
+
+
+/**
+ @brief 
+ */
+bool CBasicC2SProtocolHandler::ReqMoveToServer(netid senderId, const std::string &serverName)
+{
+	return true;
+}
+
+
 //------------------------------------------------------------------------
 // groupid : -1 이라면 root 그룹의 자식을 보낸다.
 //------------------------------------------------------------------------
-void CBasicC2SProtocolHandler::ReqGroupList(netid senderId, const netid &groupid)
+bool CBasicC2SProtocolHandler::ReqGroupList(netid senderId, const netid &groupid)
 {
 	GroupPtr pGroup = NULL;
 	if (ROOT_GROUP_NETID == groupid)
@@ -46,13 +101,14 @@ void CBasicC2SProtocolHandler::ReqGroupList(netid senderId, const netid &groupid
 	}
 	m_BasicProtocol.AckGroupList(senderId, SEND_TARGET, 
 		(pGroup)? ERR_SUCCESS : ERR_GROUPLIST_NOT_FOUND_GROUP, gv);
+	return true;
 }
 
 
 //------------------------------------------------------------------------
 // Request Joint the Group of groupid
 //------------------------------------------------------------------------
-void CBasicC2SProtocolHandler::ReqGroupJoin(netid senderId, const netid &groupid)
+bool CBasicC2SProtocolHandler::ReqGroupJoin(netid senderId, const netid &groupid)
 {
 	GroupPtr pTo = (groupid == INVALID_NETID)? &m_Server.GetRootGroup() : m_Server.GetRootGroup().GetChildandThis(groupid);
 	GroupPtr pFrom = m_Server.GetRootGroup().GetChildFromUser( senderId );
@@ -62,22 +118,25 @@ void CBasicC2SProtocolHandler::ReqGroupJoin(netid senderId, const netid &groupid
 		{// Error!!
 			m_BasicProtocol.AckGroupJoin( senderId, SEND_TARGET, ERR_GROUPJOIN_ALREADY_SAME_GROUP, 
 				senderId, groupid );
-			return;
+			return false;
 		}
 		if (!pTo->IsTerminal())
 		{// Error!!
 			m_BasicProtocol.AckGroupJoin( senderId, SEND_TARGET, ERR_GROUPJOIN_NOT_TERMINAL, 
 				senderId, groupid );
+			return false;
 		}
 
 		pFrom->RemoveUser(pFrom->GetId(), senderId);
 		pTo->AddUser(pTo->GetId(), senderId);
 		m_BasicProtocol.AckGroupJoin( pTo->GetId(), SEND_T_V, ERR_SUCCESS , senderId, groupid );
 		m_BasicProtocol.AckGroupJoin( pFrom->GetId(), SEND_T_V, ERR_SUCCESS , senderId, groupid );
+		return true;
 	}
 	else
 	{ // Error!!
 		m_BasicProtocol.AckGroupJoin( senderId, SEND_TARGET, ERR_NOT_FOUND_GROUP, senderId, groupid );
+		return false;
 	}
 }
 
@@ -88,11 +147,11 @@ void CBasicC2SProtocolHandler::ReqGroupJoin(netid senderId, const netid &groupid
 // 만약 이렇게 하려면, group에 소속된 멤버들을 새 그룹에 소속시키고, 
 // 현재 group의 자식으로 추가해야 한다. (단말 노드에만 유저가 소속될 수 있다.)
 //------------------------------------------------------------------------
-void CBasicC2SProtocolHandler::ReqGroupCreate(netid senderId, const netid &parentGroupId, const std::string &groupName)
+bool CBasicC2SProtocolHandler::ReqGroupCreate(netid senderId, const netid &parentGroupId, const std::string &groupName)
 {
 	GroupPtr pParentGroup, pFrom, pNewGroup;
 	if (!CreateBlankGroup(senderId, parentGroupId, groupName, pParentGroup, pFrom, pNewGroup))
-		return;
+		return false;
 
 	pFrom->RemoveUser(pFrom->GetId(), senderId);
 	pNewGroup->AddUser(pNewGroup->GetId(), senderId);
@@ -103,22 +162,24 @@ void CBasicC2SProtocolHandler::ReqGroupCreate(netid senderId, const netid &paren
 		senderId, groupId, parentGroupId, groupName);
 	m_BasicProtocol.AckGroupJoin( pNewGroup->GetId(), SEND_T_V, ERR_SUCCESS,
 		senderId, groupId);
+	return true;
 }
 
 
 /**
  @brief Create Blank Group
  */
-void CBasicC2SProtocolHandler::ReqGroupCreateBlank(
+bool CBasicC2SProtocolHandler::ReqGroupCreateBlank(
 	netid senderId, const netid &parentGroupId, const std::string &groupName)
 {
 	GroupPtr pParentGroup, pFrom, pNewGroup;
 	if (!CreateBlankGroup(senderId, parentGroupId, groupName, pParentGroup, pFrom, pNewGroup))
-		return;
+		return false;
 
 	pNewGroup->AddViewer( pParentGroup->GetId() );
 	m_BasicProtocol.AckGroupCreateBlank( pNewGroup->GetId(), SEND_T_V, ERR_SUCCESS, 
 		senderId, pNewGroup->GetId(), parentGroupId, groupName);
+	return true;
 }
 
 
@@ -189,7 +250,7 @@ bool	CBasicC2SProtocolHandler::CreateBlankGroup(
 /**
  @brief Request peer to peer connection
  */
-void CBasicC2SProtocolHandler::ReqP2PConnect(netid senderId)
+bool CBasicC2SProtocolHandler::ReqP2PConnect(netid senderId)
 {
 	// check p2p connection
 	// if networking this group on p2p
@@ -201,14 +262,14 @@ void CBasicC2SProtocolHandler::ReqP2PConnect(netid senderId)
 	if (!pClient)
 	{
 		clog::Error( clog::ERROR_PROBLEM, "not found remoteclient netid: %d\n", senderId );
-		return;
+		return false;
 	}
 
 	GroupPtr pGroup = m_Server.GetRootGroup().GetChildFromUser(senderId);
 	if (!pGroup)
 	{
 		clog::Error( clog::ERROR_PROBLEM, "not found group from user id: %d\n", senderId );
-		return;
+		return false;
 	}
 
 	// search up and down p2p connection
@@ -223,7 +284,7 @@ void CBasicC2SProtocolHandler::ReqP2PConnect(netid senderId)
 			// maybe~ never happen this accident
 			m_BasicProtocol.AckP2PConnect( senderId, SEND_TARGET, 
 				error::ERR_P2PCONNECTION_NO_MEMBER_IN_GROUP, network::P2P_CLIENT, " ", 0 );
-			return;
+			return false;
 		}
 
 		// p2p host 
@@ -239,6 +300,7 @@ void CBasicC2SProtocolHandler::ReqP2PConnect(netid senderId)
 			// error!!
 			m_BasicProtocol.AckP2PConnect( senderId, SEND_TARGET, 
 				error::ERR_P2PCONNECTION_ALREADY_CONNECTED, network::P2P_CLIENT, "", 0);
+			return false;
 		}
 		else
 		{
@@ -250,6 +312,7 @@ void CBasicC2SProtocolHandler::ReqP2PConnect(netid senderId)
 				m_BasicProtocol.AckP2PConnect( senderId, SEND_TARGET, 
 					error::ERR_P2PCONNECTION_HOSTCLIENT_DISAPPEAR, network::P2P_CLIENT, "", 0);
 				// waitting next command. maybe good work
+				return false;
 			}
 			else
 			{
@@ -259,5 +322,7 @@ void CBasicC2SProtocolHandler::ReqP2PConnect(netid senderId)
 			}
 		}
 	}
+
+	return true;
 }
 

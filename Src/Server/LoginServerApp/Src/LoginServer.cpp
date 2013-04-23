@@ -9,16 +9,21 @@
 #include "NetProtocol/src/certify_Protocol.cpp"
 #include "NetProtocol/src/certify_ProtocolListener.cpp"
 
+#include "Network/ProtocolHandler/BasicC2SProtocolHandler.h"
+#include "BasicC2SProtocolHandler_LoginSvr.h"
 
 using namespace network;
 
 
-CLoginServer::CLoginServer()
+CLoginServer::CLoginServer() :
+	m_pBasicPrtHandler(NULL)
 {
 }
 
 CLoginServer::~CLoginServer()
 {
+	SAFE_DELETE(m_pBasicPrtHandler);
+
 }
 
 
@@ -42,9 +47,12 @@ void	CLoginServer::OnConnectNetGroupController()
 		return;
 	}
 
+	m_pBasicPrtHandler = new CBasicC2SProtocolHandler_LoginSvr(*pCertifySvrController, *GetServer());
+
 	RegisterProtocol(&m_LoginProtocol);
 
 	AddProtocolListener(this);
+	AddProtocolListener(m_pBasicPrtHandler);
 	pLobbySvrController->AddProtocolListener(this);
 	pCertifySvrController->AddProtocolListener(this);
 
@@ -82,85 +90,18 @@ void	CLoginServer::OnSubServerConnect(CNetEvent &event)
 /**
  @brief ReqMoveUser
  */
-void CLoginServer::ReqMoveUser(netid senderId, const std::string &id, const netid &userId)
+bool CLoginServer::ReqMoveUser(netid senderId, const std::string &id, const netid &userId)
 {
-
+	return true;
 }
 
 
 /**
  @brief AckMoveUser
  */
-void CLoginServer::AckMoveUser(netid senderId, const error::ERROR_CODE &errorCode, const std::string &id, const netid &userId)
+bool CLoginServer::AckMoveUser(netid senderId, const error::ERROR_CODE &errorCode, const std::string &id, const netid &userId)
 {
 
-}
-
-
-/**
- @brief ReqLogIn
- */
-void CLoginServer::ReqLogIn(netid senderId, const std::string &id, const std::string &passwd)
-{
-	CRemoteClient *pClient = GetServer()->GetRemoteClient(id);
-	if (pClient)
-	{
-		clog::Error( clog::ERROR_PROBLEM, "ReqLogin Error!! client already exist senderId=%d, id=%s",
-			senderId, id.c_str());
-		m_LoginProtocol.AckLogIn(pClient->GetId(), SEND_T, error::ERR_ALREADY_EXIST_USER, id, 0);
-		return;
-	}
-
-	pClient = GetServer()->GetRemoteClient(senderId);
-	if (!pClient)
-	{
-		clog::Error( clog::ERROR_PROBLEM, "ReqLogin Error!! client not found senderId=%d, id=%s",
-			senderId, id.c_str());
-		m_LoginProtocol.AckLogIn(pClient->GetId(), SEND_T, error::ERR_NOT_FOUND_USER, id, 0);
-		return;
-	}
-
-	pClient->SetName(id);
-
-	m_CertifyProtocol.ReqUserId(SERVER_NETID, SEND_T, id, passwd);
-}
-
-
-/**
- @brief ReqLogOut
- */
-void CLoginServer::ReqLogOut(netid senderId, const std::string &id)
-{
-
-}
-
-
-/**
- @brief 
- */
-void CLoginServer::ReqMoveToServer(netid senderId, const std::string &serverName)
-{
-
-}
-
-
-/**
- @brief 
- */
-void CLoginServer::AckUserId(netid senderId, const error::ERROR_CODE &errorCode, const std::string &id, const netid &userId)
-{
-	CRemoteClient *pClient = GetServer()->GetRemoteClient(id);
-	if (!pClient)
-	{
-		clog::Error( clog::ERROR_PROBLEM, "AckUserId Error!! client not found id=%s", id.c_str());
-		return;
-	}
-
-	if (errorCode != error::ERR_SUCCESS)
-	{
-		clog::Error( clog::ERROR_PROBLEM, "AckUserId Error!! client generate user id Error id=%s", id.c_str());
-	}
-
-	m_LoginProtocol.AckLogIn(pClient->GetId(), SEND_T, errorCode, id, userId);
+	return true;
 }
 

@@ -81,30 +81,12 @@ bool compiler::WriteProtocolCode(string protocolFileName, sRmi *rmi)
 }
 
 
-////------------------------------------------------------------------------
-//// 인자로 넘어온 fileName의 확장자를 제외한 스트링을 리턴한다.
-////------------------------------------------------------------------------
-//string compiler::GetFileNameExceptExt(const string &fileName)
-//{
-//	char srcFileName[ MAX_PATH];
-//	strcpy_s(srcFileName, MAX_PATH, fileName.c_str() );
-//	char *tmp;
-//	char *name = strtok_s(srcFileName, ".", &tmp);
-//	return name;
-//}
-
-
 //------------------------------------------------------------------------
 // 파일이름의 경로와 확장자를 제외한 파일 이름
 //------------------------------------------------------------------------
 string compiler::GetProtocolName(const string &fileName)
 {
 	return common::GetFileNameExceptExt(fileName);
-// 	char srcFileName[ MAX_PATH];
-// 	strcpy_s(srcFileName, MAX_PATH, fileName.c_str() );
-// 	char *name = PathFindFileNameA(srcFileName);
-// 	PathRemoveExtensionA(name);
-// 	return name;
 }
 
 
@@ -255,10 +237,6 @@ bool compiler::WriteListenerHeader(ofstream &fs, sRmi *rmi)
 	fs << "// ProtocolListener\n";
 	fs << "class " << g_className << " : virtual public network::IProtocolListener\n";
 	fs << "{\n";
-//	fs << "public:\n" );
-// 	pProtocol->name"\t%s() : IProtocolListener(%s) {}\n", n_className.c_str(), n_protocolId.c_str() );
-// 	pProtocol->name"protected:\n");
-// 	pProtocol->name"\tvirtual void Dispatch(network::CPacket &packet, const ProtocolListenerList &listeners) override;\n" );
 	fs << "\tfriend class " << dispatcherClassName << ";\n";
 	WriteDeclProtocolList( fs, rmi->protocol, true, true, false);
 	fs << "};\n";
@@ -336,13 +314,20 @@ void compiler::WriteDeclProtocolList(ofstream &fs, sProtocol *pProtocol, bool is
 	fs << "\t";
 	if (isVirtual)
 		fs << "virtual ";
-	fs << "void " << pProtocol->name << "(";
+
+	if (isImpl)
+		fs << "bool "; // listener header file
+	else
+		fs << "void "; // protocol header file
+
+	//fs << "bool " << pProtocol->name << "(";
+	fs << pProtocol->name << "(";
 	WriteFirstArg(fs, pProtocol->argList, isTarget);
 	fs << ")";
 	if (isImpl)
-		fs << "{}";
+		fs << "{ return true; }"; // listener header file
 	else
-		fs << ";";
+		fs << ";"; // protocol header file
 	fs << endl;
 	WriteDeclProtocolList(fs, pProtocol->next, isVirtual, isImpl, isTarget);
 }

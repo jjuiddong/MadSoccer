@@ -26,7 +26,7 @@ protected:
 	virtual void	OnConnectNetGroupController() override;
 
 	// Network Protocol Handler
-	virtual void ReqUserId(netid senderId, const std::string &id, const std::string &passwd) override;
+	virtual bool ReqUserId(netid senderId, const std::string &id, const std::string &passwd) override;
 
 private:
 	certify::s2s_Protocol m_Protocol;

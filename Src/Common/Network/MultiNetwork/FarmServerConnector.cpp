@@ -208,7 +208,7 @@ void CFarmServerConnector::OnDisconnectLink(CNetEvent &event)
 /**
  @brief 
  */
-void CFarmServerConnector::AckSubServerLogin(netid senderId, const error::ERROR_CODE &errorCode)
+bool CFarmServerConnector::AckSubServerLogin(netid senderId, const error::ERROR_CODE &errorCode)
 {
 	if (errorCode == error::ERR_SUCCESS)
 	{
@@ -216,11 +216,13 @@ void CFarmServerConnector::AckSubServerLogin(netid senderId, const error::ERROR_
 		m_Protocol.SendSubServerP2PSLink( SERVER_NETID, SEND_T, m_Config.p2pS );
 		m_Protocol.SendSubServerInputLink( SERVER_NETID, SEND_T, m_Config.inputLink );
 		m_Protocol.SendSubServerOutputLink( SERVER_NETID, SEND_T, m_Config.outputLink );
+		return true;
 	}
 	else
 	{
 		clog::Error( clog::ERROR_CRITICAL, "AckSubServerLogin Error!! errorCode= %d, svrType = %s", errorCode, m_Config.svrType.c_str() );
 		clog::ErrorMsg( common::format( "AckSubServerLogin Error!! errorCode= %d, svrType = %s", errorCode, m_Config.svrType.c_str()) );
+		return false;
 	}
 }
 
@@ -228,45 +230,51 @@ void CFarmServerConnector::AckSubServerLogin(netid senderId, const error::ERROR_
 /**
  @brief AckSendSubServerP2PCLink
  */
-void CFarmServerConnector::AckSendSubServerP2PCLink(netid senderId, const error::ERROR_CODE &errorCode)
+bool CFarmServerConnector::AckSendSubServerP2PCLink(netid senderId, const error::ERROR_CODE &errorCode)
 {
 	if (!m_IsDetectedSendConfig)
 		m_IsDetectedSendConfig = (errorCode != error::ERR_SUCCESS);
 
 	if (errorCode != error::ERR_SUCCESS)
 		clog::Error( clog::ERROR_CRITICAL, "P2PC Link Error!!" );
+
+	return true;
 }
 
 
 /**
  @brief AckSendSubServerP2PSLink
  */
-void CFarmServerConnector::AckSendSubServerP2PSLink(netid senderId, const error::ERROR_CODE &errorCode)
+bool CFarmServerConnector::AckSendSubServerP2PSLink(netid senderId, const error::ERROR_CODE &errorCode)
 {
 	if (!m_IsDetectedSendConfig)
 		m_IsDetectedSendConfig = (errorCode != error::ERR_SUCCESS);
 
 	if (errorCode != error::ERR_SUCCESS)
 		clog::Error( clog::ERROR_CRITICAL, "P2PS Link Error!!" );
+
+	return true;
 }
 
 /**
  @brief 
  */
-void CFarmServerConnector::AckSendSubServerInputLink(netid senderId, const error::ERROR_CODE &errorCode)
+bool CFarmServerConnector::AckSendSubServerInputLink(netid senderId, const error::ERROR_CODE &errorCode)
 {
 	if (!m_IsDetectedSendConfig)
 		m_IsDetectedSendConfig = (errorCode != error::ERR_SUCCESS);
 
 	if (errorCode != error::ERR_SUCCESS)
 		clog::Error( clog::ERROR_CRITICAL, "P2P Link Error!!" );
+
+	return true;
 }
 
 
 /**
  @brief 
  */
-void CFarmServerConnector::AckSendSubServerOutputLink(netid senderId, const error::ERROR_CODE &errorCode)
+bool CFarmServerConnector::AckSendSubServerOutputLink(netid senderId, const error::ERROR_CODE &errorCode)
 {
 	if (!m_IsDetectedSendConfig)
 		m_IsDetectedSendConfig = (errorCode != error::ERR_SUCCESS);
@@ -274,29 +282,18 @@ void CFarmServerConnector::AckSendSubServerOutputLink(netid senderId, const erro
 	if (m_IsDetectedSendConfig)
 	{
 		clog::Error( clog::ERROR_CRITICAL, "AckSendSubServerOutputLink Error"  );
-		return;
+		return false;
 	}
 
 	ConnectLink();
-	//MakeupInputOutputLink();
-	//MakeupP2PLink();
-
-	//// 자신의 서버객체 생성
-	//std::string bindSubSvrType;
-	//if (m_Config.inputLink.size() > 0 || m_Config.outputLink.size() > 0)
-	//	bindSubSvrType = "client";		
-	//else if (m_Config.p2pC.size() > 0)
-	//	bindSubSvrType = "p2p";
-	//else
-	//	bindSubSvrType = "none";
-	//CreateSubController( SERVER, false, m_Config.svrType, bindSubSvrType );
+	return true;
 }
 
 
 /**
  @brief 
  */
-void CFarmServerConnector::AckServerInfoList(netid senderId, const error::ERROR_CODE &errorCode, 
+bool CFarmServerConnector::AckServerInfoList(netid senderId, const error::ERROR_CODE &errorCode, 
 	const std::string &clientSvrType, const std::string &serverSvrType, const std::vector<SHostInfo> &v)
 {
 	if (errorCode != error::ERR_SUCCESS)
@@ -304,7 +301,7 @@ void CFarmServerConnector::AckServerInfoList(netid senderId, const error::ERROR_
 		clog::Error( clog::ERROR_CRITICAL, 
 			"AckServerInfoList Error!!, not found port number  clientSvrType = %s, serverSvrType = %s", 
 			clientSvrType.c_str(), serverSvrType.c_str() );
-		return;
+		return true;
 	}
 
 	// Connect Client
@@ -314,20 +311,22 @@ void CFarmServerConnector::AckServerInfoList(netid senderId, const error::ERROR_
 		clog::Error( clog::ERROR_CRITICAL, 
 			"AckServerInfoList Error!!, not found controller serverSvrType = %s", 
 			serverSvrType.c_str() );
-		return;
+		return true;
 	}
 	
 	if (!ptr->Start(v))
 	{
 		clog::Error( clog::ERROR_CRITICAL, "NetGroupController Start Error!!" );
+		return false;
 	}
+	return true;
 }
 
 
 /**
  @brief 
  */
-void CFarmServerConnector::AckToBindOuterPort(netid senderId, const error::ERROR_CODE &errorCode, 
+bool CFarmServerConnector::AckToBindOuterPort(netid senderId, const error::ERROR_CODE &errorCode, 
 	const std::string &bindSubServerSvrType, const int &port)
 {
 	if (errorCode != error::ERR_SUCCESS)
@@ -335,7 +334,7 @@ void CFarmServerConnector::AckToBindOuterPort(netid senderId, const error::ERROR
 		clog::Error( clog::ERROR_CRITICAL, 
 			"AckToBindOuterPort Error!!, not found port number  bindSubServerSvrType = %s", 
 			bindSubServerSvrType.c_str() );
-		return;
+		return false;
 	}
 
 	NetGroupControllerPtr ptr = CMultiNetwork::Get()->GetController(bindSubServerSvrType);
@@ -344,21 +343,23 @@ void CFarmServerConnector::AckToBindOuterPort(netid senderId, const error::ERROR
 		clog::Error( clog::ERROR_CRITICAL, 
 			"AckToBindOuterPort Error!!, not found controller bindSubServerSvrType = %s", 
 			bindSubServerSvrType.c_str() );
-		return;
+		return false;
 	}
 
 	// Server Bind
 	if (!ptr->Start( "", port))
 	{
 		clog::Error( clog::ERROR_CRITICAL, "NetGroupController Start Error!!" );
+		return false;
 	}
+	return true;
 }
 
 
 /**
  @brief 
  */
-void CFarmServerConnector::AckToBindInnerPort(netid senderId, const error::ERROR_CODE &errorCode, 
+bool CFarmServerConnector::AckToBindInnerPort(netid senderId, const error::ERROR_CODE &errorCode, 
 	const std::string &bindSubServerSvrType, const int &port)
 {
 	if (errorCode != error::ERR_SUCCESS)
@@ -366,7 +367,7 @@ void CFarmServerConnector::AckToBindInnerPort(netid senderId, const error::ERROR
 		clog::Error( clog::ERROR_CRITICAL, 
 			"AckToBindInnerPort Error!!, not found port number  bindSubServerSvrType = %s", 
 			bindSubServerSvrType.c_str() );
-		return;
+		return false;
 	}
 
 	NetGroupControllerPtr ptr = CMultiNetwork::Get()->GetController(bindSubServerSvrType);
@@ -375,52 +376,58 @@ void CFarmServerConnector::AckToBindInnerPort(netid senderId, const error::ERROR
 		clog::Error( clog::ERROR_CRITICAL, 
 			"AckToBindInnerPort Error!!, not found controller bindSubServerSvrType = %s", 
 			bindSubServerSvrType.c_str() );
-		return;
+		return false;
 	}
 
 	// Server Bind
 	if (!ptr->Start( "", port))
 	{
 		clog::Error( clog::ERROR_CRITICAL, "NetGroupController Start Error!!" );
+		return false;
 	}
+	return true;
 }
 
 
 /**
  @brief 
  */
-void CFarmServerConnector::AckSubServerBindComplete(netid senderId, const error::ERROR_CODE &errorCode, 
+bool CFarmServerConnector::AckSubServerBindComplete(netid senderId, const error::ERROR_CODE &errorCode, 
 	const std::string &subServerSvrType)
 {
 
+	return true;
 }
 
 
 /**
  @brief 
  */
-void CFarmServerConnector::AckSubClientConnectComplete(netid senderId, const error::ERROR_CODE &errorCode, 
+bool CFarmServerConnector::AckSubClientConnectComplete(netid senderId, const error::ERROR_CODE &errorCode, 
 	const std::string &subClientSvrType)
 {
 
+	return true;
 }
 
 
 /**
  @brief 
  */
-void CFarmServerConnector::BindSubServer(netid senderId, const std::string &bindSubSvrType, 
+bool CFarmServerConnector::BindSubServer(netid senderId, const std::string &bindSubSvrType, 
 	const std::string &ip, const int &port)
 {
 	NetGroupControllerPtr ptr = CMultiNetwork::Get()->GetController(bindSubSvrType);	
 	if (!ptr)
 	{
 		clog::Error( clog::ERROR_CRITICAL, "BindSubServer Error!! not found bindSubSvr : %s", bindSubSvrType.c_str() );
-		return;
+		return false;
 	}
 
 	if (!ptr->Start(ip, port))
 	{
 		clog::Error( clog::ERROR_CRITICAL, "BindSubServer Start Error!! ip=%s, port=%d", ip.c_str(), port );
+		return false;
 	}
+	return true;
 }

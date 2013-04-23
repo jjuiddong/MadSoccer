@@ -46,6 +46,7 @@ namespace network
 		void			SetProtocolId(int protocolId);
 		void			SetPacketId(int packetId);
 		void			SetPacketSize(short packetSize);
+		void			SetSenderId(netid id);
 		int			GetProtocolId() const;
 		int			GetPacketId() const;
 		int			GetPacketSize() const;
@@ -63,6 +64,7 @@ namespace network
 		int			m_WriteIdx;
 	};
 
+	inline void	 CPacket::SetSenderId(netid id) { m_SenderId = id; }
 	inline netid CPacket::GetSenderId() const { return m_SenderId; }
 	inline char* CPacket::GetData() const { return (char*)m_Data; }
 	inline int CPacket::GetPacketSize() const { return m_WriteIdx; }

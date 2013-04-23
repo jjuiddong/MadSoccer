@@ -219,6 +219,7 @@ bool CServerBasic::AddRemoteClient(SOCKET sock, const std::string &ip)
 	CRemoteClient *pNewRemoteClient = m_pRemoteClientFactory->New();// new CRemoteClient();
 	pNewRemoteClient->SetSocket(sock);
 	pNewRemoteClient->SetIp(ip);
+	pNewRemoteClient->SetState(CLIENTSTATE_LOGIN_WAIT);
 
 	if (!m_RootGroup.AddUser(m_WaitGroupId, pNewRemoteClient->GetId()))
 	{

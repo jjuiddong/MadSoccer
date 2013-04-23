@@ -21,15 +21,15 @@ CBasicS2CProtocolHandler::~CBasicS2CProtocolHandler()
 /**
  @brief Acknowlege packet of RequestP2PConnect 
  */
-void CBasicS2CProtocolHandler::AckP2PConnect(
+bool CBasicS2CProtocolHandler::AckP2PConnect(
 	netid senderId, const network::error::ERROR_CODE &errorCode, const network::P2P_STATE &state, 
 	const std::string &ip, const int &port)
 {
 	if (errorCode != error::ERR_SUCCESS)
-		return; // todo: error process
+		return false; // todo: error process
 
 	if (!m_Client.m_pP2p)
-		return; // error!!
+		return false; // error!!
 	
 	bool result = false;
 	if (state == P2P_HOST)
@@ -42,5 +42,6 @@ void CBasicS2CProtocolHandler::AckP2PConnect(
 	}
 
 	m_BasicProtocol.ReqP2PConnectTryResult(SERVER_NETID, SEND_TARGET, result);
+	return true;
 }
 

@@ -16,8 +16,8 @@ CServer::CServer() :
 
 CServer::~CServer()
 {
-	RemoveProtocolListener(m_pBasicPrtHandler);
-	SAFE_DELETE(m_pBasicPrtHandler);
+	//RemoveProtocolListener(m_pBasicPrtHandler);
+	//SAFE_DELETE(m_pBasicPrtHandler);
 	SAFE_DELETE(m_pBasicProtocol);
 }
 
@@ -30,8 +30,8 @@ void	CServer::OnConnectNetGroupController()
 	m_pBasicProtocol = new basic::s2c_Protocol();
 	RegisterProtocol(m_pBasicProtocol);
 
-	m_pBasicPrtHandler = new CBasicC2SProtocolHandler(*GetServer());
-	AddProtocolListener(m_pBasicPrtHandler);
+	//m_pBasicPrtHandler = new CBasicC2SProtocolHandler(*GetServer());
+	//AddProtocolListener(m_pBasicPrtHandler);
 
 	EVENT_CONNECT(EVT_CLIENT_JOIN, CServer, CServer::OnClientJoin);
 	EVENT_CONNECT(EVT_CLIENT_LEAVE, CServer, CServer::OnClientLeave);

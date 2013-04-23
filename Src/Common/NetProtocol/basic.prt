@@ -1,6 +1,13 @@
 
 protocol s2c 100
 {
+	Error( error::ERROR_CODE errorCode );
+
+	AckLogIn( error::ERROR_CODE errorCode, std::string id, netid userId  );
+	AckLogOut( error::ERROR_CODE errorCode, std::string id, int result );
+
+	AckMoveToServer( error::ERROR_CODE errorCode, std::string serverName );
+
 	AckGroupList( error::ERROR_CODE errorCode, GroupVector groups );
 	AckGroupJoin( error::ERROR_CODE errorCode, netid reqId, netid joinGroupId );
 	AckGroupCreate( error::ERROR_CODE errorCode, netid reqId, netid crGroupId, netid crParentGroupId, std::string groupName );
@@ -14,6 +21,11 @@ protocol s2c 100
 
 protocol c2s 200
 {
+	ReqLogIn( std::string id, std::string passwd );
+	ReqLogOut( std::string id );
+
+	ReqMoveToServer( std::string serverName );
+
 	ReqGroupList( netid groupid );
 	ReqGroupJoin( netid groupid );
 	ReqGroupCreate( netid parentGroupId, std::string groupName  );
@@ -21,5 +33,6 @@ protocol c2s 200
 
 	ReqP2PConnect( );
 	ReqP2PConnectTryResult(  bool isSuccess );
+
 }
 

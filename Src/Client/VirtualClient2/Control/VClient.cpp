@@ -55,7 +55,7 @@ void CVClient::recv(netid senderId, network::CPacket &packet)
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-void CVClient::AckGroupList(netid senderId, const network::error::ERROR_CODE &errorCode, const GroupVector &groups)
+bool CVClient::AckGroupList(netid senderId, const network::error::ERROR_CODE &errorCode, const GroupVector &groups)
 {
 	GetConsole()->AddString( "------------" );
 	GetConsole()->AddString( 
@@ -78,6 +78,8 @@ void CVClient::AckGroupList(netid senderId, const network::error::ERROR_CODE &er
 			common::format( "    users: %d",
 			groups[ i].GetUsers().size()) );
 	}
+
+	return true;
 }
 
 
@@ -139,20 +141,21 @@ void	CVClient::OnMemberLeave(network::CNetEvent &event)
 /**
  @brief 
  */
-void CVClient::SendData(netid senderId)
+bool CVClient::SendData(netid senderId)
 {
 	// Host 일때, 나머지 클라이언트들에게 패킷을 보낸다.
 	if (IsP2PHostClient())
 	{
 		m_P2pProtocol.SendData( P2P_NETID, SEND_T );
 	}
+	return true;
 }
 
 
 /**
  @brief Acknowledge
  */
-void CVClient::AckLogIn(netid senderId, const network::error::ERROR_CODE &errorCode, 
+bool CVClient::AckLogIn(netid senderId, const network::error::ERROR_CODE &errorCode, 
 	const std::string &id, const netid &netId)
 {
 	if (errorCode == error::ERR_SUCCESS)
@@ -165,4 +168,5 @@ void CVClient::AckLogIn(netid senderId, const network::error::ERROR_CODE &errorC
 	{
 		theApp.GetMainDlg()->SetWindowText( _T("Login Fail") );
 	}
+	return true;
 }

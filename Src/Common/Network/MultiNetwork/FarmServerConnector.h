@@ -46,17 +46,17 @@ namespace network { namespace multinetwork {
 		void OnDisconnectLink(CNetEvent &event);
 
 		// network packet handler
-		virtual void AckSubServerLogin(netid senderId, const error::ERROR_CODE &errorCode) override;
-		virtual void AckSendSubServerP2PSLink(netid senderId, const error::ERROR_CODE &errorCode) override;
-		virtual void AckSendSubServerP2PCLink(netid senderId, const error::ERROR_CODE &errorCode) override;
-		virtual void AckSendSubServerInputLink(netid senderId, const error::ERROR_CODE &errorCode) override;
-		virtual void AckSendSubServerOutputLink(netid senderId, const error::ERROR_CODE &errorCode) override;
-		virtual void AckServerInfoList(netid senderId, const error::ERROR_CODE &errorCode, const std::string &clientSvrType, const std::string &serverSvrType, const std::vector<SHostInfo> &v) override;
-		virtual void AckToBindOuterPort(netid senderId, const error::ERROR_CODE &errorCode, const std::string &bindSubServerSvrType, const int &port) override;
-		virtual void AckToBindInnerPort(netid senderId, const error::ERROR_CODE &errorCode, const std::string &bindSubServerSvrType, const int &port)override;
-		virtual void AckSubServerBindComplete(netid senderId, const error::ERROR_CODE &errorCode, const std::string &subServerSvrType) override;
-		virtual void AckSubClientConnectComplete(netid senderId, const error::ERROR_CODE &errorCode, const std::string &subClientSvrType) override;
-		virtual void BindSubServer(netid senderId, const std::string &bindSubSvrType, const std::string &ip, const int &port) override;
+		virtual bool AckSubServerLogin(netid senderId, const error::ERROR_CODE &errorCode) override;
+		virtual bool AckSendSubServerP2PSLink(netid senderId, const error::ERROR_CODE &errorCode) override;
+		virtual bool AckSendSubServerP2PCLink(netid senderId, const error::ERROR_CODE &errorCode) override;
+		virtual bool AckSendSubServerInputLink(netid senderId, const error::ERROR_CODE &errorCode) override;
+		virtual bool AckSendSubServerOutputLink(netid senderId, const error::ERROR_CODE &errorCode) override;
+		virtual bool AckServerInfoList(netid senderId, const error::ERROR_CODE &errorCode, const std::string &clientSvrType, const std::string &serverSvrType, const std::vector<SHostInfo> &v) override;
+		virtual bool AckToBindOuterPort(netid senderId, const error::ERROR_CODE &errorCode, const std::string &bindSubServerSvrType, const int &port) override;
+		virtual bool AckToBindInnerPort(netid senderId, const error::ERROR_CODE &errorCode, const std::string &bindSubServerSvrType, const int &port)override;
+		virtual bool AckSubServerBindComplete(netid senderId, const error::ERROR_CODE &errorCode, const std::string &subServerSvrType) override;
+		virtual bool AckSubClientConnectComplete(netid senderId, const error::ERROR_CODE &errorCode, const std::string &subClientSvrType) override;
+		virtual bool BindSubServer(netid senderId, const std::string &bindSubSvrType, const std::string &ip, const int &port) override;
 
 	private:
 		farm::c2s_Protocol m_Protocol;

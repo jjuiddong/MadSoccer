@@ -84,6 +84,7 @@
     <ClCompile Include="Algorithm\GroupTraverse.cpp" />
     <ClCompile Include="Controller\ClientBasic.cpp" />
     <ClCompile Include="Controller\ServerBasic.cpp" />
+    <ClCompile Include="ErrReport\ErrorCheck.cpp" />
     <ClCompile Include="MultiNetwork\MultiNetwork.cpp" />
     <ClCompile Include="MultiNetwork\MultiNetworkUtillity.cpp" />
     <ClCompile Include="MultiNetwork\NetGroupController.cpp" />
@@ -115,6 +116,7 @@
     <ClInclude Include="Algorithm\GroupTraverse.h" />
     <ClInclude Include="Controller\ClientBasic.h" />
     <ClInclude Include="Controller\ServerBasic.h" />
+    <ClInclude Include="ErrReport\ErrorCheck.h" />
     <ClInclude Include="ErrReport\ErrorCode.h" />
     <ClInclude Include="MultiNetwork\MultiNetwork.h" />
     <ClInclude Include="MultiNetwork\MultiNetworkUtillity.h" />

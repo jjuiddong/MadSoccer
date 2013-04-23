@@ -44,13 +44,11 @@ public:
 	virtual void recv(netid senderId, network::CPacket &packet) override;
 
 	// basic
-	virtual void AckGroupList(netid senderId, const network::error::ERROR_CODE &errorCode, const GroupVector &groups) override;
-
-	// login
-	virtual void AckLogIn(netid senderId, const network::error::ERROR_CODE &errorCode, const std::string &id, const netid &netId) override;
+	virtual bool AckGroupList(netid senderId, const network::error::ERROR_CODE &errorCode, const GroupVector &groups) override;
+	virtual bool AckLogIn(netid senderId, const network::error::ERROR_CODE &errorCode, const std::string &id, const netid &netId) override;
 
 	// p2pComm
-	virtual void SendData(netid senderId) override;
+	virtual bool SendData(netid senderId) override;
 
 private:
 	netid				m_heroId;
