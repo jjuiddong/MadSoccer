@@ -27,7 +27,7 @@ CBasicC2SProtocolHandler::~CBasicC2SProtocolHandler()
  */
 bool CBasicC2SProtocolHandler::ReqLogIn(IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, const std::string &passwd)
 {
-	CRemoteClient *pClient = m_Server.GetRemoteClient(id);
+	CSession *pClient = m_Server.GetSession(id);
 	if (pClient)
 	{
 		clog::Error( clog::ERROR_PROBLEM, "ReqLogin Error!! client already exist senderId=%d, id=%s",
@@ -36,7 +36,7 @@ bool CBasicC2SProtocolHandler::ReqLogIn(IProtocolDispatcher &dispatcher, netid s
 		return false;
 	}
 
-	pClient = m_Server.GetRemoteClient(senderId);
+	pClient = m_Server.GetSession(senderId);
 	if (!pClient)
 	{
 		clog::Error( clog::ERROR_PROBLEM, "ReqLogin Error!! client not found senderId=%d, id=%s",
@@ -259,10 +259,10 @@ bool CBasicC2SProtocolHandler::ReqP2PConnect(IProtocolDispatcher &dispatcher, ne
 	// else
 	// -> select p2p host in group client, and network p2p each other
 
-	CRemoteClient* pClient = m_Server.GetRemoteClient(senderId);
+	CSession* pClient = m_Server.GetSession(senderId);
 	if (!pClient)
 	{
-		clog::Error( clog::ERROR_PROBLEM, "not found remoteclient netid: %d\n", senderId );
+		clog::Error( clog::ERROR_PROBLEM, "not found Session netid: %d\n", senderId );
 		return false;
 	}
 
@@ -305,7 +305,7 @@ bool CBasicC2SProtocolHandler::ReqP2PConnect(IProtocolDispatcher &dispatcher, ne
 		}
 		else
 		{
-			CRemoteClient *pHostClient = m_Server.GetRemoteClient(p2pHostClient);
+			CSession *pHostClient = m_Server.GetSession(p2pHostClient);
 			if (!pHostClient)
 			{
 				// error!!

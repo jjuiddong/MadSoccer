@@ -43,8 +43,9 @@ CServerBasic* CNetGroupDelegation::GetServer()
 /**
  @brief 
  */
-CCoreClient* CNetGroupDelegation::GetClient()
+const CoreClients_V& CNetGroupDelegation::GetClients()
 {
-	RETV(!GetConnector(), NULL);
-	return GetConnector()->GetClient();
+	static CoreClients_V v;
+	RETV(!GetConnector(), v);
+	return GetConnector()->GetClients();
 }

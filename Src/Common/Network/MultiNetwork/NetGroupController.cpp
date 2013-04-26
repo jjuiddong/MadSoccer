@@ -20,7 +20,7 @@ CNetGroupController::CNetGroupController( SERVICE_TYPE type, const std::string &
 ,	m_pClient(NULL)
 ,	m_pServer(NULL)
 ,	m_pP2p(NULL)
-,	m_pRemoteClientFactory(NULL)
+,	m_pSessionFactory(NULL)
 ,	m_pGroupFactory(NULL)
 {
 	if (SERVER == type)
@@ -38,7 +38,7 @@ CNetGroupController::~CNetGroupController()
 	SAFE_DELETE(m_pClient);
 	SAFE_DELETE(m_pServer);
 	SAFE_DELETE(m_pP2p);
-	SAFE_DELETE(m_pRemoteClientFactory);
+	SAFE_DELETE(m_pSessionFactory);
 	SAFE_DELETE(m_pGroupFactory);
 	BOOST_FOREACH(auto &client, m_Clients.m_Seq)
 	{
@@ -172,7 +172,7 @@ bool	CNetGroupController::Connect( SERVICE_TYPE type, const std::string &ip, con
 			{
 				pClient->AddProtocolListener(protocol);
 			}
-			m_Clients.insert( Clients::value_type(pClient->GetNetId(), pClient) );
+			m_Clients.insert( CoreClients_::value_type(pClient->GetNetId(), pClient) );
 
 			CNetController::Get()->StartCoreClient(ip, port, pClient);
 		}
@@ -186,12 +186,12 @@ bool	CNetGroupController::Connect( SERVICE_TYPE type, const std::string &ip, con
 /**
  @brief 
  */
-void	CNetGroupController::SetRemoteClientFactory( IRemoteClientFactory *ptr )
+void	CNetGroupController::SetSessionFactory( ISessionFactory *ptr )
 {
-	SAFE_DELETE(m_pRemoteClientFactory);
-	m_pRemoteClientFactory = ptr;
+	SAFE_DELETE(m_pSessionFactory);
+	m_pSessionFactory = ptr;
 	if (m_pServer)
-		m_pServer->SetRemoteClientFactory(m_pRemoteClientFactory->Clone());
+		m_pServer->SetSessionFactory(m_pSessionFactory->Clone());
 }
 
 
@@ -237,7 +237,8 @@ void	CNetGroupController::OnDisconnect( CNetEvent &event )
 		m_Clients.remove( event.GetHandler()->GetNetId() );
 
 		// 제거 clients 로 옮겨져서, 나중에 지워진다.
-		m_RemoveClients.insert( Clients::value_type(event.GetHandler()->GetNetId(), (CCoreClient*)event.GetHandler().Get() ) );
+		m_RemoveClients.insert( CoreClients_::value_type(event.GetHandler()->GetNetId(), 
+			(CCoreClient*)event.GetHandler().Get() ) );
 	}
 }
 

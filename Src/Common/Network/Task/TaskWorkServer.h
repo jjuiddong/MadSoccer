@@ -64,7 +64,7 @@ namespace network
 				const netid senderId = sockets.netid_array[ i];
 				if (result == INVALID_SOCKET || 0 == result)
 				{
-					psvr->RemoveRemoteClientSocket(sockets.netid_array[ i]);
+					psvr->RemoveSessionSocket(sockets.netid_array[ i]);
 
 					CPacketQueue::Get()->PushPacket( 
 						CPacketQueue::SPacketData(m_ServerId, 

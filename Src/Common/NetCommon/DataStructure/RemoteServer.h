@@ -7,11 +7,12 @@ Date:    4/25/2013
 */
 #pragma once
 
+#include "../Controller/Session.h"
 
 namespace network
 {
 
-	class CRemoteServer : public CRemoteClient
+	class CRemoteServer : public CSession
 	{
 	public:
 		CRemoteServer();

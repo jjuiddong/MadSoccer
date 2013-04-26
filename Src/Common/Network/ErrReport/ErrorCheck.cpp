@@ -11,12 +11,12 @@ using namespace network;
  @brief ClientCheck
 	clientId에 해당하는 클라이언트가 없다면, 에러 메세지를 클라이언트에게 보내고 NULL을 리턴한다.
  */
-CRemoteClient* network::CheckClientNetId( ServerBasicPtr pServer, netid clientId, 
+CSession* network::CheckClientNetId( ServerBasicPtr pServer, netid clientId, 
 	basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher )
 {
 	RETV(!pServer, NULL);
 
-	CRemoteClient *pClient = pServer->GetRemoteClient(clientId);
+	CSession *pClient = pServer->GetSession(clientId);
 	if (!pClient)
 	{
 		//clog::Error( clog::ERROR_PROBLEM, "Client Check Error!! client not found id=%d", clientId);
@@ -34,12 +34,12 @@ CRemoteClient* network::CheckClientNetId( ServerBasicPtr pServer, netid clientId
  @brief ClientCheck
   id 에 해당하는 클라이언트가 없다면, 에러 메세지를 클라이언트에게 보내고 NULL을 리턴한다.
  */
-CRemoteClient* network::CheckClientId( ServerBasicPtr pServer, const std::string &id, netid clientId, 
+CSession* network::CheckClientId( ServerBasicPtr pServer, const std::string &id, netid clientId, 
 	basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher )
 {
 	RETV(!pServer, NULL);
 
-	CRemoteClient *pClient = pServer->GetRemoteClient(id);
+	CSession *pClient = pServer->GetSession(id);
 	if (!pClient)
 	{
 		//clog::Error( clog::ERROR_PROBLEM, "Client Check Error!! client not found id=%s", id.c_str());
@@ -56,7 +56,7 @@ CRemoteClient* network::CheckClientId( ServerBasicPtr pServer, const std::string
 /**
  @brief CheckClientConnection
  */
-bool network::CheckClientConnection( CRemoteClient *pClient, 
+bool network::CheckClientConnection( CSession *pClient, 
 	basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher )
 {
 	RETV(!pClient, false);

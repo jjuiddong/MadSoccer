@@ -51,7 +51,7 @@ bool CBasicC2SProtocolHandler_LoginSvr::ReqLogOut(IProtocolDispatcher &dispatche
 bool CBasicC2SProtocolHandler_LoginSvr::ReqMoveToServer(IProtocolDispatcher &dispatcher, 
 	netid senderId, const std::string &serverName)
 {
-	CRemoteClient *pClient = network::CheckClientNetId( &GetServer(), senderId, &m_BasicProtocol, &dispatcher );
+	CSession *pClient = network::CheckClientNetId( &GetServer(), senderId, &m_BasicProtocol, &dispatcher );
 	RETV(!pClient, false);
 
 	// 유저가 서버 이동이 가능한지 판단~
@@ -85,7 +85,7 @@ bool CBasicC2SProtocolHandler_LoginSvr::ReqMoveToServer(IProtocolDispatcher &dis
 bool CBasicC2SProtocolHandler_LoginSvr::AckUserId(IProtocolDispatcher &dispatcher, netid senderId, 
 	const error::ERROR_CODE &errorCode, const std::string &id, const netid &userId)
 {
-	CRemoteClient *pClient = network::CheckClientId( &GetServer(), id, userId, &m_BasicProtocol, &dispatcher );
+	CSession *pClient = network::CheckClientId( &GetServer(), id, userId, &m_BasicProtocol, &dispatcher );
 	RETV(!pClient, false);
 
 	if (errorCode != error::ERR_SUCCESS)

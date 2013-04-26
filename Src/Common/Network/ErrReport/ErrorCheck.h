@@ -12,13 +12,13 @@ namespace basic { class s2c_Protocol; }
 namespace network
 {
 
-	CRemoteClient* CheckClientNetId( ServerBasicPtr pServer, netid clientId, 
+	CSession* CheckClientNetId( ServerBasicPtr pServer, netid clientId, 
 		basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher );
 
-	CRemoteClient* CheckClientId( ServerBasicPtr pServer, const std::string &id, netid clientId, 
+	CSession* CheckClientId( ServerBasicPtr pServer, const std::string &id, netid clientId, 
 		basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher );
 
-	bool CheckClientConnection( CRemoteClient *pClient, 
+	bool CheckClientConnection( CSession *pClient, 
 		basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher );
 
 

@@ -16,7 +16,7 @@ namespace network
 	public:
 		CServerUserAccess( ServerBasicPtr svr );
 		virtual ~CServerUserAccess();
-		virtual RemoteClientPtr GetUser(netid id) override;
+		virtual SessionPtr GetUser(netid id) override;
 	protected:
 		ServerBasicPtr m_pSvr;
 	};
@@ -34,10 +34,10 @@ namespace network
 	/**
 	 @brief return the remote client in server object
 	 */
-	inline RemoteClientPtr CServerUserAccess::GetUser(netid id)
+	inline SessionPtr CServerUserAccess::GetUser(netid id)
 	{
 		RETV(!m_pSvr, NULL);
-		return m_pSvr->GetRemoteClient(id);
+		return m_pSvr->GetSession(id);
 	}
 
 }

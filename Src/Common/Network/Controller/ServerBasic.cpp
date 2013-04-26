@@ -12,7 +12,7 @@ CServerBasic::CServerBasic(PROCESS_TYPE procType) :
 	CNetConnector(procType)
 ,	m_IsServerOn(false)
 ,	m_RootGroup(NULL, "root")
-,	m_pRemoteClientFactory(new CRemoteClientFactory()) // defalut 
+,	m_pSessionFactory(new CSessionFactory()) // defalut 
 ,	m_pGroupFactory(new CGroupFactory()) // default
 {
 	m_ServerPort = 2333;
@@ -25,18 +25,18 @@ CServerBasic::~CServerBasic()
 {
 	Clear();
 	m_Timers.clear();
-	SAFE_DELETE(m_pRemoteClientFactory);
+	SAFE_DELETE(m_pSessionFactory);
 	SAFE_DELETE(m_pGroupFactory);
 }
 
 
 /**
- @brief SetRemoteClientFactory
+ @brief SetSessionFactory
  */
-void	CServerBasic::SetRemoteClientFactory( IRemoteClientFactory *ptr ) 
+void	CServerBasic::SetSessionFactory( ISessionFactory *ptr ) 
 { 
-	SAFE_DELETE(m_pRemoteClientFactory);
-	m_pRemoteClientFactory = ptr; 
+	SAFE_DELETE(m_pSessionFactory);
+	m_pSessionFactory = ptr; 
 }
 
 
@@ -90,7 +90,7 @@ void	CServerBasic::Proc()
 			const netid senderId = sockets.netid_array[ i];
 			if (result == SOCKET_ERROR || result == 0) // 받은 패킷사이즈가 0이면 서버와 끊겼다는 의미다.
 			{
-				RemoveRemoteClientSocket(sockets.netid_array[ i]);
+				RemoveSessionSocket(sockets.netid_array[ i]);
 
 				CPacketQueue::Get()->PushPacket( 
 					CPacketQueue::SPacketData(GetNetId(), 
@@ -142,7 +142,7 @@ bool CServerBasic::AcceptProcess()
 
 			CPacketQueue::Get()->PushPacket( 
 				CPacketQueue::SPacketData(GetNetId(), AcceptPacket(remoteSocket, ip)) );
-			//AddRemoteClient( remoteSocket, ip );
+			//AddSession( remoteSocket, ip );
 		}
 	}
 	return true; 
@@ -196,7 +196,7 @@ void	CServerBasic::DispatchPacket()
 
 
 //------------------------------------------------------------------------
-// 저장된 remoteClient를 모두 제거한다.
+// 저장된 Session 를 모두 제거한다.
 //------------------------------------------------------------------------
 bool CServerBasic::Stop()
 {
@@ -208,33 +208,33 @@ bool CServerBasic::Stop()
 //------------------------------------------------------------------------
 // 클라이언트 추가
 //------------------------------------------------------------------------
-bool CServerBasic::AddRemoteClient(SOCKET sock, const std::string &ip)
+bool CServerBasic::AddSession(SOCKET sock, const std::string &ip)
 {
-	RETV(!m_pRemoteClientFactory, false);
+	RETV(!m_pSessionFactory, false);
 
 	common::AutoCSLock cs(m_CS);
 
-	RemoteClientItor it = FindRemoteClientBySocket(sock);
-	if (m_RemoteClients.end() != it)
+	SessionItor it = FindSessionBySocket(sock);
+	if (m_Sessions.end() != it)
 		return false; // 이미존재한다면 실패
 
-	CRemoteClient *pNewRemoteClient = m_pRemoteClientFactory->New();// new CRemoteClient();
-	pNewRemoteClient->SetSocket(sock);
-	pNewRemoteClient->SetIp(ip);
-	pNewRemoteClient->SetState(CLIENTSTATE_LOGIN_WAIT);
+	CSession *pNewSession = m_pSessionFactory->New();
+	pNewSession->SetSocket(sock);
+	pNewSession->SetIp(ip);
+	pNewSession->SetState(CLIENTSTATE_LOGIN_WAIT);
 
-	if (!m_RootGroup.AddUser(m_WaitGroupId, pNewRemoteClient->GetId()))
+	if (!m_RootGroup.AddUser(m_WaitGroupId, pNewSession->GetId()))
 	{
-		clog::Error( clog::ERROR_CRITICAL, "CServerBasic::AddClient Error!! netid: %d\n", pNewRemoteClient->GetId());
-		SAFE_DELETE(pNewRemoteClient);
+		clog::Error( clog::ERROR_CRITICAL, "CServerBasic::AddClient Error!! netid: %d\n", pNewSession->GetId());
+		SAFE_DELETE(pNewSession);
 	}
 	else
 	{
-		m_RemoteClients.insert( 
-			RemoteClients::value_type(pNewRemoteClient->GetId(), pNewRemoteClient) );
+		m_Sessions.insert( 
+			Sessions_::value_type(pNewSession->GetId(), pNewSession) );
 
-		clog::Log( clog::LOG_F_N_O, "AddClient netid: %d, socket: %d\n", pNewRemoteClient->GetId(), sock );
-		OnClientJoin(pNewRemoteClient->GetId());
+		clog::Log( clog::LOG_F_N_O, "AddClient netid: %d, socket: %d\n", pNewSession->GetId(), sock );
+		OnClientJoin(pNewSession->GetId());
 	}
 
 	return true;
@@ -244,10 +244,10 @@ bool CServerBasic::AddRemoteClient(SOCKET sock, const std::string &ip)
 //------------------------------------------------------------------------
 // 리모트 클라이언트 얻기
 //------------------------------------------------------------------------
-CRemoteClient* CServerBasic::GetRemoteClient(netid netId)
+CSession* CServerBasic::GetSession(netid netId)
 {
-	RemoteClientItor it = m_RemoteClients.find(netId);
-	if (m_RemoteClients.end() == it)
+	SessionItor it = m_Sessions.find(netId);
+	if (m_Sessions.end() == it)
 		return NULL; //없다면 실패
 	return it->second;
 }
@@ -256,9 +256,9 @@ CRemoteClient* CServerBasic::GetRemoteClient(netid netId)
 /**
  @brief  리모트 클라이언트 얻기
  */
-CRemoteClient* CServerBasic::GetRemoteClient(const std::string &clientId)
+CSession* CServerBasic::GetSession(const std::string &clientId)
 {
-	BOOST_FOREACH(auto &client, m_RemoteClients.m_Seq)
+	BOOST_FOREACH(auto &client, m_Sessions.m_Seq)
 	{
 		if (client && client->GetName() == clientId)
 		{
@@ -274,8 +274,8 @@ CRemoteClient* CServerBasic::GetRemoteClient(const std::string &clientId)
 //------------------------------------------------------------------------
 netid CServerBasic::GetNetIdFromSocket(SOCKET sock)
 {
-	RemoteClientItor it = FindRemoteClientBySocket(sock);
-	if (m_RemoteClients.end() == it)
+	SessionItor it = FindSessionBySocket(sock);
+	if (m_Sessions.end() == it)
 		return INVALID_NETID; //없다면 실패
 	return it->second->GetId();
 }
@@ -284,12 +284,12 @@ netid CServerBasic::GetNetIdFromSocket(SOCKET sock)
 //------------------------------------------------------------------------
 // 클라이언트 제거
 //------------------------------------------------------------------------
-bool CServerBasic::RemoveRemoteClient(netid netId)
+bool CServerBasic::RemoveSession(netid netId)
 {
 	common::AutoCSLock cs(m_CS);
 
-	RemoteClientItor it = m_RemoteClients.find(netId);
-	if (m_RemoteClients.end() == it)
+	SessionItor it = m_Sessions.find(netId);
+	if (m_Sessions.end() == it)
 		return false; //없다면 실패
 	RemoveClientProcess(it);
 	return true;
@@ -301,9 +301,9 @@ bool CServerBasic::RemoveRemoteClient(netid netId)
  나머지 정보를 차례차례 제거한다.
  오류가 발생한 소켓으로 패킷을 계속 받는 것을 막기 위해서
  */
-bool	CServerBasic::RemoveRemoteClientSocket(netid netId)
+bool	CServerBasic::RemoveSessionSocket(netid netId)
 {
-	CRemoteClient *pClient = GetRemoteClient(netId);
+	CSession *pClient = GetSession(netId);
 	if (!pClient)
 		return false;
 
@@ -313,32 +313,32 @@ bool	CServerBasic::RemoveRemoteClientSocket(netid netId)
 }
 
 //------------------------------------------------------------------------
-// m_RemoteClients에서 sock에 해당하는 클라이언트를 리턴한다.
+// m_Sessions에서 sock에 해당하는 클라이언트를 리턴한다.
 //------------------------------------------------------------------------
-RemoteClientItor CServerBasic::FindRemoteClientBySocket(SOCKET sock)
+SessionItor CServerBasic::FindSessionBySocket(SOCKET sock)
 {
-	RemoteClientItor it = m_RemoteClients.begin();
-	while (m_RemoteClients.end() != it)
+	SessionItor it = m_Sessions.begin();
+	while (m_Sessions.end() != it)
 	{
 		if (it->second->GetSocket() == sock)
 			return it;
 		++it;
 	}
-	return m_RemoteClients.end();	
+	return m_Sessions.end();	
 }
 
 
 //------------------------------------------------------------------------
-// m_RemoteClients 루프안에서 Client를 제거해야 될때 쓰이는 함수다.
+// m_Sessions 루프안에서 Client를 제거해야 될때 쓰이는 함수다.
 // Client를 제거하고 다음을 가르키는 iterator를 반환한다.
 //------------------------------------------------------------------------
-//RemoteClientItor CServerBasic::RemoveRemoteClientInLoop(netid netId)
+//SessionItor CServerBasic::RemoveSessionInLoop(netid netId)
 //{
-//	RemoteClientItor it = m_RemoteClients.find(netId);
+//	SessionItor it = m_RemoteClients.find(netId);
 //	if (m_RemoteClients.end() == it)
 //		return m_RemoteClients.end(); //없다면 실패
 //
-//	RemoteClientItor r = RemoveClientProcess(it);
+//	SessionItor r = RemoveClientProcess(it);
 //	return r;
 //}
 
@@ -346,7 +346,7 @@ RemoteClientItor CServerBasic::FindRemoteClientBySocket(SOCKET sock)
 //------------------------------------------------------------------------
 // 클라이언트 제거 처리
 //------------------------------------------------------------------------
-bool CServerBasic::RemoveClientProcess(RemoteClientItor it)
+bool CServerBasic::RemoveClientProcess(SessionItor it)
 {
 	const netid userId = it->second->GetId();
 	const SOCKET sock = it->second->GetSocket();
@@ -369,7 +369,7 @@ bool CServerBasic::RemoveClientProcess(RemoteClientItor it)
 	 }
 
 	//delete it->second;
-	m_RemoteClients.remove(it->first);
+	m_Sessions.remove(it->first);
 	delete it->second;
 
 	clog::Log( clog::LOG_F_N_O, "RemoveClient netid: %d, socket: %d\n", userId, sock );
@@ -383,11 +383,11 @@ bool CServerBasic::RemoveClientProcess(RemoteClientItor it)
 void CServerBasic::Clear()
 {
 	m_IsServerOn = false;
-	BOOST_FOREACH( auto &kv, m_RemoteClients.m_Seq)
+	BOOST_FOREACH( auto &kv, m_Sessions.m_Seq)
 	{
 		delete kv;
 	}
-	m_RemoteClients.clear();
+	m_Sessions.clear();
 
 	m_RootGroup.Clear();
 
@@ -396,7 +396,7 @@ void CServerBasic::Clear()
 
 
 //------------------------------------------------------------------------
-// m_RemoteClients에 저장된 socket으로 fd_set을 생성한다. 
+// m_Sessions에 저장된 socket으로 fd_set을 생성한다. 
 //------------------------------------------------------------------------
 void CServerBasic::MakeFDSET( SFd_Set *pfdset)
 {
@@ -406,7 +406,7 @@ void CServerBasic::MakeFDSET( SFd_Set *pfdset)
 	common::AutoCSLock cs(m_CS);
 
 	FD_ZERO(pfdset);
-	BOOST_FOREACH(auto &kv, m_RemoteClients.m_Seq)
+	BOOST_FOREACH(auto &kv, m_Sessions.m_Seq)
 	{
 		//pfdset->fd_array[ pfdset->fd_count] = kv.second->GetSocket();
 		//pfdset->fd_count++;
@@ -421,8 +421,8 @@ void CServerBasic::MakeFDSET( SFd_Set *pfdset)
 //------------------------------------------------------------------------
 bool CServerBasic::IsExist(netid netId)
 {
-	RemoteClientItor it = m_RemoteClients.find(netId);
-	return m_RemoteClients.end() != it;
+	SessionItor it = m_Sessions.find(netId);
+	return m_Sessions.end() != it;
 }
 
 
@@ -431,9 +431,9 @@ bool CServerBasic::IsExist(netid netId)
 //------------------------------------------------------------------------
 bool CServerBasic::SendAll(const CPacket &packet)
 {
-	//RemoteClientItor it = m_RemoteClients.begin();
-	//while (m_RemoteClients.end() != it)
-	BOOST_FOREACH(auto &client, m_RemoteClients.m_Seq)
+	//SessionItor it = m_Sessions.begin();
+	//while (m_Sessions.end() != it)
+	BOOST_FOREACH(auto &client, m_Sessions.m_Seq)
 	{
 		if (!client)
 			continue;
@@ -458,14 +458,14 @@ bool	CServerBasic::Send(netid netId, const SEND_FLAG flag, const CPacket &packet
 	bool sendResult = true;
 	if ((flag == SEND_T) || (flag == SEND_T_V))
 	{
-		RemoteClientItor it = m_RemoteClients.find(netId);
-		if (m_RemoteClients.end() != it) // Send To Client
+		SessionItor it = m_Sessions.find(netId);
+		if (m_Sessions.end() != it) // Send To Client
 		{
 			const int result = send(it->second->GetSocket(), packet.GetData(), CPacket::MAX_PACKETSIZE, 0);
 			if (result == INVALID_SOCKET)
 			{
 				clog::Error( clog::ERROR_WARNING, common::format("CServer::Send() Socket Error id=%d\n", it->second->GetId()) );
-				RemoveRemoteClient(packet.GetSenderId());
+				RemoveSession(packet.GetSenderId());
 				sendResult = false;
 			}
 		}

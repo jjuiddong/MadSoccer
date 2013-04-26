@@ -40,30 +40,31 @@ namespace network { namespace multinetwork {
 
 		const std::string& GetSvrType() const;
 		const std::string& GetConnectSvrType() const;
-		void				SetRemoteClientFactory( IRemoteClientFactory *ptr );
+		void				SetSessionFactory( ISessionFactory *ptr );
 		void				SetGroupFactory( IGroupFactory *ptr );
 		SERVICE_TYPE GetServiceType() const;
 		bool				IsConnect() const;
 		bool				IsTryConnect() const;
 		void				SetTryConnect();
 		CServerBasic* GetServer();
-		CCoreClient* GetClient();
+		const CoreClients_V& GetClients();
 
 		// overriding
 		virtual bool	AddProtocolListener(ProtocolListenerPtr pListener) override;
 		virtual bool	RemoveProtocolListener(ProtocolListenerPtr pListener) override;
 
+
 	protected:
 		bool				Connect( SERVICE_TYPE type, const std::string &ip, const int port );
+
 
 	private:
 		// Event Handler
 		void				OnConnect( CNetEvent &event );
 		void				OnDisconnect( CNetEvent &event );
 
-	private:
-		typedef common::VectorMap<netid, CCoreClient*> Clients;
 
+	private:
 		STATE m_State;
 		SERVICE_TYPE m_ServiceType;
 		std::string m_svrType;
@@ -74,9 +75,9 @@ namespace network { namespace multinetwork {
 		CCoreClient *m_pClient;
 		CServerBasic *m_pServer;
 		CP2PClient *m_pP2p;
-		Clients m_Clients;
-		Clients m_RemoveClients;
-		IRemoteClientFactory *m_pRemoteClientFactory;
+		CoreClients_ m_Clients;
+		CoreClients_ m_RemoveClients;
+		ISessionFactory *m_pSessionFactory;
 		IGroupFactory *m_pGroupFactory;
 		
 	};
@@ -86,7 +87,7 @@ namespace network { namespace multinetwork {
 	inline const std::string& CNetGroupController::GetConnectSvrType() const { return m_connectSvrType; }
 	inline SERVICE_TYPE CNetGroupController::GetServiceType() const { return m_ServiceType; }
 	inline CServerBasic* CNetGroupController::GetServer() { return m_pServer; }
-	inline CCoreClient* CNetGroupController::GetClient() { return m_pClient; }
+	inline const CoreClients_V& CNetGroupController::GetClients() { return m_Clients.m_Seq; }
 	inline bool CNetGroupController::IsConnect() const { return (m_State == RUN) || (m_State == TRYCONNECT); }
 	inline bool CNetGroupController::IsTryConnect() const { return (m_State == TRYCONNECT); }
 	inline void	CNetGroupController::SetTryConnect() { m_State = TRYCONNECT; }

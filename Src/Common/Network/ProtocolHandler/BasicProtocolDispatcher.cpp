@@ -33,7 +33,7 @@ void basic_protocol::ServerDispatcher::Dispatch(CPacket &packet, ServerBasicPtr 
 			}
 			else
 			{
-				pSvr->RemoveRemoteClient(disconnectId);
+				pSvr->RemoveSession(disconnectId);
 			}
 		}
 		break;
@@ -47,7 +47,7 @@ void basic_protocol::ServerDispatcher::Dispatch(CPacket &packet, ServerBasicPtr 
 
 			netid disconnectId = INVALID_NETID;
 			newPacket >> disconnectId;
-			pSvr->RemoveRemoteClient(disconnectId);
+			pSvr->RemoveSession(disconnectId);
 		}
 		break;
 
@@ -57,7 +57,7 @@ void basic_protocol::ServerDispatcher::Dispatch(CPacket &packet, ServerBasicPtr 
 			newPacket >> remoteClientSock;
 			std::string ip;
 			newPacket >> ip;
-			pSvr->AddRemoteClient(remoteClientSock, ip);
+			pSvr->AddSession(remoteClientSock, ip);
 		}
 		break;
 

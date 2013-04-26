@@ -115,7 +115,7 @@ bool CLoginServer::AckMoveUser(IProtocolDispatcher &dispatcher, netid senderId, 
  */
 bool CLoginServer::ReqLobbyIn(IProtocolDispatcher &dispatcher, netid senderId)
 {
-	CRemoteClient *pClient = CheckClientNetId(GetServer(), senderId, &m_BasicProtocol, &dispatcher);
+	CSession *pClient = CheckClientNetId(GetServer(), senderId, &m_BasicProtocol, &dispatcher);
 	RETV(!pClient, false);
 
 	if (!CheckClientConnection(pClient, &m_BasicProtocol, &dispatcher))
@@ -125,13 +125,16 @@ bool CLoginServer::ReqLobbyIn(IProtocolDispatcher &dispatcher, netid senderId)
 	if (!pLobbySvrDelegation)
 	{
 		clog::Error( clog::ERROR_CRITICAL, "ReqLobbyIn Error!! not found lobbysvr netgroupdelegation" );
-		m_BasicProtocol.AckMoveToServer( senderId, SEND_T, error::ERR_MOVETOSERVER_NOT_FOUND_SERVER, "lobbysvr");
+		m_BasicProtocol.AckMoveToServer( senderId, SEND_T, error::ERR_MOVETOSERVER_NOT_FOUND_SERVER, "lobbysvr" );
 		return false;
 	}
 
 	CSubServerConnector *pSubSvrCon = dynamic_cast<CSubServerConnector*>(pLobbySvrDelegation.Get());
 	if (!pSubSvrCon)
+	{
+		m_BasicProtocol.AckMoveToServer( senderId, SEND_T, error::ERR_MOVETOSERVER_NOT_FOUND_SERVER, "lobbysvr" );
 		return false;
+	}
 
 	std::list<SSubServerInfo> subServers = pSubSvrCon->GetSubServerInfo();
 

@@ -27,6 +27,7 @@ class CLobbyServer	: public network::CServer
 	enum
 	{
 		ID_TIMER_REFRESH = 100,
+		REFRESH_TIMER_INTERVAL = 10000,
 	};
 
 public:

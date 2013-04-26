@@ -3,35 +3,36 @@ Name:   Factory.h
 Author:  jjuiddong
 Date:    4/7/2013
 
-	RemoteClient, Group 생성 factory 클래스 정의 
+	CSession, Group 생성 factory 클래스 정의 
 */
 #pragma once
 
 #include "DataStructure/RemoteClient.h"
+#include "Controller/Session.h"
 
 namespace network
 {
 
-	/// CRemoteClient Factory class
-	class IRemoteClientFactory
+	/// CSession Factory class
+	class ISessionFactory
 	{
 	public:
-		virtual ~IRemoteClientFactory() {}
-		virtual CRemoteClient* New() = 0;
-		virtual IRemoteClientFactory* Clone() = 0;
+		virtual ~ISessionFactory() {}
+		virtual CSession* New() = 0;
+		virtual ISessionFactory* Clone() = 0;
 	};
 
-	class CRemoteClientFactory : public IRemoteClientFactory
+	class CSessionFactory : public ISessionFactory
 	{
-		virtual CRemoteClient* New() { return new CRemoteClient(); }
-		virtual IRemoteClientFactory* Clone() { return new CRemoteClientFactory(); }
+		virtual CSession* New() { return new CSession(); }
+		virtual ISessionFactory* Clone() { return new CSessionFactory(); }
 	};
 
 	/// CRemoteSubServer class Factory
-	class CRemoteServerFactory : public IRemoteClientFactory
+	class CRemoteServerFactory : public ISessionFactory
 	{
-		virtual CRemoteClient* New() { return new CRemoteServer(); }
-		virtual IRemoteClientFactory* Clone() { return new CRemoteServerFactory(); }
+		virtual CSession* New() { return new CRemoteServer(); }
+		virtual ISessionFactory* Clone() { return new CRemoteServerFactory(); }
 	};
 
 

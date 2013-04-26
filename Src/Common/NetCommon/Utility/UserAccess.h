@@ -14,7 +14,7 @@ namespace network
 	{
 	public:
 		virtual ~IUserAccess() {}
-		virtual RemoteClientPtr GetUser(netid id) = 0;
+		virtual SessionPtr GetUser(netid id) = 0;
 	};
 
 }

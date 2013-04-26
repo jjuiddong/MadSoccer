@@ -21,7 +21,7 @@ namespace network { namespace multinetwork {
 		NetGroupControllerPtr		GetConnector() const;
 
 		CServerBasic* GetServer();
-		CCoreClient*	GetClient();
+		const CoreClients_V& GetClients();
 
 	protected:
 		// Event 

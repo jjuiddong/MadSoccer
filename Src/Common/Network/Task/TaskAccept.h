@@ -64,7 +64,7 @@ namespace network
 				getpeername( remoteSocket, (sockaddr*)&addr, &len );
 				std::string ip = inet_ntoa(addr.sin_addr);
 
-				//pSvr->AddRemoteClient( remoteSocket, ip );
+				//pSvr->AddSession( remoteSocket, ip );
 				CPacketQueue::Get()->PushPacket( 
 					CPacketQueue::SPacketData(pSvr->GetNetId(), AcceptPacket(remoteSocket, ip)) );
 			}

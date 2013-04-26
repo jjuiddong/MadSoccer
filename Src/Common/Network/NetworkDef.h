@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include "Common/Common.h"
 #include "NetCommon/NetCommon.h"
 
 #include "wxMemMonitorLib/wxMemMonitor.h"
@@ -32,6 +33,16 @@ typedef common::ReferencePtr<network::CClient> ClientPtr;
 typedef common::ReferencePtr<network::CP2PClient> P2PClientPtr;
 typedef common::ReferencePtr<network::CCoreClient> CoreClientPtr;
 typedef common::ReferencePtr<network::CCharacter> CharacterPtr;
+
+typedef common::VectorMap<netid, ClientBasicPtr> Clients;
+typedef common::VectorMap<netid, network::CClientBasic*> Clients_;
+typedef Clients_::VectorType	Clients_V;
+typedef common::VectorMap<netid, CoreClientPtr> CoreClients;
+typedef common::VectorMap<netid, network::CCoreClient*> CoreClients_;
+typedef CoreClients_::VectorType	CoreClients_V;
+
+//typedef common::VectorMap<netid, CCoreClient*> CoreClientsPtr;
+
 
 
 #include "ErrReport/ErrorCode.h"
@@ -68,6 +79,9 @@ namespace network { namespace multinetwork {
 
 typedef common::ReferencePtr<network::multinetwork::CNetGroupController> NetGroupControllerPtr;
 typedef common::ReferencePtr<network::multinetwork::CNetGroupDelegation> NetGroupDelegationPtr;
+
+
+#include "Controller/CoreClient.h"
 
 #include "MultiNetwork/MultiNetwork.h"
 #include "MultiNetwork/NetGroupController.h"

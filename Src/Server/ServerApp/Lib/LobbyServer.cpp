@@ -53,7 +53,7 @@ void	CLobbyServer::OnConnectNetGroupController()
 	NETEVENT_CONNECT( EVT_CLIENT_LEAVE, CLobbyServer, CLobbyServer::OnClientLeave );
 	EVENT_CONNECT_TO( GetServer(), this, EVT_TIMER, CLobbyServer, CLobbyServer::OnTimer );
 
-	GetServer()->AddTimer(ID_TIMER_REFRESH, 1000 );
+	GetServer()->AddTimer(ID_TIMER_REFRESH, REFRESH_TIMER_INTERVAL);
 }
 
 
@@ -232,8 +232,8 @@ std::string CLobbyServer::ToString()
 	common::AutoCSLock cs(GetServer()->GetCS());
 
 	std::stringstream ss;
-	ss << "RemoteClient: " << GetServer()->GetRemoteClients().size() << std::endl;
-	BOOST_FOREACH(auto &client, GetServer()->GetRemoteClients())
+	ss << "Session : " << GetServer()->GetSessions().size() << std::endl;
+	BOOST_FOREACH(auto &client, GetServer()->GetSessions())
 	{
 		ss << "netid: " << client->GetId() << ", sock: " << client->GetSocket() << std::endl;			
 	}
@@ -251,7 +251,7 @@ void	CLobbyServer::OnTimer( CEvent &event )
 		// 주기적으로 서버 정보를 Login서버에게 보낸다.
 		if (GetServer() && GetServer()->IsServerOn())
 		{
-			m_SvrNetworkProtocol.SendServerInfo( SERVER_NETID, network::SEND_T, "lobbysvr", GetServer()->GetRemoteClients().size() );
+			m_SvrNetworkProtocol.SendServerInfo( SERVER_NETID, network::SEND_T, "lobbysvr", GetServer()->GetSessions().size() );
 		}
 	}
 

@@ -1,11 +1,13 @@
-//------------------------------------------------------------------------
-// Name:    NetController.h
-// Author:  jjuiddong
-// Date:    12/24/2012
-// 
-// 네트워크에 필요한 쓰레드와 서버,클라이언트 객체를 관리한다.
-// Dipatcher 를 관리한다.
-//------------------------------------------------------------------------
+/**
+Name:   NetController.h
+Author:  jjuiddong
+Date:    12/24/2012
+
+
+네트워크에 필요한 쓰레드와 서버,클라이언트 객체를 관리한다.
+Dipatcher 를 관리한다.
+
+*/
 #pragma once
 
 namespace network
@@ -26,8 +28,6 @@ namespace network
 		typedef common::VectorMap<netid, ServerBasicPtr> Servers;
 
 		typedef std::map<SOCKET, ClientBasicPtr> ClientSockets;
-		typedef common::VectorMap<netid, ClientBasicPtr> Clients;
-		typedef common::VectorMap<netid, CoreClientPtr> CoreClients;
 
 		typedef std::map<int,IProtocolDispatcher*> DispatcherMap;
 		typedef ServerSockets::iterator ServerItor;

@@ -26,6 +26,7 @@ namespace network
 	class CGroup;
 	class CRemoteClient;
 	class CRemoteServer;
+	class CSession;
 	class CPacket;
 	class IProtocol;
 	class IProtocolListener;
@@ -116,6 +117,11 @@ typedef RemoteClients::iterator RemoteClientItor;
 typedef common::ReferencePtr<network::CRemoteClient> RemoteClientPtr;
 typedef common::ReferencePtr<network::CRemoteServer> RemoteServerPtr;
 
+typedef common::ReferencePtr<network::CSession> SessionPtr;
+typedef common::VectorMap<netid,network::CSession*> Sessions_;
+typedef Sessions_::VectorType	Sessions_V;
+typedef Sessions_::MapType::iterator SessionItor;
+
 typedef std::list<network::CGroup*> GroupList;
 typedef GroupList::iterator GroupItor;
 typedef common::ReferencePtr<network::CGroup> GroupPtr;
@@ -143,6 +149,7 @@ typedef ProtocolMap::iterator ProtocolItor;
 
 #include "Controller/NetConnector.h"
 #include "Controller/NetConnectorLinker.h"
+#include "Controller/Session.h"
 
 #include "Interface/Protocol.h"
 #include "Interface/ProtocolDispatcher.h"

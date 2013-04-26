@@ -10,7 +10,7 @@ Date:    12/25/2012
 
 namespace network
 {
-	class CNetConnector : public CEventHandler
+	class CNetConnector : public CEventHandler, public CSession
 	{
 	public:
 		CNetConnector(PROCESS_TYPE procType);

@@ -80,6 +80,7 @@
     <ClInclude Include="..\Common\event\FastDelegate.h" />
     <ClInclude Include="Controller\NetConnector.h" />
     <ClInclude Include="Controller\NetConnectorLinker.h" />
+    <ClInclude Include="Controller\Session.h" />
     <ClInclude Include="DataStructure\Group.h" />
     <ClInclude Include="DataStructure\Packet.h" />
     <ClInclude Include="DataStructure\PacketQueue.h" />
@@ -105,6 +106,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Controller\NetConnector.cpp" />
+    <ClCompile Include="Controller\Session.cpp" />
     <ClCompile Include="DataStructure\Group.cpp" />
     <ClCompile Include="DataStructure\Packet.cpp" />
     <ClCompile Include="DataStructure\RemoteClient.cpp" />

@@ -12,7 +12,7 @@ namespace network
 	public:
 		CClientUserAccess( ClientBasicPtr svr );
 		virtual ~CClientUserAccess();
-		virtual RemoteClientPtr GetUser(netid id) override;
+		virtual SessionPtr GetUser(netid id) override;
 	protected:
 		ClientBasicPtr m_pSvr;
 	};

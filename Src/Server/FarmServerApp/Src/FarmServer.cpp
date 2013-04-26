@@ -24,7 +24,7 @@ void	CFarmServer::OnConnectNetGroupController()
 {
 	RegisterProtocol( &m_Protocol );
 	AddProtocolListener(this);
-	GetConnector()->SetRemoteClientFactory( new CRemoteSubServerFactory() );
+	GetConnector()->SetSessionFactory( new CRemoteSubServerFactory() );
 	GetConnector()->SetGroupFactory( new CSubServerGroupFactory() );
 
 	m_pServer = GetServer();
@@ -111,7 +111,7 @@ bool CFarmServer::SendSubServerP2PCLink(IProtocolDispatcher &dispatcher, netid s
 	}
 
 	RemoteSubServerPtr pClient = dynamic_cast<CRemoteSubServer*>(
-		GetServer()->GetRemoteClient(senderId));
+		GetServer()->GetSession(senderId));
 	if (!pClient)
 	{
 		clog::Error( log::ERROR_PROBLEM, "SendSubServerP2PCLink Error!!, not exist user id = %d\n", senderId );
@@ -139,7 +139,7 @@ bool CFarmServer::SendSubServerP2PSLink(IProtocolDispatcher &dispatcher, netid s
 	}	
 
 	RemoteSubServerPtr pClient = dynamic_cast<CRemoteSubServer*>(
-		GetServer()->GetRemoteClient(senderId));
+		GetServer()->GetSession(senderId));
 	if (!pClient)
 	{
 		clog::Error( log::ERROR_PROBLEM, "SendSubServerP2PSLink Error!!, not exist user id = %d\n", senderId );
@@ -167,7 +167,7 @@ bool CFarmServer::SendSubServerInputLink(IProtocolDispatcher &dispatcher, netid 
 	}	
 
 	RemoteSubServerPtr pClient = dynamic_cast<CRemoteSubServer*>(
-		GetServer()->GetRemoteClient(senderId));
+		GetServer()->GetSession(senderId));
 	if (!pClient)
 	{
 		clog::Error( log::ERROR_PROBLEM, "SendSubServerInputLink Error!!, not exist user id = %d\n", senderId );
@@ -195,7 +195,7 @@ bool CFarmServer::SendSubServerOutputLink(IProtocolDispatcher &dispatcher, netid
 	}	
 
 	RemoteSubServerPtr pClient = dynamic_cast<CRemoteSubServer*>(
-		GetServer()->GetRemoteClient(senderId));
+		GetServer()->GetSession(senderId));
 	if (!pClient)
 	{
 		clog::Error( log::ERROR_PROBLEM, "SendSubServerOutputLink Error!!, not exist user id = %d\n", senderId );
@@ -270,7 +270,7 @@ bool CFarmServer::ReqToBindOuterPort(IProtocolDispatcher &dispatcher, netid send
 	const int bindPort = pSubSvrGroup->GetToBindOuterPort( CServerUserAccess(GetServer()) );
 
 	RemoteSubServerPtr pSubServer = dynamic_cast<CRemoteSubServer*>(
-		GetServer()->GetRemoteClient(senderId));
+		GetServer()->GetSession(senderId));
 	if (!pSubServer)
 	{// Error!!
 		clog::Error( log::ERROR_PROBLEM, "ReqToBindOuterPort Error!!, not found user user id = %d\n", senderId );
@@ -308,7 +308,7 @@ bool CFarmServer::ReqToBindInnerPort(IProtocolDispatcher &dispatcher, netid send
 	const int bindPort = pSubSvrGroup->GetToBindInnerPort( CServerUserAccess(GetServer()) );
 
 	RemoteSubServerPtr pSubServer = dynamic_cast<CRemoteSubServer*>(
-		GetServer()->GetRemoteClient(senderId));
+		GetServer()->GetSession(senderId));
 	if (!pSubServer)
 	{// Error!!
 		clog::Error( log::ERROR_PROBLEM, "ReqToBindInnerPort Error!!, not found user user id = %d\n", senderId );
@@ -344,7 +344,7 @@ bool CFarmServer::ReqSubServerBindComplete(IProtocolDispatcher &dispatcher, neti
 	}
 
 	RemoteSubServerPtr pClient = dynamic_cast<CRemoteSubServer*>(
-		GetServer()->GetRemoteClient(senderId));
+		GetServer()->GetSession(senderId));
 	if (!pClient)
 	{
 		clog::Error( log::ERROR_PROBLEM, "AckSubServerBindComplete Error!!, not exist user id = %d\n", senderId );
@@ -410,7 +410,7 @@ bool CFarmServer::ReqSubClientConnectComplete(IProtocolDispatcher &dispatcher, n
 	}
 
 	RemoteSubServerPtr pClient = dynamic_cast<CRemoteSubServer*>(
-		GetServer()->GetRemoteClient(senderId));
+		GetServer()->GetSession(senderId));
 	if (!pClient)
 	{
 		clog::Error( log::ERROR_PROBLEM, "AckSubClientConnectComplete Error!!, not exist user id = %d\n", senderId );

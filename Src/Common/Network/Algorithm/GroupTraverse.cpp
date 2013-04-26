@@ -33,7 +33,7 @@ netid group::GetP2PHostClient( GroupPtr pGroup, IUserAccess &userAccess)
 	const NetIdes &users = p2pGroup->GetUsers();
 	BOOST_FOREACH(auto &userId, users)
 	{
-		RemoteClientPtr clientPtr = userAccess.GetUser(userId);
+		SessionPtr clientPtr = userAccess.GetUser(userId);
 		if (!clientPtr)
 			continue;
 		if (P2P_HOST == clientPtr->GetP2PState())

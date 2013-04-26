@@ -26,7 +26,8 @@ void	CSubServerConnector::OnConnectNetGroupController()
 
 	AddProtocolListener( this );
 
-	GetServer()->SetRemoteClientFactory( new CRemoteServerFactory() );
+	GetConnector()->SetSessionFactory( new CRemoteServerFactory() );
+
 }
 
 
@@ -60,7 +61,7 @@ std::list<SSubServerInfo> CSubServerConnector::GetSubServerInfo()
 	{
 		RETV(!GetServer(), servers);
 
-		BOOST_FOREACH(auto &client, GetServer()->GetRemoteClients())
+		BOOST_FOREACH(auto &client, GetServer()->GetSessions())
 		{
 			if (!client)
 				continue;
@@ -77,7 +78,17 @@ std::list<SSubServerInfo> CSubServerConnector::GetSubServerInfo()
 	}
 	else
 	{
+		BOOST_FOREACH( auto &client, GetClients())
+		{
+			if (!client)
+				continue;
 
+			SSubServerInfo info;
+			info.ip = client->GetServerIp();
+			info.portnum = client->GetServerPort();
+			//info.userCnt = pSvr->GetUserCount();
+			servers.push_back( info );
+		}
 	}
 
 	return  servers;

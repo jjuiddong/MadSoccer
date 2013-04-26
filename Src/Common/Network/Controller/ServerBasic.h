@@ -21,17 +21,17 @@ namespace network
 		CServerBasic(PROCESS_TYPE procType);
 		virtual ~CServerBasic();
 
-		bool				AddRemoteClient(SOCKET sock, const std::string &ip);
-		CRemoteClient* GetRemoteClient(netid netId);
-		CRemoteClient* GetRemoteClient(const std::string &clientId);
-		bool				RemoveRemoteClient(netid netId);
-		bool				RemoveRemoteClientSocket(netid netId);
-		//RemoteClientItor	RemoveRemoteClientInLoop(netid netId);
+		bool				AddSession(SOCKET sock, const std::string &ip);
+		CSession*	GetSession(netid netId);
+		CSession*	GetSession(const std::string &clientId);
+		bool				RemoveSession(netid netId);
+		bool				RemoveSessionSocket(netid netId);
+
 		CGroup&		GetRootGroup();
-		RemoteClients::VectorType& GetRemoteClients();
-		void				SetRemoteClientFactory( IRemoteClientFactory *ptr );
+		Sessions_V& GetSessions();
+		void				SetSessionFactory( ISessionFactory *ptr );
 		void				SetGroupFactory( IGroupFactory *ptr );
-		IRemoteClientFactory* GetRemoteClientFactory() const;
+		ISessionFactory* GetSessionFactory() const;
 		IGroupFactory* GetGroupFactory() const;
 
 		common::CriticalSection& GetCS();
@@ -68,14 +68,14 @@ namespace network
 		bool				SendViewer(netid groupId, const SEND_FLAG flag, const CPacket &packet);
 		bool				SendViewerRecursive(netid viewerId, const netid exceptGroupId, const CPacket &packet);
 
-		bool				RemoveClientProcess(RemoteClientItor it);
-		RemoteClientItor	FindRemoteClientBySocket(SOCKET sock);
+		bool				RemoveClientProcess(SessionItor it);
+		SessionItor	FindSessionBySocket(SOCKET sock);
 
 	private:
 		int								m_ServerPort;
 		bool								m_IsServerOn;			// 서버가 정상적으로 실행이 되었다면 true
-		RemoteClients		m_RemoteClients;		// 서버와 연결된 클라이언트 정보리스트
-		IRemoteClientFactory	*m_pRemoteClientFactory;
+		Sessions_						m_Sessions;					// 서버와 연결된 클라이언트 정보리스트
+		ISessionFactory			*m_pSessionFactory;
 		IGroupFactory			    *m_pGroupFactory;
 		common::CriticalSection  m_CS;
 		std::vector<STimer>	m_Timers;
@@ -89,8 +89,8 @@ namespace network
 	inline void	 CServerBasic::SetPort(int port) { m_ServerPort = port; }
 	inline CGroup&	CServerBasic::GetRootGroup() { return m_RootGroup; }
 	inline common::CriticalSection& CServerBasic::GetCS() { return m_CS; }
-	inline RemoteClients::VectorType& CServerBasic::GetRemoteClients() { return m_RemoteClients.m_Seq; }
-	inline IRemoteClientFactory* CServerBasic::GetRemoteClientFactory() const { return m_pRemoteClientFactory; }
+	inline Sessions_V& CServerBasic::GetSessions() { return m_Sessions.m_Seq; }
+	inline ISessionFactory* CServerBasic::GetSessionFactory() const { return m_pSessionFactory; }
 	inline IGroupFactory* CServerBasic::GetGroupFactory() const { return m_pGroupFactory; }
 
 };

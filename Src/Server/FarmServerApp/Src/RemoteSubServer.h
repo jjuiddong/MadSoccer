@@ -10,12 +10,13 @@ Date:    4/7/2013
 #include "LinkState.h"
 
 /// Remote Sub Server class 
-class CRemoteSubServer : public network::CRemoteClient
+class CRemoteSubServer : public network::CSession
 {
 public:
+	CRemoteSubServer();
+
 	typedef std::vector<SLinkState> Links;
 
-	CRemoteSubServer();
 	void		SetP2PCLink( const std::vector<std::string> &v );	
 	void		SetP2PSLink( const std::vector<std::string> &v );	
 	void		SetInputLink( const std::vector<std::string> &v );
@@ -55,8 +56,8 @@ private:
 
 
 /// CRemoteSubServer class Factory
-class CRemoteSubServerFactory : public network::IRemoteClientFactory
+class CRemoteSubServerFactory : public network::ISessionFactory
 {
-	virtual network::CRemoteClient* New() { return new CRemoteSubServer(); }
-	virtual network::IRemoteClientFactory* Clone() { return new CRemoteSubServerFactory(); }
+	virtual network::CSession* New() { return new CRemoteSubServer(); }
+	virtual network::ISessionFactory* Clone() { return new CRemoteSubServerFactory(); }
 };
