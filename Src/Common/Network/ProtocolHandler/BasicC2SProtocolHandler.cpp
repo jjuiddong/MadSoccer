@@ -3,6 +3,7 @@
 #include "BasicC2SProtocolHandler.h"
 #include "../Utility/ServerUserAccess.h"
 #include "../Algorithm/GroupTraverse.h"
+#include "Network/ErrReport/ErrorCheck.h"
 
 #include "NetProtocol/Src/basic_ProtocolListener.cpp"
 #include "NetProtocol/Src/basic_Protocol.cpp"
@@ -24,7 +25,7 @@ CBasicC2SProtocolHandler::~CBasicC2SProtocolHandler()
 /**
  @brief ReqLogIn
  */
-bool CBasicC2SProtocolHandler::ReqLogIn(netid senderId, const std::string &id, const std::string &passwd)
+bool CBasicC2SProtocolHandler::ReqLogIn(IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, const std::string &passwd)
 {
 	CRemoteClient *pClient = m_Server.GetRemoteClient(id);
 	if (pClient)
@@ -60,7 +61,7 @@ bool CBasicC2SProtocolHandler::ReqLogIn(netid senderId, const std::string &id, c
 /**
  @brief ReqLogOut
  */
-bool CBasicC2SProtocolHandler::ReqLogOut(netid senderId, const std::string &id)
+bool CBasicC2SProtocolHandler::ReqLogOut(IProtocolDispatcher &dispatcher, netid senderId, const std::string &id)
 {
 
 	return true;
@@ -70,7 +71,7 @@ bool CBasicC2SProtocolHandler::ReqLogOut(netid senderId, const std::string &id)
 /**
  @brief 
  */
-bool CBasicC2SProtocolHandler::ReqMoveToServer(netid senderId, const std::string &serverName)
+bool CBasicC2SProtocolHandler::ReqMoveToServer(IProtocolDispatcher &dispatcher, netid senderId, const std::string &serverName)
 {
 	return true;
 }
@@ -79,7 +80,7 @@ bool CBasicC2SProtocolHandler::ReqMoveToServer(netid senderId, const std::string
 //------------------------------------------------------------------------
 // groupid : -1 이라면 root 그룹의 자식을 보낸다.
 //------------------------------------------------------------------------
-bool CBasicC2SProtocolHandler::ReqGroupList(netid senderId, const netid &groupid)
+bool CBasicC2SProtocolHandler::ReqGroupList(IProtocolDispatcher &dispatcher, netid senderId, const netid &groupid)
 {
 	GroupPtr pGroup = NULL;
 	if (ROOT_GROUP_NETID == groupid)
@@ -108,7 +109,7 @@ bool CBasicC2SProtocolHandler::ReqGroupList(netid senderId, const netid &groupid
 //------------------------------------------------------------------------
 // Request Joint the Group of groupid
 //------------------------------------------------------------------------
-bool CBasicC2SProtocolHandler::ReqGroupJoin(netid senderId, const netid &groupid)
+bool CBasicC2SProtocolHandler::ReqGroupJoin(IProtocolDispatcher &dispatcher, netid senderId, const netid &groupid)
 {
 	GroupPtr pTo = (groupid == INVALID_NETID)? &m_Server.GetRootGroup() : m_Server.GetRootGroup().GetChildandThis(groupid);
 	GroupPtr pFrom = m_Server.GetRootGroup().GetChildFromUser( senderId );
@@ -147,7 +148,7 @@ bool CBasicC2SProtocolHandler::ReqGroupJoin(netid senderId, const netid &groupid
 // 만약 이렇게 하려면, group에 소속된 멤버들을 새 그룹에 소속시키고, 
 // 현재 group의 자식으로 추가해야 한다. (단말 노드에만 유저가 소속될 수 있다.)
 //------------------------------------------------------------------------
-bool CBasicC2SProtocolHandler::ReqGroupCreate(netid senderId, const netid &parentGroupId, const std::string &groupName)
+bool CBasicC2SProtocolHandler::ReqGroupCreate(IProtocolDispatcher &dispatcher, netid senderId, const netid &parentGroupId, const std::string &groupName)
 {
 	GroupPtr pParentGroup, pFrom, pNewGroup;
 	if (!CreateBlankGroup(senderId, parentGroupId, groupName, pParentGroup, pFrom, pNewGroup))
@@ -170,7 +171,7 @@ bool CBasicC2SProtocolHandler::ReqGroupCreate(netid senderId, const netid &paren
  @brief Create Blank Group
  */
 bool CBasicC2SProtocolHandler::ReqGroupCreateBlank(
-	netid senderId, const netid &parentGroupId, const std::string &groupName)
+	IProtocolDispatcher &dispatcher, netid senderId, const netid &parentGroupId, const std::string &groupName)
 {
 	GroupPtr pParentGroup, pFrom, pNewGroup;
 	if (!CreateBlankGroup(senderId, parentGroupId, groupName, pParentGroup, pFrom, pNewGroup))
@@ -250,7 +251,7 @@ bool	CBasicC2SProtocolHandler::CreateBlankGroup(
 /**
  @brief Request peer to peer connection
  */
-bool CBasicC2SProtocolHandler::ReqP2PConnect(netid senderId)
+bool CBasicC2SProtocolHandler::ReqP2PConnect(IProtocolDispatcher &dispatcher, netid senderId)
 {
 	// check p2p connection
 	// if networking this group on p2p

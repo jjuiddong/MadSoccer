@@ -8,7 +8,7 @@ using namespace network::multinetwork;
 
 
 CNetGroupDelegation::CNetGroupDelegation()
-	//m_SvrType(svrType)
+	//m_SvrType(linkSvrType)
 {
 }
 

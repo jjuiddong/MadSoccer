@@ -19,6 +19,8 @@ namespace compiler
 	void WriteFirstArg(ofstream &fs, sArg*p, bool isTarget);
 	void WriteArg(ofstream &fs, sArg *arg, bool comma);
 	void WriteArgVar(ofstream &fs, sArg *arg, bool comma);
+
+	// Write Dispatcher
 	void WriteProtocolDispatchFunc(ofstream &fs, sRmi *rmi);
 	void WriteDispatchSwitchCase(ofstream &fs, sProtocol *pProtocol, int packetId);
 	void WriteDispatchImpleArg(ofstream &fs, sArg*p);
@@ -365,6 +367,7 @@ void compiler::WriteFirstArg(ofstream &fs, sArg*p, bool isTarget)
 	}
 	else
 	{
+		fs << "IProtocolDispatcher &dispatcher, ";
 		fs << "netid senderId";
 	}
 
@@ -514,6 +517,10 @@ void compiler::WriteDispatchSwitchCase(ofstream &fs, sProtocol *pProtocol, int p
 	fs << "\t\t\t\tbreak;\n";
 	fs << endl;
 
+	// set current packet
+	fs << "\t\t\tSetCurrentDispatchPacket( &packet );";
+	fs << endl;
+
 	WriteDispatchImpleArg(fs, pProtocol->argList);
 	WriteLastDispatchSwitchCase(fs, pProtocol);
 
@@ -546,7 +553,7 @@ void compiler::WriteDispatchImpleArg(ofstream &fs, sArg*p)
 //------------------------------------------------------------------------
 void compiler::WriteLastDispatchSwitchCase(ofstream &fs, sProtocol *pProtocol)
 {
-	fs << "\t\t\tSEND_LISTENER(" << g_listenerClassName << ", recvListener, " << pProtocol->name << "(packet.GetSenderId()";
+	fs << "\t\t\tSEND_LISTENER(" << g_listenerClassName << ", recvListener, " << pProtocol->name << "(*this, packet.GetSenderId()";
 	WriteArgVar(fs, pProtocol->argList, true );
 	fs << ") );\n";
 }

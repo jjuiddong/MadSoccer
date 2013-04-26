@@ -25,7 +25,7 @@ CFarmServerConnector::CFarmServerConnector(const std::string &svrType, const SSv
 */
 void	CFarmServerConnector::OnConnectNetGroupController()
 {
-	EVENT_CONNECT(EVT_CONNECT, CFarmServerConnector, CFarmServerConnector::OnConnect );
+	NETEVENT_CONNECT(EVT_CONNECT, CFarmServerConnector, CFarmServerConnector::OnConnect );
 	AddProtocolListener(this);
 	RegisterProtocol( &m_Protocol );
 }
@@ -135,8 +135,8 @@ bool	CFarmServerConnector::CreateSubController( SERVICE_TYPE serviceType, bool I
 		return false;
 	}
 
-	EVENT_CONNECT_TO( pctrl, this, EVT_CONNECT, CFarmServerConnector, CFarmServerConnector::OnConnectLink );
-	EVENT_CONNECT_TO( pctrl, this, EVT_DISCONNECT, CFarmServerConnector, CFarmServerConnector::OnDisconnectLink );
+	NETEVENT_CONNECT_TO( pctrl, this, EVT_CONNECT, CFarmServerConnector, CFarmServerConnector::OnConnectLink );
+	NETEVENT_CONNECT_TO( pctrl, this, EVT_DISCONNECT, CFarmServerConnector, CFarmServerConnector::OnDisconnectLink );
 
 	return true;
 }
@@ -208,7 +208,7 @@ void CFarmServerConnector::OnDisconnectLink(CNetEvent &event)
 /**
  @brief 
  */
-bool CFarmServerConnector::AckSubServerLogin(netid senderId, const error::ERROR_CODE &errorCode)
+bool CFarmServerConnector::AckSubServerLogin(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode)
 {
 	if (errorCode == error::ERR_SUCCESS)
 	{
@@ -230,7 +230,7 @@ bool CFarmServerConnector::AckSubServerLogin(netid senderId, const error::ERROR_
 /**
  @brief AckSendSubServerP2PCLink
  */
-bool CFarmServerConnector::AckSendSubServerP2PCLink(netid senderId, const error::ERROR_CODE &errorCode)
+bool CFarmServerConnector::AckSendSubServerP2PCLink(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode)
 {
 	if (!m_IsDetectedSendConfig)
 		m_IsDetectedSendConfig = (errorCode != error::ERR_SUCCESS);
@@ -245,7 +245,7 @@ bool CFarmServerConnector::AckSendSubServerP2PCLink(netid senderId, const error:
 /**
  @brief AckSendSubServerP2PSLink
  */
-bool CFarmServerConnector::AckSendSubServerP2PSLink(netid senderId, const error::ERROR_CODE &errorCode)
+bool CFarmServerConnector::AckSendSubServerP2PSLink(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode)
 {
 	if (!m_IsDetectedSendConfig)
 		m_IsDetectedSendConfig = (errorCode != error::ERR_SUCCESS);
@@ -259,7 +259,7 @@ bool CFarmServerConnector::AckSendSubServerP2PSLink(netid senderId, const error:
 /**
  @brief 
  */
-bool CFarmServerConnector::AckSendSubServerInputLink(netid senderId, const error::ERROR_CODE &errorCode)
+bool CFarmServerConnector::AckSendSubServerInputLink(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode)
 {
 	if (!m_IsDetectedSendConfig)
 		m_IsDetectedSendConfig = (errorCode != error::ERR_SUCCESS);
@@ -274,7 +274,7 @@ bool CFarmServerConnector::AckSendSubServerInputLink(netid senderId, const error
 /**
  @brief 
  */
-bool CFarmServerConnector::AckSendSubServerOutputLink(netid senderId, const error::ERROR_CODE &errorCode)
+bool CFarmServerConnector::AckSendSubServerOutputLink(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode)
 {
 	if (!m_IsDetectedSendConfig)
 		m_IsDetectedSendConfig = (errorCode != error::ERR_SUCCESS);
@@ -293,7 +293,8 @@ bool CFarmServerConnector::AckSendSubServerOutputLink(netid senderId, const erro
 /**
  @brief 
  */
-bool CFarmServerConnector::AckServerInfoList(netid senderId, const error::ERROR_CODE &errorCode, 
+bool CFarmServerConnector::AckServerInfoList(IProtocolDispatcher &dispatcher, netid senderId, 
+	const error::ERROR_CODE &errorCode, 
 	const std::string &clientSvrType, const std::string &serverSvrType, const std::vector<SHostInfo> &v)
 {
 	if (errorCode != error::ERR_SUCCESS)
@@ -326,7 +327,7 @@ bool CFarmServerConnector::AckServerInfoList(netid senderId, const error::ERROR_
 /**
  @brief 
  */
-bool CFarmServerConnector::AckToBindOuterPort(netid senderId, const error::ERROR_CODE &errorCode, 
+bool CFarmServerConnector::AckToBindOuterPort(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode, 
 	const std::string &bindSubServerSvrType, const int &port)
 {
 	if (errorCode != error::ERR_SUCCESS)
@@ -359,7 +360,7 @@ bool CFarmServerConnector::AckToBindOuterPort(netid senderId, const error::ERROR
 /**
  @brief 
  */
-bool CFarmServerConnector::AckToBindInnerPort(netid senderId, const error::ERROR_CODE &errorCode, 
+bool CFarmServerConnector::AckToBindInnerPort(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode, 
 	const std::string &bindSubServerSvrType, const int &port)
 {
 	if (errorCode != error::ERR_SUCCESS)
@@ -392,7 +393,7 @@ bool CFarmServerConnector::AckToBindInnerPort(netid senderId, const error::ERROR
 /**
  @brief 
  */
-bool CFarmServerConnector::AckSubServerBindComplete(netid senderId, const error::ERROR_CODE &errorCode, 
+bool CFarmServerConnector::AckSubServerBindComplete(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode, 
 	const std::string &subServerSvrType)
 {
 
@@ -403,7 +404,7 @@ bool CFarmServerConnector::AckSubServerBindComplete(netid senderId, const error:
 /**
  @brief 
  */
-bool CFarmServerConnector::AckSubClientConnectComplete(netid senderId, const error::ERROR_CODE &errorCode, 
+bool CFarmServerConnector::AckSubClientConnectComplete(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode, 
 	const std::string &subClientSvrType)
 {
 
@@ -414,7 +415,7 @@ bool CFarmServerConnector::AckSubClientConnectComplete(netid senderId, const err
 /**
  @brief 
  */
-bool CFarmServerConnector::BindSubServer(netid senderId, const std::string &bindSubSvrType, 
+bool CFarmServerConnector::BindSubServer(IProtocolDispatcher &dispatcher, netid senderId, const std::string &bindSubSvrType, 
 	const std::string &ip, const int &port)
 {
 	NetGroupControllerPtr ptr = CMultiNetwork::Get()->GetController(bindSubSvrType);	

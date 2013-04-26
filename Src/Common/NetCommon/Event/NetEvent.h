@@ -21,18 +21,24 @@ namespace network
 
 
 	// 컴파일 워닝을 없애기위한 매크로
-#define EVENT_CONNECT_TO( to, handler, eventType, classname, fn )\
+#define NETEVENT_CONNECT_TO( to, handler, eventType, classname, fn )\
 	{\
 	void (classname::*evt_handler)(CNetEvent &) = &fn;\
 	to->EventConnect( handler, eventType, (EventFunction)(NetEventFunction)evt_handler); \
 	}
 
+#define EVENT_CONNECT_TO( to, handler, eventType, classname, fn )\
+	{\
+	void (classname::*evt_handler)(CEvent &) = &fn;\
+	to->EventConnect( handler, eventType, (EventFunction)evt_handler); \
+	}
 
-#define EVENT_CONNECT( eventType, classname, fn )\
-		EVENT_CONNECT_TO( this, this, eventType, classname, fn )
 
-
+#define NETEVENT_CONNECT( eventType, classname, fn )\
+		NETEVENT_CONNECT_TO( this, this, eventType, classname, fn )
 	
+#define EVENT_CONNECT( eventType, classname, fn )\
+	EVENT_CONNECT_TO( this, this, eventType, classname, fn )
 
 
 	/// Network Event Class

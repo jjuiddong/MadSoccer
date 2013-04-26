@@ -8,7 +8,7 @@
 
 using namespace network;
 
-CFarmServer::CFarmServer() 
+CFarmServer::CFarmServer()
 {
 }
 
@@ -56,7 +56,7 @@ SubServerGroupPtr CFarmServer::FindGroup(const std::string &svrType)
 /**
 @brief ReqSubServerLogin
 */
-bool CFarmServer::ReqSubServerLogin(netid senderId, const std::string &svrType)
+bool CFarmServer::ReqSubServerLogin(IProtocolDispatcher &dispatcher, netid senderId, const std::string &svrType)
 {
 	GroupPtr pFromGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
 	if (!pFromGroup)
@@ -100,7 +100,7 @@ bool CFarmServer::ReqSubServerLogin(netid senderId, const std::string &svrType)
 /**
  @brief SendSubServerP2PCLink
  */
-bool CFarmServer::SendSubServerP2PCLink(netid senderId, const std::vector<std::string> &v)
+bool CFarmServer::SendSubServerP2PCLink(IProtocolDispatcher &dispatcher, netid senderId, const std::vector<std::string> &v)
 {
 	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
 	if (!pGroup)
@@ -128,7 +128,7 @@ bool CFarmServer::SendSubServerP2PCLink(netid senderId, const std::vector<std::s
 /**
  @brief SendSubServerP2PSLink
  */
-bool CFarmServer::SendSubServerP2PSLink(netid senderId, const std::vector<std::string> &v)
+bool CFarmServer::SendSubServerP2PSLink(IProtocolDispatcher &dispatcher, netid senderId, const std::vector<std::string> &v)
 {
 	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
 	if (!pGroup)
@@ -156,7 +156,7 @@ bool CFarmServer::SendSubServerP2PSLink(netid senderId, const std::vector<std::s
 /**
  @brief SendSubServerInputLink
  */
-bool CFarmServer::SendSubServerInputLink(netid senderId, const std::vector<std::string> &v)
+bool CFarmServer::SendSubServerInputLink(IProtocolDispatcher &dispatcher, netid senderId, const std::vector<std::string> &v)
 {
 	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
 	if (!pGroup)
@@ -184,7 +184,7 @@ bool CFarmServer::SendSubServerInputLink(netid senderId, const std::vector<std::
 /**
  @brief SendSubServerOutputLink
  */
-bool CFarmServer::SendSubServerOutputLink(netid senderId, const std::vector<std::string> &v)
+bool CFarmServer::SendSubServerOutputLink(IProtocolDispatcher &dispatcher, netid senderId, const std::vector<std::string> &v)
 {
 	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
 	if (!pGroup)
@@ -212,7 +212,7 @@ bool CFarmServer::SendSubServerOutputLink(netid senderId, const std::vector<std:
 /**
  @brief ReqServerInfoList
  */
-bool CFarmServer::ReqServerInfoList(netid senderId, const std::string &clientSvrType, const std::string &serverSvrType)
+bool CFarmServer::ReqServerInfoList(IProtocolDispatcher &dispatcher, netid senderId, const std::string &clientSvrType, const std::string &serverSvrType)
 {
 	std::vector<network::SHostInfo> hostInfo;
 	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
@@ -249,7 +249,7 @@ bool CFarmServer::ReqServerInfoList(netid senderId, const std::string &clientSvr
 /**
  @brief ReqToBindOuterPort
  */
-bool CFarmServer::ReqToBindOuterPort(netid senderId, const std::string &bindSubServerSvrType)
+bool CFarmServer::ReqToBindOuterPort(IProtocolDispatcher &dispatcher, netid senderId, const std::string &bindSubServerSvrType)
 {
 	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
 	if (!pGroup)
@@ -287,7 +287,7 @@ bool CFarmServer::ReqToBindOuterPort(netid senderId, const std::string &bindSubS
 /**
  @brief ReqToBindInnerPort
  */
-bool CFarmServer::ReqToBindInnerPort(netid senderId, const std::string &bindSubServerSvrType)
+bool CFarmServer::ReqToBindInnerPort(IProtocolDispatcher &dispatcher, netid senderId, const std::string &bindSubServerSvrType)
 {
 	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
 	if (!pGroup)
@@ -325,7 +325,7 @@ bool CFarmServer::ReqToBindInnerPort(netid senderId, const std::string &bindSubS
 /**
  @brief ReqSubServerBindComplete
  */
-bool CFarmServer::ReqSubServerBindComplete(netid senderId, const std::string &bindSubServerSvrType)
+bool CFarmServer::ReqSubServerBindComplete(IProtocolDispatcher &dispatcher, netid senderId, const std::string &bindSubServerSvrType)
 {
 	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
 	if (!pGroup)
@@ -391,7 +391,7 @@ bool CFarmServer::ReqSubServerBindComplete(netid senderId, const std::string &bi
 /**
  @brief ReqSubClientConnectComplete
  */
-bool CFarmServer::ReqSubClientConnectComplete(netid senderId, const std::string &bindSubServerSvrType)
+bool CFarmServer::ReqSubClientConnectComplete(IProtocolDispatcher &dispatcher, netid senderId, const std::string &bindSubServerSvrType)
 {
 	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
 	if (!pGroup)

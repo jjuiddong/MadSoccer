@@ -651,3 +651,17 @@ void	CNetController::DisconnectCoreClient(CoreClientPtr pCoreClt)
 		break;
 	}
 }
+
+
+/**
+ @brief Main Loop , Logic Thread 에서 호출한다.
+ */
+void	CNetController::MainLoop()
+{
+	common::AutoCSLock cs(m_CS); 	/// Sync
+	BOOST_FOREACH(auto server, m_Servers.m_Seq)
+	{
+		if (server)
+			server->MainLoop();
+	}
+}

@@ -88,6 +88,11 @@ CPacket::CPacket():
 {
 }
 
+CPacket::CPacket(const CPacket &rhs)
+{
+	CPacket::operator=(rhs);
+}
+
 CPacket::CPacket(netid senderId, char *buf256) :
 	m_SenderId(senderId)
 ,	m_WriteIdx(HEADER_SIZE)
@@ -98,6 +103,22 @@ CPacket::CPacket(netid senderId, char *buf256) :
 		memcpy( m_Data, buf256, MAX_PACKETSIZE);
 		m_WriteIdx = GetPacketSizeFromRawData();
 	}
+}
+
+
+/**
+	@brief 
+	*/
+CPacket& CPacket::operator=(const CPacket &rhs)
+{
+	if (this != &rhs)
+	{
+		m_SenderId = rhs.m_SenderId;
+		memcpy(m_Data, rhs.m_Data, sizeof(rhs.m_Data));
+		m_ReadIdx = rhs.m_ReadIdx;
+		m_WriteIdx = rhs.m_WriteIdx;
+	}
+	return *this;
 }
 
 
@@ -174,6 +195,15 @@ int	CPacket::GetReadableSize() const
 void	CPacket::EndPack()
 {
 	SetPacketSize( (short)GetPacketSize() );
+}
+
+
+/**
+ @brief 
+ */
+void	CPacket::InitRead()
+{
+	m_ReadIdx = HEADER_SIZE;
 }
 
 

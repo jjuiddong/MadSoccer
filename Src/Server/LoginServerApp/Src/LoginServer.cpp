@@ -1,6 +1,7 @@
 
 #include "stdafx.h"
 #include "LoginServer.h"
+#include "Network/Service/SubServerConnector.h"
 
 #include "NetProtocol/Src/login_Protocol.cpp"
 #include "NetProtocol/Src/login_ProtocolListener.cpp"
@@ -49,15 +50,17 @@ void	CLoginServer::OnConnectNetGroupController()
 
 	m_pBasicPrtHandler = new CBasicC2SProtocolHandler_LoginSvr(*pCertifySvrController, *GetServer());
 
+	RegisterProtocol(&m_BasicProtocol);
 	RegisterProtocol(&m_LoginProtocol);
 
 	AddProtocolListener(this);
 	AddProtocolListener(m_pBasicPrtHandler);
+
 	pLobbySvrController->AddProtocolListener(this);
 	pCertifySvrController->AddProtocolListener(this);
 
-	EVENT_CONNECT_TO(pLobbySvrController, this, EVT_CONNECT, CLoginServer, CLoginServer::OnSubServerConnect);
-	EVENT_CONNECT_TO(pCertifySvrController, this, EVT_CONNECT, CLoginServer, CLoginServer::OnSubServerConnect);
+	NETEVENT_CONNECT_TO(pLobbySvrController, this, EVT_CONNECT, CLoginServer, CLoginServer::OnSubServerConnect);
+	NETEVENT_CONNECT_TO(pCertifySvrController, this, EVT_CONNECT, CLoginServer, CLoginServer::OnSubServerConnect);
 
 }
 
@@ -90,7 +93,7 @@ void	CLoginServer::OnSubServerConnect(CNetEvent &event)
 /**
  @brief ReqMoveUser
  */
-bool CLoginServer::ReqMoveUser(netid senderId, const std::string &id, const netid &userId)
+bool CLoginServer::ReqMoveUser(IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, const netid &userId)
 {
 	return true;
 }
@@ -99,9 +102,44 @@ bool CLoginServer::ReqMoveUser(netid senderId, const std::string &id, const neti
 /**
  @brief AckMoveUser
  */
-bool CLoginServer::AckMoveUser(netid senderId, const error::ERROR_CODE &errorCode, const std::string &id, const netid &userId)
+bool CLoginServer::AckMoveUser(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode, const std::string &id, const netid &userId)
 {
 
 	return true;
 }
 
+
+/**
+ @brief ReqLobbyIn
+ 로비서버로 이동 요청 
+ */
+bool CLoginServer::ReqLobbyIn(IProtocolDispatcher &dispatcher, netid senderId)
+{
+	CRemoteClient *pClient = CheckClientNetId(GetServer(), senderId, &m_BasicProtocol, &dispatcher);
+	RETV(!pClient, false);
+
+	if (!CheckClientConnection(pClient, &m_BasicProtocol, &dispatcher))
+		return false;
+
+	NetGroupDelegationPtr pLobbySvrDelegation = multinetwork::CMultiNetwork::Get()->GetDelegation("lobbysvr");
+	if (!pLobbySvrDelegation)
+	{
+		clog::Error( clog::ERROR_CRITICAL, "ReqLobbyIn Error!! not found lobbysvr netgroupdelegation" );
+		m_BasicProtocol.AckMoveToServer( senderId, SEND_T, error::ERR_MOVETOSERVER_NOT_FOUND_SERVER, "lobbysvr");
+		return false;
+	}
+
+	CSubServerConnector *pSubSvrCon = dynamic_cast<CSubServerConnector*>(pLobbySvrDelegation.Get());
+	if (!pSubSvrCon)
+		return false;
+
+	std::list<SSubServerInfo> subServers = pSubSvrCon->GetSubServerInfo();
+
+	//pLobbySvrController->
+	//m_BasicProtocol.AckMoveToServer( senderId, SEND_T, error::ERR_SUCCESS, "lobbysvr" );
+
+
+
+
+	return true; 
+}

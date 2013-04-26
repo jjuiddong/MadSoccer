@@ -26,9 +26,9 @@ CNetGroupController::CNetGroupController( SERVICE_TYPE type, const std::string &
 	if (SERVER == type)
 	{
 		m_pServer = new CServerBasic( SERVICE_SEPERATE_THREAD );
-		EVENT_CONNECT_TO( m_pServer, this, EVT_LISTEN, CNetGroupController, CNetGroupController::OnConnect );
-		EVENT_CONNECT_TO( m_pServer, this, EVT_CONNECT, CNetGroupController, CNetGroupController::OnConnect );
-		EVENT_CONNECT_TO( m_pServer, this, EVT_DISCONNECT, CNetGroupController, CNetGroupController::OnDisconnect );
+		NETEVENT_CONNECT_TO( m_pServer, this, EVT_LISTEN, CNetGroupController, CNetGroupController::OnConnect );
+		NETEVENT_CONNECT_TO( m_pServer, this, EVT_CONNECT, CNetGroupController, CNetGroupController::OnConnect );
+		NETEVENT_CONNECT_TO( m_pServer, this, EVT_DISCONNECT, CNetGroupController, CNetGroupController::OnDisconnect );
 	}
 	
 }
@@ -166,8 +166,8 @@ bool	CNetGroupController::Connect( SERVICE_TYPE type, const std::string &ip, con
 			m_Port = port;
 
 			CCoreClient *pClient = new CCoreClient(SERVICE_SEPERATE_THREAD);
-			EVENT_CONNECT_TO( pClient, this, EVT_CONNECT, CNetGroupController, CNetGroupController::OnConnect );
-			EVENT_CONNECT_TO( pClient, this, EVT_DISCONNECT, CNetGroupController, CNetGroupController::OnDisconnect );
+			NETEVENT_CONNECT_TO( pClient, this, EVT_CONNECT, CNetGroupController, CNetGroupController::OnConnect );
+			NETEVENT_CONNECT_TO( pClient, this, EVT_DISCONNECT, CNetGroupController, CNetGroupController::OnDisconnect );
 			BOOST_FOREACH(auto &protocol, GetProtocolListeners())
 			{
 				pClient->AddProtocolListener(protocol);

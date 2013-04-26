@@ -11,14 +11,24 @@ Date:    12/29/2012
 #include "NetProtocol/Src/login_ProtocolListener.h"
 #include "NetProtocol/Src/basic_Protocol.h"
 #include "NetProtocol/Src/basic_ProtocolListener.h"
+#include "NetProtocol/src/server_network_Protocol.h"
+#include "NetProtocol/src/certify_Protocol.h"
+#include "NetProtocol/src/certify_ProtocolListener.h"
+
 
 DECLARE_TYPE_NAME(CLobbyServer)
 class CLobbyServer	: public network::CServer
-	//: public network::multinetwork::CNetGroupDelegation
 								, public login::c2s_ProtocolListener
+
+								// Debug
 								, public network::AllProtocolDisplayer
 								, public memmonitor::Monitor<CLobbyServer, TYPE_NAME(CLobbyServer)>
 {
+	enum
+	{
+		ID_TIMER_REFRESH = 100,
+	};
+
 public:
 	CLobbyServer();
 	virtual ~CLobbyServer();
@@ -48,6 +58,8 @@ protected:
 
 	// Event Handler
 	virtual void	OnConnectNetGroupController() override;
+	void				OnSubServerConnect(network::CNetEvent &event);
+	void				OnTimer( network::CEvent &event );
 
 	// Network Event Handler
 	void			OnClientJoin(network::CNetEvent &event);
@@ -66,5 +78,7 @@ private:
 	// Protocol
 	login::s2c_Protocol	m_LoginProtocol;
 	basic::s2c_Protocol	m_BasicProtocol;
+	certify::s2s_Protocol m_CertifyProtocol;
+	server_network::s2s_Protocol m_SvrNetworkProtocol;
 
 };

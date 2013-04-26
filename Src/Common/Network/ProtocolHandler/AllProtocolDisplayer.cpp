@@ -1,7 +1,6 @@
 
 #include "stdafx.h"
 #include "AllProtocolDisplayer.h"
-#include "../Utility/Protocols.h"
 
 using namespace network;
 

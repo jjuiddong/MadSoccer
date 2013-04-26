@@ -25,6 +25,7 @@ namespace network
 	class CNetConnector;
 	class CGroup;
 	class CRemoteClient;
+	class CRemoteServer;
 	class CPacket;
 	class IProtocol;
 	class IProtocolListener;
@@ -86,6 +87,14 @@ namespace network
 		SHostInfo() {}
 		SHostInfo(std::string ip_, int port) : ip(ip_), portnum(port) {}
 	};
+
+
+	struct SSubServerInfo : SHostInfo
+	{
+		int userCnt;
+	};
+
+
 }
 
 
@@ -102,9 +111,10 @@ typedef PacketList::const_iterator PacketCItor;
 
 typedef common::ReferencePtr<network::CNetConnector> NetConnectorPtr;
 
-typedef std::map<netid,network::CRemoteClient*> RemoteClientMap;
-typedef RemoteClientMap::iterator RemoteClientItor;
+typedef common::VectorMap<netid,network::CRemoteClient*> RemoteClients;
+typedef RemoteClients::iterator RemoteClientItor;
 typedef common::ReferencePtr<network::CRemoteClient> RemoteClientPtr;
+typedef common::ReferencePtr<network::CRemoteServer> RemoteServerPtr;
 
 typedef std::list<network::CGroup*> GroupList;
 typedef GroupList::iterator GroupItor;
@@ -125,6 +135,7 @@ typedef ProtocolMap::iterator ProtocolItor;
 #include "DataStructure/Packet.h"
 #include "DataStructure/PacketQueue.h"
 #include "DataStructure/RemoteClient.h"
+#include "DataStructure/RemoteServer.h"
 #include "DataStructure/Group.h"
 #include "Marshalling/Marshalling.h"
 #include "Marshalling/MarshallingGroup.h"
@@ -144,5 +155,6 @@ typedef ProtocolMap::iterator ProtocolItor;
 
 #include "Event/NetEvent.h"
 
-#include "Utillity/UserAccess.h"
+#include "Utility/UserAccess.h"
+#include "Utility/Protocols.h"
 

@@ -13,6 +13,8 @@ Date:    2012-11-28
 // 1 : Disconnect
 */
 #pragma once
+#ifndef __PACKET_H__
+#define __PACKET_H__
 
 #include <boost/type_traits/is_pointer.hpp>
 #include <boost/type_traits/is_array.hpp>
@@ -31,9 +33,11 @@ namespace network
 
 		CPacket();
 		CPacket(netid senderId, char *buf256);
+		CPacket(const CPacket &rhs);
 		virtual ~CPacket() {}
 
 		void	EndPack(); /// call before send packet
+		void	InitRead(); /// call before read
 
 		template<class T> CPacket& operator<<(const T& rhs);
 		template<class T> CPacket& operator>>(T& rhs);
@@ -53,6 +57,8 @@ namespace network
 		netid		GetSenderId() const;
 		int			GetReadableSize() const;
 		char*		GetData() const;
+
+		CPacket& operator=(const CPacket &rhs);
 
 	protected:
 		short		GetPacketSizeFromRawData();
@@ -167,3 +173,5 @@ namespace network
 	CPacket P2PMemberLeave(netid leaveMemberId );
 
 }
+
+#endif // __PACKET_H__

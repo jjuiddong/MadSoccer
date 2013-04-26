@@ -35,6 +35,7 @@ typedef common::ReferencePtr<network::CCharacter> CharacterPtr;
 
 
 #include "ErrReport/ErrorCode.h"
+#include "ErrReport/ErrorCheck.h"
 #include "Algorithm/BindCore.h"
 
 
@@ -73,7 +74,6 @@ typedef common::ReferencePtr<network::multinetwork::CNetGroupDelegation> NetGrou
 #include "MultiNetwork/NetGroupDelegation.h"
 
 #include "ProtocolHandler\AllProtocolDisplayer.h"
-
 
 
 

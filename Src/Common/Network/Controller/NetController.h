@@ -17,6 +17,7 @@ namespace network
 	public:
 		CNetController();
 		virtual ~CNetController();
+		friend class CTaskLogic;
 		friend class CTaskAccept;
 		friend class CTaskWorkClient;
 		friend class CTaskWorkServer;
@@ -78,8 +79,9 @@ namespace network
 		void		DisconnectServer(ServerBasicPtr pSvr);
 		void		DisconnectClient(ClientBasicPtr pClt);
 		void		DisconnectCoreClient(CoreClientPtr pClt);
+		void		MainLoop();
 
-	protected:
+	private:
 		Servers							m_Servers;
 		ServerSockets				m_ServerSockets;
 

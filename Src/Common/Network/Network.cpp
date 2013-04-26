@@ -4,7 +4,6 @@
 #include "Controller/NetController.h"
 #include "MultiNetwork/MultiNetwork.h"
 #include <MMSystem.h>
-#include "Utility/Protocols.h"
 
 
 using namespace network;
@@ -96,6 +95,15 @@ bool network::StopClient(ClientBasicPtr pClt)
 bool	network::ConnectDelegation( const std::string &linkSvrType, NetGroupDelegationPtr ptr)
 {
 	return multinetwork::CMultiNetwork::Get()->ConnectDelegation( linkSvrType, ptr );
+}
+
+
+/**
+ @brief AddDelegation
+ */
+bool	network::AddDelegation( const std::string &linkSvrType, multinetwork::CNetGroupDelegation *ptr)
+{
+	return multinetwork::CMultiNetwork::Get()->AddDelegation(linkSvrType, ptr);
 }
 
 

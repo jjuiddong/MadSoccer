@@ -8,7 +8,7 @@ Date:    4/18/2013
 #pragma once
 
 DECLARE_TYPE_NAME(CGameServer)
-class CGameServer : public network::multinetwork::CNetGroupDelegation
+class CGameServer : public network::CServer
 								, public network::AllProtocolDisplayer
 								, public memmonitor::Monitor<CGameServer, TYPE_NAME(CGameServer)>
 {

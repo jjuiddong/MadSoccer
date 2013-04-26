@@ -58,6 +58,12 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		goto exit;
 	}
 
+	if (!network::AddDelegation( "lobbysvr", new network::CSubServerConnector()))
+	{
+		clog::Error( clog::ERROR_CRITICAL, "network :: AddDelegation Fail !!\n" );
+		goto exit;
+	}
+
 	network::StartMultiNetwork();
 
 	MSG msg;

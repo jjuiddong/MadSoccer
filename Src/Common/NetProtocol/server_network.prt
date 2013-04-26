@@ -5,5 +5,7 @@ protocol s2s 800
 	ReqMoveUser( std::string id, netid userId );
 	AckMoveUser( error::ERROR_CODE errorCode, std::string id, netid userId );
 
+	SendServerInfo( std::string svrType, int userCount );
+
 }
 

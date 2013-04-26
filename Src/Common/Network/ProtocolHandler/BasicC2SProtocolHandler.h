@@ -23,15 +23,15 @@ namespace network
 		basic::s2c_Protocol& GetBasicProtocol();
 
 		// Network Protocol Handler
-		virtual bool ReqLogIn(netid senderId, const std::string &id, const std::string &passwd) override;
-		virtual bool ReqLogOut(netid senderId, const std::string &id) override;
-		virtual bool ReqMoveToServer(netid senderId, const std::string &serverName) override;
+		virtual bool ReqLogIn(IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, const std::string &passwd) override;
+		virtual bool ReqLogOut(IProtocolDispatcher &dispatcher, netid senderId, const std::string &id) override;
+		virtual bool ReqMoveToServer(IProtocolDispatcher &dispatcher, netid senderId, const std::string &serverName) override;
 
-		virtual bool ReqGroupList(netid senderId, const netid &groupid) override;
-		virtual bool ReqGroupJoin(netid senderId, const netid &groupid) override;
-		virtual bool ReqGroupCreate(netid senderId, const netid &parentGroupId, const std::string &groupName) override;
-		virtual bool ReqGroupCreateBlank(netid senderId, const netid &parentGroupId, const std::string &groupName) override;
-		virtual bool ReqP2PConnect(netid senderId) override;
+		virtual bool ReqGroupList(IProtocolDispatcher &dispatcher, netid senderId, const netid &groupid) override;
+		virtual bool ReqGroupJoin(IProtocolDispatcher &dispatcher, netid senderId, const netid &groupid) override;
+		virtual bool ReqGroupCreate(IProtocolDispatcher &dispatcher, netid senderId, const netid &parentGroupId, const std::string &groupName) override;
+		virtual bool ReqGroupCreateBlank(IProtocolDispatcher &dispatcher, netid senderId, const netid &parentGroupId, const std::string &groupName) override;
+		virtual bool ReqP2PConnect(IProtocolDispatcher &dispatcher, netid senderId) override;
 
 	protected:
 		bool			CreateBlankGroup( netid senderId, const netid &parentGroupId, const std::string &groupName, 

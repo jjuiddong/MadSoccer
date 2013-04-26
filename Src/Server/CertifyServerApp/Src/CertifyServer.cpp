@@ -33,7 +33,7 @@ void	CCertifyServer::OnConnectNetGroupController()
 /**
  @brief ReqUserId
  */
-bool CCertifyServer::ReqUserId(netid senderId, const std::string &id, const std::string &passwd)
+bool CCertifyServer::ReqUserId(IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, const std::string &passwd)
 {
 	m_Protocol.AckUserId( senderId, SEND_T, error::ERR_SUCCESS, id, common::GenerateId() );
 

@@ -27,6 +27,12 @@ namespace network
 		virtual IRemoteClientFactory* Clone() { return new CRemoteClientFactory(); }
 	};
 
+	/// CRemoteSubServer class Factory
+	class CRemoteServerFactory : public IRemoteClientFactory
+	{
+		virtual CRemoteClient* New() { return new CRemoteServer(); }
+		virtual IRemoteClientFactory* Clone() { return new CRemoteServerFactory(); }
+	};
 
 
 	/// CGroup Factory class

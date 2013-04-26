@@ -1,6 +1,6 @@
 
 #include "stdafx.h"
-#include "MultiNetworkUtillity.h"
+#include "MultiNetworkUtility.h"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 

@@ -13,6 +13,7 @@
 #include "NetProtocol/Src/login_Protocol.cpp"
 #include "NetProtocol/Src/login_ProtocolListener.cpp"
 
+
 using namespace network;
 
 CVClient::CVClient() : CClient(network::USER_LOOP)
@@ -50,38 +51,6 @@ void CVClient::recv(netid senderId, network::CPacket &packet)
 
 	GetConsole()->AddString( ss.str() );
 }
-
-
-//------------------------------------------------------------------------
-// 
-//------------------------------------------------------------------------
-bool CVClient::AckGroupList(netid senderId, const network::error::ERROR_CODE &errorCode, const GroupVector &groups)
-{
-	GetConsole()->AddString( "------------" );
-	GetConsole()->AddString( 
-		common::format( "group count: %d, errorCode: %d",
-		groups.size(), errorCode) );		
-
-	for (u_int i=0; i < groups.size(); ++i)
-	{
-		GetConsole()->AddString( "Group Information" );
-
-		GetConsole()->AddString( 
-			common::format( "    group id: %d",
-				groups[ i].GetId()) );		
-
-		GetConsole()->AddString( 
-			common::format( "    group name: %s",
-			groups[ i].GetName().c_str()) );		
-
-		GetConsole()->AddString( 
-			common::format( "    users: %d",
-			groups[ i].GetUsers().size()) );
-	}
-
-	return true;
-}
-
 
 
 //------------------------------------------------------------------------
@@ -138,10 +107,42 @@ void	CVClient::OnMemberLeave(network::CNetEvent &event)
 }
 
 
+//------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------
+bool CVClient::AckGroupList(IProtocolDispatcher &dispatcher, netid senderId, 
+	const network::error::ERROR_CODE &errorCode, const GroupVector &groups)
+{
+	GetConsole()->AddString( "------------" );
+	GetConsole()->AddString( 
+		common::format( "group count: %d, errorCode: %d",
+		groups.size(), errorCode) );		
+
+	for (u_int i=0; i < groups.size(); ++i)
+	{
+		GetConsole()->AddString( "Group Information" );
+
+		GetConsole()->AddString( 
+			common::format( "    group id: %d",
+			groups[ i].GetId()) );		
+
+		GetConsole()->AddString( 
+			common::format( "    group name: %s",
+			groups[ i].GetName().c_str()) );		
+
+		GetConsole()->AddString( 
+			common::format( "    users: %d",
+			groups[ i].GetUsers().size()) );
+	}
+
+	return true;
+}
+\
+
 /**
  @brief 
  */
-bool CVClient::SendData(netid senderId)
+bool CVClient::SendData(IProtocolDispatcher &dispatcher, netid senderId)
 {
 	// Host 일때, 나머지 클라이언트들에게 패킷을 보낸다.
 	if (IsP2PHostClient())
@@ -155,8 +156,8 @@ bool CVClient::SendData(netid senderId)
 /**
  @brief Acknowledge
  */
-bool CVClient::AckLogIn(netid senderId, const network::error::ERROR_CODE &errorCode, 
-	const std::string &id, const netid &netId)
+bool CVClient::AckLogIn(IProtocolDispatcher &dispatcher, netid senderId, 
+	const network::error::ERROR_CODE &errorCode, const std::string &id, const netid &netId)
 {
 	if (errorCode == error::ERR_SUCCESS)
 	{

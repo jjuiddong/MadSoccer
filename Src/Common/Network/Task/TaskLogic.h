@@ -61,6 +61,10 @@ namespace network
 	//------------------------------------------------------------------------
 	inline common::CTask::RUN_RESULT CTaskLogic::Run()
 	{
+		// Main Timer
+		CNetController::Get()->MainLoop();
+		//
+
 		CPacketQueue::SPacketData packetData;
 		if (!CPacketQueue::Get()->PopPacket(packetData))
 			return RR_CONTINUE;

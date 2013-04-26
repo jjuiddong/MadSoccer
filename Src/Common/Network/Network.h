@@ -5,6 +5,7 @@
 #include "NetworkDef.h"
 #include "Service/Server.h"
 #include "Service/Client.h"
+#include "Service/SubServerConnector.h"
 
 namespace network
 {
@@ -27,6 +28,7 @@ namespace network
 	// Multi Network
 	bool		StartMultiNetwork();
 	bool		ConnectDelegation( const std::string &linkSvrType, NetGroupDelegationPtr ptr);
+	bool		AddDelegation( const std::string &linkSvrType, multinetwork::CNetGroupDelegation *ptr);
 
 	// Common
 	bool		Init(int logicThreadCount, const std::string &svrConfigFileName="");

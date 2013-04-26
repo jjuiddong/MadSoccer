@@ -19,7 +19,7 @@ DECLARE_TYPE_NAME(CVClient);
 class CVClient : public network::CClient
 						,public all::ProtocolListener
 						,public basic::s2c_ProtocolListener
-						,public login::s2c_ProtocolListener
+						//,public login::s2c_ProtocolListener
 						,public p2pComm::c2c_ProtocolListener
 						,public common::CSingleton<CVClient>
 						,public memmonitor::Monitor<CVClient, TYPE_NAME(CVClient)>
@@ -44,11 +44,11 @@ public:
 	virtual void recv(netid senderId, network::CPacket &packet) override;
 
 	// basic
-	virtual bool AckGroupList(netid senderId, const network::error::ERROR_CODE &errorCode, const GroupVector &groups) override;
-	virtual bool AckLogIn(netid senderId, const network::error::ERROR_CODE &errorCode, const std::string &id, const netid &netId) override;
+	virtual bool AckGroupList(network::IProtocolDispatcher &dispatcher, netid senderId, const network::error::ERROR_CODE &errorCode, const GroupVector &groups) override;
+	virtual bool AckLogIn(network::IProtocolDispatcher &dispatcher, netid senderId, const network::error::ERROR_CODE &errorCode, const std::string &id, const netid &netId) override;
 
 	// p2pComm
-	virtual bool SendData(netid senderId) override;
+	virtual bool SendData(network::IProtocolDispatcher &dispatcher, netid senderId) override;
 
 private:
 	netid				m_heroId;

@@ -24,12 +24,12 @@ public:
 protected:
 	// Network Protocol Handler
 	// certify server
-	virtual bool AckUserId(netid senderId, const network::error::ERROR_CODE &errorCode, const std::string &id, const netid &userId) override;
+	virtual bool AckUserId(network::IProtocolDispatcher &dispatcher, netid senderId, const network::error::ERROR_CODE &errorCode, const std::string &id, const netid &userId) override;
 
 	// client
-	virtual bool ReqLogIn(netid senderId, const std::string &id, const std::string &passwd) override;
-	virtual bool ReqLogOut(netid senderId, const std::string &id) override;
-	virtual bool ReqMoveToServer(netid senderId, const std::string &serverName) override;
+	virtual bool ReqLogIn(network::IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, const std::string &passwd) override;
+	virtual bool ReqLogOut(network::IProtocolDispatcher &dispatcher, netid senderId, const std::string &id) override;
+	virtual bool ReqMoveToServer(network::IProtocolDispatcher &dispatcher, netid senderId, const std::string &serverName) override;
 
 private:
 	certify::s2s_Protocol	m_CertifyProtocol;

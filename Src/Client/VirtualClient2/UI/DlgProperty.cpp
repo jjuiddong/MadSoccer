@@ -211,6 +211,7 @@ void CDlgProperty::OnBnClickedButtonSend()
 		return;
 
 	CPacket packet;
+	packet.SetSenderId(0);
 	MakePacket(packet, m_pRmi, m_pProtocol);
 
 	// 특수 프로토콜, 서버에 접속하는 프로토콜이다.

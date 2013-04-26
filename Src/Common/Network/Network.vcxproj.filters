@@ -107,9 +107,6 @@
     <ClCompile Include="MultiNetwork\NetGroupDelegation.cpp">
       <Filter>Lib\MultiNetwork</Filter>
     </ClCompile>
-    <ClCompile Include="MultiNetwork\MultiNetworkUtillity.cpp">
-      <Filter>Lib\MultiNetwork</Filter>
-    </ClCompile>
     <ClCompile Include="Controller\ServerBasic.cpp">
       <Filter>Lib\Controller</Filter>
     </ClCompile>
@@ -122,11 +119,14 @@
     <ClCompile Include="ProtocolHandler\AllProtocolDisplayer.cpp">
       <Filter>Lib\ProtocolHandler</Filter>
     </ClCompile>
-    <ClCompile Include="Utility\Protocols.cpp">
-      <Filter>Lib\Utility</Filter>
-    </ClCompile>
     <ClCompile Include="ErrReport\ErrorCheck.cpp">
       <Filter>Lib\ErrReport</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiNetwork\MultiNetworkUtility.cpp">
+      <Filter>Lib\MultiNetwork</Filter>
+    </ClCompile>
+    <ClCompile Include="Service\SubServerConnector.cpp">
+      <Filter>Lib\Service</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -220,9 +220,6 @@
     <ClInclude Include="MultiNetwork\NetGroupDelegation.h">
       <Filter>Lib\MultiNetwork</Filter>
     </ClInclude>
-    <ClInclude Include="MultiNetwork\MultiNetworkUtillity.h">
-      <Filter>Lib\MultiNetwork</Filter>
-    </ClInclude>
     <ClInclude Include="Controller\ClientBasic.h">
       <Filter>Lib\Controller</Filter>
     </ClInclude>
@@ -238,9 +235,6 @@
     <ClInclude Include="Utility\ClientUserAccess.h">
       <Filter>Lib\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Utility\Protocols.h">
-      <Filter>Lib\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="Utility\ServerUserAccess.h">
       <Filter>Lib\Utility</Filter>
     </ClInclude>
@@ -249,6 +243,12 @@
     </ClInclude>
     <ClInclude Include="ErrReport\ErrorCheck.h">
       <Filter>Lib\ErrReport</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiNetwork\MultiNetworkUtility.h">
+      <Filter>Lib\MultiNetwork</Filter>
+    </ClInclude>
+    <ClInclude Include="Service\SubServerConnector.h">
+      <Filter>Lib\Service</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -8,7 +8,7 @@ Date:    4/1/2013
 */
 #pragma once
 
-#include "MultiNetworkUtillity.h"
+#include "MultiNetworkUtility.h"
 
 namespace network { namespace multinetwork {
 
@@ -32,16 +32,22 @@ namespace network { namespace multinetwork {
 		bool		AddController( CNetGroupController *ptr );
 		bool		RemoveController( const std::string &linkSvrType );
 		NetGroupControllerPtr GetController( const std::string &linkSvrType );
+
+		bool		AddDelegation( const std::string &linkSvrType, CNetGroupDelegation *ptr);
+		bool		RemoveDelegation( const std::string &linkSvrType );
 		bool		ConnectDelegation( const std::string &linkSvrType, NetGroupDelegationPtr ptr);
+		NetGroupDelegationPtr GetDelegation( const std::string &linkSvrType );
 
 	protected:
 		void		Cleanup();
 
 	private:
 		typedef common::VectorMap<std::string, NetGroupControllerPtr> Controllers;
+		typedef common::VectorMap<std::string, CNetGroupDelegation*> Delegations;
 
 		SSvrConfigData m_Config;
 		Controllers m_Controllers;
+		Delegations m_Delegations;
 		CFarmServerConnector *m_pFarmSvrConnector;
 
 	};

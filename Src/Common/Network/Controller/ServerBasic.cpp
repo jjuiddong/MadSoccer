@@ -16,6 +16,7 @@ CServerBasic::CServerBasic(PROCESS_TYPE procType) :
 ,	m_pGroupFactory(new CGroupFactory()) // default
 {
 	m_ServerPort = 2333;
+	m_Timers.reserve(10);
 
 	InitRootGroup();
 }
@@ -23,6 +24,7 @@ CServerBasic::CServerBasic(PROCESS_TYPE procType) :
 CServerBasic::~CServerBasic()
 {
 	Clear();
+	m_Timers.clear();
 	SAFE_DELETE(m_pRemoteClientFactory);
 	SAFE_DELETE(m_pGroupFactory);
 }
@@ -229,7 +231,7 @@ bool CServerBasic::AddRemoteClient(SOCKET sock, const std::string &ip)
 	else
 	{
 		m_RemoteClients.insert( 
-			RemoteClientMap::value_type(pNewRemoteClient->GetId(), pNewRemoteClient) );
+			RemoteClients::value_type(pNewRemoteClient->GetId(), pNewRemoteClient) );
 
 		clog::Log( clog::LOG_F_N_O, "AddClient netid: %d, socket: %d\n", pNewRemoteClient->GetId(), sock );
 		OnClientJoin(pNewRemoteClient->GetId());
@@ -256,11 +258,11 @@ CRemoteClient* CServerBasic::GetRemoteClient(netid netId)
  */
 CRemoteClient* CServerBasic::GetRemoteClient(const std::string &clientId)
 {
-	BOOST_FOREACH(auto &client, m_RemoteClients)
+	BOOST_FOREACH(auto &client, m_RemoteClients.m_Seq)
 	{
-		if (client.second && client.second->GetName() == clientId)
+		if (client && client->GetName() == clientId)
 		{
-			return client.second;
+			return client;
 		}
 	}
 	return NULL;
@@ -330,21 +332,21 @@ RemoteClientItor CServerBasic::FindRemoteClientBySocket(SOCKET sock)
 // m_RemoteClients 루프안에서 Client를 제거해야 될때 쓰이는 함수다.
 // Client를 제거하고 다음을 가르키는 iterator를 반환한다.
 //------------------------------------------------------------------------
-RemoteClientItor CServerBasic::RemoveRemoteClientInLoop(netid netId)
-{
-	RemoteClientItor it = m_RemoteClients.find(netId);
-	if (m_RemoteClients.end() == it)
-		return m_RemoteClients.end(); //없다면 실패
-
-	RemoteClientItor r = RemoveClientProcess(it);
-	return r;
-}
+//RemoteClientItor CServerBasic::RemoveRemoteClientInLoop(netid netId)
+//{
+//	RemoteClientItor it = m_RemoteClients.find(netId);
+//	if (m_RemoteClients.end() == it)
+//		return m_RemoteClients.end(); //없다면 실패
+//
+//	RemoteClientItor r = RemoveClientProcess(it);
+//	return r;
+//}
 
 
 //------------------------------------------------------------------------
 // 클라이언트 제거 처리
 //------------------------------------------------------------------------
-RemoteClientItor CServerBasic::RemoveClientProcess(RemoteClientItor it)
+bool CServerBasic::RemoveClientProcess(RemoteClientItor it)
 {
 	const netid userId = it->second->GetId();
 	const SOCKET sock = it->second->GetSocket();
@@ -366,11 +368,12 @@ RemoteClientItor CServerBasic::RemoveClientProcess(RemoteClientItor it)
 		 clog::Error( clog::ERROR_PROBLEM, "CServer::RemoveClientProcess() Error!! not found group userid: %d\n",userId);
 	 }
 
+	//delete it->second;
+	m_RemoteClients.remove(it->first);
 	delete it->second;
-	RemoteClientItor r = m_RemoteClients.erase(it);
 
 	clog::Log( clog::LOG_F_N_O, "RemoveClient netid: %d, socket: %d\n", userId, sock );
-	return r;
+	return true;
 }
 
 
@@ -380,9 +383,9 @@ RemoteClientItor CServerBasic::RemoveClientProcess(RemoteClientItor it)
 void CServerBasic::Clear()
 {
 	m_IsServerOn = false;
-	BOOST_FOREACH( RemoteClientMap::value_type &kv, m_RemoteClients)
+	BOOST_FOREACH( auto &kv, m_RemoteClients.m_Seq)
 	{
-		delete kv.second;
+		delete kv;
 	}
 	m_RemoteClients.clear();
 
@@ -403,12 +406,12 @@ void CServerBasic::MakeFDSET( SFd_Set *pfdset)
 	common::AutoCSLock cs(m_CS);
 
 	FD_ZERO(pfdset);
-	BOOST_FOREACH(RemoteClientMap::value_type &kv, m_RemoteClients)
+	BOOST_FOREACH(auto &kv, m_RemoteClients.m_Seq)
 	{
 		//pfdset->fd_array[ pfdset->fd_count] = kv.second->GetSocket();
 		//pfdset->fd_count++;
-		FD_SET(kv.second->GetSocket(), (fd_set*)pfdset);
-		pfdset->netid_array[ pfdset->fd_count-1] = kv.second->GetId();
+		FD_SET(kv->GetSocket(), (fd_set*)pfdset);
+		pfdset->netid_array[ pfdset->fd_count-1] = kv->GetId();
 	}
 }
 
@@ -428,16 +431,19 @@ bool CServerBasic::IsExist(netid netId)
 //------------------------------------------------------------------------
 bool CServerBasic::SendAll(const CPacket &packet)
 {
-	RemoteClientItor it = m_RemoteClients.begin();
-	while (m_RemoteClients.end() != it)
+	//RemoteClientItor it = m_RemoteClients.begin();
+	//while (m_RemoteClients.end() != it)
+	BOOST_FOREACH(auto &client, m_RemoteClients.m_Seq)
 	{
-		const int result = send(it->second->GetSocket(), packet.GetData(), CPacket::MAX_PACKETSIZE, 0);
+		if (!client)
+			continue;
+
+		const int result = send(client->GetSocket(), packet.GetData(), CPacket::MAX_PACKETSIZE, 0);
 		if (result == INVALID_SOCKET)
 		{
 			Send(GetNetId(), SEND_T, 
-				ClientDisconnectPacket(CNetController::Get()->GetUniqueValue(), it->second->GetId()) );
+				ClientDisconnectPacket(CNetController::Get()->GetUniqueValue(), client->GetId()) );
 		}
-		++it;
 	}
 
 	return true;
@@ -630,4 +636,74 @@ void	CServerBasic::OnClientJoin(netid netId)
 void	CServerBasic::OnClientLeave(netid netId)
 {
 	SearchEventTable( CNetEvent(EVT_CLIENT_LEAVE, this, netId) );
+}
+
+
+/**
+ @brief Timer
+ */
+void	CServerBasic::OnTimer(int id)
+{
+	SearchEventTable( CEvent(EVT_TIMER, id) );
+}
+
+
+/**
+ @brief 타이머 추가
+ */
+void	CServerBasic::AddTimer( int id, int intervalTime, bool isRepeat ) //  isRepeat = true;
+{
+	STimer timer(id, intervalTime, GetTickCount(), isRepeat);
+	auto it = std::find(m_Timers.begin(), m_Timers.end(), timer);
+	if (m_Timers.end() == it)
+	{
+		m_Timers.push_back( timer );
+	}
+	else
+	{
+		it->interval = intervalTime;
+	}
+}
+
+
+/**
+ @brief 타이머 종료
+ */
+void	CServerBasic::KillTimer( int id )
+{
+	common::removevector(m_Timers, STimer(id) );
+}
+
+
+/**
+ @brief 
+ */
+void	CServerBasic::MainLoop()
+{
+
+	//------------------------------------------------------------
+	// Timer 처리 
+	if (m_Timers.empty())
+		return;
+	const int curT = GetTickCount();
+	for (u_int i=0; i < m_Timers.size(); ++i)
+	{
+		if ((curT - m_Timers[ i].beginT) > m_Timers[ i].interval)
+		{
+			const int id = m_Timers[ i].id;
+			if (!m_Timers[ i].repeat)
+			{
+				KillTimer( id );
+				OnTimer( id );
+			}
+			else
+			{
+				OnTimer( id );
+				m_Timers[ i].beginT = curT;
+			}
+			break; // OnTimer는 한번만 호출하고 종료한다. OnTimer 호출 도중 killtimer 를 호출하면 문제가 생길 수 있기 때문.
+		}
+	}	
+	//------------------------------------------------------------
+
 }

@@ -43,6 +43,7 @@ namespace network
 			clog::Error( clog::ERROR_CRITICAL, "CTaskWorkServer::Run() Error!! not found server netid: %d\n", m_ServerId );
 			return RR_END;
 		}
+		
 		if (!psvr->IsServerOn())
 			return RR_CONTINUE;
 

@@ -3,10 +3,13 @@
 #include "LobbyServer.h"
 #include "../DataStructure/UserLobby.h"
 
+#include "NetProtocol/Src/server_network_Protocol.cpp"
+#include "NetProtocol/Src/server_network_ProtocolListener.cpp"
+
 
 using namespace network;
 
-CLobbyServer::CLobbyServer() //: CServer(SERVICE_EXCLUSIVE_THREAD)
+CLobbyServer::CLobbyServer()
 {
 }
 
@@ -23,12 +26,42 @@ void	CLobbyServer::OnConnectNetGroupController()
 {
 	CServer::OnConnectNetGroupController();
 
+	NetGroupControllerPtr pLoginSvrController = multinetwork::CMultiNetwork::Get()->GetController("loginsvr");
+	if (!pLoginSvrController)
+	{
+		clog::Error( clog::ERROR_CRITICAL, "CLobbyServer Init Error!! not found lobbysvr netgroupcontroller" );
+		return;
+	}
+	NetGroupControllerPtr pCertifySvrController = multinetwork::CMultiNetwork::Get()->GetController("certifysvr");
+	if (!pCertifySvrController)
+	{
+		clog::Error( clog::ERROR_CRITICAL, "CLobbyServer Init Error!! not found certify netgroupcontroller" );
+		return;
+	}
+
+	pLoginSvrController->RegisterProtocol(&m_SvrNetworkProtocol);
+	pCertifySvrController->RegisterProtocol(&m_CertifyProtocol);
+
 	RegisterProtocol(&m_LoginProtocol);
 	RegisterProtocol(&m_BasicProtocol);
 	AddProtocolListener( this );
 
-	EVENT_CONNECT( EVT_CLIENT_JOIN, CLobbyServer, CLobbyServer::OnClientJoin );
-	EVENT_CONNECT( EVT_CLIENT_LEAVE, CLobbyServer, CLobbyServer::OnClientLeave );
+	NETEVENT_CONNECT_TO(pLoginSvrController, this, EVT_CONNECT, CLobbyServer, CLobbyServer::OnSubServerConnect);
+	NETEVENT_CONNECT_TO(pCertifySvrController, this, EVT_CONNECT, CLobbyServer, CLobbyServer::OnSubServerConnect);
+
+	NETEVENT_CONNECT( EVT_CLIENT_JOIN, CLobbyServer, CLobbyServer::OnClientJoin );
+	NETEVENT_CONNECT( EVT_CLIENT_LEAVE, CLobbyServer, CLobbyServer::OnClientLeave );
+	EVENT_CONNECT_TO( GetServer(), this, EVT_TIMER, CLobbyServer, CLobbyServer::OnTimer );
+
+	GetServer()->AddTimer(ID_TIMER_REFRESH, 1000 );
+}
+
+
+/**
+ @brief OnSubServerConnect
+ */
+void	CLobbyServer::OnSubServerConnect(network::CNetEvent &event)
+{
 
 }
 
@@ -200,11 +233,28 @@ std::string CLobbyServer::ToString()
 
 	std::stringstream ss;
 	ss << "RemoteClient: " << GetServer()->GetRemoteClients().size() << std::endl;
-	BOOST_FOREACH(RemoteClientMap::value_type &kv, GetServer()->GetRemoteClients())
+	BOOST_FOREACH(auto &client, GetServer()->GetRemoteClients())
 	{
-		ss << "netid: " << kv.second->GetId() << ", sock: " << kv.second->GetSocket() << std::endl;			
+		ss << "netid: " << client->GetId() << ", sock: " << client->GetSocket() << std::endl;			
 	}
 	return ss.str();
+}
+
+
+/**
+ @brief 
+ */
+void	CLobbyServer::OnTimer( CEvent &event )
+{
+	if (ID_TIMER_REFRESH == event.GetParam())
+	{
+		// 주기적으로 서버 정보를 Login서버에게 보낸다.
+		if (GetServer() && GetServer()->IsServerOn())
+		{
+			m_SvrNetworkProtocol.SendServerInfo( SERVER_NETID, network::SEND_T, "lobbysvr", GetServer()->GetRemoteClients().size() );
+		}
+	}
+
 }
 
 

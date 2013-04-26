@@ -9,9 +9,27 @@
 
 namespace network
 {
+
 	struct SFd_Set : fd_set
 	{
 		netid netid_array[ FD_SETSIZE];		// fd_array[] 소켓에 해당하는 netid 값
 	};
+
+
+	struct STimer
+	{
+		int id;
+		int interval;
+		int beginT;
+		bool repeat;
+
+		STimer() {}
+		STimer(int _id):id(_id) {}
+		STimer(int _id, int _interval, int _beginT, bool _repeat) : id(_id), interval(_interval), beginT(_beginT), repeat(_repeat) {}
+		bool operator==(const STimer&rhs) { return id == rhs.id; }
+	};
+
+
+	//struct S
 
 }

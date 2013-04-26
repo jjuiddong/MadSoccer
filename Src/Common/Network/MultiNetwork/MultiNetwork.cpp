@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 #include "MultiNetwork.h"
-#include "MultiNetworkUtillity.h"
+#include "MultiNetworkUtility.h"
 #include "NetGroupController.h"
 #include "NetGroupDelegation.h"
 #include "FarmServerConnector.h"
@@ -69,6 +69,12 @@ void	CMultiNetwork::Cleanup()
 	m_Controllers.clear();
 
 	SAFE_DELETE( m_pFarmSvrConnector );
+
+	BOOST_FOREACH(auto &ctrl, m_Delegations.m_Seq)
+	{
+		SAFE_DELETE(ctrl);
+	}
+	m_Delegations.clear();
 
 }
 
@@ -172,3 +178,47 @@ NetGroupControllerPtr CMultiNetwork::GetController( const std::string &linkSvrTy
 	return it->second;
 }
 
+
+/**
+ @brief Delegation 추가
+ */
+bool	CMultiNetwork::AddDelegation( const std::string &linkSvrType, CNetGroupDelegation *ptr)
+{
+	RETV(!ptr, false);
+
+	auto it = m_Delegations.find( linkSvrType );
+	if (m_Delegations.end() != it)
+		return false; // already exist
+
+	if (!ConnectDelegation(linkSvrType, ptr))
+		return false;
+
+	m_Delegations.insert( Delegations::value_type(linkSvrType, ptr) );
+	return true;
+}
+
+
+/**
+ @brief Delegation 제거
+ */
+bool	CMultiNetwork::RemoveDelegation( const std::string &linkSvrType )
+{
+	auto it = m_Delegations.find( linkSvrType );
+	if (m_Delegations.end() == it)
+		return false; // not exist
+
+	m_Delegations.remove( linkSvrType );
+	return true;
+}
+
+
+/**
+ @brief GetDelegation
+ */
+NetGroupDelegationPtr CMultiNetwork::GetDelegation( const std::string &linkSvrType )
+{
+	auto it = m_Delegations.find( linkSvrType );
+	if (m_Delegations.end() == it)
+		return NULL; // not exist
+	return it->second;
+}
