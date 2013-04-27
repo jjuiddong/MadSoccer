@@ -59,8 +59,8 @@ void CPrinter::OnRefreshTimer(wxTimerEvent& event)
 		const int logType = ParseLogType( line );
 		switch (logType)
 		{
-		case 0: SetItemBackgroundColour(idx, wxColour(255,100,0) ); break;
-		case 1: SetItemBackgroundColour(idx, wxColour(255,255,0) ); break;
+		case 0: SetItemBackgroundColour(idx, wxColour(255,100,0)); break;
+		case 1: SetItemBackgroundColour(idx, wxColour(255,255,0)); break;
 		}
 		
 		m_Pos = m_InputFile.tellg();
@@ -88,7 +88,7 @@ void CPrinter::OnContextMenu(wxContextMenuEvent& event)
  */
 void CPrinter::OnMenuClear(wxCommandEvent& event)
 {
-	//Clear();
+	DeleteAllItems();
 }
 
 
