@@ -20,7 +20,7 @@ wxListCtrl(parent, -1, wxDefaultPosition, wxSize(400,150),
 	wxLC_REPORT)
 ,	m_fileName(fileName)
 {
-	InsertColumn(0, "Llog Message");
+	InsertColumn(0, "Log Message");
 	SetColumnWidth(0, 1000);
 
 	m_Timer.SetOwner(this, ID_REFRESH_TIMER);
