@@ -7,7 +7,10 @@ Date:    4/20/2013
 */
 #pragma once
 
-class CPrinter : public wxTextCtrl
+#include <wx/listctrl.h>
+#include <wx/listbox.h>
+
+class CPrinter : public wxListCtrl
 {
 	enum  {
 		MENU_CLEAR = 100,
@@ -25,6 +28,7 @@ protected:
 	void OnRefreshTimer(wxTimerEvent& event);
 	void OnContextMenu(wxContextMenuEvent& event);
 	void OnMenuClear(wxCommandEvent& event);
+	int ParseLogType(const std::string &msg);	
 
 private:
 	wxTimer	m_Timer;
