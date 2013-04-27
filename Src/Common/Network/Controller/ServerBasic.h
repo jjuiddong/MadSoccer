@@ -45,7 +45,6 @@ namespace network
 		void				Close();
 		bool				IsServerOn() const;
 		void				MakeFDSET( SFd_Set *pfdset);
-		void				SetPort(int port);
 		void				AddTimer( int id, int intervalTime, bool isRepeat = true );
 		void				KillTimer( int id );
 
@@ -72,8 +71,6 @@ namespace network
 		SessionItor	FindSessionBySocket(SOCKET sock);
 
 	private:
-		int								m_ServerPort;
-		bool								m_IsServerOn;			// 서버가 정상적으로 실행이 되었다면 true
 		Sessions_						m_Sessions;					// 서버와 연결된 클라이언트 정보리스트
 		ISessionFactory			*m_pSessionFactory;
 		IGroupFactory			    *m_pGroupFactory;
@@ -85,8 +82,7 @@ namespace network
 	};
 
 
-	inline bool CServerBasic::IsServerOn() const { return m_IsServerOn; }
-	inline void	 CServerBasic::SetPort(int port) { m_ServerPort = port; }
+	inline bool CServerBasic::IsServerOn() const { return GetState() == SESSIONSTATE_LOGIN; }
 	inline CGroup&	CServerBasic::GetRootGroup() { return m_RootGroup; }
 	inline common::CriticalSection& CServerBasic::GetCS() { return m_CS; }
 	inline Sessions_V& CServerBasic::GetSessions() { return m_Sessions.m_Seq; }

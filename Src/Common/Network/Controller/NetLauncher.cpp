@@ -71,6 +71,7 @@ bool netlauncher::LaunchServer(ServerBasicPtr pSvr, int port)
 	}
 
 	pSvr->SetSocket(svrSocket);
+	pSvr->SetIp("127.0.0.1");
 	pSvr->SetPort(port);
 	pSvr->OnListen();
 	return true;
@@ -146,10 +147,10 @@ bool	netlauncher::LaunchCoreClient(CoreClientPtr pClient, const std::string &ip,
 		return false;
 	}
 
-	pClient->SetServerIp(ip);
-	pClient->SetServerPort(port);
+	pClient->SetIp(ip);
+	pClient->SetPort(port);
 	pClient->SetSocket(clientSocket);
-	pClient->SetConnect(true);
+	pClient->SetState(SESSIONSTATE_LOGIN);
 	pClient->OnConnect();
 
 	return true;

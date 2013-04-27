@@ -235,7 +235,7 @@ std::string CLobbyServer::ToString()
 	ss << "Session : " << GetServer()->GetSessions().size() << std::endl;
 	BOOST_FOREACH(auto &client, GetServer()->GetSessions())
 	{
-		ss << "netid: " << client->GetId() << ", sock: " << client->GetSocket() << std::endl;			
+		ss << "netid: " << client->GetNetId() << ", sock: " << client->GetSocket() << std::endl;
 	}
 	return ss.str();
 }

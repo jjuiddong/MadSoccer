@@ -94,8 +94,8 @@ bool CBasicC2SProtocolHandler_LoginSvr::AckUserId(IProtocolDispatcher &dispatche
 		return false;
 	}
 
-	pClient->SetState(CLIENTSTATE_LOGIN); // login state
-	m_BasicProtocol.AckLogIn(pClient->GetId(), SEND_T, errorCode, id, userId);
+	pClient->SetState(SESSIONSTATE_LOGIN); // login state
+	m_BasicProtocol.AckLogIn(pClient->GetNetId(), SEND_T, errorCode, id, userId);
 	return true;
 }
 

@@ -84,8 +84,8 @@ std::list<SSubServerInfo> CSubServerConnector::GetSubServerInfo()
 				continue;
 
 			SSubServerInfo info;
-			info.ip = client->GetServerIp();
-			info.portnum = client->GetServerPort();
+			info.ip = client->GetIp();
+			info.portnum = client->GetPort();
 			//info.userCnt = pSvr->GetUserCount();
 			servers.push_back( info );
 		}

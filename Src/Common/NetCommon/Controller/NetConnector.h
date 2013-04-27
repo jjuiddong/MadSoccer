@@ -20,11 +20,12 @@ namespace network
 		virtual bool	AddProtocolListener(ProtocolListenerPtr pListener);
 		virtual bool	RemoveProtocolListener(ProtocolListenerPtr pListener);
 		const ProtocolListenerList&	GetProtocolListeners() const;
-		void				ClearConnection();
 
-		netid			GetNetId() const;
-		SOCKET		GetSocket() const;
-		void				SetSocket(SOCKET sock);
+		//void				ClearConnection();
+		//netid			GetNetId() const;
+		//SOCKET		GetSocket() const;
+		//void				SetSocket(SOCKET sock);
+
 		void				SetParent(NetConnectorPtr parent);
 		NetConnectorPtr GetParent() const;
 		void				SetThreadHandle(HANDLE handle);
@@ -36,8 +37,8 @@ namespace network
 		virtual bool	SendAll(const CPacket &packet) = 0;
 
 	private:
-		netid						m_Id;
-		SOCKET					m_Socket; 
+		//netid						m_Id;
+		//SOCKET					m_Socket; 
 		NetConnectorPtr		m_pParent;				// CNetConnector 소유자
 		ProtocolListenerList m_ProtocolListeners;		
 		HANDLE					m_hThread;				// 소속된 스레드 핸들, 없다면 NULL
@@ -45,10 +46,11 @@ namespace network
 	};
 
 
-	inline void	 CNetConnector::SetSocket(SOCKET sock) { m_Socket = sock; }
+	//inline void	 CNetConnector::SetSocket(SOCKET sock) { m_Socket = sock; }
+	//inline netid CNetConnector::GetNetId() const { return m_Id; }
+	//	inline SOCKET CNetConnector::GetSocket() const { return m_Socket; }
+
 	inline const ProtocolListenerList&	 CNetConnector::GetProtocolListeners() const { return m_ProtocolListeners; }
-	inline netid CNetConnector::GetNetId() const { return m_Id; }
-	inline SOCKET CNetConnector::GetSocket() const { return m_Socket; }
 	inline void	 CNetConnector::SetParent(NetConnectorPtr parent) { m_pParent = parent; }
 	inline NetConnectorPtr CNetConnector::GetParent() const { return m_pParent; }
 	inline void	 CNetConnector::SetThreadHandle(HANDLE handle) { m_hThread = handle; }

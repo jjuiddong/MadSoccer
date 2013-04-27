@@ -45,7 +45,7 @@ bool CBasicC2SProtocolHandler::ReqLogIn(IProtocolDispatcher &dispatcher, netid s
 		return false;
 	}
 
-	if (pClient->GetState() != CLIENTSTATE_LOGIN_WAIT)
+	if (pClient->GetState() != SESSIONSTATE_LOGIN_WAIT)
 	{
 		clog::Error( clog::ERROR_PROBLEM, "ReqLogin Error!! client state error state=%d",
 			pClient->GetState() );

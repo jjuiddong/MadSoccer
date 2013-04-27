@@ -10,12 +10,11 @@ using namespace network;
 
 CServerBasic::CServerBasic(PROCESS_TYPE procType) :
 	CNetConnector(procType)
-,	m_IsServerOn(false)
 ,	m_RootGroup(NULL, "root")
 ,	m_pSessionFactory(new CSessionFactory()) // defalut 
 ,	m_pGroupFactory(new CGroupFactory()) // default
 {
-	m_ServerPort = 2333;
+	SetPort(2333);
 	m_Timers.reserve(10);
 
 	InitRootGroup();
@@ -221,20 +220,20 @@ bool CServerBasic::AddSession(SOCKET sock, const std::string &ip)
 	CSession *pNewSession = m_pSessionFactory->New();
 	pNewSession->SetSocket(sock);
 	pNewSession->SetIp(ip);
-	pNewSession->SetState(CLIENTSTATE_LOGIN_WAIT);
+	pNewSession->SetState(SESSIONSTATE_LOGIN_WAIT);
 
-	if (!m_RootGroup.AddUser(m_WaitGroupId, pNewSession->GetId()))
+	if (!m_RootGroup.AddUser(m_WaitGroupId, pNewSession->GetNetId()))
 	{
-		clog::Error( clog::ERROR_CRITICAL, "CServerBasic::AddClient Error!! netid: %d\n", pNewSession->GetId());
+		clog::Error( clog::ERROR_CRITICAL, "CServerBasic::AddClient Error!! netid: %d\n", pNewSession->GetNetId());
 		SAFE_DELETE(pNewSession);
 	}
 	else
 	{
 		m_Sessions.insert( 
-			Sessions_::value_type(pNewSession->GetId(), pNewSession) );
+			Sessions_::value_type(pNewSession->GetNetId(), pNewSession) );
 
-		clog::Log( clog::LOG_F_N_O, "AddClient netid: %d, socket: %d\n", pNewSession->GetId(), sock );
-		OnClientJoin(pNewSession->GetId());
+		clog::Log( clog::LOG_F_N_O, "AddClient netid: %d, socket: %d\n", pNewSession->GetNetId(), sock );
+		OnClientJoin(pNewSession->GetNetId());
 	}
 
 	return true;
@@ -277,7 +276,7 @@ netid CServerBasic::GetNetIdFromSocket(SOCKET sock)
 	SessionItor it = FindSessionBySocket(sock);
 	if (m_Sessions.end() == it)
 		return INVALID_NETID; //없다면 실패
-	return it->second->GetId();
+	return it->second->GetNetId();
 }
 
 
@@ -348,7 +347,7 @@ SessionItor CServerBasic::FindSessionBySocket(SOCKET sock)
 //------------------------------------------------------------------------
 bool CServerBasic::RemoveClientProcess(SessionItor it)
 {
-	const netid userId = it->second->GetId();
+	const netid userId = it->second->GetNetId();
 	const SOCKET sock = it->second->GetSocket();
 
 	// call before remove client
@@ -382,7 +381,7 @@ bool CServerBasic::RemoveClientProcess(SessionItor it)
 //------------------------------------------------------------------------
 void CServerBasic::Clear()
 {
-	m_IsServerOn = false;
+	SetState(SESSIONSTATE_DISCONNECT);
 	BOOST_FOREACH( auto &kv, m_Sessions.m_Seq)
 	{
 		delete kv;
@@ -411,7 +410,7 @@ void CServerBasic::MakeFDSET( SFd_Set *pfdset)
 		//pfdset->fd_array[ pfdset->fd_count] = kv.second->GetSocket();
 		//pfdset->fd_count++;
 		FD_SET(kv->GetSocket(), (fd_set*)pfdset);
-		pfdset->netid_array[ pfdset->fd_count-1] = kv->GetId();
+		pfdset->netid_array[ pfdset->fd_count-1] = kv->GetNetId();
 	}
 }
 
@@ -442,7 +441,7 @@ bool CServerBasic::SendAll(const CPacket &packet)
 		if (result == INVALID_SOCKET)
 		{
 			Send(GetNetId(), SEND_T, 
-				ClientDisconnectPacket(CNetController::Get()->GetUniqueValue(), client->GetId()) );
+				ClientDisconnectPacket(CNetController::Get()->GetUniqueValue(), client->GetNetId()) );
 		}
 	}
 
@@ -464,7 +463,8 @@ bool	CServerBasic::Send(netid netId, const SEND_FLAG flag, const CPacket &packet
 			const int result = send(it->second->GetSocket(), packet.GetData(), CPacket::MAX_PACKETSIZE, 0);
 			if (result == INVALID_SOCKET)
 			{
-				clog::Error( clog::ERROR_WARNING, common::format("CServer::Send() Socket Error id=%d\n", it->second->GetId()) );
+				clog::Error( clog::ERROR_WARNING, common::format("CServer::Send() Socket Error id=%d\n", 
+					it->second->GetNetId()) );
 				RemoveSession(packet.GetSenderId());
 				sendResult = false;
 			}
@@ -599,7 +599,7 @@ void	CServerBasic::Disconnect()
 */
 void	CServerBasic::Close()
 {
-	m_IsServerOn = false;
+	SetState(SESSIONSTATE_DISCONNECT);
 	ClearConnection();
 }
 
@@ -609,7 +609,7 @@ void	CServerBasic::Close()
 //------------------------------------------------------------------------
 void	CServerBasic::OnListen()
 {
-	m_IsServerOn = true;
+	SetState(SESSIONSTATE_LOGIN);
 	SearchEventTable( CNetEvent(EVT_LISTEN, this) );
 }
 

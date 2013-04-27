@@ -12,9 +12,8 @@ using namespace network;
 CCoreClient::CCoreClient(PROCESS_TYPE procType) :
 	CNetConnector(procType)
 {
-	m_ServerIP = "127.0.0.1";
-	m_ServerPort = 2333;
-	m_IsConnect = false;
+	SetIp( "127.0.0.1" );
+	SetPort( 2333 );
 }
 
 CCoreClient::~CCoreClient() 
@@ -134,7 +133,7 @@ void CCoreClient::Disconnect()
 */
 void CCoreClient::Close()
 {
-	m_IsConnect = false;
+	SetState(SESSIONSTATE_DISCONNECT);
 	ClearConnection();
 }
 
@@ -144,9 +143,8 @@ void CCoreClient::Close()
 //------------------------------------------------------------------------
 void CCoreClient::Clear()
 {
-	m_IsConnect = false;
+	SetState(SESSIONSTATE_DISCONNECT);
 	ClearConnection();
-
 }
 
 

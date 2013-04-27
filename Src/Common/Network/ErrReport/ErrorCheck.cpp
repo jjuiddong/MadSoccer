@@ -60,7 +60,7 @@ bool network::CheckClientConnection( CSession *pClient,
 	basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher )
 {
 	RETV(!pClient, false);
-	if (pClient->GetState() == CLIENTSTATE_LOGIN)
+	if (pClient->GetState() == SESSIONSTATE_LOGIN)
 		return true;
 	if (pDispatcher)
 		pDispatcher->PrintThisPacket( clog::LOG_F, "!!! Error client not connection >>" );
