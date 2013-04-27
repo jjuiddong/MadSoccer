@@ -11,6 +11,7 @@ using namespace network;
 
 CCoreClient::CCoreClient(PROCESS_TYPE procType) :
 	CNetConnector(procType)
+,	m_ServerNetId(common::GenerateId())
 {
 	SetIp( "127.0.0.1" );
 	SetPort( 2333 );

@@ -44,7 +44,6 @@ namespace network
 		std::string m_Name;
 		std::string m_Ip;
 		int m_Port;
-		//std::string m_Passwd;
 
 	};
 

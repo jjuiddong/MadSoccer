@@ -22,6 +22,8 @@ namespace network { namespace multinetwork {
 
 		CServerBasic* GetServer();
 		const CoreClients_V& GetClients();
+		CoreClientPtr GetClient(netid netId);
+		CoreClientPtr GetClientFromServerNetId(netid serverNetId);
 
 	protected:
 		// Event 

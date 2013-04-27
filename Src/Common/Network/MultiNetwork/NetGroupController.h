@@ -48,6 +48,8 @@ namespace network { namespace multinetwork {
 		void				SetTryConnect();
 		CServerBasic* GetServer();
 		const CoreClients_V& GetClients();
+		CoreClientPtr GetClient(netid netId);
+		CoreClientPtr GetClientFromServerNetId(netid serverNetId);
 
 		// overriding
 		virtual bool	AddProtocolListener(ProtocolListenerPtr pListener) override;

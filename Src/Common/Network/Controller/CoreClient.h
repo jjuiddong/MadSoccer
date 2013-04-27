@@ -28,6 +28,7 @@ namespace network
 
 		bool				IsConnect() const;
 		void				SetConnect(bool isConnect);
+		netid			GetServerNetId() const;
 
 		virtual bool	Send(netid netId, const SEND_FLAG flag, const CPacket &packet);
 		virtual bool	SendAll(const CPacket &packet) override;
@@ -43,10 +44,13 @@ namespace network
 		void				DispatchPacket();
 		void				Clear();
 
+	private:
+		netid			m_ServerNetId;			// ¼­¹öÀÇ NetId
 	};
 
 
 	inline bool CCoreClient::IsConnect() const { return GetState() == SESSIONSTATE_LOGIN; }
 	inline void	 CCoreClient::SetConnect(bool isConnect) { SetState(isConnect? SESSIONSTATE_LOGIN : SESSIONSTATE_DISCONNECT); }
+	inline netid CCoreClient::GetServerNetId() const { return m_ServerNetId; }
 
 }

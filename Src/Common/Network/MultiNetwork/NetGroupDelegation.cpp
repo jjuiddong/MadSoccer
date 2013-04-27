@@ -49,3 +49,24 @@ const CoreClients_V& CNetGroupDelegation::GetClients()
 	RETV(!GetConnector(), v);
 	return GetConnector()->GetClients();
 }
+
+
+/**
+ @brief 
+ */
+CoreClientPtr CNetGroupDelegation::GetClient(netid netId)
+{
+	RETV(!GetConnector(), NULL);	
+	return GetConnector()->GetClient(netId);
+}
+
+
+/**
+ @brief 
+ */
+CoreClientPtr CNetGroupDelegation::GetClientFromServerNetId(netid serverNetId)
+{
+	RETV(!GetConnector(), NULL);	
+	return GetConnector()->GetClientFromServerNetId(serverNetId);
+}
+

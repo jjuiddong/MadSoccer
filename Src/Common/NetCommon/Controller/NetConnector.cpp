@@ -6,7 +6,6 @@ using namespace network;
 
 
 CNetConnector::CNetConnector(PROCESS_TYPE procType) :
-	//m_Id(common::GenerateId())
 	m_ProcessType(procType)
 ,	m_pParent(NULL)
 ,	m_hThread(NULL)
@@ -54,14 +53,3 @@ bool CNetConnector::RemoveProtocolListener(ProtocolListenerPtr pListener)
 	m_ProtocolListeners.erase(it);
 	return true;
 }
-
-
-//------------------------------------------------------------------------
-// Ä¿³Ø¼Ç Á¦°Å
-//------------------------------------------------------------------------
-//void	CNetConnector::ClearConnection()
-//{
-//	closesocket(m_Socket);
-//	m_Socket = 0;
-//	//WSACleanup();
-//}

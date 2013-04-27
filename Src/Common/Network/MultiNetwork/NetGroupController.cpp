@@ -273,3 +273,29 @@ bool	CNetGroupController::RemoveProtocolListener(ProtocolListenerPtr pListener)
 	}
 	return true;
 }
+
+
+/**
+ @brief return CoreClient 
+ */
+CoreClientPtr CNetGroupController::GetClient(netid netId)
+{
+	auto it = m_Clients.find(netId);
+	if (m_Clients.end() == it)
+		return NULL;
+	return it->second;
+}
+
+
+/**
+ @brief return CoreClient from correspond server netid
+ */
+CoreClientPtr CNetGroupController::GetClientFromServerNetId(netid serverNetId)
+{
+	BOOST_FOREACH(auto &client, m_Clients.m_Seq)
+	{
+		if (client && client->GetServerNetId() == serverNetId)
+			return client;
+	}
+	return NULL;
+}

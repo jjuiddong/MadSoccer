@@ -311,6 +311,7 @@ bool	CServerBasic::RemoveSessionSocket(netid netId)
 	return true;
 }
 
+
 //------------------------------------------------------------------------
 // m_Sessions에서 sock에 해당하는 클라이언트를 리턴한다.
 //------------------------------------------------------------------------
@@ -367,9 +368,8 @@ bool CServerBasic::RemoveClientProcess(SessionItor it)
 		 clog::Error( clog::ERROR_PROBLEM, "CServer::RemoveClientProcess() Error!! not found group userid: %d\n",userId);
 	 }
 
-	//delete it->second;
-	m_Sessions.remove(it->first);
 	delete it->second;
+	m_Sessions.remove(userId);
 
 	clog::Log( clog::LOG_F_N_O, "RemoveClient netid: %d, socket: %d\n", userId, sock );
 	return true;
@@ -430,8 +430,6 @@ bool CServerBasic::IsExist(netid netId)
 //------------------------------------------------------------------------
 bool CServerBasic::SendAll(const CPacket &packet)
 {
-	//SessionItor it = m_Sessions.begin();
-	//while (m_Sessions.end() != it)
 	BOOST_FOREACH(auto &client, m_Sessions.m_Seq)
 	{
 		if (!client)

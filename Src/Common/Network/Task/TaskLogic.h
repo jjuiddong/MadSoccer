@@ -25,6 +25,7 @@ namespace network
 		virtual ~CTaskLogic();
 		virtual RUN_RESULT	Run() override;
 		CNetConnector* GetReceiveConnector(netid netId, OUT CONNECTOR_TYPE &type);
+		void UpdateSenderNetId(CNetConnector *pCon,  CONNECTOR_TYPE type, CPacket &packet);
 	};
 
 
@@ -37,6 +38,10 @@ namespace network
 	{
 	}
 
+
+	/**
+	 @brief 
+	 */
 	CNetConnector* CTaskLogic::GetReceiveConnector(netid netId, OUT CONNECTOR_TYPE &type)
 	{
 		CNetConnector *pCon = GetServer(netId);
@@ -56,9 +61,41 @@ namespace network
 		return pCon;
 	}
 
-	//------------------------------------------------------------------------
-	// Run
-	//------------------------------------------------------------------------
+
+	/**
+	 @brief 클라이언트에서 패킷을 받으면, packet 의 Sender가 서버 Id 로 설정한다.
+	 */
+	void CTaskLogic::UpdateSenderNetId(CNetConnector *pCon,  CONNECTOR_TYPE type, CPacket &packet)
+	{
+		switch (type)
+		{
+		case CON_SERVER: break; // nothing
+
+		case CON_CORECLIENT:
+			{
+				CCoreClient *pClient = dynamic_cast<CCoreClient*>(pCon);
+				if (pClient)
+				{
+					packet.SetSenderId(pClient->GetServerNetId());
+				}				
+			}
+			break;
+		case CON_CLIENT:
+			{
+				CClientBasic *pClient = dynamic_cast<CClientBasic*>(pCon);
+				if (pClient && pClient->GetConnectSvrClient())
+				{
+					packet.SetSenderId( pClient->GetConnectSvrClient()->GetServerNetId() );
+				}
+			}
+			break;
+		}
+	}
+
+
+	/**
+	 @brief Run
+	 */
 	inline common::CTask::RUN_RESULT CTaskLogic::Run()
 	{
 		// Main Timer
@@ -78,6 +115,8 @@ namespace network
 				packetData.rcvNetId) );
 			return RR_CONTINUE;
 		}
+
+		UpdateSenderNetId(pCon, type, packetData.packet);
 
 		const ProtocolListenerList &listeners = pCon->GetProtocolListeners();
 

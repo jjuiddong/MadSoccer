@@ -77,7 +77,6 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Common\event\FastDelegate.h" />
     <ClInclude Include="Controller\NetConnector.h" />
     <ClInclude Include="Controller\NetConnectorLinker.h" />
     <ClInclude Include="Controller\Session.h" />
