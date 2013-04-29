@@ -2,8 +2,8 @@
 #include "stdafx.h"
 #include "MultiNetwork.h"
 #include "MultiNetworkUtility.h"
-#include "NetGroupController.h"
-#include "NetGroupDelegation.h"
+#include "MultiPlug.h"
+#include "MultiPlugDelegation.h"
 #include "FarmServerConnector.h"
 
 
@@ -12,7 +12,7 @@ using namespace network::multinetwork;
 
 
 CMultiNetwork::CMultiNetwork() :
-	CNetConnector(SERVICE_SEPERATE_THREAD)
+	CPlug(SERVICE_SEPERATE_THREAD)
 ,	m_pFarmSvrConnector(NULL)
 {
 	m_Config.clear();
@@ -35,7 +35,7 @@ bool	CMultiNetwork::Init( const std::string &configFileName )
 
 	if ("farmsvr" == m_Config.svrType)
 	{
-		CNetGroupController *pMainCtrl = new CNetGroupController(SERVER, m_Config.svrType, "client");
+		CMultiPlug *pMainCtrl = new CMultiPlug(SERVER, m_Config.svrType, "client");
 		if (!AddController(pMainCtrl))
 			return false;
 	}
@@ -44,7 +44,7 @@ bool	CMultiNetwork::Init( const std::string &configFileName )
 		// create farmsvr connector, and delegation
 		if (!m_Config.parentSvrIp.empty())
 		{
-			CNetGroupController *pCtrl = new CNetGroupController(CLIENT, m_Config.svrType, "farmsvr");
+			CMultiPlug *pCtrl = new CMultiPlug(CLIENT, m_Config.svrType, "farmsvr");
 			if (!AddController(pCtrl))
 				return false;
 
@@ -141,7 +141,7 @@ bool	CMultiNetwork::Proc()
 /**
  @brief Add NetGroupController object
  */
-bool	CMultiNetwork::AddController( CNetGroupController *ptr )
+bool	CMultiNetwork::AddController( CMultiPlug *ptr )
 {
 	RETV(!ptr, false);
 
@@ -183,7 +183,7 @@ NetGroupControllerPtr CMultiNetwork::GetController( const std::string &linkSvrTy
 /**
  @brief Delegation Ãß°¡
  */
-bool	CMultiNetwork::AddDelegation( const std::string &linkSvrType, CNetGroupDelegation *ptr)
+bool	CMultiNetwork::AddDelegation( const std::string &linkSvrType, CMultiPlugDelegation *ptr)
 {
 	RETV(!ptr, false);
 

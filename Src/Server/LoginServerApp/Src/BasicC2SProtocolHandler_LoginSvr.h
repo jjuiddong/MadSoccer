@@ -18,7 +18,7 @@ class CBasicC2SProtocolHandler_LoginSvr : public network::CBasicC2SProtocolHandl
 																	, public certify::s2s_ProtocolListener
 {
 public:
-	CBasicC2SProtocolHandler_LoginSvr(network::multinetwork::CNetGroupController &certifySvr, network::CServerBasic &svr);
+	CBasicC2SProtocolHandler_LoginSvr(network::multinetwork::CMultiPlug &certifySvr, network::CServerBasic &svr);
 	virtual ~CBasicC2SProtocolHandler_LoginSvr();
 
 protected:

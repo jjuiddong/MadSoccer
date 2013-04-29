@@ -11,7 +11,7 @@ CServer 에 접속하는 클라이언트 클래스다.
 namespace network
 {
 
-	class CCoreClient : public CNetConnector
+	class CCoreClient : public CPlug
 	{
 		friend class CNetLauncher;
 		friend class CNetController;

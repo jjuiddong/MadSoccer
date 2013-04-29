@@ -13,7 +13,7 @@ namespace network
 	class CCoreClient;
 
 	DECLARE_TYPE_NAME_SCOPE(network, CP2PClient)
-	class CP2PClient : public CNetConnector
+	class CP2PClient : public CPlug
 								, public memmonitor::Monitor<CP2PClient, TYPE_NAME(CP2PClient)>
 	{
 		friend class CNetController;

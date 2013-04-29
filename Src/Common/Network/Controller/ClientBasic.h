@@ -13,7 +13,7 @@ namespace network
 {
 	class CP2PClient;
 	class CCoreClient;
-	class CClientBasic : public CNetConnector
+	class CClientBasic : public CPlug
 	{
 
 		friend class CNetLauncher;

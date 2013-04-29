@@ -6,7 +6,7 @@ Date:    12/24/2012
 */
 #pragma once
 
-namespace network { namespace netlauncher {
+namespace network { namespace launcher {
 
 	class CServerBasic;
 	class CClient;

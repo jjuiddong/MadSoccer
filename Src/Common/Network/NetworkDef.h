@@ -74,19 +74,19 @@ typedef std::vector<network::CGroup> GroupVector;
 
 namespace network { namespace multinetwork {
 
-	class CNetGroupController;
-	class CNetGroupDelegation;
+	class CMultiPlug;
+	class CMultiPlugDelegation;
 }}
 
-typedef common::ReferencePtr<network::multinetwork::CNetGroupController> NetGroupControllerPtr;
-typedef common::ReferencePtr<network::multinetwork::CNetGroupDelegation> NetGroupDelegationPtr;
+typedef common::ReferencePtr<network::multinetwork::CMultiPlug> NetGroupControllerPtr;
+typedef common::ReferencePtr<network::multinetwork::CMultiPlugDelegation> NetGroupDelegationPtr;
 
 
 #include "Controller/CoreClient.h"
 
 #include "MultiNetwork/MultiNetwork.h"
-#include "MultiNetwork/NetGroupController.h"
-#include "MultiNetwork/NetGroupDelegation.h"
+#include "MultiNetwork/MultiPlug.h"
+#include "MultiNetwork/MultiPlugDelegation.h"
 
 #include "ProtocolHandler\AllProtocolDisplayer.h"
 

@@ -24,8 +24,8 @@ namespace network
 		CTaskLogic();
 		virtual ~CTaskLogic();
 		virtual RUN_RESULT	Run() override;
-		CNetConnector* GetReceiveConnector(netid netId, OUT CONNECTOR_TYPE &type);
-		void UpdateSenderNetId(CNetConnector *pCon,  CONNECTOR_TYPE type, CPacket &packet);
+		CPlug* GetReceiveConnector(netid netId, OUT CONNECTOR_TYPE &type);
+		void UpdateSenderNetId(CPlug *pCon,  CONNECTOR_TYPE type, CPacket &packet);
 	};
 
 
@@ -42,9 +42,9 @@ namespace network
 	/**
 	 @brief 
 	 */
-	CNetConnector* CTaskLogic::GetReceiveConnector(netid netId, OUT CONNECTOR_TYPE &type)
+	CPlug* CTaskLogic::GetReceiveConnector(netid netId, OUT CONNECTOR_TYPE &type)
 	{
-		CNetConnector *pCon = GetServer(netId);
+		CPlug *pCon = GetServer(netId);
 		if (pCon) 
 			type = CON_SERVER;
 		if (!pCon) 
@@ -65,7 +65,7 @@ namespace network
 	/**
 	 @brief 클라이언트에서 패킷을 받으면, packet 의 Sender가 서버 Id 로 설정한다.
 	 */
-	void CTaskLogic::UpdateSenderNetId(CNetConnector *pCon,  CONNECTOR_TYPE type, CPacket &packet)
+	void CTaskLogic::UpdateSenderNetId(CPlug *pCon,  CONNECTOR_TYPE type, CPacket &packet)
 	{
 		switch (type)
 		{
@@ -107,7 +107,7 @@ namespace network
 			return RR_CONTINUE;
 
 		CONNECTOR_TYPE type;
-		CNetConnector *pCon = GetReceiveConnector(packetData.rcvNetId, type);
+		CPlug *pCon = GetReceiveConnector(packetData.rcvNetId, type);
 		if (!pCon)
 		{
 			clog::Error( clog::ERROR_PROBLEM,

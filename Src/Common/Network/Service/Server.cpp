@@ -8,7 +8,7 @@
 using namespace network;
 
 CServer::CServer() : 
-	multinetwork::CNetGroupDelegation()
+	multinetwork::CMultiPlugDelegation()
 ,	m_pBasicProtocol(NULL)
 ,	m_pBasicPrtHandler(NULL)
 {

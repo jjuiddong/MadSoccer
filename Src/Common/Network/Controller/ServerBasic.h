@@ -10,7 +10,7 @@ Date:    2012-11-27
 namespace network
 {
 
-	class CServerBasic : public CNetConnector
+	class CServerBasic : public CPlug
 	{
 		friend class CNetLauncher;
 		friend class CNetController;

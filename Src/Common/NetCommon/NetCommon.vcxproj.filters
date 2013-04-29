@@ -71,14 +71,8 @@
     <ClInclude Include="DataStructure\PacketQueue.h">
       <Filter>DataStructure</Filter>
     </ClInclude>
-    <ClInclude Include="Controller\NetConnector.h">
-      <Filter>Controller</Filter>
-    </ClInclude>
     <ClInclude Include="Marshalling\Marshalling.h">
       <Filter>Marshalling</Filter>
-    </ClInclude>
-    <ClInclude Include="Controller\NetConnectorLinker.h">
-      <Filter>Controller</Filter>
     </ClInclude>
     <ClInclude Include="Event\NetEvent.h">
       <Filter>Event</Filter>
@@ -110,6 +104,12 @@
     <ClInclude Include="Controller\Session.h">
       <Filter>Controller</Filter>
     </ClInclude>
+    <ClInclude Include="Controller\Plug.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\PlugLinker.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -126,9 +126,6 @@
     </ClCompile>
     <ClCompile Include="DataStructure\Packet.cpp">
       <Filter>DataStructure</Filter>
-    </ClCompile>
-    <ClCompile Include="Controller\NetConnector.cpp">
-      <Filter>Controller</Filter>
     </ClCompile>
     <ClCompile Include="Marshalling\Marshalling.cpp">
       <Filter>Marshalling</Filter>
@@ -155,6 +152,9 @@
       <Filter>DataStructure</Filter>
     </ClCompile>
     <ClCompile Include="Controller\Session.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller\Plug.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
   </ItemGroup>

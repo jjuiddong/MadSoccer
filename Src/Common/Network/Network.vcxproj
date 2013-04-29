@@ -87,8 +87,8 @@
     <ClCompile Include="ErrReport\ErrorCheck.cpp" />
     <ClCompile Include="MultiNetwork\MultiNetwork.cpp" />
     <ClCompile Include="MultiNetwork\MultiNetworkUtility.cpp" />
-    <ClCompile Include="MultiNetwork\NetGroupController.cpp" />
-    <ClCompile Include="MultiNetwork\NetGroupDelegation.cpp" />
+    <ClCompile Include="MultiNetwork\MultiPlug.cpp" />
+    <ClCompile Include="MultiNetwork\MultiPlugDelegation.cpp" />
     <ClCompile Include="MultiNetwork\FarmServerConnector.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="ProtocolHandler\AllProtocolDisplayer.cpp" />
@@ -105,7 +105,7 @@
     <ClCompile Include="DataStructure\User.cpp" />
     <ClCompile Include="Controller\CoreClient.cpp" />
     <ClCompile Include="Controller\NetController.cpp" />
-    <ClCompile Include="Controller\NetLauncher.cpp" />
+    <ClCompile Include="Controller\Launcher.cpp" />
     <ClCompile Include="Controller\P2PClient.cpp" />
     <ClCompile Include="Service\AllProtocol.cpp" />
     <ClCompile Include="Service\AllProtocolListener.cpp" />
@@ -120,8 +120,8 @@
     <ClInclude Include="ErrReport\ErrorCode.h" />
     <ClInclude Include="MultiNetwork\MultiNetwork.h" />
     <ClInclude Include="MultiNetwork\MultiNetworkUtility.h" />
-    <ClInclude Include="MultiNetwork\NetGroupController.h" />
-    <ClInclude Include="MultiNetwork\NetGroupDelegation.h" />
+    <ClInclude Include="MultiNetwork\MultiPlug.h" />
+    <ClInclude Include="MultiNetwork\MultiPlugDelegation.h" />
     <ClInclude Include="MultiNetwork\FarmServerConnector.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="NetworkDef.h" />
@@ -143,7 +143,7 @@
     <ClInclude Include="Task\TaskWork.h" />
     <ClInclude Include="Controller\CoreClient.h" />
     <ClInclude Include="Controller\NetController.h" />
-    <ClInclude Include="Controller\NetLauncher.h" />
+    <ClInclude Include="Controller\Launcher.h" />
     <ClInclude Include="Controller\P2PClient.h" />
     <ClInclude Include="Service\AllProtocol.h" />
     <ClInclude Include="Service\AllProtocolListener.h" />

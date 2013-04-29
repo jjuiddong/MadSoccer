@@ -1,6 +1,6 @@
 
 #include "stdafx.h"
-#include "NetLauncher.h"
+#include "Launcher.h"
 #include "CoreClient.h"
 
 using namespace network;
@@ -8,7 +8,7 @@ using namespace network;
 //------------------------------------------------------------------------
 // 서버 시작
 //------------------------------------------------------------------------
-bool netlauncher::LaunchServer(ServerBasicPtr pSvr, int port)
+bool launcher::LaunchServer(ServerBasicPtr pSvr, int port)
 {
 	if (!pSvr)
 		return false;
@@ -81,7 +81,7 @@ bool netlauncher::LaunchServer(ServerBasicPtr pSvr, int port)
 //------------------------------------------------------------------------
 // 클라이언트 시작
 //------------------------------------------------------------------------
-bool netlauncher::LaunchClient(ClientPtr pClient, const std::string &ip, int port)
+bool launcher::LaunchClient(ClientPtr pClient, const std::string &ip, int port)
 {
 	if (!pClient)
 		return false;
@@ -96,7 +96,7 @@ bool netlauncher::LaunchClient(ClientPtr pClient, const std::string &ip, int por
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-bool	netlauncher::LaunchCoreClient(CoreClientPtr pClient, const std::string &ip, int port)
+bool	launcher::LaunchCoreClient(CoreClientPtr pClient, const std::string &ip, int port)
 {
 	if (!pClient)
 		return false;

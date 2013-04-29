@@ -9,7 +9,7 @@ using namespace network;
 
 
 CClientBasic::CClientBasic(PROCESS_TYPE procType) :
-	CNetConnector(procType)
+	CPlug(procType)
 ,	m_pP2p(NULL)
 ,	m_pConnectSvr(NULL)
 {
@@ -103,7 +103,7 @@ void CClientBasic::Clear()
 //------------------------------------------------------------------------
 bool	CClientBasic::AddProtocolListener(ProtocolListenerPtr pListener)
 {
-	if (!CNetConnector::AddProtocolListener(pListener))
+	if (!CPlug::AddProtocolListener(pListener))
 		return false;
 	if (m_pConnectSvr)
 		m_pConnectSvr->AddProtocolListener(pListener);
@@ -118,7 +118,7 @@ bool	CClientBasic::AddProtocolListener(ProtocolListenerPtr pListener)
 //------------------------------------------------------------------------
 bool	CClientBasic::RemoveProtocolListener(ProtocolListenerPtr pListener)
 {
-	if (!CNetConnector::RemoveProtocolListener(pListener))
+	if (!CPlug::RemoveProtocolListener(pListener))
 		return false;
 	if (m_pConnectSvr)
 		m_pConnectSvr->RemoveProtocolListener(pListener);

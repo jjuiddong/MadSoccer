@@ -1,6 +1,6 @@
 
 #include "stdafx.h"
-#include "NetGroupController.h"
+#include "MultiPlug.h"
 #include "../Controller/CoreClient.h"
 #include "../Controller/P2PClient.h"
 #include "../Controller/ServerBasic.h"
@@ -10,9 +10,9 @@ using namespace network;
 using namespace network::multinetwork;
 
 
-CNetGroupController::CNetGroupController( SERVICE_TYPE type, const std::string &svrType,
+CMultiPlug::CMultiPlug( SERVICE_TYPE type, const std::string &svrType,
 	const std::string &connectSvrType ) :
-	CNetConnector(SERVICE_SEPERATE_THREAD)
+	CPlug(SERVICE_SEPERATE_THREAD)
 ,	m_State(WAIT)
 ,	m_ServiceType(type)
 ,	m_svrType(svrType)
@@ -26,14 +26,14 @@ CNetGroupController::CNetGroupController( SERVICE_TYPE type, const std::string &
 	if (SERVER == type)
 	{
 		m_pServer = new CServerBasic( SERVICE_SEPERATE_THREAD );
-		NETEVENT_CONNECT_TO( m_pServer, this, EVT_LISTEN, CNetGroupController, CNetGroupController::OnConnect );
-		NETEVENT_CONNECT_TO( m_pServer, this, EVT_CONNECT, CNetGroupController, CNetGroupController::OnConnect );
-		NETEVENT_CONNECT_TO( m_pServer, this, EVT_DISCONNECT, CNetGroupController, CNetGroupController::OnDisconnect );
+		NETEVENT_CONNECT_TO( m_pServer, this, EVT_LISTEN, CMultiPlug, CMultiPlug::OnConnect );
+		NETEVENT_CONNECT_TO( m_pServer, this, EVT_CONNECT, CMultiPlug, CMultiPlug::OnConnect );
+		NETEVENT_CONNECT_TO( m_pServer, this, EVT_DISCONNECT, CMultiPlug, CMultiPlug::OnDisconnect );
 	}
 	
 }
 
-CNetGroupController::~CNetGroupController()
+CMultiPlug::~CMultiPlug()
 {
 	SAFE_DELETE(m_pClient);
 	SAFE_DELETE(m_pServer);
@@ -58,7 +58,7 @@ CNetGroupController::~CNetGroupController()
 /**
  @brief 
  */
-bool	CNetGroupController::Start(const std::string &ip, const int port)
+bool	CMultiPlug::Start(const std::string &ip, const int port)
 {
 	return Connect(m_ServiceType, ip, port);
 }
@@ -68,7 +68,7 @@ bool	CNetGroupController::Start(const std::string &ip, const int port)
  @brief 클라이언트로 서버에 접속할 때, 접속할 서버가 한개 이상일 때, 
  이 함수가 쓰인다.
  */
-bool	CNetGroupController::Start(const std::vector<SHostInfo> &v)
+bool	CMultiPlug::Start(const std::vector<SHostInfo> &v)
 {
 	if (CLIENT != m_ServiceType)
 		return false;
@@ -84,7 +84,7 @@ bool	CNetGroupController::Start(const std::vector<SHostInfo> &v)
 /**
  @brief 
  */
-void	CNetGroupController::Stop()
+void	CMultiPlug::Stop()
 {
 	if (m_pServer)
 		m_pServer->Stop();
@@ -100,7 +100,7 @@ void	CNetGroupController::Stop()
 /**
  @brief Send
  */
-bool	CNetGroupController::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
+bool	CMultiPlug::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
 {
 	switch (m_ServiceType)
 	{
@@ -123,7 +123,7 @@ bool	CNetGroupController::Send(netid netId, const SEND_FLAG flag, const CPacket 
 /**
  @brief SendAll
  */
-bool	CNetGroupController::SendAll(const CPacket &packet) 
+bool	CMultiPlug::SendAll(const CPacket &packet) 
 {
 	switch (m_ServiceType)
 	{
@@ -146,7 +146,7 @@ bool	CNetGroupController::SendAll(const CPacket &packet)
 /**
  @brief 
  */
-bool	CNetGroupController::Connect( SERVICE_TYPE type, const std::string &ip, const int port )
+bool	CMultiPlug::Connect( SERVICE_TYPE type, const std::string &ip, const int port )
 {
 	switch (type)
 	{
@@ -166,8 +166,8 @@ bool	CNetGroupController::Connect( SERVICE_TYPE type, const std::string &ip, con
 			m_Port = port;
 
 			CCoreClient *pClient = new CCoreClient(SERVICE_SEPERATE_THREAD);
-			NETEVENT_CONNECT_TO( pClient, this, EVT_CONNECT, CNetGroupController, CNetGroupController::OnConnect );
-			NETEVENT_CONNECT_TO( pClient, this, EVT_DISCONNECT, CNetGroupController, CNetGroupController::OnDisconnect );
+			NETEVENT_CONNECT_TO( pClient, this, EVT_CONNECT, CMultiPlug, CMultiPlug::OnConnect );
+			NETEVENT_CONNECT_TO( pClient, this, EVT_DISCONNECT, CMultiPlug, CMultiPlug::OnDisconnect );
 			BOOST_FOREACH(auto &protocol, GetProtocolListeners())
 			{
 				pClient->AddProtocolListener(protocol);
@@ -186,7 +186,7 @@ bool	CNetGroupController::Connect( SERVICE_TYPE type, const std::string &ip, con
 /**
  @brief 
  */
-void	CNetGroupController::SetSessionFactory( ISessionFactory *ptr )
+void	CMultiPlug::SetSessionFactory( ISessionFactory *ptr )
 {
 	SAFE_DELETE(m_pSessionFactory);
 	m_pSessionFactory = ptr;
@@ -198,7 +198,7 @@ void	CNetGroupController::SetSessionFactory( ISessionFactory *ptr )
 /**
  @brief SetGroupFactory
  */
-void	CNetGroupController::SetGroupFactory( IGroupFactory *ptr )
+void	CMultiPlug::SetGroupFactory( IGroupFactory *ptr )
 {
 	SAFE_DELETE(m_pGroupFactory);
 	m_pGroupFactory = ptr;
@@ -210,7 +210,7 @@ void	CNetGroupController::SetGroupFactory( IGroupFactory *ptr )
 /**
  @brief OnConnect
  */
-void	CNetGroupController::OnConnect( CNetEvent &event )
+void	CMultiPlug::OnConnect( CNetEvent &event )
 {
 	m_State = RUN;
 	SearchEventTable(CNetEvent(EVT_CONNECT, this));// Event Propagate
@@ -220,7 +220,7 @@ void	CNetGroupController::OnConnect( CNetEvent &event )
 /**
  @brief OnDisconnect
  */
-void	CNetGroupController::OnDisconnect( CNetEvent &event )
+void	CMultiPlug::OnDisconnect( CNetEvent &event )
 {
 	if (m_ServiceType == SERVER)
 		m_State = END;
@@ -247,9 +247,9 @@ void	CNetGroupController::OnDisconnect( CNetEvent &event )
 /**
  @brief AddProtocolListener
  */
-bool	CNetGroupController::AddProtocolListener(ProtocolListenerPtr pListener)
+bool	CMultiPlug::AddProtocolListener(ProtocolListenerPtr pListener)
 {
-	CNetConnector::AddProtocolListener(pListener);
+	CPlug::AddProtocolListener(pListener);
 	if (m_pServer)
 		m_pServer->AddProtocolListener(pListener);
 	BOOST_FOREACH(auto &client, m_Clients.m_Seq)
@@ -263,9 +263,9 @@ bool	CNetGroupController::AddProtocolListener(ProtocolListenerPtr pListener)
 /**
  @brief RemoveProtocolListener
  */
-bool	CNetGroupController::RemoveProtocolListener(ProtocolListenerPtr pListener)
+bool	CMultiPlug::RemoveProtocolListener(ProtocolListenerPtr pListener)
 {
-	CNetConnector::RemoveProtocolListener(pListener);
+	CPlug::RemoveProtocolListener(pListener);
 	if (m_pServer)
 		m_pServer->RemoveProtocolListener(pListener);
 	BOOST_FOREACH(auto &client, m_Clients.m_Seq)
@@ -279,7 +279,7 @@ bool	CNetGroupController::RemoveProtocolListener(ProtocolListenerPtr pListener)
 /**
  @brief return CoreClient 
  */
-CoreClientPtr CNetGroupController::GetClient(netid netId)
+CoreClientPtr CMultiPlug::GetClient(netid netId)
 {
 	auto it = m_Clients.find(netId);
 	if (m_Clients.end() == it)
@@ -291,7 +291,7 @@ CoreClientPtr CNetGroupController::GetClient(netid netId)
 /**
  @brief return CoreClient from correspond server netid
  */
-CoreClientPtr CNetGroupController::GetClientFromServerNetId(netid serverNetId)
+CoreClientPtr CMultiPlug::GetClientFromServerNetId(netid serverNetId)
 {
 	BOOST_FOREACH(auto &client, m_Clients.m_Seq)
 	{
@@ -305,7 +305,7 @@ CoreClientPtr CNetGroupController::GetClientFromServerNetId(netid serverNetId)
 /**
  @brief 서버 자신, 클라이언트 자신, 혹은 리모트 클라이언트.
  */
-SessionPtr CNetGroupController::GetSession(netid netId)
+SessionPtr CMultiPlug::GetSession(netid netId)
 {
 	if (GetServer())
 	{

@@ -9,7 +9,7 @@ using namespace network;
 
 
 CServerBasic::CServerBasic(PROCESS_TYPE procType) :
-	CNetConnector(procType)
+	CPlug(procType)
 ,	m_RootGroup(NULL, "root")
 ,	m_pSessionFactory(new CSessionFactory()) // defalut 
 ,	m_pGroupFactory(new CGroupFactory()) // default

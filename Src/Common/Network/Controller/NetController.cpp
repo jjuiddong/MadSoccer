@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 #include "NetController.h"
-#include "NetLauncher.h"
+#include "Launcher.h"
 #include "ServerBasic.h"
 #include "../Service/Server.h"
 #include "../Service/Client.h"
@@ -102,7 +102,7 @@ bool CNetController::StartServer(int port, ServerBasicPtr pSvr)
 	if (pSvr->IsServerOn())
 		pSvr->Close();
 
-	if (!netlauncher::LaunchServer(pSvr, port))
+	if (!launcher::LaunchServer(pSvr, port))
 		return false;
 
 	// 서버 시작에 관련된 코드 추가
@@ -177,20 +177,6 @@ ServerBasicPtr CNetController::GetServer(netid netId)
 
 
 //------------------------------------------------------------------------
-// SOCKET 에 해당하는 서버를 리턴한다.
-//------------------------------------------------------------------------
-//ServerBasicPtr CNetController::GetServerFromSocket(SOCKET sock)
-//{
-//	common::AutoCSLock cs(m_CS); /// sync
-//
-//	ServerItor it = m_ServerSockets.find(sock);
-//	if (m_ServerSockets.end() == it)
-//		return NULL;
-//	return it->second;
-//}
-
-
-//------------------------------------------------------------------------
 // 클라이언트는 ip, port 의 서버에 접속을 시도한다.
 //------------------------------------------------------------------------
 bool CNetController::StartClient(const std::string &ip, int port, ClientBasicPtr pClt)
@@ -210,7 +196,6 @@ bool CNetController::StartClient(const std::string &ip, int port, ClientBasicPtr
 		if (m_Clients.end() == it)
 		{
 			m_Clients.insert( Clients::value_type(pClt->GetNetId(), pClt) );
-			//m_ClientSockets.insert( ClientSockets::value_type(pClt->GetSocket(), pClt) );
 		}
 	}
 	return true;
@@ -242,26 +227,8 @@ bool	CNetController::RemoveClient(ClientBasicPtr pClt)
 		clog::Error( clog::ERROR_PROBLEM, "StopClient Error!! netid: %d client\n", pClt->GetNetId());
 	pClt->SetState(SESSIONSTATE_LOGOUT_WAIT);
 
-	//ClientItor it = m_ClientSockets.find(pClt->GetSocket());
-	//if (m_ClientSockets.end() == it)
-	//	return false;
-	//m_ClientSockets.erase(it);
 	return true;
 }
-
-
-//------------------------------------------------------------------------
-// clientId에 해당하는 클라이언트를 리턴한다.
-//------------------------------------------------------------------------
-//ClientBasicPtr CNetController::GetClientFromSocket(SOCKET sock)
-//{
-//	common::AutoCSLock cs(m_CS); 	/// Sync
-//
-//	ClientItor it = m_ClientSockets.find(sock);
-//	if (m_ClientSockets.end() == it)
-//		return NULL;
-//	return it->second;
-//}
 
 
 //------------------------------------------------------------------------
@@ -291,7 +258,7 @@ bool CNetController::StartCoreClient(const std::string &ip, int port, CoreClient
 	// 서버 시작에 관련된 코드 추가
 	clog::Log( clog::LOG_F_N_O, "%d Client Start\n", pClt->GetNetId() );
 
- 	if (!netlauncher::LaunchCoreClient(pClt, ip, port))
+ 	if (!launcher::LaunchCoreClient(pClt, ip, port))
  	{
  		clog::Error( clog::ERROR_CRITICAL, "StartCoreClient Error!! Launch Fail ip: %s, port: %d\n", ip.c_str(), port);
  		return false;
@@ -509,7 +476,7 @@ std::string CNetController::ToString()
 //------------------------------------------------------------------------
 // 해당되는 타입의 WorkThread를 리턴한다.
 //------------------------------------------------------------------------
-ThreadPtr CNetController::AllocWorkThread(SERVICE_TYPE serviceType, NetConnectorPtr pConnector)
+ThreadPtr CNetController::AllocWorkThread(SERVICE_TYPE serviceType, PlugPtr pConnector)
 {
 	RETV(!pConnector, NULL);
 
@@ -561,7 +528,7 @@ ThreadPtr CNetController::AllocWorkThread(SERVICE_TYPE serviceType, NetConnector
 
 	case SERVICE_CHILD_THREAD:
 		{
-			NetConnectorPtr pParent = pConnector->GetParent();
+			PlugPtr pParent = pConnector->GetParent();
 			if (!pParent)
 				return NULL;
 			ThreadPtr ptr = GetThread( m_WorkThreads, pParent->GetThreadHandle() );

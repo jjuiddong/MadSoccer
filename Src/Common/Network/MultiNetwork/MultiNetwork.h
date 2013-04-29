@@ -12,12 +12,12 @@ Date:    4/1/2013
 
 namespace network { namespace multinetwork {
 
-	class CNetGroupController;
-	class CNetGroupDelegation;
+	class CMultiPlug;
+	class CMultiPlugDelegation;
 	class CFarmServerConnector;
 
 	DECLARE_TYPE_NAME_SCOPE(network::multinetwork, CMultiNetwork)
-	class CMultiNetwork : public CNetConnector
+	class CMultiNetwork : public CPlug
 										, public common::CSingleton<CMultiNetwork>
 										,public memmonitor::Monitor<CMultiNetwork, TYPE_NAME(network::multinetwork::CMultiNetwork)>
 	{
@@ -30,11 +30,11 @@ namespace network { namespace multinetwork {
 		bool		Stop();
 		bool		Proc();
 
-		bool		AddController( CNetGroupController *ptr );
+		bool		AddController( CMultiPlug *ptr );
 		bool		RemoveController( const std::string &linkSvrType );
 		NetGroupControllerPtr GetController( const std::string &linkSvrType );
 
-		bool		AddDelegation( const std::string &linkSvrType, CNetGroupDelegation *ptr);
+		bool		AddDelegation( const std::string &linkSvrType, CMultiPlugDelegation *ptr);
 		bool		RemoveDelegation( const std::string &linkSvrType );
 		bool		ConnectDelegation( const std::string &linkSvrType, NetGroupDelegationPtr ptr);
 		NetGroupDelegationPtr GetDelegation( const std::string &linkSvrType );
@@ -48,7 +48,7 @@ namespace network { namespace multinetwork {
 
 	private:
 		typedef common::VectorMap<std::string, NetGroupControllerPtr> Controllers;
-		typedef common::VectorMap<std::string, CNetGroupDelegation*> Delegations;
+		typedef common::VectorMap<std::string, CMultiPlugDelegation*> Delegations;
 
 		SSvrConfigData m_Config;
 		Controllers m_Controllers;

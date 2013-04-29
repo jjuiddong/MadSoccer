@@ -27,7 +27,7 @@ CSubServerConnector::~CSubServerConnector()
  */
 void	CSubServerConnector::OnConnectNetGroupController()
 {
-	multinetwork::CNetGroupDelegation::OnConnectNetGroupController();
+	multinetwork::CMultiPlugDelegation::OnConnectNetGroupController();
 	AddProtocolListener( this );
 	GetConnector()->SetSessionFactory( new CRemoteServerFactory() );
 }

@@ -1,11 +1,11 @@
 
 #include "stdafx.h"
-#include "NetConnector.h"
+#include "Plug.h"
 
 using namespace network;
 
 
-CNetConnector::CNetConnector(PROCESS_TYPE procType) :
+CPlug::CPlug(PROCESS_TYPE procType) :
 	m_ProcessType(procType)
 ,	m_pParent(NULL)
 ,	m_hThread(NULL)
@@ -13,7 +13,7 @@ CNetConnector::CNetConnector(PROCESS_TYPE procType) :
 
 }
 
-CNetConnector::~CNetConnector()
+CPlug::~CPlug()
 {
 
 }
@@ -22,7 +22,7 @@ CNetConnector::~CNetConnector()
 //------------------------------------------------------------------------
 // 프로토콜 추가
 //------------------------------------------------------------------------
-bool CNetConnector::RegisterProtocol(ProtocolPtr protocol)
+bool CPlug::RegisterProtocol(ProtocolPtr protocol)
 {
 	protocol->SetNetConnector(this);
 	return true;
@@ -32,7 +32,7 @@ bool CNetConnector::RegisterProtocol(ProtocolPtr protocol)
 //------------------------------------------------------------------------
 // 리스너 등록
 //------------------------------------------------------------------------
-bool CNetConnector::AddProtocolListener(ProtocolListenerPtr pListener)
+bool CPlug::AddProtocolListener(ProtocolListenerPtr pListener)
 {
 	ProtocolListenerItor it = find(m_ProtocolListeners.begin(), m_ProtocolListeners.end(), pListener);
 	if (m_ProtocolListeners.end() != it)
@@ -45,7 +45,7 @@ bool CNetConnector::AddProtocolListener(ProtocolListenerPtr pListener)
 //------------------------------------------------------------------------
 // 리스너 제거 (메모리는 외부에서 소거해야한다.)
 //------------------------------------------------------------------------
-bool CNetConnector::RemoveProtocolListener(ProtocolListenerPtr pListener)
+bool CPlug::RemoveProtocolListener(ProtocolListenerPtr pListener)
 {
 	ProtocolListenerItor it = find(m_ProtocolListeners.begin(), m_ProtocolListeners.end(), pListener);
 	if (m_ProtocolListeners.end() == it)

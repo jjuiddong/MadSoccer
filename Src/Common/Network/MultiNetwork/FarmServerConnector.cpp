@@ -1,7 +1,6 @@
 
 #include "stdafx.h"
 #include "FarmServerConnector.h"
-#include "NetGroupController.h"
 #include "MultiNetwork.h"
 #include "Network/Controller/CoreClient.h"
 
@@ -127,7 +126,7 @@ bool	CFarmServerConnector::CreateSubController( SERVICE_TYPE serviceType, bool I
 	if (ptr)
 		return true;
 
-	CNetGroupController *pctrl = new CNetGroupController(serviceType, connectSubSvrType, bindSubSvrType);
+	CMultiPlug *pctrl = new CMultiPlug(serviceType, connectSubSvrType, bindSubSvrType);
 	if (!CMultiNetwork::Get()->AddController(pctrl))
 	{
 		clog::Error(log::ERROR_CRITICAL, "Not Create NetGroupController !!" );
@@ -185,7 +184,7 @@ void CFarmServerConnector::OnConnect(CNetEvent &event)
  */
 void CFarmServerConnector::OnConnectLink(CNetEvent &event)
 {
-	CNetGroupController *pctrl = dynamic_cast<CNetGroupController*>(event.GetHandler().Get());
+	CMultiPlug *pctrl = dynamic_cast<CMultiPlug*>(event.GetHandler().Get());
 	if (!pctrl)
 		return;
 

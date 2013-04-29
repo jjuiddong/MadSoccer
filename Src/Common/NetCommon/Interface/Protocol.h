@@ -12,23 +12,23 @@ namespace network
 {
 	class IProtocol
 	{
-		friend class CNetConnector;
+		friend class CPlug;
 
 	public:
 		IProtocol(int id) : m_Id(id) {}
 		virtual ~IProtocol() {}
 		void SetId(int id) { m_Id = id; }
 		int GetId() const { return m_Id; }
-		const NetConnectorPtr& GetNetConnector() const;
+		const PlugPtr& GetNetConnector() const;
 	protected:
-		void SetNetConnector(NetConnectorPtr pServer);
+		void SetNetConnector(PlugPtr pServer);
 	private:
 		int m_Id; // 대응하는 ProtocolListener ID 와 동일한 값이다.
-		NetConnectorPtr m_pNetConnector;
+		PlugPtr m_pNetConnector;
 	};
 
 
-	inline const NetConnectorPtr& IProtocol::GetNetConnector() const { return m_pNetConnector; }
-	inline void IProtocol::SetNetConnector(NetConnectorPtr pServer) { m_pNetConnector = pServer; }
+	inline const PlugPtr& IProtocol::GetNetConnector() const { return m_pNetConnector; }
+	inline void IProtocol::SetNetConnector(PlugPtr pServer) { m_pNetConnector = pServer; }
 
 }

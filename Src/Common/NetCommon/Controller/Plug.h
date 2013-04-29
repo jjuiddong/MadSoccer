@@ -10,19 +10,19 @@ Date:    12/25/2012
 
 namespace network
 {
-	class CNetConnector : public CEventHandler, public CSession
+	class CPlug : public CEventHandler, public CSession
 	{
 	public:
-		CNetConnector(PROCESS_TYPE procType);
-		virtual ~CNetConnector();
+		CPlug(PROCESS_TYPE procType);
+		virtual ~CPlug();
 
 		bool				RegisterProtocol(ProtocolPtr protocol);
 		virtual bool	AddProtocolListener(ProtocolListenerPtr pListener);
 		virtual bool	RemoveProtocolListener(ProtocolListenerPtr pListener);
 		const ProtocolListenerList&	GetProtocolListeners() const;
 
-		void				SetParent(NetConnectorPtr parent);
-		NetConnectorPtr GetParent() const;
+		void				SetParent(PlugPtr parent);
+		PlugPtr GetParent() const;
 		void				SetThreadHandle(HANDLE handle);
 		HANDLE		GetThreadHandle() const;
 		PROCESS_TYPE GetProcessType() const;
@@ -32,18 +32,18 @@ namespace network
 		virtual bool	SendAll(const CPacket &packet) = 0;
 
 	private:
-		NetConnectorPtr		m_pParent;				// CNetConnector 소유자
+		PlugPtr		m_pParent;				// CNetConnector 소유자
 		ProtocolListenerList m_ProtocolListeners;		
 		HANDLE					m_hThread;				// 소속된 스레드 핸들, 없다면 NULL
 		PROCESS_TYPE		m_ProcessType;
 	};
 
 
-	inline const ProtocolListenerList&	 CNetConnector::GetProtocolListeners() const { return m_ProtocolListeners; }
-	inline void	 CNetConnector::SetParent(NetConnectorPtr parent) { m_pParent = parent; }
-	inline NetConnectorPtr CNetConnector::GetParent() const { return m_pParent; }
-	inline void	 CNetConnector::SetThreadHandle(HANDLE handle) { m_hThread = handle; }
-	inline HANDLE CNetConnector::GetThreadHandle() const { return m_hThread; }
-	inline PROCESS_TYPE CNetConnector::GetProcessType() const { return m_ProcessType; }
+	inline const ProtocolListenerList&	 CPlug::GetProtocolListeners() const { return m_ProtocolListeners; }
+	inline void	 CPlug::SetParent(PlugPtr parent) { m_pParent = parent; }
+	inline PlugPtr CPlug::GetParent() const { return m_pParent; }
+	inline void	 CPlug::SetThreadHandle(HANDLE handle) { m_hThread = handle; }
+	inline HANDLE CPlug::GetThreadHandle() const { return m_hThread; }
+	inline PROCESS_TYPE CPlug::GetProcessType() const { return m_ProcessType; }
 
 }

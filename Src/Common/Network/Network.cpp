@@ -101,7 +101,7 @@ bool	network::ConnectDelegation( const std::string &linkSvrType, NetGroupDelegat
 /**
  @brief AddDelegation
  */
-bool	network::AddDelegation( const std::string &linkSvrType, multinetwork::CNetGroupDelegation *ptr)
+bool	network::AddDelegation( const std::string &linkSvrType, multinetwork::CMultiPlugDelegation *ptr)
 {
 	return multinetwork::CMultiNetwork::Get()->AddDelegation(linkSvrType, ptr);
 }

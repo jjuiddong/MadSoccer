@@ -7,7 +7,7 @@
 using namespace network;
 
 CP2PClient::CP2PClient(PROCESS_TYPE procType) :
-	CNetConnector(procType)
+	CPlug(procType)
 ,	m_pP2pClient(NULL)
 ,	m_pP2pHost(NULL)
 ,	m_State(P2P_CLIENT)
@@ -202,7 +202,7 @@ void	CP2PClient::Close()
 //------------------------------------------------------------------------
 bool	CP2PClient::AddProtocolListener(ProtocolListenerPtr pListener)
 {
-	if (!CNetConnector::AddProtocolListener(pListener))
+	if (!CPlug::AddProtocolListener(pListener))
 		return false;
 	if (m_pP2pClient)
 		m_pP2pClient->AddProtocolListener(pListener);
@@ -217,7 +217,7 @@ bool	CP2PClient::AddProtocolListener(ProtocolListenerPtr pListener)
 //------------------------------------------------------------------------
 bool	CP2PClient::RemoveProtocolListener(ProtocolListenerPtr pListener)
 {
-	if (!CNetConnector::RemoveProtocolListener(pListener))
+	if (!CPlug::RemoveProtocolListener(pListener))
 		return false;
 	if (m_pP2pClient)
 		m_pP2pClient->RemoveProtocolListener(pListener);

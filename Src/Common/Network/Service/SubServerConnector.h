@@ -13,7 +13,7 @@ Date:    4/25/2013
 
 namespace network
 {
-	class CSubServerConnector : public multinetwork::CNetGroupDelegation
+	class CSubServerConnector : public multinetwork::CMultiPlugDelegation
 												, public server_network::s2s_ProtocolListener
 	{
 	public:

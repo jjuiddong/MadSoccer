@@ -14,7 +14,7 @@ namespace basic { class s2c_Protocol; }
 namespace network
 {
 	class CBasicC2SProtocolHandler;
-	class CServer : public multinetwork::CNetGroupDelegation
+	class CServer : public multinetwork::CMultiPlugDelegation
 	{
 		friend class CBasicC2SProtocolHandler;
 

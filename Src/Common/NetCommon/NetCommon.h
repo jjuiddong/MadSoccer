@@ -22,7 +22,7 @@ namespace network
 {
 	using namespace common;
 
-	class CNetConnector;
+	class CPlug;
 	class CGroup;
 	class CRemoteClient;
 	class CRemoteServer;
@@ -114,7 +114,7 @@ typedef std::list<network::CPacket> PacketList;
 typedef PacketList::iterator PacketItor;
 typedef PacketList::const_iterator PacketCItor;
 
-typedef common::ReferencePtr<network::CNetConnector> NetConnectorPtr;
+typedef common::ReferencePtr<network::CPlug> PlugPtr;
 
 typedef common::VectorMap<netid,network::CRemoteClient*> RemoteClients;
 typedef RemoteClients::iterator RemoteClientItor;
@@ -151,8 +151,8 @@ typedef ProtocolMap::iterator ProtocolItor;
 #include "Marshalling/MarshallingGroup.h"
 #include "Marshalling/MarshallingEtc.h"
 
-#include "Controller/NetConnector.h"
-#include "Controller/NetConnectorLinker.h"
+#include "Controller/Plug.h"
+#include "Controller/PlugLinker.h"
 #include "Controller/Session.h"
 
 #include "Interface/Protocol.h"

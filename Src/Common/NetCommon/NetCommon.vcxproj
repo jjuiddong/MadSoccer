@@ -77,8 +77,8 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Controller\NetConnector.h" />
-    <ClInclude Include="Controller\NetConnectorLinker.h" />
+    <ClInclude Include="Controller\Plug.h" />
+    <ClInclude Include="Controller\PlugLinker.h" />
     <ClInclude Include="Controller\Session.h" />
     <ClInclude Include="DataStructure\Group.h" />
     <ClInclude Include="DataStructure\Packet.h" />
@@ -104,7 +104,7 @@
     <ClInclude Include="Utility\UserAccess.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Controller\NetConnector.cpp" />
+    <ClCompile Include="Controller\Plug.cpp" />
     <ClCompile Include="Controller\Session.cpp" />
     <ClCompile Include="DataStructure\Group.cpp" />
     <ClCompile Include="DataStructure\Packet.cpp" />

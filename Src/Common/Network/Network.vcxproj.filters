@@ -68,9 +68,6 @@
     <ClCompile Include="Controller\NetController.cpp">
       <Filter>Lib\Controller</Filter>
     </ClCompile>
-    <ClCompile Include="Controller\NetLauncher.cpp">
-      <Filter>Lib\Controller</Filter>
-    </ClCompile>
     <ClCompile Include="Controller\P2PClient.cpp">
       <Filter>Lib\Controller</Filter>
     </ClCompile>
@@ -101,12 +98,6 @@
     <ClCompile Include="MultiNetwork\MultiNetwork.cpp">
       <Filter>Lib\MultiNetwork</Filter>
     </ClCompile>
-    <ClCompile Include="MultiNetwork\NetGroupController.cpp">
-      <Filter>Lib\MultiNetwork</Filter>
-    </ClCompile>
-    <ClCompile Include="MultiNetwork\NetGroupDelegation.cpp">
-      <Filter>Lib\MultiNetwork</Filter>
-    </ClCompile>
     <ClCompile Include="Controller\ServerBasic.cpp">
       <Filter>Lib\Controller</Filter>
     </ClCompile>
@@ -127,6 +118,15 @@
     </ClCompile>
     <ClCompile Include="Service\SubServerConnector.cpp">
       <Filter>Lib\Service</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller\Launcher.cpp">
+      <Filter>Lib\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiNetwork\MultiPlug.cpp">
+      <Filter>Lib\MultiNetwork</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiNetwork\MultiPlugDelegation.cpp">
+      <Filter>Lib\MultiNetwork</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -172,9 +172,6 @@
     <ClInclude Include="Controller\NetController.h">
       <Filter>Lib\Controller</Filter>
     </ClInclude>
-    <ClInclude Include="Controller\NetLauncher.h">
-      <Filter>Lib\Controller</Filter>
-    </ClInclude>
     <ClInclude Include="Controller\P2PClient.h">
       <Filter>Lib\Controller</Filter>
     </ClInclude>
@@ -211,13 +208,7 @@
     <ClInclude Include="ProtocolHandler\BasicProtocolDispatcher.h">
       <Filter>Lib\ProtocolHandler</Filter>
     </ClInclude>
-    <ClInclude Include="MultiNetwork\NetGroupController.h">
-      <Filter>Lib\MultiNetwork</Filter>
-    </ClInclude>
     <ClInclude Include="MultiNetwork\MultiNetwork.h">
-      <Filter>Lib\MultiNetwork</Filter>
-    </ClInclude>
-    <ClInclude Include="MultiNetwork\NetGroupDelegation.h">
       <Filter>Lib\MultiNetwork</Filter>
     </ClInclude>
     <ClInclude Include="Controller\ClientBasic.h">
@@ -249,6 +240,15 @@
     </ClInclude>
     <ClInclude Include="Service\SubServerConnector.h">
       <Filter>Lib\Service</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\Launcher.h">
+      <Filter>Lib\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiNetwork\MultiPlug.h">
+      <Filter>Lib\MultiNetwork</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiNetwork\MultiPlugDelegation.h">
+      <Filter>Lib\MultiNetwork</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

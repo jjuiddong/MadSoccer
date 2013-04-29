@@ -45,21 +45,21 @@ namespace network
 	class CNetEvent : public common::CEvent
 	{
 	public:
-		CNetEvent(EventType type, NetConnectorPtr ptr, netid id=0);
+		CNetEvent(EventType type, PlugPtr ptr, netid id=0);
 		virtual ~CNetEvent() {}
 
 		netid GetNetId() const;
-		NetConnectorPtr GetHandler();
+		PlugPtr GetHandler();
 
 	private:
 		netid m_netId;
-		NetConnectorPtr m_handler;
+		PlugPtr m_handler;
 	};
 
  
-	inline CNetEvent::CNetEvent(EventType type, NetConnectorPtr ptr, netid id) : CEvent(type),
+	inline CNetEvent::CNetEvent(EventType type, PlugPtr ptr, netid id) : CEvent(type),
 		m_netId(id), m_handler(ptr) {}
 	inline netid CNetEvent::GetNetId() const { return m_netId; }
-	inline NetConnectorPtr CNetEvent::GetHandler() { return m_handler; }
+	inline PlugPtr CNetEvent::GetHandler() { return m_handler; }
 
 }

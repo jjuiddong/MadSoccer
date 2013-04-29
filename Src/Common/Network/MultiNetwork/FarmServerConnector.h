@@ -12,14 +12,14 @@ FarmServer 에 접속해서, 필요한 정보를 요청하고, 응답을 받는다.
 #pragma once
 
 #include "MultiNetworkUtility.h"
-#include "NetGroupDelegation.h"
+#include "MultiPlugDelegation.h"
 #include "NetProtocol/Src/farm_Protocol.h"
 #include "NetProtocol/Src/farm_ProtocolListener.h"
 
 namespace network { namespace multinetwork {
 
 	struct SSvrConfigData;
-	class CFarmServerConnector : public CNetGroupDelegation
+	class CFarmServerConnector : public CMultiPlugDelegation
 													,public farm::s2c_ProtocolListener
 													,public AllProtocolDisplayer
 	{

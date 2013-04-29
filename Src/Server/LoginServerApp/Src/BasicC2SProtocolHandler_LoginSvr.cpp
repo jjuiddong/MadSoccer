@@ -5,7 +5,7 @@
 
 using namespace network;
 
-CBasicC2SProtocolHandler_LoginSvr::CBasicC2SProtocolHandler_LoginSvr(multinetwork::CNetGroupController &certifySvr, 
+CBasicC2SProtocolHandler_LoginSvr::CBasicC2SProtocolHandler_LoginSvr(multinetwork::CMultiPlug &certifySvr, 
 	CServerBasic &svr) :
 	network::CBasicC2SProtocolHandler(svr)
 {

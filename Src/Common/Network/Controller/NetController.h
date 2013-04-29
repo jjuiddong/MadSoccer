@@ -24,12 +24,8 @@ namespace network
 		friend class CTaskWorkClient;
 		friend class CTaskWorkServer;
 
-		//typedef std::map<SOCKET, ServerBasicPtr> ServerSockets;
-		//typedef std::map<SOCKET, ClientBasicPtr> ClientSockets;
 		typedef std::map<int,IProtocolDispatcher*> DispatcherMap;
 
-		//typedef ServerSockets::iterator ServerItor;
-		//typedef ClientSockets::iterator ClientItor;
 		typedef DispatcherMap::iterator DispatcherItor;
 		typedef std::list<common::CThread*> ThreadList;
 		typedef ThreadList::iterator ThreadItor;
@@ -45,14 +41,12 @@ namespace network
 		bool		StopServer(ServerBasicPtr pSvr);
 		bool		RemoveServer(ServerBasicPtr pSvr);
 		ServerBasicPtr	GetServer(netid netId);
-		//ServerBasicPtr	GetServerFromSocket(SOCKET sock);
 
 		// Client
 		bool		StartClient(const std::string &ip, int port, ClientBasicPtr pClt);
 		bool		StopClient(ClientBasicPtr pClt);
 		bool		RemoveClient(ClientBasicPtr pClt);
 		ClientBasicPtr	GetClient(netid netId);
-		//ClientBasicPtr	GetClientFromSocket(SOCKET sock);
 
 		// CoreClient
 		bool		StartCoreClient(const std::string &ip, int port, CoreClientPtr pClt);
@@ -70,7 +64,7 @@ namespace network
 		std::string ToString();
 
 	protected:
-		ThreadPtr AllocWorkThread(SERVICE_TYPE serviceType, NetConnectorPtr pConnector);
+		ThreadPtr AllocWorkThread(SERVICE_TYPE serviceType, PlugPtr pConnector);
 		ThreadPtr GetThread( const ThreadList &threads, HANDLE hThreadHandle );
 		void		MakeServersFDSET( SFd_Set *pfdset);
 		void		MakeCoreClientsFDSET( PROCESS_TYPE procType, SFd_Set *pfdset);
@@ -82,11 +76,7 @@ namespace network
 
 	private:
 		Servers							m_Servers;
-		//ServerSockets				m_ServerSockets;
-
 		Clients							m_Clients;
-		//ClientSockets				m_ClientSockets;
-
 		CoreClients					m_CoreClients;
 
 		DispatcherMap				m_Dispatchers;

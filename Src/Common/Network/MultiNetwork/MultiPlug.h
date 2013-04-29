@@ -15,9 +15,9 @@ Date:    4/1/2013
 namespace network { namespace multinetwork {
 
 	///  네트워크 그룹에 접근하는 Server/Client/P2p 를 관리하는 클래스.
-	DECLARE_TYPE_NAME_SCOPE(network::multinetwork, CNetGroupController)
-	class CNetGroupController : public CNetConnector
-												, public memmonitor::Monitor<CNetGroupController, TYPE_NAME(network::multinetwork::CNetGroupController)>
+	DECLARE_TYPE_NAME_SCOPE(network::multinetwork, CMultiPlug)
+	class CMultiPlug : public CPlug
+							, public memmonitor::Monitor<CMultiPlug, TYPE_NAME(network::multinetwork::CMultiPlug)>
 	{
 	public:
 		enum STATE {
@@ -27,9 +27,9 @@ namespace network { namespace multinetwork {
 			END, // after call Stop()
 		};
 
-		CNetGroupController( SERVICE_TYPE type, const std::string &svrType, 
+		CMultiPlug( SERVICE_TYPE type, const std::string &svrType, 
 			const std::string &connectSvrType );
-		virtual ~CNetGroupController();
+		virtual ~CMultiPlug();
 
 		bool				Start(const std::string &ip, const int port);
 		bool				Start(const std::vector<SHostInfo> &v);
@@ -86,13 +86,13 @@ namespace network { namespace multinetwork {
 	};
 
 
-	inline const std::string& CNetGroupController::GetSvrType() const { return m_svrType; }
-	inline const std::string& CNetGroupController::GetConnectSvrType() const { return m_connectSvrType; }
-	inline SERVICE_TYPE CNetGroupController::GetServiceType() const { return m_ServiceType; }
-	inline CServerBasic* CNetGroupController::GetServer() { return m_pServer; }
-	inline const CoreClients_V& CNetGroupController::GetClients() { return m_Clients.m_Seq; }
-	inline bool CNetGroupController::IsConnect() const { return (m_State == RUN) || (m_State == TRYCONNECT); }
-	inline bool CNetGroupController::IsTryConnect() const { return (m_State == TRYCONNECT); }
-	inline void	CNetGroupController::SetTryConnect() { m_State = TRYCONNECT; }
+	inline const std::string& CMultiPlug::GetSvrType() const { return m_svrType; }
+	inline const std::string& CMultiPlug::GetConnectSvrType() const { return m_connectSvrType; }
+	inline SERVICE_TYPE CMultiPlug::GetServiceType() const { return m_ServiceType; }
+	inline CServerBasic* CMultiPlug::GetServer() { return m_pServer; }
+	inline const CoreClients_V& CMultiPlug::GetClients() { return m_Clients.m_Seq; }
+	inline bool CMultiPlug::IsConnect() const { return (m_State == RUN) || (m_State == TRYCONNECT); }
+	inline bool CMultiPlug::IsTryConnect() const { return (m_State == TRYCONNECT); }
+	inline void	CMultiPlug::SetTryConnect() { m_State = TRYCONNECT; }
 
 }}
