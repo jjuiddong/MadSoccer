@@ -40,11 +40,13 @@ CNetGroupController::~CNetGroupController()
 	SAFE_DELETE(m_pP2p);
 	SAFE_DELETE(m_pSessionFactory);
 	SAFE_DELETE(m_pGroupFactory);
+
 	BOOST_FOREACH(auto &client, m_Clients.m_Seq)
 	{
 		SAFE_DELETE(client);
 	}
 	m_Clients.clear();
+
 	BOOST_FOREACH(auto &client, m_RemoveClients.m_Seq)
 	{
 		SAFE_DELETE(client);
@@ -104,11 +106,9 @@ bool	CNetGroupController::Send(netid netId, const SEND_FLAG flag, const CPacket 
 	{
 	case CLIENT:
 		{
-			BOOST_FOREACH(auto &client, m_Clients.m_Seq)
-			{
-				if (client && client->IsConnect())
-					return client->Send(netId, flag, packet);
-			}
+			CoreClientPtr pClient = GetClientFromServerNetId(netId);
+			if (pClient)
+				pClient->Send(netId, flag, packet);
 		}
 		break;
 	case SERVER:
@@ -235,6 +235,7 @@ void	CNetGroupController::OnDisconnect( CNetEvent &event )
 
 		it->second->Stop();
 		m_Clients.remove( event.GetHandler()->GetNetId() );
+		m_Clients.apply_removes();
 
 		// 제거 clients 로 옮겨져서, 나중에 지워진다.
 		m_RemoveClients.insert( CoreClients_::value_type(event.GetHandler()->GetNetId(), 
@@ -296,6 +297,28 @@ CoreClientPtr CNetGroupController::GetClientFromServerNetId(netid serverNetId)
 	{
 		if (client && client->GetServerNetId() == serverNetId)
 			return client;
+	}
+	return NULL;
+}
+
+
+/**
+ @brief 서버 자신, 클라이언트 자신, 혹은 리모트 클라이언트.
+ */
+SessionPtr CNetGroupController::GetSession(netid netId)
+{
+	if (GetServer())
+	{
+		//if (GetServer()->GetNetId() == netId)
+		//	return GetServer();
+		if (SessionPtr ptr = GetServer()->GetSession(netId))
+			return ptr;
+	}
+	else
+	{
+		if (CoreClientPtr ptr = GetClient(netId))
+			return ptr;
+		return GetClientFromServerNetId(netId);
 	}
 	return NULL;
 }

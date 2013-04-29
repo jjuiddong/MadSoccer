@@ -111,7 +111,7 @@ bool CNetController::StartServer(int port, ServerBasicPtr pSvr)
 	{ /// Sync
 		common::AutoCSLock cs(m_CS); /// Sync
 		m_Servers.insert( Servers::value_type(pSvr->GetNetId(), pSvr) );
-		m_ServerSockets.insert( ServerSockets::value_type(pSvr->GetSocket(), pSvr) );
+		//m_ServerSockets.insert( ServerSockets::value_type(pSvr->GetSocket(), pSvr) );
 	}
 
 	// Work 쓰레드 생성
@@ -152,10 +152,11 @@ bool	 CNetController::RemoveServer(ServerBasicPtr pSvr)
 
 	if (!m_Servers.remove(pSvr->GetNetId()))
 		return false;
+	pSvr->SetState(SESSIONSTATE_LOGOUT_WAIT);
 
-	ServerItor it = m_ServerSockets.find(pSvr->GetSocket());
-	if (m_ServerSockets.end() != it)
-		m_ServerSockets.erase(it);
+	//ServerItor it = m_ServerSockets.find(pSvr->GetSocket());
+	//if (m_ServerSockets.end() != it)
+	//	m_ServerSockets.erase(it);
 
 	return true;
 }
@@ -178,15 +179,15 @@ ServerBasicPtr CNetController::GetServer(netid netId)
 //------------------------------------------------------------------------
 // SOCKET 에 해당하는 서버를 리턴한다.
 //------------------------------------------------------------------------
-ServerBasicPtr CNetController::GetServerFromSocket(SOCKET sock)
-{
-	common::AutoCSLock cs(m_CS); /// sync
-
-	ServerItor it = m_ServerSockets.find(sock);
-	if (m_ServerSockets.end() == it)
-		return NULL;
-	return it->second;
-}
+//ServerBasicPtr CNetController::GetServerFromSocket(SOCKET sock)
+//{
+//	common::AutoCSLock cs(m_CS); /// sync
+//
+//	ServerItor it = m_ServerSockets.find(sock);
+//	if (m_ServerSockets.end() == it)
+//		return NULL;
+//	return it->second;
+//}
 
 
 //------------------------------------------------------------------------
@@ -209,7 +210,7 @@ bool CNetController::StartClient(const std::string &ip, int port, ClientBasicPtr
 		if (m_Clients.end() == it)
 		{
 			m_Clients.insert( Clients::value_type(pClt->GetNetId(), pClt) );
-			m_ClientSockets.insert( ClientSockets::value_type(pClt->GetSocket(), pClt) );
+			//m_ClientSockets.insert( ClientSockets::value_type(pClt->GetSocket(), pClt) );
 		}
 	}
 	return true;
@@ -237,15 +238,14 @@ bool	CNetController::RemoveClient(ClientBasicPtr pClt)
 	RETV(!pClt, false);
 
 	common::AutoCSLock cs(m_CS); 	/// Sync
-
 	if (!m_Clients.remove(pClt->GetNetId()))
 		clog::Error( clog::ERROR_PROBLEM, "StopClient Error!! netid: %d client\n", pClt->GetNetId());
+	pClt->SetState(SESSIONSTATE_LOGOUT_WAIT);
 
-	ClientItor it = m_ClientSockets.find(pClt->GetSocket());
-	if (m_ClientSockets.end() == it)
-		return false;
-
-	m_ClientSockets.erase(it);
+	//ClientItor it = m_ClientSockets.find(pClt->GetSocket());
+	//if (m_ClientSockets.end() == it)
+	//	return false;
+	//m_ClientSockets.erase(it);
 	return true;
 }
 
@@ -253,15 +253,15 @@ bool	CNetController::RemoveClient(ClientBasicPtr pClt)
 //------------------------------------------------------------------------
 // clientId에 해당하는 클라이언트를 리턴한다.
 //------------------------------------------------------------------------
-ClientBasicPtr CNetController::GetClientFromSocket(SOCKET sock)
-{
-	common::AutoCSLock cs(m_CS); 	/// Sync
-
-	ClientItor it = m_ClientSockets.find(sock);
-	if (m_ClientSockets.end() == it)
-		return NULL;
-	return it->second;
-}
+//ClientBasicPtr CNetController::GetClientFromSocket(SOCKET sock)
+//{
+//	common::AutoCSLock cs(m_CS); 	/// Sync
+//
+//	ClientItor it = m_ClientSockets.find(sock);
+//	if (m_ClientSockets.end() == it)
+//		return NULL;
+//	return it->second;
+//}
 
 
 //------------------------------------------------------------------------
@@ -342,6 +342,7 @@ bool	CNetController::RemoveCoreClient(CoreClientPtr  pClt)
 		common::AutoCSLock cs(m_CS); 	/// Sync
 		if (!m_CoreClients.remove(pClt->GetNetId()))
 			clog::Error( clog::ERROR_PROBLEM, "StopClient Error!! netid: %d client\n", pClt->GetNetId());
+		pClt->SetState(SESSIONSTATE_LOGOUT_WAIT);
 	}
 
 	// Stop CoreClient Work Thread
@@ -404,14 +405,19 @@ IProtocolDispatcher* CNetController::GetDispatcher(int protocolID)
 //------------------------------------------------------------------------
 // 서버들의 fd_set 을 생성해서 리턴한다.
 //------------------------------------------------------------------------
-void CNetController::MakeServersFDSET( fd_set *pfdset )
+void CNetController::MakeServersFDSET( SFd_Set *pfdset )
 {
 	common::AutoCSLock cs(m_CS);
 
 	FD_ZERO(pfdset);
-	BOOST_FOREACH(ServerSockets::value_type &kv, m_ServerSockets)
+	BOOST_FOREACH(auto &pSvr, m_Servers.m_Seq)
 	{
-		FD_SET( kv.second->GetSocket(), pfdset );
+		if (!pSvr)
+			continue;
+		if (!pSvr->IsConnect())
+			continue;
+		FD_SET( pSvr->GetSocket(), pfdset );
+		pfdset->netid_array[ pfdset->fd_count-1] = pSvr->GetNetId();
 	}
 }
 
@@ -487,7 +493,7 @@ std::string CNetController::ToString()
 
 	// 서버 갯수
 	ss << std::endl;
-	ss << "Server Cnt: " << m_ServerSockets.size() << std::endl;
+	ss << "Server Cnt: " << m_Servers.size() << std::endl;
 
 	// 디스패쳐갯수
 	ss << "Dispatcher Cnt: " << m_Dispatchers.size() << std::endl;
@@ -654,14 +660,31 @@ void	CNetController::DisconnectCoreClient(CoreClientPtr pCoreClt)
 
 
 /**
+ @brief 제거될 Sever, Client 를 처리한다.
+ */
+void	CNetController::RemoveProcess()
+{
+	m_Clients.apply_removes();
+	m_CoreClients.apply_removes();
+	m_Servers.apply_removes();
+}
+
+
+/**
  @brief Main Loop , Logic Thread 에서 호출한다.
  */
 void	CNetController::MainLoop()
 {
+	// 제거될 Sever, Client 를 처리한다.
+	RemoveProcess();
+	//
+
+	// Server Main Loop Process
 	common::AutoCSLock cs(m_CS); 	/// Sync
 	BOOST_FOREACH(auto server, m_Servers.m_Seq)
 	{
 		if (server)
 			server->MainLoop();
 	}
+	//
 }

@@ -12,7 +12,8 @@ using namespace network::multinetwork;
 
 
 CMultiNetwork::CMultiNetwork() :
-	m_pFarmSvrConnector(NULL)
+	CNetConnector(SERVICE_SEPERATE_THREAD)
+,	m_pFarmSvrConnector(NULL)
 {
 	m_Config.clear();
 
@@ -221,4 +222,44 @@ NetGroupDelegationPtr CMultiNetwork::GetDelegation( const std::string &linkSvrTy
 	if (m_Delegations.end() == it)
 		return NULL; // not exist
 	return it->second;
+}
+
+
+/**
+ @brief 
+ */
+bool	CMultiNetwork::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
+{
+	NetGroupControllerPtr ptr = GetControllerFromNetId(netId);
+	RETV(!ptr, false);
+	ptr->Send(netId, flag, packet);
+	return true;
+}
+
+
+/**
+ @brief 
+ */
+bool	CMultiNetwork::SendAll(const CPacket &packet)
+{
+	BOOST_FOREACH( auto ctrl, m_Controllers.m_Seq)
+	{
+		ctrl->SendAll(packet);
+	}
+	return true;
+}
+
+
+
+/**
+ @brief 
+ */
+NetGroupControllerPtr	CMultiNetwork::GetControllerFromNetId( netid netId )
+{
+	BOOST_FOREACH( auto ctrl, m_Controllers.m_Seq)
+	{
+		if (ctrl->GetSession(netId))
+			return ctrl;
+	}
+	return NULL;
 }

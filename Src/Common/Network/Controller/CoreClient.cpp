@@ -154,14 +154,24 @@ void CCoreClient::Clear()
  */
 bool	CCoreClient::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
 {
-	// send(연결된 소켓, 보낼 버퍼, 버퍼의 길이, 상태값)
-	const int result = send(GetSocket(), packet.GetData(), CPacket::MAX_PACKETSIZE, 0);
-	if (result == INVALID_SOCKET)
+	if (!IsConnect())
+		return false;
+
+	if (netId == SERVER_NETID || (m_ServerNetId == netId))
 	{
-		Disconnect();
+		// send(연결된 소켓, 보낼 버퍼, 버퍼의 길이, 상태값)
+		const int result = send(GetSocket(), packet.GetData(), CPacket::MAX_PACKETSIZE, 0);
+		if (result == INVALID_SOCKET)
+		{
+			Disconnect();
+			return false;
+		}
+		return true;
+	}
+	else
+	{
 		return false;
 	}
-	return true;
 }
 
 
@@ -170,7 +180,15 @@ bool	CCoreClient::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
 //------------------------------------------------------------------------
 bool CCoreClient::SendAll(const CPacket &packet)
 {
-	// 아직 아무것도 없음
+	if (!IsConnect())
+		return false;
+
+	const int result = send(GetSocket(), packet.GetData(), CPacket::MAX_PACKETSIZE, 0);
+	if (result == INVALID_SOCKET)
+	{
+		Disconnect();
+		return false;
+	}
 	return true;
 }
 

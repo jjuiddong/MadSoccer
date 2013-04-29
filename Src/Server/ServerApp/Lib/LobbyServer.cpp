@@ -39,7 +39,7 @@ void	CLobbyServer::OnConnectNetGroupController()
 		return;
 	}
 
-	pLoginSvrController->RegisterProtocol(&m_SvrNetworkProtocol);
+	multinetwork::CMultiNetwork::Get()->RegisterProtocol(&m_SvrNetworkProtocol) ;
 	pCertifySvrController->RegisterProtocol(&m_CertifyProtocol);
 
 	RegisterProtocol(&m_LoginProtocol);
@@ -251,7 +251,8 @@ void	CLobbyServer::OnTimer( CEvent &event )
 		// 주기적으로 서버 정보를 Login서버에게 보낸다.
 		if (GetServer() && GetServer()->IsServerOn())
 		{
-			m_SvrNetworkProtocol.SendServerInfo( SERVER_NETID, network::SEND_T, "lobbysvr", GetServer()->GetSessions().size() );
+			m_SvrNetworkProtocol.SendServerInfo( SERVER_NETID, network::SEND_T, "lobbysvr", 
+				GetServer()->GetIp(), GetServer()->GetPort(), GetServer()->GetSessions().size() );
 		}
 	}
 
@@ -265,3 +266,25 @@ void	CLobbyServer::OnTimer( CEvent &event )
 //{
 //	m_LoginProtocol.AckLogIn(senderId, SEND_TARGET, error::ERR_SUCCESS, id, senderId);
 //}
+
+
+/**
+ @brief ReqMoveUser
+ */
+bool CLobbyServer::ReqMoveUser(IProtocolDispatcher &dispatcher, netid senderId, 
+	const std::string &id, const netid &userId)
+{
+	CSession *pClient = CheckClientId(GetServer(), id, userId, NULL, NULL);
+	if (pClient) // Already exist
+	{
+		m_SvrNetworkProtocol.AckMoveUser(senderId, SEND_T, error::ERR_MOVEUSER_ALREADY_EXIST,
+			id, userId);
+		return false;
+	}
+
+	multinetwork::CMultiNetwork::Get()->RegisterProtocol(&m_SvrNetworkProtocol) ;
+	m_SvrNetworkProtocol.AckMoveUser(senderId, SEND_T, error::ERR_MOVEUSER_ALREADY_EXIST,
+		id, userId);
+	
+	return true;
+}

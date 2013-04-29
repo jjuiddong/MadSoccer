@@ -48,6 +48,7 @@ namespace network { namespace multinetwork {
 		void				SetTryConnect();
 		CServerBasic* GetServer();
 		const CoreClients_V& GetClients();
+		SessionPtr GetSession(netid netId);
 		CoreClientPtr GetClient(netid netId);
 		CoreClientPtr GetClientFromServerNetId(netid serverNetId);
 

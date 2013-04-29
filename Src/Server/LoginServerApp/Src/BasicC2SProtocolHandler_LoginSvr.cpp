@@ -61,7 +61,7 @@ bool CBasicC2SProtocolHandler_LoginSvr::ReqMoveToServer(IProtocolDispatcher &dis
 	{
 		clog::Error( clog::ERROR_PROBLEM, "ReqMoveToServer Error!! invalid servername name=%s", 
 			serverName.c_str());
-		m_BasicProtocol.AckMoveToServer(senderId, SEND_T, error::ERR_MOVETOSERVER_INVALID_SERVERNAME, serverName);
+		m_BasicProtocol.AckMoveToServer(senderId, SEND_T, error::ERR_MOVETOSERVER_INVALID_SERVERNAME, serverName, "", 0);
 		return false;
 	}
 	
@@ -69,7 +69,7 @@ bool CBasicC2SProtocolHandler_LoginSvr::ReqMoveToServer(IProtocolDispatcher &dis
 	if (!pNetGroupCtrl)
 	{
 		clog::Error( clog::ERROR_PROBLEM, "ReqMoveToServer Error!! not found server group " );
-		m_BasicProtocol.AckMoveToServer(senderId, SEND_T, error::ERR_MOVETOSERVER_NOT_FOUND_SERVER, serverName);
+		m_BasicProtocol.AckMoveToServer(senderId, SEND_T, error::ERR_MOVETOSERVER_NOT_FOUND_SERVER, serverName, "", 0);
 		return false;
 	}
 	

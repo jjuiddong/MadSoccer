@@ -24,14 +24,12 @@ namespace network
 		friend class CTaskWorkClient;
 		friend class CTaskWorkServer;
 
-		typedef std::map<SOCKET, ServerBasicPtr> ServerSockets;
-		typedef common::VectorMap<netid, ServerBasicPtr> Servers;
-
-		typedef std::map<SOCKET, ClientBasicPtr> ClientSockets;
-
+		//typedef std::map<SOCKET, ServerBasicPtr> ServerSockets;
+		//typedef std::map<SOCKET, ClientBasicPtr> ClientSockets;
 		typedef std::map<int,IProtocolDispatcher*> DispatcherMap;
-		typedef ServerSockets::iterator ServerItor;
-		typedef ClientSockets::iterator ClientItor;
+
+		//typedef ServerSockets::iterator ServerItor;
+		//typedef ClientSockets::iterator ClientItor;
 		typedef DispatcherMap::iterator DispatcherItor;
 		typedef std::list<common::CThread*> ThreadList;
 		typedef ThreadList::iterator ThreadItor;
@@ -47,14 +45,14 @@ namespace network
 		bool		StopServer(ServerBasicPtr pSvr);
 		bool		RemoveServer(ServerBasicPtr pSvr);
 		ServerBasicPtr	GetServer(netid netId);
-		ServerBasicPtr	GetServerFromSocket(SOCKET sock);
+		//ServerBasicPtr	GetServerFromSocket(SOCKET sock);
 
 		// Client
 		bool		StartClient(const std::string &ip, int port, ClientBasicPtr pClt);
 		bool		StopClient(ClientBasicPtr pClt);
 		bool		RemoveClient(ClientBasicPtr pClt);
 		ClientBasicPtr	GetClient(netid netId);
-		ClientBasicPtr	GetClientFromSocket(SOCKET sock);
+		//ClientBasicPtr	GetClientFromSocket(SOCKET sock);
 
 		// CoreClient
 		bool		StartCoreClient(const std::string &ip, int port, CoreClientPtr pClt);
@@ -74,19 +72,20 @@ namespace network
 	protected:
 		ThreadPtr AllocWorkThread(SERVICE_TYPE serviceType, NetConnectorPtr pConnector);
 		ThreadPtr GetThread( const ThreadList &threads, HANDLE hThreadHandle );
-		void		MakeServersFDSET( fd_set *pfdset);
+		void		MakeServersFDSET( SFd_Set *pfdset);
 		void		MakeCoreClientsFDSET( PROCESS_TYPE procType, SFd_Set *pfdset);
 		void		DisconnectServer(ServerBasicPtr pSvr);
 		void		DisconnectClient(ClientBasicPtr pClt);
 		void		DisconnectCoreClient(CoreClientPtr pClt);
 		void		MainLoop();
+		void		RemoveProcess();
 
 	private:
 		Servers							m_Servers;
-		ServerSockets				m_ServerSockets;
+		//ServerSockets				m_ServerSockets;
 
 		Clients							m_Clients;
-		ClientSockets				m_ClientSockets;
+		//ClientSockets				m_ClientSockets;
 
 		CoreClients					m_CoreClients;
 

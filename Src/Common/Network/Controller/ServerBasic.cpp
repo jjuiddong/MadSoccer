@@ -13,6 +13,7 @@ CServerBasic::CServerBasic(PROCESS_TYPE procType) :
 ,	m_RootGroup(NULL, "root")
 ,	m_pSessionFactory(new CSessionFactory()) // defalut 
 ,	m_pGroupFactory(new CGroupFactory()) // default
+,	m_IsLoginCheck(false)
 {
 	SetPort(2333);
 	m_Timers.reserve(10);
@@ -220,7 +221,7 @@ bool CServerBasic::AddSession(SOCKET sock, const std::string &ip)
 	CSession *pNewSession = m_pSessionFactory->New();
 	pNewSession->SetSocket(sock);
 	pNewSession->SetIp(ip);
-	pNewSession->SetState(SESSIONSTATE_LOGIN_WAIT);
+	pNewSession->SetState(m_IsLoginCheck? SESSIONSTATE_LOGIN_WAIT : SESSIONSTATE_LOGIN);
 
 	if (!m_RootGroup.AddUser(m_WaitGroupId, pNewSession->GetNetId()))
 	{
@@ -285,12 +286,12 @@ netid CServerBasic::GetNetIdFromSocket(SOCKET sock)
 //------------------------------------------------------------------------
 bool CServerBasic::RemoveSession(netid netId)
 {
-	common::AutoCSLock cs(m_CS);
-
 	SessionItor it = m_Sessions.find(netId);
 	if (m_Sessions.end() == it)
 		return false; //없다면 실패
-	RemoveClientProcess(it);
+	if (it->second)
+		it->second->SetState(SESSIONSTATE_LOGOUT_WAIT);
+	m_Sessions.remove(netId);
 	return true;
 }
 
@@ -329,49 +330,44 @@ SessionItor CServerBasic::FindSessionBySocket(SOCKET sock)
 
 
 //------------------------------------------------------------------------
-// m_Sessions 루프안에서 Client를 제거해야 될때 쓰이는 함수다.
-// Client를 제거하고 다음을 가르키는 iterator를 반환한다.
-//------------------------------------------------------------------------
-//SessionItor CServerBasic::RemoveSessionInLoop(netid netId)
-//{
-//	SessionItor it = m_RemoteClients.find(netId);
-//	if (m_RemoteClients.end() == it)
-//		return m_RemoteClients.end(); //없다면 실패
-//
-//	SessionItor r = RemoveClientProcess(it);
-//	return r;
-//}
-
-
-//------------------------------------------------------------------------
 // 클라이언트 제거 처리
 //------------------------------------------------------------------------
-bool CServerBasic::RemoveClientProcess(SessionItor it)
+bool CServerBasic::RemoveClientProcess()
 {
-	const netid userId = it->second->GetNetId();
-	const SOCKET sock = it->second->GetSocket();
+	if (m_Sessions.m_RmKeys.empty())
+		return true;
 
-	// call before remove client
-	OnClientLeave(userId);
+	common::AutoCSLock cs(m_CS);
+	BOOST_FOREACH(auto netId, m_Sessions.m_RmKeys)
+	{
+		CSession *pSession = GetSession(netId);
+		if (!pSession)
+			continue;
 
-	 GroupPtr pGroup = m_RootGroup.GetChildFromUser(userId);
-	 if (pGroup)
-	 {
-		if (!m_RootGroup.RemoveUser(pGroup->GetId(), userId))
-		{
-			clog::Error( clog::ERROR_PROBLEM, "CServer::RemoveClientProcess() Error!! not remove user groupid: %d, userid: %d\n",
-				pGroup->GetId(), userId);
-		}
-	 }
-	 else
-	 {
-		 clog::Error( clog::ERROR_PROBLEM, "CServer::RemoveClientProcess() Error!! not found group userid: %d\n",userId);
-	 }
+		// call before remove client
+		OnClientLeave(netId);
 
-	delete it->second;
-	m_Sessions.remove(userId);
+		 GroupPtr pGroup = m_RootGroup.GetChildFromUser(netId);
+		 if (pGroup)
+		 {
+			if (!m_RootGroup.RemoveUser(pGroup->GetId(), netId))
+			{
+				clog::Error( clog::ERROR_PROBLEM, 
+					"CServerBasic::RemoveClientProcess() Error!! not remove user groupid: %d, userid: %d\n",
+					pGroup->GetId(), netId);
+			}
+		 }
+		 else
+		 {
+			 clog::Error( clog::ERROR_PROBLEM, 
+				 "CServerBasic::RemoveClientProcess() Error!! not found group userid: %d\n", netId);
+		 }
 
-	clog::Log( clog::LOG_F_N_O, "RemoveClient netid: %d, socket: %d\n", userId, sock );
+		delete pSession;
+		clog::Log( clog::LOG_F_N_O, "RemoveClient netid: %d, socket: %d\n", netId, pSession->GetSocket() );
+	}
+
+	m_Sessions.apply_removes();
 	return true;
 }
 
@@ -432,7 +428,7 @@ bool CServerBasic::SendAll(const CPacket &packet)
 {
 	BOOST_FOREACH(auto &client, m_Sessions.m_Seq)
 	{
-		if (!client)
+		if (!client || !client->IsConnect())
 			continue;
 
 		const int result = send(client->GetSocket(), packet.GetData(), CPacket::MAX_PACKETSIZE, 0);
@@ -442,7 +438,6 @@ bool CServerBasic::SendAll(const CPacket &packet)
 				ClientDisconnectPacket(CNetController::Get()->GetUniqueValue(), client->GetNetId()) );
 		}
 	}
-
 	return true;
 }
 
@@ -456,7 +451,7 @@ bool	CServerBasic::Send(netid netId, const SEND_FLAG flag, const CPacket &packet
 	if ((flag == SEND_T) || (flag == SEND_T_V))
 	{
 		SessionItor it = m_Sessions.find(netId);
-		if (m_Sessions.end() != it) // Send To Client
+		if (m_Sessions.end() != it && it->second->IsConnect()) // Send To Client
 		{
 			const int result = send(it->second->GetSocket(), packet.GetData(), CPacket::MAX_PACKETSIZE, 0);
 			if (result == INVALID_SOCKET)
@@ -678,6 +673,9 @@ void	CServerBasic::KillTimer( int id )
  */
 void	CServerBasic::MainLoop()
 {
+	// 지워야될 client 정리 
+	RemoveClientProcess();
+	//
 
 	//------------------------------------------------------------
 	// Timer 처리 

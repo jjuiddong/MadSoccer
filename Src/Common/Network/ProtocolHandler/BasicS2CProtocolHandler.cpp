@@ -45,3 +45,16 @@ bool CBasicS2CProtocolHandler::AckP2PConnect(
 	return true;
 }
 
+
+/**
+ @brief AckMoveToServer
+ */
+bool CBasicS2CProtocolHandler::AckMoveToServer(IProtocolDispatcher &dispatcher, netid senderId, 
+	const error::ERROR_CODE &errorCode, const std::string &serverName, const std::string &ip, const int &port)
+{
+	if (error::ERR_SUCCESS != errorCode)
+		return false;
+
+	m_Client.Stop();
+	return StartClient(ip, port, &m_Client);
+}

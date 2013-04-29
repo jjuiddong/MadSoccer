@@ -5,6 +5,7 @@
 #include <Windows.h>
 #include <list>
 #include <map>
+#include <set>
 #include <unordered_map>
 #include <vector>
 #include <algorithm>
@@ -111,6 +112,7 @@ typedef unsigned short u_short;
 #include "etc/Dump.h"
 #include "CodeGen.h"
 #include "container/VectorMap.h"
+#include "container/StableVectorMap.h"
 
 #include "event/Event.h"
 #include "event/EventHandler.h"

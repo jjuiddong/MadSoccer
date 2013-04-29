@@ -59,7 +59,7 @@ string log::GetLogFileName()
 string log::GetErrorLogFileName()
 {
 	string processName = GetCurrentProcessName();
-	processName += ".ErrLog.log";
+	processName += ".Log.log";
 	return processName;
 }
 

@@ -37,17 +37,15 @@ void	CSubServerConnector::OnConnectNetGroupController()
  @brief 서브 서버들로부터 현재 서버 정보를 업데이트 받는다.
  */
 bool CSubServerConnector::SendServerInfo(IProtocolDispatcher &dispatcher, netid senderId, 
-	const std::string &svrType, const int &userCount)
+	const std::string &svrType, const std::string &ip, const int &port, const int &userCount)
 {
-	//CRemoteServer *pRemoteSvr = dynamic_cast<CRemoteServer*>(
-	//	CheckClientNetId(GetServer(), senderId, NULL, &dispatcher));
-	//RETV(!pRemoteSvr, false);
-	//pRemoteSvr->SetUserCount(userCount);
-
 	auto it = m_RemoteServers.find(senderId);
 	if (m_RemoteServers.end() == it)
 	{
 		CRemoteServer *pNewSvr = new CRemoteServer();
+		pNewSvr->SetNetId(senderId);
+		pNewSvr->SetIp( ip );
+		pNewSvr->SetPort(port);
 		pNewSvr->SetNetId(senderId);
 		pNewSvr->SetUserCount(userCount);
 		m_RemoteServers.insert( RemoteServers::value_type(senderId, pNewSvr) );
@@ -80,10 +78,11 @@ std::list<SSubServerInfo> CSubServerConnector::GetSubServerInfo()
 			if (pClient)
 			{
 					SSubServerInfo info;
+					info.serverId = svr->GetNetId();
 					info.ip = svr->GetIp();
 					info.portnum = svr->GetPort();
 					info.userCnt = svr->GetUserCount();
-					servers.push_back( info );				
+					servers.push_back( info );
 			}
 			else
 			{
@@ -101,6 +100,7 @@ std::list<SSubServerInfo> CSubServerConnector::GetSubServerInfo()
 			if (pClient)
 			{
 				SSubServerInfo info;
+				info.serverId = svr->GetNetId();
 				info.ip = svr->GetIp();
 				info.portnum = svr->GetPort();
 				info.userCnt = svr->GetUserCount();

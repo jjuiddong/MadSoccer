@@ -34,11 +34,12 @@ typedef common::ReferencePtr<network::CP2PClient> P2PClientPtr;
 typedef common::ReferencePtr<network::CCoreClient> CoreClientPtr;
 typedef common::ReferencePtr<network::CCharacter> CharacterPtr;
 
-typedef common::VectorMap<netid, ClientBasicPtr> Clients;
-typedef common::VectorMap<netid, network::CClientBasic*> Clients_;
+typedef common::StableVectorMap<netid, ServerBasicPtr> Servers;
+typedef common::StableVectorMap<netid, ClientBasicPtr> Clients;
+typedef common::StableVectorMap<netid, network::CClientBasic*> Clients_;
 typedef Clients_::VectorType	Clients_V;
-typedef common::VectorMap<netid, CoreClientPtr> CoreClients;
-typedef common::VectorMap<netid, network::CCoreClient*> CoreClients_;
+typedef common::StableVectorMap<netid, CoreClientPtr> CoreClients;
+typedef common::StableVectorMap<netid, network::CCoreClient*> CoreClients_;
 typedef CoreClients_::VectorType	CoreClients_V;
 
 //typedef common::VectorMap<netid, CCoreClient*> CoreClientsPtr;

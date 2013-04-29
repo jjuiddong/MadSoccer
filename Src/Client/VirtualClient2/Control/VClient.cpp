@@ -22,12 +22,12 @@ CVClient::CVClient() : CClient(network::USER_LOOP)
 	RegisterProtocol(&m_P2pProtocol);
 	AddProtocolListener(this);
 
-	EVENT_CONNECT( EVT_CONNECT, CVClient, CVClient::OnConnect );
-	EVENT_CONNECT( EVT_DISCONNECT, CVClient, CVClient::OnDisconnect );
-	EVENT_CONNECT( EVT_P2P_CONNECT, CVClient, CVClient::OnP2PConnect);
-	EVENT_CONNECT( EVT_P2P_DISCONNECT, CVClient, CVClient::OnP2PDisconnect);
-	EVENT_CONNECT( EVT_MEMBER_JOIN, CVClient, CVClient::OnMemberJoin);
-	EVENT_CONNECT( EVT_MEMBER_LEAVE, CVClient, CVClient::OnMemberLeave);	
+	NETEVENT_CONNECT( EVT_CONNECT, CVClient, CVClient::OnConnect );
+	NETEVENT_CONNECT( EVT_DISCONNECT, CVClient, CVClient::OnDisconnect );
+	NETEVENT_CONNECT( EVT_P2P_CONNECT, CVClient, CVClient::OnP2PConnect);
+	NETEVENT_CONNECT( EVT_P2P_DISCONNECT, CVClient, CVClient::OnP2PDisconnect);
+	NETEVENT_CONNECT( EVT_MEMBER_JOIN, CVClient, CVClient::OnMemberJoin);
+	NETEVENT_CONNECT( EVT_MEMBER_LEAVE, CVClient, CVClient::OnMemberLeave);	
 }
 
 CVClient::~CVClient()

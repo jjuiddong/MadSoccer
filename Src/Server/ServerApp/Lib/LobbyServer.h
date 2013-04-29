@@ -14,11 +14,13 @@ Date:    12/29/2012
 #include "NetProtocol/src/server_network_Protocol.h"
 #include "NetProtocol/src/certify_Protocol.h"
 #include "NetProtocol/src/certify_ProtocolListener.h"
+#include "NetProtocol/Src/server_network_ProtocolListener.h"
 
 
 DECLARE_TYPE_NAME(CLobbyServer)
 class CLobbyServer	: public network::CServer
 								, public login::c2s_ProtocolListener
+								, public server_network::s2s_ProtocolListener
 
 								// Debug
 								, public network::AllProtocolDisplayer
@@ -62,15 +64,16 @@ protected:
 	void				OnSubServerConnect(network::CNetEvent &event);
 	void				OnTimer( network::CEvent &event );
 
+
 	// Network Event Handler
 	void			OnClientJoin(network::CNetEvent &event);
 	void			OnClientLeave(network::CNetEvent &event);
 	void			OnClientLeave2(network::CEvent &event) {}
 
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Test
-	//virtual void ReqLogIn(netid senderId, const std::string &id, const std::string &password) override;
+	// Network Protocol Handler
+	virtual bool ReqMoveUser(network::IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, const netid &userId) override;
+
 
 private:
 	UserMap				m_Users;

@@ -33,6 +33,9 @@ void	CFarmServer::OnConnectNetGroupController()
 	{ // Error!!
 		assert(0);
 	}
+
+	NETEVENT_CONNECT( EVT_CLIENT_JOIN, CFarmServer, CFarmServer::OnClientJoin );
+
 }
 
 

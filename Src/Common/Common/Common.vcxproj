@@ -34,7 +34,7 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />	  
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
@@ -90,6 +90,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
+    <ClInclude Include="container\StableVectorMap.h" />
+    <ClInclude Include="container\VectorHelper.h" />
     <ClInclude Include="etc\AutoLock.h" />
     <ClInclude Include="event\Event.h" />
     <ClInclude Include="event\EventHandler.h" />
@@ -122,7 +124,6 @@
     <ClInclude Include="thread\Task.h" />
     <ClInclude Include="thread\Thread.h" />
     <ClInclude Include="container\VectorMap.h" />
-    <ClInclude Include="VectorHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />

@@ -48,6 +48,8 @@ void	CLoginServer::OnConnectNetGroupController()
 		return;
 	}
 
+	GetServer()->SetOption( true );
+
 	m_pBasicPrtHandler = new CBasicC2SProtocolHandler_LoginSvr(*pCertifySvrController, *GetServer());
 
 	RegisterProtocol(&m_BasicProtocol);
@@ -125,24 +127,30 @@ bool CLoginServer::ReqLobbyIn(IProtocolDispatcher &dispatcher, netid senderId)
 	if (!pLobbySvrDelegation)
 	{
 		clog::Error( clog::ERROR_CRITICAL, "ReqLobbyIn Error!! not found lobbysvr netgroupdelegation" );
-		m_BasicProtocol.AckMoveToServer( senderId, SEND_T, error::ERR_MOVETOSERVER_NOT_FOUND_SERVER, "lobbysvr" );
+		m_LoginProtocol.AckLobbyIn( senderId, SEND_T, error::ERR_REQLOBBYIN_NOTFOUND_SERVER );
 		return false;
 	}
 
 	CSubServerConnector *pSubSvrCon = dynamic_cast<CSubServerConnector*>(pLobbySvrDelegation.Get());
 	if (!pSubSvrCon)
 	{
-		m_BasicProtocol.AckMoveToServer( senderId, SEND_T, error::ERR_MOVETOSERVER_NOT_FOUND_SERVER, "lobbysvr" );
+		m_LoginProtocol.AckLobbyIn( senderId, SEND_T, error::ERR_REQLOBBYIN_NOTFOUND_SERVER );
 		return false;
 	}
 
 	std::list<SSubServerInfo> subServers = pSubSvrCon->GetSubServerInfo();
+	subServers.sort();
+	if (subServers.empty())
+	{
+		m_LoginProtocol.AckLobbyIn( senderId, SEND_T, error::ERR_REQLOBBYIN_NOTFOUND_SERVER );
+		return false;
+	}
 
-	//pLobbySvrController->
-	//m_BasicProtocol.AckMoveToServer( senderId, SEND_T, error::ERR_SUCCESS, "lobbysvr" );
+	SSubServerInfo targetSvr = subServers.front();
+	pSubSvrCon->RegisterProtocol( &m_SvrNetworkProtocol );
+	m_SvrNetworkProtocol.ReqMoveUser( targetSvr.serverId, SEND_T, pClient->GetName(), pClient->GetNetId() );
 
-
-
-
+	//m_BasicProtocol.AckMoveToServer( senderId, SEND_T, error::ERR_SUCCESS, "lobbysvr", 
+	//	subServers.front().ip, subServers.front().portnum);
 	return true; 
 }

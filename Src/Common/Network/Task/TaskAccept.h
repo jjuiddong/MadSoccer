@@ -32,28 +32,31 @@ namespace network
 	inline common::CTask::RUN_RESULT CTaskAccept::Run()
 	{
 		const timeval t = {0, 10}; // 10 millisecond
-		fd_set readSockets;
+		SFd_Set readSockets;
 		CNetController::Get()->MakeServersFDSET(&readSockets);
+		const SFd_Set sockets = readSockets;
 
 		const int ret = select( readSockets.fd_count, &readSockets, NULL, NULL, &t );
 		if (ret != 0 && ret != SOCKET_ERROR)
 		{
-			for (u_int i=0; i < readSockets.fd_count; ++i)
+			for (u_int i=0; i < sockets.fd_count; ++i)
 			{
+				if (!FD_ISSET(sockets.fd_array[ i], &readSockets)) continue;
+
 				// accept(요청을 받으 소켓, 선택 클라이언트 주소)
-				SOCKET remoteSocket = accept(readSockets.fd_array[ i], NULL, NULL);
+				SOCKET remoteSocket = accept(sockets.fd_array[ i], NULL, NULL);
 				if (remoteSocket == INVALID_SOCKET)
 				{
 					clog::Error( clog::ERROR_CRITICAL, "Client를 Accept하는 도중에 에러가 발생함\n" );
 					return RR_CONTINUE;
 				}
 
-				CServerBasic *pSvr = CNetController::Get()->GetServerFromSocket(readSockets.fd_array[ i]);
+				CServerBasic *pSvr = CNetController::Get()->GetServer(sockets.netid_array[ i]);
 				if (!pSvr)
 				{
 					clog::Error( clog::ERROR_PROBLEM,
 						common::format("%d 소켓에 해당하는 서버를 찾지못함\n", 
-						readSockets.fd_array[ i]) );
+						sockets.fd_array[ i]) );
 					return RR_CONTINUE;
 				}
 

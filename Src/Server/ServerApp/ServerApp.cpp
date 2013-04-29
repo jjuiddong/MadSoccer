@@ -102,6 +102,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 			InvalidateRect(g_Hwnd,NULL,TRUE);
 			tick = curT;
 		}
+		Sleep(1);
 	}
 
 exit:

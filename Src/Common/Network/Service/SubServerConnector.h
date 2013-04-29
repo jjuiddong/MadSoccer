@@ -27,7 +27,7 @@ namespace network
 		virtual void	OnConnectNetGroupController() override;
 
 		/// Network Protocol Handler
-		virtual bool SendServerInfo(IProtocolDispatcher &dispatcher, netid senderId, const std::string &svrType, const int &userCount) override;
+		virtual bool SendServerInfo(IProtocolDispatcher &dispatcher, netid senderId, const std::string &svrType, const std::string &ip, const int &port, const int &userCount) override;
 
 	private:
 		typedef VectorMap<netid, CRemoteServer*>	RemoteServers;

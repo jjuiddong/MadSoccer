@@ -17,7 +17,8 @@ namespace network { namespace multinetwork {
 	class CFarmServerConnector;
 
 	DECLARE_TYPE_NAME_SCOPE(network::multinetwork, CMultiNetwork)
-	class CMultiNetwork : public common::CSingleton<CMultiNetwork>
+	class CMultiNetwork : public CNetConnector
+										, public common::CSingleton<CMultiNetwork>
 										,public memmonitor::Monitor<CMultiNetwork, TYPE_NAME(network::multinetwork::CMultiNetwork)>
 	{
 	public:
@@ -38,7 +39,11 @@ namespace network { namespace multinetwork {
 		bool		ConnectDelegation( const std::string &linkSvrType, NetGroupDelegationPtr ptr);
 		NetGroupDelegationPtr GetDelegation( const std::string &linkSvrType );
 
+		virtual bool	Send(netid netId, const SEND_FLAG flag, const CPacket &packet) override;
+		virtual bool	SendAll(const CPacket &packet) override;
+
 	protected:
+		NetGroupControllerPtr	GetControllerFromNetId( netid netId );
 		void		Cleanup();
 
 	private:

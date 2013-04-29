@@ -58,6 +58,7 @@ namespace network
 		SESSIONSTATE_DISCONNECT,
 		SESSIONSTATE_LOGIN_WAIT,
 		SESSIONSTATE_LOGIN,
+		SESSIONSTATE_LOGOUT_WAIT,		// 제거 대기 목록에 있는 상태
 	};
 
 	enum P2P_STATE
@@ -92,7 +93,10 @@ namespace network
 
 	struct SSubServerInfo : SHostInfo
 	{
+		netid serverId;
 		int userCnt;
+
+		bool operator<( const SSubServerInfo &rhs) { return userCnt < rhs.userCnt; }
 	};
 
 
@@ -118,7 +122,7 @@ typedef common::ReferencePtr<network::CRemoteClient> RemoteClientPtr;
 typedef common::ReferencePtr<network::CRemoteServer> RemoteServerPtr;
 
 typedef common::ReferencePtr<network::CSession> SessionPtr;
-typedef common::VectorMap<netid,network::CSession*> Sessions_;
+typedef common::StableVectorMap<netid,network::CSession*> Sessions_;
 typedef Sessions_::VectorType	Sessions_V;
 typedef Sessions_::MapType::iterator SessionItor;
 

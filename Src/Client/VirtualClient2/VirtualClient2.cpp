@@ -74,7 +74,7 @@ BOOL CVirtualClient2App::InitInstance()
 		// Perform some background processing here 
 		// using another call to OnIdle
 		CVClient::Get()->Proc();
-		Sleep(0);
+		Sleep(1);
 	}
 
 	CVClient::Get()->Stop();

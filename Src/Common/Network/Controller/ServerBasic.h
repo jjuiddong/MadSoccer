@@ -21,35 +21,42 @@ namespace network
 		CServerBasic(PROCESS_TYPE procType);
 		virtual ~CServerBasic();
 
+		/// Packet
+		virtual bool	Send(netid netId, const SEND_FLAG flag, const CPacket &packet) override;
+		virtual bool	SendAll(const CPacket &packet) override;
+
+		/// Session
 		bool				AddSession(SOCKET sock, const std::string &ip);
 		CSession*	GetSession(netid netId);
 		CSession*	GetSession(const std::string &clientId);
 		bool				RemoveSession(netid netId);
 		bool				RemoveSessionSocket(netid netId);
-
-		CGroup&		GetRootGroup();
 		Sessions_V& GetSessions();
+		bool				IsExist(netid netId);
+		netid			GetNetIdFromSocket(SOCKET sock);
+
+		/// Group
+		CGroup&		GetRootGroup();
+
+		/// Factory
 		void				SetSessionFactory( ISessionFactory *ptr );
 		void				SetGroupFactory( IGroupFactory *ptr );
 		ISessionFactory* GetSessionFactory() const;
 		IGroupFactory* GetGroupFactory() const;
 
-		common::CriticalSection& GetCS();
-		netid			GetNetIdFromSocket(SOCKET sock);
-		bool				IsExist(netid netId);
-		void				Clear();
-
+		/// Etc
+		bool				IsServerOn() const;
 		void				Proc();
 		bool				Stop();
 		void				Disconnect();
 		void				Close();
-		bool				IsServerOn() const;
+		void				Clear();
+
+		void				SetOption(bool IsLoginCheck);
+		common::CriticalSection& GetCS();
 		void				MakeFDSET( SFd_Set *pfdset);
 		void				AddTimer( int id, int intervalTime, bool isRepeat = true );
 		void				KillTimer( int id );
-
-		virtual bool	Send(netid netId, const SEND_FLAG flag, const CPacket &packet) override;
-		virtual bool	SendAll(const CPacket &packet) override;
 
 		// Event Handler
 		void				OnListen();
@@ -67,7 +74,7 @@ namespace network
 		bool				SendViewer(netid groupId, const SEND_FLAG flag, const CPacket &packet);
 		bool				SendViewerRecursive(netid viewerId, const netid exceptGroupId, const CPacket &packet);
 
-		bool				RemoveClientProcess(SessionItor it);
+		bool				RemoveClientProcess();
 		SessionItor	FindSessionBySocket(SOCKET sock);
 
 	private:
@@ -76,6 +83,7 @@ namespace network
 		IGroupFactory			    *m_pGroupFactory;
 		common::CriticalSection  m_CS;
 		std::vector<STimer>	m_Timers;
+		bool								m_IsLoginCheck;			// true 이면 로그인된 클라이언트에게만 패킷을 전송할 수 있다.
 
 		CGroup							m_RootGroup;
 		netid							m_WaitGroupId;			// waiting place before join concrete group
@@ -88,5 +96,6 @@ namespace network
 	inline Sessions_V& CServerBasic::GetSessions() { return m_Sessions.m_Seq; }
 	inline ISessionFactory* CServerBasic::GetSessionFactory() const { return m_pSessionFactory; }
 	inline IGroupFactory* CServerBasic::GetGroupFactory() const { return m_pGroupFactory; }
+	inline void CServerBasic::SetOption(bool IsLoginCheck) { m_IsLoginCheck = IsLoginCheck; }
 
 };

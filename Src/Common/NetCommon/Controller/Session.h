@@ -19,6 +19,7 @@ namespace network
 
 		netid		GetNetId() const;
 		SOCKET	GetSocket() const;
+		bool			IsConnect() const;
 		P2P_STATE GetP2PState() const;
 		SESSION_STATE GetState() const;
 		const std::string& GetName() const;
@@ -54,7 +55,9 @@ namespace network
 	inline P2P_STATE CSession::GetP2PState() const { return m_P2PState; }
 	inline SESSION_STATE CSession::GetState() const { return m_State; }
 	inline const std::string& CSession::GetIp() const { return m_Ip; }
-	inline int CSession::GetPort() const { return m_Port; }
+	inline int			CSession::GetPort() const { return m_Port; }
+	inline bool		CSession::IsConnect() const { return m_State ==  SESSIONSTATE_LOGIN; }
+
 	inline void			CSession::SetNetId(netid id) { m_Id = id; }
 	inline void			CSession::SetName(const std::string &name) { m_Name = name; }
 	inline void			CSession::SetSocket(SOCKET sock) { m_Socket = sock; }

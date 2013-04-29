@@ -26,6 +26,9 @@ namespace network { namespace error {
 			ERR_MOVETOSERVER_INVALID_SERVERNAME,
 			ERR_MOVETOSERVER_NOT_FOUND_SERVER,
 
+			// MoveUser
+			ERR_MOVEUSER_ALREADY_EXIST,
+
 
 		// group
 		ERR_NO_CREATE_GROUP,
@@ -53,6 +56,10 @@ namespace network { namespace error {
 
 		// request server info
 		ERR_REQSERVERINFO_NOTFOUND_SERVER,
+
+		
+		// login server
+		ERR_REQLOBBYIN_NOTFOUND_SERVER,
 
 	};
 
