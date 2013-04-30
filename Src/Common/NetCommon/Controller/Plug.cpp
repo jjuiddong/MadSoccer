@@ -145,7 +145,7 @@ PlugPtr	CPlug::GetChild( netid childId, bool isFindChildren ) // isFindChildren 
 bool CPlug::SearchEventTable( common::CEvent &event )
 {
 	CEventHandler::SearchEventTable(event);
-	if (m_pParent)
+	if (!event.IsSkip() && m_pParent)
 		m_pParent->SearchEventTable(event);
 	return true;
 }

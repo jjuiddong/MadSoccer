@@ -44,16 +44,22 @@ namespace common
 		void			 SetType(EventType type);
 		EventType GetType() const;
 		int			GetParam() const;
+		void			Skip();
+		bool			IsSkip() const;
+
 	private:
 		EventType	m_Type;
 		int				m_Param;
+		bool				m_IsSkip;
 	};
 
-	inline CEvent::CEvent() { m_Type = EVT_NULL; }
-	inline CEvent::CEvent(EventType type) : m_Type(type) { }
-	inline CEvent::CEvent(EventType type, int param) : m_Type(type), m_Param(param) { }
+	inline CEvent::CEvent() { m_Type = EVT_NULL; m_IsSkip = false; }
+	inline CEvent::CEvent(EventType type) : m_Type(type), m_IsSkip(false) { }
+	inline CEvent::CEvent(EventType type, int param) : m_Type(type), m_Param(param), m_IsSkip(false) { }
 	inline void	CEvent::SetType(EventType type) { m_Type = type; }
 	inline EventType CEvent::GetType() const { return m_Type; }
 	inline int CEvent::GetParam() const { return m_Param; }
+	inline void	CEvent::Skip() { m_IsSkip = true; }
+	inline bool CEvent::IsSkip() const { return m_IsSkip; }
 
 }

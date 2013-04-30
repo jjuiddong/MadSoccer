@@ -14,7 +14,6 @@ CBasicS2CProtocolHandler::CBasicS2CProtocolHandler( CClient &client ) :
 	client.RegisterProtocol(&m_BasicProtocol);
 
 	NETEVENT_CONNECT_TO(&client, this, EVT_DISCONNECT, CBasicS2CProtocolHandler, CBasicS2CProtocolHandler::OnDisconnectClient);
-
 }
 
 CBasicS2CProtocolHandler::~CBasicS2CProtocolHandler()

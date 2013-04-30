@@ -132,7 +132,6 @@ bool	CP2PClient::CreateP2PHost( const int port )
 	{
 		m_pP2pHost = new CServerBasic(GetProcessType());
 		AddChild(m_pP2pHost);
-		//m_pP2pHost->SetParent(this);
 		m_pP2pHost->EventConnect( this, EVT_LISTEN, NetEventHandler(CP2PClient::OnListen) );
 		m_pP2pHost->EventConnect( this, EVT_DISCONNECT, NetEventHandler(CP2PClient::OnDisconnect) );
 		m_pP2pHost->EventConnect( this, EVT_CLIENT_JOIN, NetEventHandler(CP2PClient::OnClientJoin) );
@@ -161,7 +160,6 @@ bool	CP2PClient::CreateP2PClient( const std::string &ip, const int port )
 	{
 		m_pP2pClient = new CCoreClient(GetProcessType());
 		AddChild(m_pP2pClient);
-		//m_pP2pClient->SetParent(this);
 		m_pP2pClient->EventConnect( this, EVT_CONNECT, NetEventHandler(CP2PClient::OnConnect) );
 		m_pP2pClient->EventConnect( this, EVT_DISCONNECT, NetEventHandler(CP2PClient::OnDisconnect) );
 
@@ -234,6 +232,10 @@ void	CP2PClient::Close()
  */
 void	CP2PClient::OnListen(CNetEvent &event)
 {
+	if (this == event.GetEventObject())
+		return;
+
+	event.Skip();
 	SearchEventTable( CNetEvent(EVT_CONNECT, this));
 }
 
@@ -243,6 +245,10 @@ void	CP2PClient::OnListen(CNetEvent &event)
  */
 void	CP2PClient::OnConnect(CNetEvent &event)
 {
+	if (this == event.GetEventObject())
+		return;
+
+	event.Skip();
 	SearchEventTable( CNetEvent(EVT_CONNECT, this));
 }
 
@@ -252,6 +258,10 @@ void	CP2PClient::OnConnect(CNetEvent &event)
  */
 void	CP2PClient::OnDisconnect(CNetEvent &event)
 {
+	if (this == event.GetEventObject())
+		return;
+
+	event.Skip();
 	SearchEventTable( CNetEvent(EVT_DISCONNECT, this));
 }
 
@@ -261,6 +271,11 @@ void	CP2PClient::OnDisconnect(CNetEvent &event)
  */
 void	CP2PClient::OnClientJoin(CNetEvent &event)
 {
+	if (this == event.GetEventObject())
+		return;
+
+	event.Skip();
+
 	if (m_State == P2P_HOST)
 		SendAll( P2PMemberJoin(event.GetNetId()) );
 
@@ -273,6 +288,11 @@ void	CP2PClient::OnClientJoin(CNetEvent &event)
  */
 void	CP2PClient::OnClientLeave(CNetEvent &event)
 {
+	if (this == event.GetEventObject())
+		return;
+
+	event.Skip();
+
 	if (m_State == P2P_HOST)
 		SendAll( P2PMemberLeave(event.GetNetId()) );
 

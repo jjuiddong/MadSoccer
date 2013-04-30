@@ -26,9 +26,9 @@ CMultiPlug::CMultiPlug( SERVICE_TYPE type, const std::string &svrType,
 	if (SERVER == type)
 	{
 		m_pServer = new CServerBasic( SERVICE_SEPERATE_THREAD );
-		NETEVENT_CONNECT_TO( m_pServer, this, EVT_LISTEN, CMultiPlug, CMultiPlug::OnConnect );
-		NETEVENT_CONNECT_TO( m_pServer, this, EVT_CONNECT, CMultiPlug, CMultiPlug::OnConnect );
-		NETEVENT_CONNECT_TO( m_pServer, this, EVT_DISCONNECT, CMultiPlug, CMultiPlug::OnDisconnect );
+		NETEVENT_CONNECT( EVT_LISTEN, CMultiPlug, CMultiPlug::OnConnect );
+		NETEVENT_CONNECT( EVT_CONNECT, CMultiPlug, CMultiPlug::OnConnect );
+		NETEVENT_CONNECT( EVT_DISCONNECT, CMultiPlug, CMultiPlug::OnDisconnect );
 		AddChild(m_pServer);
 	}
 	
@@ -109,13 +109,13 @@ bool	CMultiPlug::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
 		{
 			if (SERVER_NETID == netId)
 			{
-				SendAll(packet);
+				return SendAll(packet);
 			}
 			else
 			{
 				CoreClientPtr pClient = GetClientFromServerNetId(netId);
 				if (pClient)
-					pClient->Send(netId, flag, packet);
+					return pClient->Send(netId, flag, packet);
 			}
 		}
 		break;
@@ -174,8 +174,8 @@ bool	CMultiPlug::Connect( SERVICE_TYPE type, const std::string &ip, const int po
 			m_Port = port;
 
 			CCoreClient *pClient = new CCoreClient(SERVICE_SEPERATE_THREAD);
-			NETEVENT_CONNECT_TO( pClient, this, EVT_CONNECT, CMultiPlug, CMultiPlug::OnConnect );
-			NETEVENT_CONNECT_TO( pClient, this, EVT_DISCONNECT, CMultiPlug, CMultiPlug::OnDisconnect );
+			NETEVENT_CONNECT( EVT_CONNECT, CMultiPlug, CMultiPlug::OnConnect );
+			NETEVENT_CONNECT( EVT_DISCONNECT, CMultiPlug, CMultiPlug::OnDisconnect );
 			AddChild(pClient);
 
 			//BOOST_FOREACH(auto &protocol, GetProtocolListeners())
@@ -222,8 +222,13 @@ void	CMultiPlug::SetGroupFactory( IGroupFactory *ptr )
  */
 void	CMultiPlug::OnConnect( CNetEvent &event )
 {
-	m_State = RUN;
-	SearchEventTable(CNetEvent(EVT_CONNECT, this));// Event Propagate
+	if (this != event.GetEventObject())
+	{
+		m_State = RUN;
+		//event.SetEventObject(this); // update event object
+		event.Skip();
+		SearchEventTable(CNetEvent(EVT_CONNECT, this));// Event Propagate
+	}
 }
 
 
@@ -232,26 +237,31 @@ void	CMultiPlug::OnConnect( CNetEvent &event )
  */
 void	CMultiPlug::OnDisconnect( CNetEvent &event )
 {
+	if (this == event.GetEventObject())
+		return;
+
 	if (m_ServiceType == SERVER)
 		m_State = END;
+	event.SetEventObject(this); // update event object
+	event.Skip();
 	SearchEventTable(CNetEvent(EVT_DISCONNECT, this)); // Event Propagate
 
 	// disconnect 된 client 제거
 	if (CLIENT == m_ServiceType)
 	{
-		auto it = m_Clients.find(event.GetHandler()->GetNetId());
+		auto it = m_Clients.find(event.GetEventObject()->GetNetId());
 		if (m_Clients.end() == it)
 			return;
 
 		it->second->Stop();
 		RemoveChild(it->second->GetNetId());
 
-		m_Clients.remove( event.GetHandler()->GetNetId() );
+		m_Clients.remove( event.GetEventObject()->GetNetId() );
 		m_Clients.apply_removes();
 
 		// 제거 clients 로 옮겨져서, 나중에 지워진다.
-		m_RemoveClients.insert( CoreClients_::value_type(event.GetHandler()->GetNetId(), 
-			(CCoreClient*)event.GetHandler().Get() ) );
+		m_RemoveClients.insert( CoreClients_::value_type(event.GetEventObject()->GetNetId(), 
+			(CCoreClient*)event.GetEventObject().Get() ) );
 	}
 }
 

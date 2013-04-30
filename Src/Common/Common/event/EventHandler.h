@@ -14,7 +14,6 @@ namespace common
 	class CEventHandler;
 	typedef void (CEventHandler::*EventFunction)(common::CEvent &);
 
-
 	/// Event Handler class
 	class CEventHandler
 	{
@@ -24,6 +23,8 @@ namespace common
 
 		bool EventConnect(CEventHandler *handler, EventType type, EventFunction fn);
 		bool EventDisconnect(CEventHandler *handler, EventType type);
+
+	protected:
 		virtual bool SearchEventTable( CEvent &event );
 
 	private:

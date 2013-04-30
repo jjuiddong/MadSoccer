@@ -49,17 +49,21 @@ namespace network
 		virtual ~CNetEvent() {}
 
 		netid GetNetId() const;
-		PlugPtr GetHandler();
+		void SetNetId(netid netId);
+		PlugPtr GetEventObject();
+		void SetEventObject(PlugPtr ptr);
 
 	private:
 		netid m_netId;
-		PlugPtr m_handler;
+		PlugPtr m_eventObject;
 	};
 
  
 	inline CNetEvent::CNetEvent(EventType type, PlugPtr ptr, netid id) : CEvent(type),
-		m_netId(id), m_handler(ptr) {}
+		m_netId(id), m_eventObject(ptr) {}
 	inline netid CNetEvent::GetNetId() const { return m_netId; }
-	inline PlugPtr CNetEvent::GetHandler() { return m_handler; }
+	inline void CNetEvent::SetNetId(netid netId) { m_netId = netId; }
+	inline PlugPtr CNetEvent::GetEventObject() { return m_eventObject; }
+	inline void CNetEvent::SetEventObject(PlugPtr ptr) { m_eventObject = ptr; }
 
 }

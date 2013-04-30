@@ -51,23 +51,11 @@ void	CLobbyServer::OnConnectMultiPlug()
 	RegisterProtocol(&m_BasicProtocol);
 	AddProtocolListener( this );
 
-	NETEVENT_CONNECT_TO(pLoginSvrController, this, EVT_CONNECT, CLobbyServer, CLobbyServer::OnSubServerConnect);
-	NETEVENT_CONNECT_TO(pCertifySvrController, this, EVT_CONNECT, CLobbyServer, CLobbyServer::OnSubServerConnect);
-
 	NETEVENT_CONNECT( EVT_CLIENT_JOIN, CLobbyServer, CLobbyServer::OnClientJoin );
 	NETEVENT_CONNECT( EVT_CLIENT_LEAVE, CLobbyServer, CLobbyServer::OnClientLeave );
 	EVENT_CONNECT_TO( GetServer(), this, EVT_TIMER, CLobbyServer, CLobbyServer::OnTimer );
 
 	GetServer()->AddTimer(ID_TIMER_REFRESH, REFRESH_TIMER_INTERVAL);
-}
-
-
-/**
- @brief OnSubServerConnect
- */
-void	CLobbyServer::OnSubServerConnect(network::CNetEvent &event)
-{
-
 }
 
 

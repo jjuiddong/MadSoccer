@@ -61,7 +61,6 @@ protected:
 
 	// Event Handler
 	virtual void	OnConnectMultiPlug() override;
-	void				OnSubServerConnect(network::CNetEvent &event);
 	void				OnTimer( network::CEvent &event );
 
 

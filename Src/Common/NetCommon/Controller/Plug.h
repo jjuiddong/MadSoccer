@@ -38,7 +38,7 @@ namespace network
 
 	protected:
 		// EventHandler Overring
-		virtual bool SearchEventTable( common::CEvent &event ) override;
+		virtual bool	SearchEventTable( common::CEvent &event ) override;
 
 	private:
 		PlugPtr						m_pParent;				// CNetConnector ¼ÒÀ¯ÀÚ

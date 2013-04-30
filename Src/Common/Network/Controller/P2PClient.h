@@ -4,6 +4,13 @@ Author:  jjuiddong
 Date:    2/28/2013
 
 P2P 통신을 하는 클래스다.
+
+ 발생시키는 이벤트
+	- EVT_CONNECT
+	- EVT_DISCONNECT
+	- EVT_MEMBER_JOIN
+	- EVT_MEMBER_LEAVE
+
 */
 #pragma once
 

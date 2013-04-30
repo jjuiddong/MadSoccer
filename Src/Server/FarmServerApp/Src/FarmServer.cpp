@@ -34,7 +34,7 @@ void	CFarmServer::OnConnectMultiPlug()
 		assert(0);
 	}
 
-	NETEVENT_CONNECT( EVT_CLIENT_JOIN, CFarmServer, CFarmServer::OnClientJoin );
+	//NETEVENT_CONNECT( EVT_CLIENT_JOIN, CFarmServer, CFarmServer::OnClientJoin );
 
 }
 

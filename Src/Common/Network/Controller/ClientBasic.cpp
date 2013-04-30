@@ -17,7 +17,6 @@ CClientBasic::CClientBasic(PROCESS_TYPE procType) :
 	m_pConnectSvr->EventConnect( this, EVT_CONNECT, NetEventHandler(CClientBasic::OnConnect) );
 	m_pConnectSvr->EventConnect( this, EVT_DISCONNECT, NetEventHandler(CClientBasic::OnDisconnect) );
 	AddChild(m_pConnectSvr);
-	//m_pConnectSvr->SetParent(this);
 
 	m_pP2p = new CP2PClient(SERVICE_CHILD_THREAD);
 	m_pP2p->EventConnect( this, EVT_CONNECT, NetEventHandler(CClientBasic::OnConnect) );
@@ -25,7 +24,6 @@ CClientBasic::CClientBasic(PROCESS_TYPE procType) :
 	m_pP2p->EventConnect( this, EVT_MEMBER_JOIN, NetEventHandler(CClientBasic::OnMemberJoin) );
 	m_pP2p->EventConnect( this, EVT_MEMBER_LEAVE, NetEventHandler(CClientBasic::OnMemberLeave) );
 	AddChild(m_pP2p);
-	//m_pP2p->SetParent(this);
 
 }
 
@@ -193,12 +191,17 @@ bool	CClientBasic::IsP2PHostClient() const
 //------------------------------------------------------------------------
 void	CClientBasic::OnConnect(CNetEvent &event)
 {
-	if (m_pConnectSvr == event.GetHandler())
+	if (this == event.GetEventObject())
+		return;
+
+	if (m_pConnectSvr == event.GetEventObject())
 	{
-		SearchEventTable( CNetEvent(EVT_CONNECT, this) );
+		event.Skip();
+		SearchEventTable( CNetEvent(EVT_CONNECT, this) );		
 	}
-	else if (m_pP2p ==  event.GetHandler())
+	else if (m_pP2p ==  event.GetEventObject())
 	{
+		event.Skip();
 		SearchEventTable( CNetEvent(EVT_P2P_CONNECT, this) );
 	}
 }
@@ -209,12 +212,17 @@ void	CClientBasic::OnConnect(CNetEvent &event)
  */
 void	CClientBasic::OnDisconnect(CNetEvent &event)
 {
-	if (m_pConnectSvr == event.GetHandler())
+	if (this == event.GetEventObject())
+		return;
+
+	if (m_pConnectSvr == event.GetEventObject())
 	{
+		event.Skip();
 		SearchEventTable( CNetEvent(EVT_DISCONNECT, this) );
 	}
-	else if (m_pP2p == event.GetHandler())
+	else if (m_pP2p == event.GetEventObject())
 	{
+		event.Skip();
 		SearchEventTable( CNetEvent(EVT_P2P_DISCONNECT, this) );
 	}
 }
@@ -225,6 +233,10 @@ void	CClientBasic::OnDisconnect(CNetEvent &event)
  */
 void	CClientBasic::OnMemberJoin(CNetEvent &event)
 {
+	if (this == event.GetEventObject())
+		return;
+
+	event.Skip();
 	SearchEventTable( CNetEvent(EVT_MEMBER_JOIN, this, event.GetNetId()) );
 }
 
@@ -234,6 +246,9 @@ void	CClientBasic::OnMemberJoin(CNetEvent &event)
  */
 void	CClientBasic::OnMemberLeave(CNetEvent &event)
 {
+	if (this == event.GetEventObject())
+		return;
+
+	event.Skip();
 	SearchEventTable( CNetEvent(EVT_MEMBER_LEAVE, this, event.GetNetId()) );
 }
-

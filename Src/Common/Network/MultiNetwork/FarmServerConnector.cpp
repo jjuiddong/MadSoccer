@@ -136,7 +136,6 @@ bool	CFarmServerConnector::CreateSubController( SERVICE_TYPE serviceType, bool I
 
 	NETEVENT_CONNECT_TO( pctrl, this, EVT_CONNECT, CFarmServerConnector, CFarmServerConnector::OnConnectLink );
 	NETEVENT_CONNECT_TO( pctrl, this, EVT_DISCONNECT, CFarmServerConnector, CFarmServerConnector::OnDisconnectLink );
-
 	return true;
 }
 
@@ -184,7 +183,7 @@ void CFarmServerConnector::OnConnect(CNetEvent &event)
  */
 void CFarmServerConnector::OnConnectLink(CNetEvent &event)
 {
-	CMultiPlug *pctrl = dynamic_cast<CMultiPlug*>(event.GetHandler().Get());
+	CMultiPlug *pctrl = dynamic_cast<CMultiPlug*>(event.GetEventObject().Get());
 	if (!pctrl)
 		return;
 

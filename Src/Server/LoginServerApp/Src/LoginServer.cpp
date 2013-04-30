@@ -63,8 +63,8 @@ void	CLoginServer::OnConnectMultiPlug()
 	//pLobbySvrController->AddProtocolListener(this);
 	//pCertifySvrController->AddProtocolListener(this);
 
-	NETEVENT_CONNECT_TO(pLobbySvrController, this, EVT_CONNECT, CLoginServer, CLoginServer::OnSubServerConnect);
-	NETEVENT_CONNECT_TO(pCertifySvrController, this, EVT_CONNECT, CLoginServer, CLoginServer::OnSubServerConnect);
+	NETEVENT_CONNECT(EVT_CONNECT, CLoginServer, CLoginServer::OnSubServerConnect);
+	NETEVENT_CONNECT(EVT_CONNECT, CLoginServer, CLoginServer::OnSubServerConnect);
 
 }
 
