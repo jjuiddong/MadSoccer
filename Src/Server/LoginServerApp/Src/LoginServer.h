@@ -32,7 +32,7 @@ public:
 
 protected:
 	// Network Event
-	virtual void	OnConnectNetGroupController() override;
+	virtual void	OnConnectMultiPlug() override;
 	void				OnSubServerConnect(network::CNetEvent &event);
 
 	// Network Protocol Handler

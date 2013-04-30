@@ -25,11 +25,11 @@ CSubServerConnector::~CSubServerConnector()
 /**
  @brief OnConnectNetGroupController
  */
-void	CSubServerConnector::OnConnectNetGroupController()
+void	CSubServerConnector::OnConnectMultiPlug()
 {
-	multinetwork::CMultiPlugDelegation::OnConnectNetGroupController();
+	multinetwork::CMultiPlugDelegation::OnConnectMultiPlug();
 	AddProtocolListener( this );
-	GetConnector()->SetSessionFactory( new CRemoteServerFactory() );
+	GetMultiPlug()->SetSessionFactory( new CRemoteServerFactory() );
 }
 
 
@@ -65,7 +65,7 @@ bool CSubServerConnector::SendServerInfo(IProtocolDispatcher &dispatcher, netid 
 std::list<SSubServerInfo> CSubServerConnector::GetSubServerInfo()
 {
 	std::list<SSubServerInfo> servers;
-	NetGroupControllerPtr pCtrl = GetConnector();
+	MultiPlugPtr pCtrl = GetMultiPlug();
 	RETV(!pCtrl, servers);
 
 	if (SERVER == pCtrl->GetServiceType()) // server

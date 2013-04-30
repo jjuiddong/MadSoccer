@@ -24,7 +24,7 @@ namespace common
 
 		bool EventConnect(CEventHandler *handler, EventType type, EventFunction fn);
 		bool EventDisconnect(CEventHandler *handler, EventType type);
-		bool SearchEventTable( CEvent &event );
+		virtual bool SearchEventTable( CEvent &event );
 
 	private:
 		struct SEventEntry

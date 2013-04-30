@@ -131,7 +131,8 @@ bool	CP2PClient::CreateP2PHost( const int port )
 	else
 	{
 		m_pP2pHost = new CServerBasic(GetProcessType());
-		m_pP2pHost->SetParent(this);
+		AddChild(m_pP2pHost);
+		//m_pP2pHost->SetParent(this);
 		m_pP2pHost->EventConnect( this, EVT_LISTEN, NetEventHandler(CP2PClient::OnListen) );
 		m_pP2pHost->EventConnect( this, EVT_DISCONNECT, NetEventHandler(CP2PClient::OnDisconnect) );
 		m_pP2pHost->EventConnect( this, EVT_CLIENT_JOIN, NetEventHandler(CP2PClient::OnClientJoin) );
@@ -159,7 +160,8 @@ bool	CP2PClient::CreateP2PClient( const std::string &ip, const int port )
 	else
 	{
 		m_pP2pClient = new CCoreClient(GetProcessType());
-		m_pP2pClient->SetParent(this);
+		AddChild(m_pP2pClient);
+		//m_pP2pClient->SetParent(this);
 		m_pP2pClient->EventConnect( this, EVT_CONNECT, NetEventHandler(CP2PClient::OnConnect) );
 		m_pP2pClient->EventConnect( this, EVT_DISCONNECT, NetEventHandler(CP2PClient::OnDisconnect) );
 
@@ -200,31 +202,31 @@ void	CP2PClient::Close()
 //------------------------------------------------------------------------
 // p2pHost/Client 두 객체에게 Protocol Listener을 등록한다.
 //------------------------------------------------------------------------
-bool	CP2PClient::AddProtocolListener(ProtocolListenerPtr pListener)
-{
-	if (!CPlug::AddProtocolListener(pListener))
-		return false;
-	if (m_pP2pClient)
-		m_pP2pClient->AddProtocolListener(pListener);
-	if (m_pP2pHost)
-		m_pP2pHost->AddProtocolListener(pListener);
-	return true;
-}
+//bool	CP2PClient::AddProtocolListener(ProtocolListenerPtr pListener)
+//{
+//	if (!CPlug::AddProtocolListener(pListener))
+//		return false;
+//	if (m_pP2pClient)
+//		m_pP2pClient->AddProtocolListener(pListener);
+//	if (m_pP2pHost)
+//		m_pP2pHost->AddProtocolListener(pListener);
+//	return true;
+//}
 
 
 //------------------------------------------------------------------------
 // p2pHost/Client 두 객체에게 적용한다.
 //------------------------------------------------------------------------
-bool	CP2PClient::RemoveProtocolListener(ProtocolListenerPtr pListener)
-{
-	if (!CPlug::RemoveProtocolListener(pListener))
-		return false;
-	if (m_pP2pClient)
-		m_pP2pClient->RemoveProtocolListener(pListener);
-	if (m_pP2pHost)
-		m_pP2pHost->RemoveProtocolListener(pListener);
-	return true;
-}
+//bool	CP2PClient::RemoveProtocolListener(ProtocolListenerPtr pListener)
+//{
+//	if (!CPlug::RemoveProtocolListener(pListener))
+//		return false;
+//	if (m_pP2pClient)
+//		m_pP2pClient->RemoveProtocolListener(pListener);
+//	if (m_pP2pHost)
+//		m_pP2pHost->RemoveProtocolListener(pListener);
+//	return true;
+//}
 
 
 /**

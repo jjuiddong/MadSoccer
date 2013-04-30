@@ -32,22 +32,22 @@ namespace network { namespace multinetwork {
 
 		bool		AddController( CMultiPlug *ptr );
 		bool		RemoveController( const std::string &linkSvrType );
-		NetGroupControllerPtr GetController( const std::string &linkSvrType );
+		MultiPlugPtr GetController( const std::string &linkSvrType );
 
 		bool		AddDelegation( const std::string &linkSvrType, CMultiPlugDelegation *ptr);
 		bool		RemoveDelegation( const std::string &linkSvrType );
-		bool		ConnectDelegation( const std::string &linkSvrType, NetGroupDelegationPtr ptr);
-		NetGroupDelegationPtr GetDelegation( const std::string &linkSvrType );
+		bool		ConnectDelegation( const std::string &linkSvrType, MultiPlugDelegationPtr ptr);
+		MultiPlugDelegationPtr GetDelegation( const std::string &linkSvrType );
 
 		virtual bool	Send(netid netId, const SEND_FLAG flag, const CPacket &packet) override;
 		virtual bool	SendAll(const CPacket &packet) override;
 
 	protected:
-		NetGroupControllerPtr	GetControllerFromNetId( netid netId );
+		MultiPlugPtr	GetControllerFromNetId( netid netId );
 		void		Cleanup();
 
 	private:
-		typedef common::VectorMap<std::string, NetGroupControllerPtr> Controllers;
+		typedef common::VectorMap<std::string, MultiPlugPtr> Controllers;
 		typedef common::VectorMap<std::string, CMultiPlugDelegation*> Delegations;
 
 		SSvrConfigData m_Config;

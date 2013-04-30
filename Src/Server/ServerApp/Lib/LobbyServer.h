@@ -60,7 +60,7 @@ protected:
 	void			SendUsers(netid userId);
 
 	// Event Handler
-	virtual void	OnConnectNetGroupController() override;
+	virtual void	OnConnectMultiPlug() override;
 	void				OnSubServerConnect(network::CNetEvent &event);
 	void				OnTimer( network::CEvent &event );
 

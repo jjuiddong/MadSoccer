@@ -22,7 +22,7 @@ CFarmServerConnector::CFarmServerConnector(const std::string &svrType, const SSv
 /**
 @brief OnConnectNetGroupController
 */
-void	CFarmServerConnector::OnConnectNetGroupController()
+void	CFarmServerConnector::OnConnectMultiPlug()
 {
 	NETEVENT_CONNECT(EVT_CONNECT, CFarmServerConnector, CFarmServerConnector::OnConnect );
 	AddProtocolListener(this);
@@ -35,10 +35,10 @@ void	CFarmServerConnector::OnConnectNetGroupController()
  */
 bool CFarmServerConnector::Start( const std::string &ip, const int port )
 {
-	if (!GetConnector())
+	if (!GetMultiPlug())
 		return false;
 
-	GetConnector()->Start(ip, port);
+	GetMultiPlug()->Start(ip, port);
 	return true;
 }
 
@@ -122,7 +122,7 @@ bool	CFarmServerConnector::CreateSubController( SERVICE_TYPE serviceType, bool I
 	if (connectSubSvrType == bindSubSvrType)
 		return false;
 
-	NetGroupControllerPtr ptr = CMultiNetwork::Get()->GetController(bindSubSvrType);
+	MultiPlugPtr ptr = CMultiNetwork::Get()->GetController(bindSubSvrType);
 	if (ptr)
 		return true;
 
@@ -147,7 +147,7 @@ bool	CFarmServerConnector::CreateSubController( SERVICE_TYPE serviceType, bool I
 void	CFarmServerConnector::ConnectSubController( SERVICE_TYPE serviceType, bool IsInnerBind,
 	const std::string &connectSubSvrType, const std::string &bindSubSvrType )
 {
-	NetGroupControllerPtr ptr = CMultiNetwork::Get()->GetController(bindSubSvrType);
+	MultiPlugPtr ptr = CMultiNetwork::Get()->GetController(bindSubSvrType);
 	if (!ptr)
 		return;
 
@@ -305,7 +305,7 @@ bool CFarmServerConnector::AckServerInfoList(IProtocolDispatcher &dispatcher, ne
 	}
 
 	// Connect Client
-	NetGroupControllerPtr ptr = CMultiNetwork::Get()->GetController(serverSvrType);
+	MultiPlugPtr ptr = CMultiNetwork::Get()->GetController(serverSvrType);
 	if (!ptr)
 	{
 		clog::Error( clog::ERROR_CRITICAL, 
@@ -337,7 +337,7 @@ bool CFarmServerConnector::AckToBindOuterPort(IProtocolDispatcher &dispatcher, n
 		return false;
 	}
 
-	NetGroupControllerPtr ptr = CMultiNetwork::Get()->GetController(bindSubServerSvrType);
+	MultiPlugPtr ptr = CMultiNetwork::Get()->GetController(bindSubServerSvrType);
 	if (!ptr)
 	{
 		clog::Error( clog::ERROR_CRITICAL, 
@@ -370,7 +370,7 @@ bool CFarmServerConnector::AckToBindInnerPort(IProtocolDispatcher &dispatcher, n
 		return false;
 	}
 
-	NetGroupControllerPtr ptr = CMultiNetwork::Get()->GetController(bindSubServerSvrType);
+	MultiPlugPtr ptr = CMultiNetwork::Get()->GetController(bindSubServerSvrType);
 	if (!ptr)
 	{
 		clog::Error( clog::ERROR_CRITICAL, 
@@ -417,7 +417,7 @@ bool CFarmServerConnector::AckSubClientConnectComplete(IProtocolDispatcher &disp
 bool CFarmServerConnector::BindSubServer(IProtocolDispatcher &dispatcher, netid senderId, const std::string &bindSubSvrType, 
 	const std::string &ip, const int &port)
 {
-	NetGroupControllerPtr ptr = CMultiNetwork::Get()->GetController(bindSubSvrType);	
+	MultiPlugPtr ptr = CMultiNetwork::Get()->GetController(bindSubSvrType);	
 	if (!ptr)
 	{
 		clog::Error( clog::ERROR_CRITICAL, "BindSubServer Error!! not found bindSubSvr : %s", bindSubSvrType.c_str() );

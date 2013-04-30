@@ -92,7 +92,7 @@ bool network::StopClient(ClientBasicPtr pClt)
 /**
  @brief Connect Delegation to multinetwork 
  */
-bool	network::ConnectDelegation( const std::string &linkSvrType, NetGroupDelegationPtr ptr)
+bool	network::ConnectDelegation( const std::string &linkSvrType, MultiPlugDelegationPtr ptr)
 {
 	return multinetwork::CMultiNetwork::Get()->ConnectDelegation( linkSvrType, ptr );
 }

@@ -23,17 +23,17 @@ CLobbyServer::~CLobbyServer()
 /**
  @brief OnConnectNetGroupController
  */
-void	CLobbyServer::OnConnectNetGroupController()
+void	CLobbyServer::OnConnectMultiPlug()
 {
-	CServer::OnConnectNetGroupController();
+	CServer::OnConnectMultiPlug();
 
-	NetGroupControllerPtr pLoginSvrController = multinetwork::CMultiNetwork::Get()->GetController("loginsvr");
+	MultiPlugPtr pLoginSvrController = multinetwork::CMultiNetwork::Get()->GetController("loginsvr");
 	if (!pLoginSvrController)
 	{
 		clog::Error( clog::ERROR_CRITICAL, "CLobbyServer Init Error!! not found lobbysvr netgroupcontroller" );
 		return;
 	}
-	NetGroupControllerPtr pCertifySvrController = multinetwork::CMultiNetwork::Get()->GetController("certifysvr");
+	MultiPlugPtr pCertifySvrController = multinetwork::CMultiNetwork::Get()->GetController("certifysvr");
 	if (!pCertifySvrController)
 	{
 		clog::Error( clog::ERROR_CRITICAL, "CLobbyServer Init Error!! not found certify netgroupcontroller" );

@@ -24,7 +24,7 @@ public:
 
 private:
 	// Event Handling
-	virtual void	OnConnectNetGroupController() override;
+	virtual void	OnConnectMultiPlug() override;
 
 	// Network Packet Handling
 	virtual bool ReqSubServerLogin(network::IProtocolDispatcher &dispatcher, netid senderId, const std::string &svrType) override;

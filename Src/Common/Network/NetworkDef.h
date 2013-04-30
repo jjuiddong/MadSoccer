@@ -78,8 +78,8 @@ namespace network { namespace multinetwork {
 	class CMultiPlugDelegation;
 }}
 
-typedef common::ReferencePtr<network::multinetwork::CMultiPlug> NetGroupControllerPtr;
-typedef common::ReferencePtr<network::multinetwork::CMultiPlugDelegation> NetGroupDelegationPtr;
+typedef common::ReferencePtr<network::multinetwork::CMultiPlug> MultiPlugPtr;
+typedef common::ReferencePtr<network::multinetwork::CMultiPlugDelegation> MultiPlugDelegationPtr;
 
 
 #include "Controller/CoreClient.h"

@@ -20,12 +20,12 @@ CFarmServer::~CFarmServer()
 /**
  @brief NetGroupController 와 연결되면 호출된다.
  */
-void	CFarmServer::OnConnectNetGroupController()
+void	CFarmServer::OnConnectMultiPlug()
 {
 	RegisterProtocol( &m_Protocol );
 	AddProtocolListener(this);
-	GetConnector()->SetSessionFactory( new CRemoteSubServerFactory() );
-	GetConnector()->SetGroupFactory( new CSubServerGroupFactory() );
+	GetMultiPlug()->SetSessionFactory( new CRemoteSubServerFactory() );
+	GetMultiPlug()->SetGroupFactory( new CSubServerGroupFactory() );
 
 	m_pServer = GetServer();
 

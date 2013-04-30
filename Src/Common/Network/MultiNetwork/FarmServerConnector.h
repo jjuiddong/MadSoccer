@@ -38,7 +38,7 @@ namespace network { namespace multinetwork {
 			const std::string &connectSubSvrType, const std::string &bindSubSvrType );
 
 		// Event Handling
-		virtual void	OnConnectNetGroupController() override;
+		virtual void	OnConnectMultiPlug() override;
 
 		// network event handler
 		void OnConnect(CNetEvent &event);

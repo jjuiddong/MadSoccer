@@ -34,8 +34,8 @@ namespace network
 		CoreClientPtr	GetConnectSvrClient() const;
 
 		// Overriding
-		virtual bool		AddProtocolListener(ProtocolListenerPtr pListener) override;
-		virtual bool		RemoveProtocolListener(ProtocolListenerPtr pListener) override;
+		//virtual bool		AddProtocolListener(ProtocolListenerPtr pListener) override;
+		//virtual bool		RemoveProtocolListener(ProtocolListenerPtr pListener) override;
 		virtual bool		Send(netid netId, const SEND_FLAG flag, const CPacket &packet) override;
 		virtual bool		SendP2P(const CPacket &packet);
 		virtual bool		SendAll(const CPacket &packet) override;

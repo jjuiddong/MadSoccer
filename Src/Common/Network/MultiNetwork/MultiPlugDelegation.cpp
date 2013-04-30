@@ -7,7 +7,8 @@ using namespace network;
 using namespace network::multinetwork;
 
 
-CMultiPlugDelegation::CMultiPlugDelegation()
+CMultiPlugDelegation::CMultiPlugDelegation() :
+	CPlug(SERVICE_SEPERATE_THREAD)
 	//m_SvrType(linkSvrType)
 {
 }
@@ -16,17 +17,21 @@ CMultiPlugDelegation::~CMultiPlugDelegation()
 {
 }
 
-void	 CMultiPlugDelegation::SetConnector(NetGroupControllerPtr ptr) 
+void	 CMultiPlugDelegation::SetMultiPlug(MultiPlugPtr ptr) 
 { 
-	CPlug *p = dynamic_cast<CPlug*>(ptr.Get());
-	SetPlug( p); 
-	if (p)
-		OnConnectNetGroupController(); /// Call Event Handler
+	m_pMultiPlug = ptr;
+	//CPlug *p = dynamic_cast<CPlug*>(ptr.Get());
+	//CPlugLinker::SetPlug( p); 
+	//if (p)
+	if (ptr)
+		OnConnectMultiPlug(); /// Call Event Handler
 }
 
-NetGroupControllerPtr CMultiPlugDelegation::GetConnector() const 
+MultiPlugPtr CMultiPlugDelegation::GetMultiPlug() const 
 { 
-	return GetPlug(); 
+	//RETV(!GetPlug(), NULL);
+	//return dynamic_cast<CMultiPlug*>(GetPlug().Get()); 
+	return m_pMultiPlug;
 }
 
 
@@ -35,8 +40,8 @@ NetGroupControllerPtr CMultiPlugDelegation::GetConnector() const
  */
 CServerBasic* CMultiPlugDelegation::GetServer()
 {
-	RETV(!GetConnector(), NULL);
-	return GetConnector()->GetServer();
+	RETV(!GetMultiPlug(), NULL);
+	return GetMultiPlug()->GetServer();
 }
 
 
@@ -46,8 +51,8 @@ CServerBasic* CMultiPlugDelegation::GetServer()
 const CoreClients_V& CMultiPlugDelegation::GetClients()
 {
 	static CoreClients_V v;
-	RETV(!GetConnector(), v);
-	return GetConnector()->GetClients();
+	RETV(!GetMultiPlug(), v);
+	return GetMultiPlug()->GetClients();
 }
 
 
@@ -56,8 +61,8 @@ const CoreClients_V& CMultiPlugDelegation::GetClients()
  */
 CoreClientPtr CMultiPlugDelegation::GetClient(netid netId)
 {
-	RETV(!GetConnector(), NULL);	
-	return GetConnector()->GetClient(netId);
+	RETV(!GetMultiPlug(), NULL);	
+	return GetMultiPlug()->GetClient(netId);
 }
 
 
@@ -66,7 +71,27 @@ CoreClientPtr CMultiPlugDelegation::GetClient(netid netId)
  */
 CoreClientPtr CMultiPlugDelegation::GetClientFromServerNetId(netid serverNetId)
 {
-	RETV(!GetConnector(), NULL);	
-	return GetConnector()->GetClientFromServerNetId(serverNetId);
+	RETV(!GetMultiPlug(), NULL);	
+	return GetMultiPlug()->GetClientFromServerNetId(serverNetId);
+}
+
+
+/**
+ @brief 
+ */
+bool	CMultiPlugDelegation::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
+{
+	RETV(!m_pMultiPlug, false);
+	return m_pMultiPlug->Send(netId, flag, packet);
+}
+
+
+/**
+ @brief 
+ */
+bool	CMultiPlugDelegation::SendAll(const CPacket &packet)
+{
+	RETV(!m_pMultiPlug, false);
+	return m_pMultiPlug->SendAll(packet);
 }
 

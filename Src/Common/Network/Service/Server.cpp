@@ -26,7 +26,7 @@ CServer::~CServer()
 /**
  @brief 
  */
-void	CServer::OnConnectNetGroupController()
+void	CServer::OnConnectMultiPlug()
 {
 	m_pBasicProtocol = new basic::s2c_Protocol();
 	RegisterProtocol(m_pBasicProtocol);

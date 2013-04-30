@@ -28,7 +28,7 @@ namespace common { namespace log {
 											/// print output window
 	};
 
-	enum LOG_LEVEL {
+	enum LOG_TYPE {
 		LOG_FILE,
 		LOG_OUTPUTWINDOW,
 		LOG_FILE_N_OUTPUTWINDOW,
@@ -37,17 +37,37 @@ namespace common { namespace log {
 		LOG_F_N_O = LOG_FILE_N_OUTPUTWINDOW,
 	};
 
+	enum LOG_LEVEL {
+		LOG_PACKET=100,
+		LOG_EVENT,
+		LOG_MESSAGE,
+
+	};
+
 	/// log print
-	void Log( LOG_LEVEL level, const std::string &str );
+	void Log( LOG_TYPE level, const std::string &str );
 	
 	/// log print
-	void Log( LOG_LEVEL level, const char* fmt, ...);
+	void Log( LOG_TYPE level, const char* fmt, ...);
+
+	/// log print
+	void Log( LOG_TYPE type, LOG_LEVEL level, int subLevel, const char* fmt, ...);
+
+	/// log print
+	void Log( LOG_TYPE type, LOG_LEVEL level, int subLevel, const std::string &str );
+
 
 	/// error print
 	void Error( ERROR_LEVEL level, const std::string &str );
 
 	/// error print
 	void Error( ERROR_LEVEL level, const char* fmt, ... );
+
+	/// error print
+	void Error( ERROR_LEVEL level, int subLevel, const char* fmt, ... );
+
+	/// error print
+	void Error( ERROR_LEVEL level, int subLevel, const std::string &str );
 
 
 	/// write message to "Log.log" fie

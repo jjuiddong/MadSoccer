@@ -81,9 +81,9 @@ void	CMultiNetwork::Cleanup()
 
 
 /**
- @brief 
+ @brief ConnectDelegation
  */
-bool	CMultiNetwork::ConnectDelegation( const std::string &linkSvrType, NetGroupDelegationPtr ptr)
+bool	CMultiNetwork::ConnectDelegation( const std::string &linkSvrType, MultiPlugDelegationPtr ptr)
 {
 	RETV(!ptr, false);
 
@@ -91,10 +91,10 @@ bool	CMultiNetwork::ConnectDelegation( const std::string &linkSvrType, NetGroupD
 	if (m_Controllers.end() == it)
 		return false; // not exist
 
-	ptr->SetConnector( it->second );
+	ptr->AddChild( it->second );
+	ptr->SetMultiPlug( it->second );
 	return true;
 }
-
 
 
 /**
@@ -104,7 +104,7 @@ bool	CMultiNetwork::Start()
 {
 	if ("farmsvr" == m_Config.svrType)
 	{
-		NetGroupControllerPtr ptr  = GetController("client");
+		MultiPlugPtr ptr  = GetController("client");
 		if (!ptr) return false;
 		ptr->Start("localhost", m_Config.port);
 	}
@@ -112,8 +112,7 @@ bool	CMultiNetwork::Start()
 	{
 		if (m_pFarmSvrConnector)
 			m_pFarmSvrConnector->Start( m_Config.parentSvrIp, m_Config.parentSvrPort );
-	}	
-
+	}
 	return true;
 }
 
@@ -171,7 +170,7 @@ bool	CMultiNetwork::RemoveController( const std::string &linkSvrType )
 /**
  @brief Get NetGroupController Object
  */
-NetGroupControllerPtr CMultiNetwork::GetController( const std::string &linkSvrType )
+MultiPlugPtr CMultiNetwork::GetController( const std::string &linkSvrType )
 {
 	auto it = m_Controllers.find( linkSvrType );
 	if (m_Controllers.end() == it)
@@ -216,7 +215,7 @@ bool	CMultiNetwork::RemoveDelegation( const std::string &linkSvrType )
 /**
  @brief GetDelegation
  */
-NetGroupDelegationPtr CMultiNetwork::GetDelegation( const std::string &linkSvrType )
+MultiPlugDelegationPtr CMultiNetwork::GetDelegation( const std::string &linkSvrType )
 {
 	auto it = m_Delegations.find( linkSvrType );
 	if (m_Delegations.end() == it)
@@ -230,7 +229,7 @@ NetGroupDelegationPtr CMultiNetwork::GetDelegation( const std::string &linkSvrTy
  */
 bool	CMultiNetwork::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
 {
-	NetGroupControllerPtr ptr = GetControllerFromNetId(netId);
+	MultiPlugPtr ptr = GetControllerFromNetId(netId);
 	RETV(!ptr, false);
 	ptr->Send(netId, flag, packet);
 	return true;
@@ -254,7 +253,7 @@ bool	CMultiNetwork::SendAll(const CPacket &packet)
 /**
  @brief 
  */
-NetGroupControllerPtr	CMultiNetwork::GetControllerFromNetId( netid netId )
+MultiPlugPtr	CMultiNetwork::GetControllerFromNetId( netid netId )
 {
 	BOOST_FOREACH( auto ctrl, m_Controllers.m_Seq)
 	{

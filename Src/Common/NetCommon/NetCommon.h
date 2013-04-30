@@ -115,6 +115,10 @@ typedef PacketList::iterator PacketItor;
 typedef PacketList::const_iterator PacketCItor;
 
 typedef common::ReferencePtr<network::CPlug> PlugPtr;
+typedef common::StableVectorMap<netid, PlugPtr> Plugs;
+typedef Plugs::VectorType PlugsV;
+typedef common::StableVectorMap<netid, network::CPlug*> Plugs_;
+typedef Plugs_::VectorType Plugs_V;
 
 typedef common::VectorMap<netid,network::CRemoteClient*> RemoteClients;
 typedef RemoteClients::iterator RemoteClientItor;

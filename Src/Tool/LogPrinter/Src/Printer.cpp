@@ -105,6 +105,10 @@ int CPrinter::ParseLogType(const string &msg)
 	if (string::npos != problem_pos)
 		return 1;
 
+	const int error_pos = msg.find( "Error" );
+	if (string::npos != error_pos)
+		return 1;
+
 	const int pos1 = msg.find( "{" );
 	const int pos2 = msg.find( "}" );
 	if ((string::npos == pos1) || (string::npos == pos2))

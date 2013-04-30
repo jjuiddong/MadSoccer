@@ -24,7 +24,7 @@ namespace network
 
 	protected:
 		// Event
-		virtual void	OnConnectNetGroupController() override;
+		virtual void	OnConnectMultiPlug() override;
 
 		/// Network Protocol Handler
 		virtual bool SendServerInfo(IProtocolDispatcher &dispatcher, netid senderId, const std::string &svrType, const std::string &ip, const int &port, const int &userCount) override;

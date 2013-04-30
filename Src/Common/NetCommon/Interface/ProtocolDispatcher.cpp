@@ -17,5 +17,5 @@ void IProtocolDispatcher::PrintThisPacket(int logType/*common::log::LOG_LEVEL*/,
 	sProtocol *protocol = protocols::GetProtocol(packetID);
 	std::stringstream ss;
 	ss << msg << network::Packet2String(*m_pCurrentDispatchPacket, protocol);
-	common::log::Log( (common::log::LOG_LEVEL)logType, ss.str() );
+	common::log::Log( (common::log::LOG_TYPE)logType, ss.str() );
 }

@@ -29,7 +29,7 @@ namespace network
 		virtual ~CPlugLinker() { }
 
 		void				SetPlug( PlugPtr ptr );
-		PlugPtr GetPlug() const;
+		PlugPtr			GetPlug() const;
 		bool				RegisterProtocol(ProtocolPtr protocol);
 		virtual bool	AddProtocolListener(ProtocolListenerPtr pListener);
 		virtual bool	RemoveProtocolListener(ProtocolListenerPtr pListener);

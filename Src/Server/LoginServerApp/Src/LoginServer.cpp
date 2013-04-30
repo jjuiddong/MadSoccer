@@ -31,17 +31,17 @@ CLoginServer::~CLoginServer()
 /**
  @brief OnConnectNetGroupController
  */
-void	CLoginServer::OnConnectNetGroupController()
+void	CLoginServer::OnConnectMultiPlug()
 {
-	CServer::OnConnectNetGroupController();
+	CServer::OnConnectMultiPlug();
 
-	NetGroupControllerPtr pLobbySvrController = multinetwork::CMultiNetwork::Get()->GetController("lobbysvr");
+	MultiPlugPtr pLobbySvrController = multinetwork::CMultiNetwork::Get()->GetController("lobbysvr");
 	if (!pLobbySvrController)
 	{
 		clog::Error( clog::ERROR_CRITICAL, "CLoginServer Init Error!! not found lobbysvr netgroupcontroller" );
 		return;
 	}
-	NetGroupControllerPtr pCertifySvrController = multinetwork::CMultiNetwork::Get()->GetController("certifysvr");
+	MultiPlugPtr pCertifySvrController = multinetwork::CMultiNetwork::Get()->GetController("certifysvr");
 	if (!pCertifySvrController)
 	{
 		clog::Error( clog::ERROR_CRITICAL, "CLoginServer Init Error!! not found certify netgroupcontroller" );
@@ -72,13 +72,13 @@ void	CLoginServer::OnConnectNetGroupController()
  */
 void	CLoginServer::OnSubServerConnect(CNetEvent &event)
 {
-	NetGroupControllerPtr pLobbySvrController = multinetwork::CMultiNetwork::Get()->GetController("lobbysvr");
+	MultiPlugPtr pLobbySvrController = multinetwork::CMultiNetwork::Get()->GetController("lobbysvr");
 	if (!pLobbySvrController)
 	{
 		clog::Error( clog::ERROR_CRITICAL, "OnSubServerConnect Error!! not found lobbysvr netgroupcontroller" );
 		return;
 	}
-	NetGroupControllerPtr pCertifySvrController = multinetwork::CMultiNetwork::Get()->GetController("certifysvr");
+	MultiPlugPtr pCertifySvrController = multinetwork::CMultiNetwork::Get()->GetController("certifysvr");
 	if (!pCertifySvrController)
 	{
 		clog::Error( clog::ERROR_CRITICAL, "OnSubServerConnect Error!! not found certify netgroupcontroller" );
@@ -123,7 +123,7 @@ bool CLoginServer::ReqLobbyIn(IProtocolDispatcher &dispatcher, netid senderId)
 	if (!CheckClientConnection(pClient, &m_BasicProtocol, &dispatcher))
 		return false;
 
-	NetGroupDelegationPtr pLobbySvrDelegation = multinetwork::CMultiNetwork::Get()->GetDelegation("lobbysvr");
+	MultiPlugDelegationPtr pLobbySvrDelegation = multinetwork::CMultiNetwork::Get()->GetDelegation("lobbysvr");
 	if (!pLobbySvrDelegation)
 	{
 		clog::Error( clog::ERROR_CRITICAL, "ReqLobbyIn Error!! not found lobbysvr netgroupdelegation" );

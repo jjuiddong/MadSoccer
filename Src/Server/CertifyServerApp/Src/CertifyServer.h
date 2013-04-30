@@ -23,7 +23,7 @@ public:
 
 protected:
 	// Event Handler
-	virtual void	OnConnectNetGroupController() override;
+	virtual void	OnConnectMultiPlug() override;
 
 	// Network Protocol Handler
 	virtual bool ReqUserId(network::IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, const std::string &passwd) override;

@@ -53,9 +53,8 @@ namespace network { namespace multinetwork {
 		CoreClientPtr GetClientFromServerNetId(netid serverNetId);
 
 		// overriding
-		virtual bool	AddProtocolListener(ProtocolListenerPtr pListener) override;
-		virtual bool	RemoveProtocolListener(ProtocolListenerPtr pListener) override;
-
+		//virtual bool	AddProtocolListener(ProtocolListenerPtr pListener) override;
+		//virtual bool	RemoveProtocolListener(ProtocolListenerPtr pListener) override;
 
 	protected:
 		bool				Connect( SERVICE_TYPE type, const std::string &ip, const int port );
@@ -75,7 +74,7 @@ namespace network { namespace multinetwork {
 		std::string m_Ip;
 		int m_Port;
 
-		CCoreClient *m_pClient;
+		//CCoreClient *m_pClient;
 		CServerBasic *m_pServer;
 		CP2PClient *m_pP2p;
 		CoreClients_ m_Clients;

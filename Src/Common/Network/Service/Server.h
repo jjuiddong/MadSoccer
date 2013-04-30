@@ -24,7 +24,7 @@ namespace network
 
 	protected:
 		// Event Handler
-		virtual void	OnConnectNetGroupController() override; // must call derived class
+		virtual void	OnConnectMultiPlug() override; // must call derived class
 
 		// Network Event Handler
 		void OnClientJoin(CNetEvent &event);

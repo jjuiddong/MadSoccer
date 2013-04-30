@@ -16,13 +16,18 @@ namespace network
 		CPlug(PROCESS_TYPE procType);
 		virtual ~CPlug();
 
+		void				SetParent(PlugPtr parent);
+		PlugPtr			GetParent() const;
+		bool				AddChild( CPlug *pChild );
+		bool				RemoveChild( netid childId );
+		PlugPtr			GetChild( netid childId, bool isFindChildren=false );
+		Plugs_&		GetChildren();
+
 		bool				RegisterProtocol(ProtocolPtr protocol);
-		virtual bool	AddProtocolListener(ProtocolListenerPtr pListener);
-		virtual bool	RemoveProtocolListener(ProtocolListenerPtr pListener);
+		virtual bool	AddProtocolListener(ProtocolListenerPtr pListener, bool isApplyChildren=true);
+		virtual bool	RemoveProtocolListener(ProtocolListenerPtr pListener, bool isApplyChildren=true);
 		const ProtocolListenerList&	GetProtocolListeners() const;
 
-		void				SetParent(PlugPtr parent);
-		PlugPtr GetParent() const;
 		void				SetThreadHandle(HANDLE handle);
 		HANDLE		GetThreadHandle() const;
 		PROCESS_TYPE GetProcessType() const;
@@ -31,11 +36,17 @@ namespace network
 		virtual bool	Send(netid netId, const SEND_FLAG flag, const CPacket &packet) = 0;
 		virtual bool	SendAll(const CPacket &packet) = 0;
 
+	protected:
+		// EventHandler Overring
+		virtual bool SearchEventTable( CEvent &event ) override;
+
 	private:
-		PlugPtr		m_pParent;				// CNetConnector 소유자
+		PlugPtr						m_pParent;				// CNetConnector 소유자
 		ProtocolListenerList m_ProtocolListeners;		
 		HANDLE					m_hThread;				// 소속된 스레드 핸들, 없다면 NULL
 		PROCESS_TYPE		m_ProcessType;
+		Plugs_						m_Children;
+
 	};
 
 
@@ -45,5 +56,6 @@ namespace network
 	inline void	 CPlug::SetThreadHandle(HANDLE handle) { m_hThread = handle; }
 	inline HANDLE CPlug::GetThreadHandle() const { return m_hThread; }
 	inline PROCESS_TYPE CPlug::GetProcessType() const { return m_ProcessType; }
+	inline Plugs_&	CPlug::GetChildren() { return m_Children; }
 
 }

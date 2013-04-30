@@ -21,9 +21,9 @@ CCertifyServer::~CCertifyServer()
 /**
  @brief OnConnectNetGroupController
  */
-void	CCertifyServer::OnConnectNetGroupController()
+void	CCertifyServer::OnConnectMultiPlug()
 {
-	CServer::OnConnectNetGroupController();
+	CServer::OnConnectMultiPlug();
 
 	AddProtocolListener(this);
 	RegisterProtocol( &m_Protocol );

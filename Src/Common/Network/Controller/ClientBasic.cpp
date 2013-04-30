@@ -16,14 +16,16 @@ CClientBasic::CClientBasic(PROCESS_TYPE procType) :
 	m_pConnectSvr = new CCoreClient(SERVICE_CHILD_THREAD);
 	m_pConnectSvr->EventConnect( this, EVT_CONNECT, NetEventHandler(CClientBasic::OnConnect) );
 	m_pConnectSvr->EventConnect( this, EVT_DISCONNECT, NetEventHandler(CClientBasic::OnDisconnect) );
-	m_pConnectSvr->SetParent(this);
+	AddChild(m_pConnectSvr);
+	//m_pConnectSvr->SetParent(this);
 
 	m_pP2p = new CP2PClient(SERVICE_CHILD_THREAD);
 	m_pP2p->EventConnect( this, EVT_CONNECT, NetEventHandler(CClientBasic::OnConnect) );
 	m_pP2p->EventConnect( this, EVT_DISCONNECT, NetEventHandler(CClientBasic::OnDisconnect) );
 	m_pP2p->EventConnect( this, EVT_MEMBER_JOIN, NetEventHandler(CClientBasic::OnMemberJoin) );
 	m_pP2p->EventConnect( this, EVT_MEMBER_LEAVE, NetEventHandler(CClientBasic::OnMemberLeave) );
-	m_pP2p->SetParent(this);
+	AddChild(m_pP2p);
+	//m_pP2p->SetParent(this);
 
 }
 
@@ -101,31 +103,31 @@ void CClientBasic::Clear()
 //------------------------------------------------------------------------
 // P2p와 Server에 접속하는 coreClient에게도 Protocol을 설정한다.
 //------------------------------------------------------------------------
-bool	CClientBasic::AddProtocolListener(ProtocolListenerPtr pListener)
-{
-	if (!CPlug::AddProtocolListener(pListener))
-		return false;
-	if (m_pConnectSvr)
-		m_pConnectSvr->AddProtocolListener(pListener);
-	if (m_pP2p)
-		m_pP2p->AddProtocolListener(pListener);
-	return true;
-}
+//bool	CClientBasic::AddProtocolListener(ProtocolListenerPtr pListener)
+//{
+//	if (!CPlug::AddProtocolListener(pListener))
+//		return false;
+//	if (m_pConnectSvr)
+//		m_pConnectSvr->AddProtocolListener(pListener);
+//	if (m_pP2p)
+//		m_pP2p->AddProtocolListener(pListener);
+//	return true;
+//}
 
 
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-bool	CClientBasic::RemoveProtocolListener(ProtocolListenerPtr pListener)
-{
-	if (!CPlug::RemoveProtocolListener(pListener))
-		return false;
-	if (m_pConnectSvr)
-		m_pConnectSvr->RemoveProtocolListener(pListener);
-	if (m_pP2p)
-		m_pP2p->RemoveProtocolListener(pListener);
-	return true;
-}
+//bool	CClientBasic::RemoveProtocolListener(ProtocolListenerPtr pListener)
+//{
+//	if (!CPlug::RemoveProtocolListener(pListener))
+//		return false;
+//	if (m_pConnectSvr)
+//		m_pConnectSvr->RemoveProtocolListener(pListener);
+//	if (m_pP2p)
+//		m_pP2p->RemoveProtocolListener(pListener);
+//	return true;
+//}
 
 
 /**

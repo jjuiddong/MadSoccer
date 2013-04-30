@@ -17,7 +17,7 @@ CMultiPlug::CMultiPlug( SERVICE_TYPE type, const std::string &svrType,
 ,	m_ServiceType(type)
 ,	m_svrType(svrType)
 ,	m_connectSvrType(connectSvrType)
-,	m_pClient(NULL)
+//,	m_pClient(NULL)
 ,	m_pServer(NULL)
 ,	m_pP2p(NULL)
 ,	m_pSessionFactory(NULL)
@@ -29,13 +29,14 @@ CMultiPlug::CMultiPlug( SERVICE_TYPE type, const std::string &svrType,
 		NETEVENT_CONNECT_TO( m_pServer, this, EVT_LISTEN, CMultiPlug, CMultiPlug::OnConnect );
 		NETEVENT_CONNECT_TO( m_pServer, this, EVT_CONNECT, CMultiPlug, CMultiPlug::OnConnect );
 		NETEVENT_CONNECT_TO( m_pServer, this, EVT_DISCONNECT, CMultiPlug, CMultiPlug::OnDisconnect );
+		AddChild(m_pServer);
 	}
 	
 }
 
 CMultiPlug::~CMultiPlug()
 {
-	SAFE_DELETE(m_pClient);
+	//SAFE_DELETE(m_pClient);
 	SAFE_DELETE(m_pServer);
 	SAFE_DELETE(m_pP2p);
 	SAFE_DELETE(m_pSessionFactory);
@@ -106,9 +107,16 @@ bool	CMultiPlug::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
 	{
 	case CLIENT:
 		{
-			CoreClientPtr pClient = GetClientFromServerNetId(netId);
-			if (pClient)
-				pClient->Send(netId, flag, packet);
+			if (SERVER_NETID == netId)
+			{
+				SendAll(packet);
+			}
+			else
+			{
+				CoreClientPtr pClient = GetClientFromServerNetId(netId);
+				if (pClient)
+					pClient->Send(netId, flag, packet);
+			}
 		}
 		break;
 	case SERVER:
@@ -168,10 +176,12 @@ bool	CMultiPlug::Connect( SERVICE_TYPE type, const std::string &ip, const int po
 			CCoreClient *pClient = new CCoreClient(SERVICE_SEPERATE_THREAD);
 			NETEVENT_CONNECT_TO( pClient, this, EVT_CONNECT, CMultiPlug, CMultiPlug::OnConnect );
 			NETEVENT_CONNECT_TO( pClient, this, EVT_DISCONNECT, CMultiPlug, CMultiPlug::OnDisconnect );
-			BOOST_FOREACH(auto &protocol, GetProtocolListeners())
-			{
-				pClient->AddProtocolListener(protocol);
-			}
+			AddChild(pClient);
+
+			//BOOST_FOREACH(auto &protocol, GetProtocolListeners())
+			//{
+			//	pClient->AddProtocolListener(protocol);
+			//}
 			m_Clients.insert( CoreClients_::value_type(pClient->GetNetId(), pClient) );
 
 			CNetController::Get()->StartCoreClient(ip, port, pClient);
@@ -234,6 +244,8 @@ void	CMultiPlug::OnDisconnect( CNetEvent &event )
 			return;
 
 		it->second->Stop();
+		RemoveChild(it->second->GetNetId());
+
 		m_Clients.remove( event.GetHandler()->GetNetId() );
 		m_Clients.apply_removes();
 
@@ -247,33 +259,33 @@ void	CMultiPlug::OnDisconnect( CNetEvent &event )
 /**
  @brief AddProtocolListener
  */
-bool	CMultiPlug::AddProtocolListener(ProtocolListenerPtr pListener)
-{
-	CPlug::AddProtocolListener(pListener);
-	if (m_pServer)
-		m_pServer->AddProtocolListener(pListener);
-	BOOST_FOREACH(auto &client, m_Clients.m_Seq)
-	{
-		client->AddProtocolListener(pListener);
-	}
-	return true;
-}
+//bool	CMultiPlug::AddProtocolListener(ProtocolListenerPtr pListener)
+//{
+//	CPlug::AddProtocolListener(pListener);
+//	if (m_pServer)
+//		m_pServer->AddProtocolListener(pListener);
+//	BOOST_FOREACH(auto &client, m_Clients.m_Seq)
+//	{
+//		client->AddProtocolListener(pListener);
+//	}
+//	return true;
+//}
 
 
 /**
  @brief RemoveProtocolListener
  */
-bool	CMultiPlug::RemoveProtocolListener(ProtocolListenerPtr pListener)
-{
-	CPlug::RemoveProtocolListener(pListener);
-	if (m_pServer)
-		m_pServer->RemoveProtocolListener(pListener);
-	BOOST_FOREACH(auto &client, m_Clients.m_Seq)
-	{
-		client->RemoveProtocolListener(pListener);
-	}
-	return true;
-}
+//bool	CMultiPlug::RemoveProtocolListener(ProtocolListenerPtr pListener)
+//{
+//	CPlug::RemoveProtocolListener(pListener);
+//	if (m_pServer)
+//		m_pServer->RemoveProtocolListener(pListener);
+//	BOOST_FOREACH(auto &client, m_Clients.m_Seq)
+//	{
+//		client->RemoveProtocolListener(pListener);
+//	}
+//	return true;
+//}
 
 
 /**
@@ -309,8 +321,8 @@ SessionPtr CMultiPlug::GetSession(netid netId)
 {
 	if (GetServer())
 	{
-		//if (GetServer()->GetNetId() == netId)
-		//	return GetServer();
+		if (GetServer()->GetNetId() == netId)
+			return GetServer();
 		if (SessionPtr ptr = GetServer()->GetSession(netId))
 			return ptr;
 	}

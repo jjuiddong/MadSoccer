@@ -68,3 +68,15 @@ std::string common::GetCurrentProcessName()
 	char *name = PathFindFileNameA(moduleName);
 	return name;
 }
+
+
+/**
+ @brief 
+ */
+std::string common::GetCurrentProcessPath()
+{
+	HMODULE hMod = GetModuleHandle(NULL);
+	char moduleName[ MAX_PATH] = "";  
+	GetModuleFileNameA(hMod, moduleName, MAX_PATH);
+	return GetFilePathExceptFileName(moduleName);
+}

@@ -27,7 +27,7 @@ namespace network
 
 	// Multi Network
 	bool		StartMultiNetwork();
-	bool		ConnectDelegation( const std::string &linkSvrType, NetGroupDelegationPtr ptr);
+	bool		ConnectDelegation( const std::string &linkSvrType, MultiPlugDelegationPtr ptr);
 	bool		AddDelegation( const std::string &linkSvrType, multinetwork::CMultiPlugDelegation *ptr);
 
 	// Common

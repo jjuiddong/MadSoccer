@@ -34,8 +34,8 @@ namespace network
 		bool				IsHostClient() const;
 
 		// Overriding
-		virtual bool	AddProtocolListener(ProtocolListenerPtr pListener) override;
-		virtual bool	RemoveProtocolListener(ProtocolListenerPtr pListener) override;
+		//virtual bool	AddProtocolListener(ProtocolListenerPtr pListener) override;
+		//virtual bool	RemoveProtocolListener(ProtocolListenerPtr pListener) override;
 
 		// Child Implementes
 		virtual bool	Send(netid netId, const SEND_FLAG flag, const CPacket &packet) override;

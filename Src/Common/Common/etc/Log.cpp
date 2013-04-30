@@ -1,6 +1,8 @@
 
 #include "stdafx.h"
 #include "log.h"
+#include "time.h"
+#include "FilePath.h"
 
 
 namespace common { namespace log {
@@ -47,9 +49,12 @@ bool IsCutMessage(const char *msg)
  */
 string log::GetLogFileName()
 {
-	string processName = GetCurrentProcessName();
-	processName += ".Log.log";
-	return processName;
+	string path = GetCurrentProcessPath() + "/Log/";
+	path += GetDateString();
+	path += "-";
+	path += GetCurrentProcessName();
+	path += ".Log.log";
+	return path;
 }
 
 
@@ -58,9 +63,15 @@ string log::GetLogFileName()
  */
 string log::GetErrorLogFileName()
 {
-	string processName = GetCurrentProcessName();
-	processName += ".Log.log";
-	return processName;
+	//string processName = GetCurrentProcessName();
+	//processName += ".Log.log";
+	//return processName;
+	string path = GetCurrentProcessPath() + "/Log/";
+	path += GetDateString();
+	path += "-";
+	path += GetCurrentProcessName();
+	path += ".Log.log";
+	return path;
 }
 
 
@@ -77,7 +88,7 @@ void log::Log_char( const char *label, const char *msg )
 
 	ofstream fs(g_LogFileName, ios_base::app);
 	if (!fs.is_open()) return;
-	fs << label << "   [" << common::GetTimeString() << "]  " << msg << endl;
+	fs << "[" << common::GetTimeString() << "]  " << label  << msg << endl;
 }
 
 
@@ -94,7 +105,7 @@ void log::ErrorLog_char( const char *label, const char *msg )
 
 	ofstream fs(g_ErrorLogFileName, ios_base::app);
 	if (!fs.is_open()) return;
-	fs << label << "   [" << common::GetTimeString() << "]  " << msg << endl;
+	fs << "[" << common::GetTimeString() << "]  " << label << msg << endl;
 }
 
 
@@ -136,7 +147,6 @@ void log::Log( const char* fmt, ...)
 	va_start ( args, fmt );
 	vsnprintf_s( textString, sizeof(textString), _TRUNCATE, fmt, args );
 	va_end ( args );
-
 
 	if (g_LogFileName.empty())
 		g_LogFileName = GetLogFileName();
@@ -184,7 +194,7 @@ void log::Msg(const std::string &str)
 /**
  @brief print log
  */
-void log::Log( LOG_LEVEL level, const std::string &str )
+void log::Log( LOG_TYPE level, const std::string &str )
 {
 	switch (level)
 	{
@@ -201,7 +211,7 @@ void log::Log( LOG_LEVEL level, const std::string &str )
 /**
  @brief print log
  */
-void log::Log( LOG_LEVEL level, const char* fmt, ...)
+void log::Log( LOG_TYPE level, const char* fmt, ...)
 {
 	char textString[ 256] = {'\0'};
 	va_list args;
@@ -222,6 +232,52 @@ void log::Log( LOG_LEVEL level, const char* fmt, ...)
 
 
 /**
+ @brief log print
+ */
+void log::Log( LOG_TYPE type, LOG_LEVEL level, int subLevel, const char* fmt, ...)
+{
+	char textString[ 256] = {'\0'};
+	va_list args;
+	va_start ( args, fmt );
+	vsnprintf_s( textString, sizeof(textString), _TRUNCATE, fmt, args );
+	va_end ( args );
+
+	stringstream ss;
+	ss << "{" << level << "," << subLevel << "} ";
+
+	switch (type)
+	{
+	case LOG_FILE:  Log_char(ss.str().c_str(), textString); break;
+	case LOG_OUTPUTWINDOW: Output_char(ss.str().c_str(), textString); break;
+	case LOG_FILE_N_OUTPUTWINDOW:
+		Log_char(ss.str().c_str(), textString);
+		Output_char(ss.str().c_str(), textString);
+		break;
+	}
+}
+
+
+/**
+ @brief log print
+ */
+void log::Log( LOG_TYPE type, LOG_LEVEL level, int subLevel, const std::string &str )
+{
+	stringstream ss;
+	ss << "{" << level << "," << subLevel << "} ";
+
+	switch (type)
+	{
+	case LOG_FILE: Log_char(ss.str().c_str(), str.c_str()); break;
+	case LOG_OUTPUTWINDOW: Output_char(ss.str().c_str(), str.c_str()); break;
+	case LOG_FILE_N_OUTPUTWINDOW: 
+		Log_char(ss.str().c_str(), str.c_str());
+		Output_char(ss.str().c_str(), str.c_str());
+		break;
+	}
+}
+
+
+/**
  @brief print error
  */
 void log::Error( ERROR_LEVEL level, const std::string &str )
@@ -229,17 +285,17 @@ void log::Error( ERROR_LEVEL level, const std::string &str )
 	switch (level)
 	{
 	case ERROR_CRITICAL: 
-		ErrorLog_char( "Critical", str.c_str() );
-		Output_char( "Critical", str.c_str() );
+		ErrorLog_char( "Critical ", str.c_str() );
+		Output_char( "Critical ", str.c_str() );
 		break;
 
 	case ERROR_PROBLEM:
-		ErrorLog_char( "Problem", str.c_str() );
-		Output_char( "Problem", str.c_str() );
+		ErrorLog_char( "Problem ", str.c_str() );
+		Output_char( "Problem ", str.c_str() );
 		break;
 
 	case ERROR_WARNING:
-		Output_char( "Warning", str.c_str() );
+		Output_char( "Warning ", str.c_str() );
 		break;
 	}
 }
@@ -259,17 +315,84 @@ void log::Error( ERROR_LEVEL level, const char* fmt, ... )
 	switch (level)
 	{
 	case ERROR_CRITICAL: 
-		ErrorLog_char( "Critical",textString );
-		Output_char( "Critical",textString );
+		ErrorLog_char( "Critical ",textString );
+		Output_char( "Critical ",textString );
 		break;
 
 	case ERROR_PROBLEM:
-		ErrorLog_char( "Problem", textString );
-		Output_char( "Problem",textString );
+		ErrorLog_char( "Problem ", textString );
+		Output_char( "Problem ",textString );
 		break;
 
 	case ERROR_WARNING:
-		Output_char( "Warning", textString);
+		Output_char( "Warning ", textString);
+		break;
+	}
+}
+
+
+/**
+ @brief  error print
+ */
+void log::Error( ERROR_LEVEL level, int subLevel, const char* fmt, ... )
+{
+	char textString[ 256] = {'\0'};
+	va_list args;
+	va_start ( args, fmt );
+	vsnprintf_s( textString, sizeof(textString), _TRUNCATE, fmt, args );
+	va_end ( args );
+
+	char *name[] = {"Critical ", "Problem ",  "Warning " };
+
+	stringstream ss;
+	if (level >= 0 && level < 3)
+		ss << name[ level];
+	ss << " {" << level << "," << subLevel << "} ";
+
+	switch (level)
+	{
+	case ERROR_CRITICAL: 
+		ErrorLog_char( ss.str().c_str() ,textString );
+		Output_char( ss.str().c_str(),textString );
+		break;
+
+	case ERROR_PROBLEM:
+		ErrorLog_char( ss.str().c_str(), textString );
+		Output_char( ss.str().c_str(),textString );
+		break;
+
+	case ERROR_WARNING:
+		Output_char( ss.str().c_str(), textString);
+		break;
+	}
+}
+
+
+/**
+ @brief error print
+ */
+void log::Error( ERROR_LEVEL level, int subLevel, const std::string &str )
+{
+	char *name[] = {"Critical ", "Problem ",  "Warning " };
+	stringstream ss;
+	if (level >= 0 && level < 3)
+		ss << name[ level];
+	ss << " {" << level << "," << subLevel << "} ";
+
+	switch (level)
+	{
+	case ERROR_CRITICAL: 
+		ErrorLog_char( ss.str().c_str() , str.c_str() );
+		Output_char( ss.str().c_str(),str.c_str() );
+		break;
+
+	case ERROR_PROBLEM:
+		ErrorLog_char( ss.str().c_str(), str.c_str() );
+		Output_char( ss.str().c_str(), str.c_str() );
+		break;
+
+	case ERROR_WARNING:
+		Output_char( ss.str().c_str(), str.c_str());
 		break;
 	}
 }
