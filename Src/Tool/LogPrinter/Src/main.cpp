@@ -1,6 +1,9 @@
 
 #include "Global.h"
 #include <wx/aui/aui.h>
+#include <wx/dir.h>
+#include <wx/busyinfo.h>
+
 #include "Printer.h"
 #include "Common/Common.h"
 
@@ -19,6 +22,8 @@ protected:
 	// Event Handler
 	DECLARE_EVENT_TABLE()
 	void OnRefreshTimer(wxTimerEvent& event);
+	void OnDropFiles(wxDropFilesEvent& event);
+
 public:
 	wxAuiManager m_mgr;
 	wxTimer	m_Timer;
@@ -48,6 +53,10 @@ MyFrame::MyFrame(wxWindow* parent) : wxFrame(parent, -1, _("LogPrinter"),
 
 	m_Timer.SetOwner(this, ID_REFRESH_TIMER);
 	m_Timer.Start( REFRESH_INTERVAL );
+
+	DragAcceptFiles(true);
+	Connect(wxEVT_DROP_FILES, wxDropFilesEventHandler(MyFrame::OnDropFiles), NULL, this);
+
 }
 
 
@@ -59,7 +68,7 @@ void MyFrame::OnRefreshTimer(wxTimerEvent& event)
 	list<string> fileList;
 	if (m_CmdLine.empty())
 	{
-		fileList = common::FindFileList( "*.log" );
+		//fileList = common::FindFileList( "*.log" );
 	}
 	else
 	{
@@ -95,6 +104,45 @@ void MyFrame::OnRefreshTimer(wxTimerEvent& event)
 }
 
 
+/**
+ @brief 
+ */
+void MyFrame::OnDropFiles(wxDropFilesEvent& event)    
+{
+	if (event.GetNumberOfFiles() > 0) 
+	{
+		wxString* dropped = event.GetFiles();
+		wxASSERT(dropped);
+
+		wxBusyCursor busyCursor;
+		wxWindowDisabler disabler;      
+		wxBusyInfo busyInfo(_("Adding files, wait please..."));
+
+		wxString name;
+		wxArrayString files;
+		for (int i = 0; i < event.GetNumberOfFiles(); i++) {
+			name = dropped[i];
+			if (wxFileExists(name))
+				files.push_back(name);
+			else if (wxDirExists(name))
+				wxDir::GetAllFiles(name, &files);                                    
+		}
+
+		auto it = files.begin();
+		while (files.end() != it)
+		{
+			std::string fileName = *it;
+			CPrinter *prt = new CPrinter(this, fileName);
+			m_mgr.AddPane(prt, wxLEFT, *it);
+			wxAuiPaneInfo& pane = m_mgr.GetPane(prt);
+			pane.MinSize(1000,0);
+			it++;
+		}
+		m_mgr.Update();
+	}
+}
+
+
 // our normal wxApp-derived class, as usual
 class MyApp : public wxApp {
 public:
@@ -119,3 +167,4 @@ public:
 
 DECLARE_APP(MyApp);
 IMPLEMENT_APP(MyApp);
+
