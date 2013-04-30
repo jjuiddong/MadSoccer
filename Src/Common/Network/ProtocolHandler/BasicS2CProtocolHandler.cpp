@@ -2,14 +2,19 @@
 #include "stdafx.h"
 #include "BasicS2CProtocolHandler.h"
 #include "../Controller/P2PClient.h"
+#include "../Service/Client.h"
 
 using namespace network;
 
 
 CBasicS2CProtocolHandler::CBasicS2CProtocolHandler( CClient &client ) :
 	m_Client(client)
+,	m_IsMoveToServer(false)
 {
 	client.RegisterProtocol(&m_BasicProtocol);
+
+	NETEVENT_CONNECT_TO(&client, this, EVT_DISCONNECT, CBasicS2CProtocolHandler, CBasicS2CProtocolHandler::OnDisconnectClient);
+
 }
 
 CBasicS2CProtocolHandler::~CBasicS2CProtocolHandler()
@@ -56,5 +61,22 @@ bool CBasicS2CProtocolHandler::AckMoveToServer(IProtocolDispatcher &dispatcher, 
 		return false;
 
 	m_Client.Stop();
-	return StartClient(ip, port, &m_Client);
+
+	m_IsMoveToServer = true;
+	m_ToServerIp = ip;
+	m_ToServerPort = port;
+	return true;
+}
+
+
+/**
+ @brief OnDisconnectClient
+ */
+void	CBasicS2CProtocolHandler::OnDisconnectClient(CNetEvent &event)
+{
+	if (m_IsMoveToServer)
+	{
+		StartClient(m_ToServerIp, m_ToServerPort, &m_Client);
+		m_IsMoveToServer = false;
+	}	
 }

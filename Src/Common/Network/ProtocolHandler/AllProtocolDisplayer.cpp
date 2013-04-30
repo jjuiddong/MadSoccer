@@ -21,6 +21,5 @@ void AllProtocolDisplayer::recv(netid senderId, network::CPacket &packet)
 	std::stringstream ss;
 	ss << "Recv = ";
 	ss << network::Packet2String(packet, protocol);
-	clog::Log( clog::LOG_OUTPUTWINDOW, ss.str() );
-	clog::Log( clog::LOG_FILE, ss.str() );
+	clog::Log( clog::LOG_F_N_O, clog::LOG_PACKET, packetID, ss.str() );
 }

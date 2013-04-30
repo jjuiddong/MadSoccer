@@ -229,9 +229,10 @@ MultiPlugDelegationPtr CMultiNetwork::GetDelegation( const std::string &linkSvrT
  */
 bool	CMultiNetwork::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
 {
-	MultiPlugPtr ptr = GetControllerFromNetId(netId);
-	RETV(!ptr, false);
-	ptr->Send(netId, flag, packet);
+	BOOST_FOREACH( auto ctrl, m_Controllers.m_Seq)
+	{
+		ctrl->Send(netId, flag, packet);
+	}
 	return true;
 }
 
@@ -247,7 +248,6 @@ bool	CMultiNetwork::SendAll(const CPacket &packet)
 	}
 	return true;
 }
-
 
 
 /**

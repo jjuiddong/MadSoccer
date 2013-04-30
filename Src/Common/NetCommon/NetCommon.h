@@ -13,6 +13,7 @@ Date:    2013-03-26
 typedef int netid;
 #define INVALID_NETID		(-1)		// 잘못된 NetId를 뜻한다. 오류값으로 쓰임
 #define SERVER_NETID		(0)		// 연결된 Server의 NetId를 뜻함 (클라이언트 일 때)
+#define ALL_NETID				(0)		// 연결된 Connection 모두를 뜻함 (서버/클라이언트)
 #define P2P_NETID				(1)		// 연결된 P2P 네트워크 Host NetId를 뜻함 (클라이언트 일 때)
 #define ROOT_GROUP_NETID (-1)	// 서버의 최상위 그룹을 뜻한다.
 

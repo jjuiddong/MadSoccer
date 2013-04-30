@@ -13,11 +13,15 @@ namespace network
 {
 	class CClient;
 
-	class CBasicS2CProtocolHandler : public basic::s2c_ProtocolListener
+	class CBasicS2CProtocolHandler : public common::CEventHandler
+														, public basic::s2c_ProtocolListener
 	{
 	public:
 		CBasicS2CProtocolHandler( CClient &svr );
 		virtual ~CBasicS2CProtocolHandler();
+
+	protected:
+		void		OnDisconnectClient(CNetEvent &event);
 
 		// Network Handler
 		virtual bool AckP2PConnect(IProtocolDispatcher &dispatcher, netid senderId, const network::error::ERROR_CODE &errorCode, const network::P2P_STATE &state, const std::string &ip, const int &port) override;
@@ -26,6 +30,10 @@ namespace network
 	private:
 		CClient							&m_Client;		/// CClient Reference 
 		basic::c2s_Protocol		m_BasicProtocol;
+
+		bool  m_IsMoveToServer;
+		std::string m_ToServerIp;
+		int m_ToServerPort;
 	};
 
 }

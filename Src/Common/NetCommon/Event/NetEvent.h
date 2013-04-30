@@ -24,13 +24,13 @@ namespace network
 #define NETEVENT_CONNECT_TO( to, handler, eventType, classname, fn )\
 	{\
 	void (classname::*evt_handler)(CNetEvent &) = &fn;\
-	to->EventConnect( handler, eventType, (EventFunction)(NetEventFunction)evt_handler); \
+	(to)->EventConnect( handler, eventType, (EventFunction)(NetEventFunction)evt_handler); \
 	}
 
 #define EVENT_CONNECT_TO( to, handler, eventType, classname, fn )\
 	{\
 	void (classname::*evt_handler)(CEvent &) = &fn;\
-	to->EventConnect( handler, eventType, (EventFunction)evt_handler); \
+	(to)->EventConnect( handler, eventType, (EventFunction)evt_handler); \
 	}
 
 

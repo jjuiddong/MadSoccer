@@ -39,8 +39,8 @@ protected:
 	virtual bool ReqLobbyIn(network::IProtocolDispatcher &dispatcher, netid senderId) override;
 
 	// common
-	virtual bool ReqMoveUser(network::IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, const netid &userId) override;
-	virtual bool AckMoveUser(network::IProtocolDispatcher &dispatcher, netid senderId, const network::error::ERROR_CODE &errorCode, const std::string &id, const netid &userId) override;
+	virtual bool ReqMoveUser(network::IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, const netid &userId, const std::string &ip, const int &port) override;
+	virtual bool AckMoveUser(network::IProtocolDispatcher &dispatcher, netid senderId, const network::error::ERROR_CODE &errorCode, const std::string &id, const netid &userId, const std::string &ip, const int &port) override;
 
 private:
 	CBasicC2SProtocolHandler_LoginSvr *m_pBasicPrtHandler;

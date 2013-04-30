@@ -40,7 +40,11 @@ void	CLobbyServer::OnConnectMultiPlug()
 		return;
 	}
 
+	AddChild( pLoginSvrController );
+	AddChild( pCertifySvrController );
+	
 	//multinetwork::CMultiNetwork::Get()->RegisterProtocol(&m_SvrNetworkProtocol) ;
+	pLoginSvrController->RegisterProtocol( &m_SvrNetworkProtocol );
 	pCertifySvrController->RegisterProtocol(&m_CertifyProtocol);
 
 	RegisterProtocol(&m_LoginProtocol);
@@ -252,11 +256,15 @@ void	CLobbyServer::OnTimer( CEvent &event )
 		// 주기적으로 서버 정보를 Login서버에게 보낸다.
 		if (GetServer() && GetServer()->IsServerOn())
 		{
-			//m_SvrNetworkProtocol.SendServerInfo( SERVER_NETID, network::SEND_T, "lobbysvr", 
-			//	GetServer()->GetIp(), GetServer()->GetPort(), GetServer()->GetSessions().size() );
+			MultiPlugPtr pLoginSvrController = multinetwork::CMultiNetwork::Get()->GetController("loginsvr");
+			if (pLoginSvrController)
+			{
+				pLoginSvrController->RegisterProtocol( &m_SvrNetworkProtocol );
+				m_SvrNetworkProtocol.SendServerInfo( ALL_NETID, network::SEND_T, "lobbysvr", 
+					GetServer()->GetIp(), GetServer()->GetPort(), GetServer()->GetSessions().size() );
+			}
 		}
 	}
-
 }
 
 
@@ -273,19 +281,18 @@ void	CLobbyServer::OnTimer( CEvent &event )
  @brief ReqMoveUser
  */
 bool CLobbyServer::ReqMoveUser(IProtocolDispatcher &dispatcher, netid senderId, 
-	const std::string &id, const netid &userId)
+	const std::string &id, const netid &userId, const std::string &ip, const int &port)
 {
 	CSession *pClient = CheckClientId(GetServer(), id, userId, NULL, NULL);
 	if (pClient) // Already exist
-	{
-		//m_SvrNetworkProtocol.AckMoveUser(senderId, SEND_T, error::ERR_MOVEUSER_ALREADY_EXIST,
-			//id, userId);
+	{ /// !!Error
+		m_SvrNetworkProtocol.AckMoveUser(senderId, SEND_T, error::ERR_MOVEUSER_ALREADY_EXIST,
+			id, userId, ip, port);
 		return false;
 	}
 
 	//multinetwork::CMultiNetwork::Get()->RegisterProtocol(&m_SvrNetworkProtocol) ;
-	//m_SvrNetworkProtocol.AckMoveUser(senderId, SEND_T, error::ERR_MOVEUSER_ALREADY_EXIST,
-		//id, userId);
+	m_SvrNetworkProtocol.AckMoveUser(senderId, SEND_T, error::ERR_SUCCESS, id, userId, ip, port);
 	
 	return true;
 }

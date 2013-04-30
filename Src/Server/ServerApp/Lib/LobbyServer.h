@@ -72,7 +72,7 @@ protected:
 
 
 	// Network Protocol Handler
-	virtual bool ReqMoveUser(network::IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, const netid &userId) override;
+	virtual bool ReqMoveUser(network::IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, const netid &userId, const std::string &ip, const int &port) override;
 
 
 private:

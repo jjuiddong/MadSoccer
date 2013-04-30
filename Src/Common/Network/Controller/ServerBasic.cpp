@@ -465,7 +465,10 @@ bool	CServerBasic::Send(netid netId, const SEND_FLAG flag, const CPacket &packet
 		else
 		{
 			// Send To Group
-			GroupPtr pGroup = (m_RootGroup.GetId() == netId)? &m_RootGroup : m_RootGroup.GetChild(netId);
+			GroupPtr pGroup = (ALL_NETID == netId)? &m_RootGroup : NULL;
+			if (!pGroup)
+				pGroup = (m_RootGroup.GetId() == netId)? &m_RootGroup : m_RootGroup.GetChild(netId);
+
 			if (pGroup)
 			{
 				const bool result = SendGroup(pGroup, packet);
