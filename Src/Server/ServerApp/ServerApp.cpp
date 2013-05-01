@@ -218,6 +218,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			case VK_ESCAPE:
 				PostQuitMessage(0);
 				break;
+			case VK_F1:
+				memmonitor::Show(true);
+				break;
 			}
 		}
 		break;

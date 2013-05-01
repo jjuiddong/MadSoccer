@@ -222,14 +222,16 @@ bool CFarmServer::ReqServerInfoList(IProtocolDispatcher &dispatcher, netid sende
 	if (!pGroup)
 	{// Error!!
 		clog::Error( log::ERROR_PROBLEM, "ReqServerInfoList Error!!, not exist group user id = %d\n", senderId );
+		dispatcher.PrintThisPacket(clog::LOG_F_N_O, "Error!! ");
 		m_Protocol.AckServerInfoList( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, clientSvrType, serverSvrType, hostInfo);
 		return false;
 	}
-	
+
 	SubServerGroupPtr pServerGroup = FindGroup( serverSvrType );
 	if (!pServerGroup)
 	{// Error!!
 		clog::Error( log::ERROR_PROBLEM, "ReqServerInfoList Error!!, not exist serverSvrType group = %s\n", serverSvrType.c_str() );
+		dispatcher.PrintThisPacket(clog::LOG_F_N_O, "Error!! ");
 		m_Protocol.AckServerInfoList( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, clientSvrType, serverSvrType, hostInfo);
 		return false;
 	}
@@ -240,6 +242,7 @@ bool CFarmServer::ReqServerInfoList(IProtocolDispatcher &dispatcher, netid sende
 	if (hostInfo.empty())
 	{// Error!!
 		clog::Error( log::ERROR_PROBLEM, "ReqServerInfoList Error!!, not found ServerInfo svrType = %s\n", clientSvrType.c_str() );
+		dispatcher.PrintThisPacket(clog::LOG_F_N_O, "Error!! ");
 	}
 
 	m_Protocol.AckServerInfoList( senderId, SEND_T, 
@@ -384,6 +387,9 @@ bool CFarmServer::ReqSubServerBindComplete(IProtocolDispatcher &dispatcher, neti
 		SubServerGroupPtr pGroup = FindGroup(svrType);
 		if (!pGroup)
 			continue;
+
+		clog::Log( clog::LOG_F_N_O, clog::LOG_MESSAGE, 0, "CorrespondClientInfo %s", svrType.c_str() );
+
 		m_Protocol.BindSubServer( pGroup->GetId(), SEND_T, pSubSvrGroup->GetSvrType(), 
 			bindInfo.front().ip, bindInfo.front().portnum );
 	}

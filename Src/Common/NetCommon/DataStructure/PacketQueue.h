@@ -34,6 +34,7 @@ namespace network
 		void PushPacket(const SPacketData &data);
 		bool PopPacket(OUT SPacketData &data);
 		bool PopPacket(netid recvId, OUT SPacketData &data);
+		bool RemovePacket( netid recvId );
 
 	protected:
 		typedef std::list<SPacketData> PacketQueue;
@@ -80,6 +81,28 @@ namespace network
 			++it;
 		}
 		return false;
+	}
+
+	/// recvId 가 받는 패킷을 모두 제거한다.
+	inline bool CPacketQueue::RemovePacket( netid recvId )
+	{
+		common::AutoCSLock cs(m_CS);
+		if (m_Packets.empty())
+			return false;
+
+		PacketItor it = m_Packets.begin();
+		while (m_Packets.end() != it)
+		{
+			if (it->rcvNetId == recvId)
+			{
+				it = m_Packets.erase(it);
+			}
+			else
+			{
+				++it;
+			}			
+		}
+		return true;
 	}
 
 }

@@ -391,10 +391,10 @@ bool CFarmServerConnector::AckToBindInnerPort(IProtocolDispatcher &dispatcher, n
 /**
  @brief 
  */
-bool CFarmServerConnector::AckSubServerBindComplete(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode, 
-	const std::string &subServerSvrType)
+bool CFarmServerConnector::AckSubServerBindComplete(IProtocolDispatcher &dispatcher, netid senderId, 
+	const error::ERROR_CODE &errorCode, const std::string &subServerSvrType)
 {
-
+	
 	return true;
 }
 
@@ -402,8 +402,8 @@ bool CFarmServerConnector::AckSubServerBindComplete(IProtocolDispatcher &dispatc
 /**
  @brief 
  */
-bool CFarmServerConnector::AckSubClientConnectComplete(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode, 
-	const std::string &subClientSvrType)
+bool CFarmServerConnector::AckSubClientConnectComplete(IProtocolDispatcher &dispatcher, netid senderId, 
+	const error::ERROR_CODE &errorCode, const std::string &subClientSvrType)
 {
 
 	return true;

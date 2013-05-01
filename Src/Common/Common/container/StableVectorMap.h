@@ -53,11 +53,7 @@ namespace common
 
 			BOOST_FOREACH(KeyType key, m_RmKeys)
 			{
-				MapType::iterator it = m_RandomAccess.find(key);
-				if (m_RandomAccess.end() == it)
-					continue;
-				removevector(m_Seq, it->second);
-				m_RandomAccess.erase(it);				
+				VectorMap::remove(key);
 			}
 			m_RmKeys.clear();
 			return true;

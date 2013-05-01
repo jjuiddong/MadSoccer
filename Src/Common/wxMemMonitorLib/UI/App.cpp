@@ -27,7 +27,7 @@ bool CApp::OnInit()
 
 	wxFrame* frame = new CFrame(NULL);
 	SetTopWindow(frame);
-	frame->Show();
+	frame->Show(false);
 	return true;
 }
 

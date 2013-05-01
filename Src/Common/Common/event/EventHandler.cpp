@@ -7,7 +7,10 @@ using namespace common;
 
 bool CEventHandler::SEventEntry::operator==(const SEventEntry &rhs)
 {
-	return ((type == rhs.type) && (handler == rhs.handler));
+	if (rhs.type == EVT_NULL)
+		return (handler == rhs.handler);
+	else
+		return ((type == rhs.type) && (handler == rhs.handler));
 }
 
 /**
@@ -40,13 +43,27 @@ bool CEventHandler::EventConnect(CEventHandler *handler, EventType type, EventFu
 
 /**
  @brief Remove Event Handler
+ @pram type : if NULL remove all handler emelent
  */
 bool CEventHandler::EventDisconnect(CEventHandler *handler, EventType type)
 {
-	SEventEntry item;
-	item.handler = handler;
-	item.type =  type;
-	common::removevector(m_EventTable, item);
+	if (EVT_NULL == type)
+	{
+		for (int i=m_EventTable.size()-1; i >= 0; --i)
+		{
+			if (m_EventTable[ i].handler == handler)
+			{
+				common::removevector(m_EventTable, m_EventTable[ i]);
+			}
+		}
+	}
+	else
+	{
+		SEventEntry item;
+		item.handler = handler;
+		item.type =  type;
+		common::removevector(m_EventTable, item);
+	}
 	return true;
 }
 

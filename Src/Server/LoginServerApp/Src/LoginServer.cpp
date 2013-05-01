@@ -146,6 +146,7 @@ bool CLoginServer::ReqLobbyIn(IProtocolDispatcher &dispatcher, netid senderId)
 	CSubServerConnector *pSubSvrCon = dynamic_cast<CSubServerConnector*>(pLobbySvrDelegation.Get());
 	if (!pSubSvrCon)
 	{
+		clog::Error( clog::ERROR_CRITICAL, "ReqLobbyIn Error!! CSubServerConnector convert error" );
 		m_LoginProtocol.AckLobbyIn( senderId, SEND_T, error::ERR_REQLOBBYIN_NOTFOUND_SERVER );
 		return false;
 	}
@@ -154,6 +155,7 @@ bool CLoginServer::ReqLobbyIn(IProtocolDispatcher &dispatcher, netid senderId)
 	subServers.sort();
 	if (subServers.empty())
 	{
+		clog::Error( clog::ERROR_CRITICAL, "ReqLobbyIn Error!! not found lobbysvr server" );
 		m_LoginProtocol.AckLobbyIn( senderId, SEND_T, error::ERR_REQLOBBYIN_NOTFOUND_SERVER );
 		return false;
 	}

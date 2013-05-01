@@ -25,13 +25,11 @@ BEGIN_EVENT_TABLE(CFrame, wxFrame)
 	 EVT_MENU (MENU_OPEN_AUTOEXP, CFrame::OnMenuOpenAutoExp)
 	 EVT_MENU (MENU_EXIT, CFrame::OnMenuExit)
 	 EVT_MENU (MENU_HELP, CFrame::OnMenuHelp)
- 	//EVT_KEY_DOWN(CFrame::OnKeyDown)
 END_EVENT_TABLE()
 
 
 CFrame::CFrame(wxWindow* parent) : wxFrame(parent, -1, _("wxMemMonitor"),
-	wxDefaultPosition, wxSize(400,500),
-	wxDEFAULT_FRAME_STYLE)
+	wxDefaultPosition, wxSize(400,500), wxDEFAULT_FRAME_STYLE)
 ,	m_pMemTree(NULL)
 ,	m_pLogWnd(NULL)
 ,	m_pPropWnd(NULL)
@@ -73,7 +71,6 @@ CFrame::CFrame(wxWindow* parent) : wxFrame(parent, -1, _("wxMemMonitor"),
 	GetModuleFileNameA(GethInstance(), moduleName, MAX_PATH);
 	char *name = PathFindFileNameA(moduleName);
 	SetTitle(name);
-
 }
 
 CFrame::~CFrame()

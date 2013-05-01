@@ -26,12 +26,12 @@ CMultiPlug::CMultiPlug( SERVICE_TYPE type, const std::string &svrType,
 	if (SERVER == type)
 	{
 		m_pServer = new CServerBasic( SERVICE_SEPERATE_THREAD );
-		NETEVENT_CONNECT( EVT_LISTEN, CMultiPlug, CMultiPlug::OnConnect );
-		NETEVENT_CONNECT( EVT_CONNECT, CMultiPlug, CMultiPlug::OnConnect );
-		NETEVENT_CONNECT( EVT_DISCONNECT, CMultiPlug, CMultiPlug::OnDisconnect );
 		AddChild(m_pServer);
 	}
-	
+
+	NETEVENT_CONNECT( EVT_LISTEN, CMultiPlug, CMultiPlug::OnConnect );
+	NETEVENT_CONNECT( EVT_CONNECT, CMultiPlug, CMultiPlug::OnConnect );
+	NETEVENT_CONNECT( EVT_DISCONNECT, CMultiPlug, CMultiPlug::OnDisconnect );
 }
 
 CMultiPlug::~CMultiPlug()
@@ -174,8 +174,6 @@ bool	CMultiPlug::Connect( SERVICE_TYPE type, const std::string &ip, const int po
 			m_Port = port;
 
 			CCoreClient *pClient = new CCoreClient(SERVICE_SEPERATE_THREAD);
-			NETEVENT_CONNECT( EVT_CONNECT, CMultiPlug, CMultiPlug::OnConnect );
-			NETEVENT_CONNECT( EVT_DISCONNECT, CMultiPlug, CMultiPlug::OnDisconnect );
 			AddChild(pClient);
 
 			//BOOST_FOREACH(auto &protocol, GetProtocolListeners())
@@ -225,7 +223,6 @@ void	CMultiPlug::OnConnect( CNetEvent &event )
 	if (this != event.GetEventObject())
 	{
 		m_State = RUN;
-		//event.SetEventObject(this); // update event object
 		event.Skip();
 		SearchEventTable(CNetEvent(EVT_CONNECT, this));// Event Propagate
 	}
@@ -242,7 +239,6 @@ void	CMultiPlug::OnDisconnect( CNetEvent &event )
 
 	if (m_ServiceType == SERVER)
 		m_State = END;
-	event.SetEventObject(this); // update event object
 	event.Skip();
 	SearchEventTable(CNetEvent(EVT_DISCONNECT, this)); // Event Propagate
 
@@ -251,9 +247,12 @@ void	CMultiPlug::OnDisconnect( CNetEvent &event )
 	{
 		auto it = m_Clients.find(event.GetEventObject()->GetNetId());
 		if (m_Clients.end() == it)
+		{
+			clog::Error(clog::ERROR_CRITICAL, "CMultiPlug::OnDisconnect not found child client netid = %d",
+				event.GetEventObject()->GetNetId() );
 			return;
+		}
 
-		it->second->Stop();
 		RemoveChild(it->second->GetNetId());
 
 		m_Clients.remove( event.GetEventObject()->GetNetId() );

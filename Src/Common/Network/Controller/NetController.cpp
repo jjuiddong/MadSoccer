@@ -148,8 +148,11 @@ bool	 CNetController::RemoveServer(ServerBasicPtr pSvr)
 {
 	RETV(!pSvr, false);
 
-	common::AutoCSLock cs(m_CS); /// sync
+	clog::Log( clog::LOG_F_N_O, clog::LOG_MESSAGE, 0, "RemoveServer netid: %d \n", pSvr->GetNetId());
 
+	CPacketQueue::Get()->RemovePacket(pSvr->GetNetId());
+
+	common::AutoCSLock cs(m_CS); /// sync
 	if (!m_Servers.remove(pSvr->GetNetId()))
 		return false;
 	pSvr->SetState(SESSIONSTATE_LOGOUT_WAIT);
@@ -221,6 +224,10 @@ bool CNetController::StopClient(ClientBasicPtr pClt)
 bool	CNetController::RemoveClient(ClientBasicPtr pClt)
 {
 	RETV(!pClt, false);
+
+	clog::Log( clog::LOG_F_N_O, clog::LOG_MESSAGE, 0, "RemoveClient netid: %d \n", pClt->GetNetId());
+
+	CPacketQueue::Get()->RemovePacket(pClt->GetNetId());
 
 	common::AutoCSLock cs(m_CS); 	/// Sync
 	if (!m_Clients.remove(pClt->GetNetId()))
@@ -304,6 +311,10 @@ bool CNetController::StopCoreClient(CoreClientPtr pClt)
 bool	CNetController::RemoveCoreClient(CoreClientPtr  pClt)
 {
 	RETV(!pClt, false);
+
+	clog::Log( clog::LOG_F_N_O, clog::LOG_MESSAGE, 0, "RemoveCoreClient netid: %d \n", pClt->GetNetId());
+
+	CPacketQueue::Get()->RemovePacket(pClt->GetNetId());
 
 	{ /// Sync
 		common::AutoCSLock cs(m_CS); 	/// Sync

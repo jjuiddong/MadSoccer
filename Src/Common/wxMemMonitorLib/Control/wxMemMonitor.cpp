@@ -35,6 +35,7 @@ void CApp::OnTerminate(wxThreadEvent& WXUNUSED(event))
 	OnExit();
 }
 
+
 //------------------------------------------------------------------------
 // load config file
 // init dia library
@@ -67,6 +68,18 @@ bool memmonitor::Init(EXECUTE_TYPE type, HINSTANCE hInst, const std::string conf
 		return (GetLastError().empty()? true : false);
 	}
 
+	return true;
+}
+
+
+/**
+ @brief Show
+ */
+bool memmonitor::Show(bool isShow)
+{
+	if (wxTheApp)
+		if (wxTheApp->GetTopWindow())
+			wxTheApp->GetTopWindow()->Show(isShow);
 	return true;
 }
 

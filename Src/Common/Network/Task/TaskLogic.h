@@ -111,8 +111,8 @@ namespace network
 		if (!pCon)
 		{
 			clog::Error( clog::ERROR_PROBLEM,
-				common::format("CTaskLogic:: netid: %d 에 해당하는 NetConnector가 없습니다.\n", 
-				packetData.rcvNetId) );
+				common::format("CTaskLogic:: recv netid: %d, packet id: %d 에 해당하는 NetConnector가 없습니다.\n", 
+				packetData.rcvNetId, packetData.packet.GetPacketId()) );
 			return RR_CONTINUE;
 		}
 

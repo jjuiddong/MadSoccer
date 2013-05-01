@@ -18,8 +18,16 @@ namespace common
 			t.wHour, t.wMinute, t.wSecond);
 	}
 
-	/// YY-MM-DD-HH
+	/// YYYY-MM-DD
 	static std::string GetDateString()
+	{
+		SYSTEMTIME t;
+		GetLocalTime(&t);
+		return common::format("%d-%d-%d", t.wYear, t.wMonth, t.wDay );
+	}
+
+	/// YYYY-MM-DD-HH
+	static std::string GetDateString2()
 	{
 		SYSTEMTIME t;
 		GetLocalTime(&t);

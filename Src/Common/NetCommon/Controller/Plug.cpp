@@ -106,6 +106,9 @@ bool	CPlug::RemoveChild( netid childId )
 	if (m_Children.end() == it)
 		return false; /// Not Exist
 
+	// delete in EventTable entry
+	EventDisconnect(it->second, EVT_NULL);
+
 	it->second->SetParent(NULL);
 	m_Children.remove(childId);
 	m_Children.apply_removes();
