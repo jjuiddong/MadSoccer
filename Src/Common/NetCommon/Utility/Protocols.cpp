@@ -82,3 +82,18 @@ sProtocol* protocols::GetProtocol(int packetId)
 		return NULL;
 	return it->second;
 }
+
+
+/**
+@brief  DisplayPacket
+*/
+void	protocols::DisplayPacket( const std::string &firstStr, const CPacket &packet )
+{
+	const int protocolID = packet.GetProtocolId();
+	const int packetID = packet.GetPacketId();
+	sProtocol *protocol = GetProtocol(packetID);
+	std::stringstream ss;
+	ss << firstStr;
+	ss << network::Packet2String(packet, protocol);
+	clog::Log( clog::LOG_F_N_O, clog::LOG_PACKET, packetID, ss.str() );
+}

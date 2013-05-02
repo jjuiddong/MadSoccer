@@ -52,6 +52,11 @@ bool	CMultiNetwork::Init( const std::string &configFileName )
 			if (!ConnectDelegation("farmsvr", m_pFarmSvrConnector))
 				return false;
 		}
+		else
+		{
+			// must fill parent server ip, port field
+			return false;
+		}
 	}
 
 	return true;

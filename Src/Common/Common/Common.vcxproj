@@ -65,6 +65,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="event\EventHandler.cpp" />
+    <ClCompile Include="math\Quaternion.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
@@ -79,7 +80,6 @@
     <ClCompile Include="math\box.cpp" />
     <ClCompile Include="math\Matrix.cpp" />
     <ClCompile Include="math\plane.cpp" />
-    <ClCompile Include="math\Quaternion.cpp" />
     <ClCompile Include="math\triangle.cpp" />
     <ClCompile Include="math\Vector.cpp" />
     <ClCompile Include="math\Vector2.cpp" />
@@ -94,6 +94,7 @@
     <ClInclude Include="etc\AutoLock.h" />
     <ClInclude Include="event\Event.h" />
     <ClInclude Include="event\EventHandler.h" />
+    <ClInclude Include="math\Quaternion.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="CodeGen.h" />
@@ -114,7 +115,6 @@
     <ClInclude Include="math\Math.h" />
     <ClInclude Include="math\Matrix.h" />
     <ClInclude Include="math\plane.h" />
-    <ClInclude Include="math\Quaternion.h" />
     <ClInclude Include="math\triangle.h" />
     <ClInclude Include="math\Vector.h" />
     <ClInclude Include="math\Vector2.h" />

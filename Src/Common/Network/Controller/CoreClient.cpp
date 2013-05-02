@@ -154,15 +154,17 @@ void CCoreClient::Clear()
 
 
 /**
- @brief 
+ @brief Send
  */
 bool	CCoreClient::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
 {
 	if (!IsConnect())
 		return false;
-
 	if (netId == SERVER_NETID || (m_ServerNetId == netId))
 	{
+		if (DISPLAY_PACKET_LOG)
+			protocols::DisplayPacket("Send =", packet);
+
 		// send(연결된 소켓, 보낼 버퍼, 버퍼의 길이, 상태값)
 		const int result = send(GetSocket(), packet.GetData(), CPacket::MAX_PACKETSIZE, 0);
 		if (result == INVALID_SOCKET)

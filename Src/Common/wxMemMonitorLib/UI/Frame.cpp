@@ -71,6 +71,9 @@ CFrame::CFrame(wxWindow* parent) : wxFrame(parent, -1, _("wxMemMonitor"),
 	GetModuleFileNameA(GethInstance(), moduleName, MAX_PATH);
 	char *name = PathFindFileNameA(moduleName);
 	SetTitle(name);
+
+	Connect(wxEVT_CHAR_HOOK, wxKeyEventHandler(CFrame::OnKeyDown));
+
 }
 
 CFrame::~CFrame()
@@ -183,4 +186,17 @@ void CFrame::UpdatePaneSize(wxWindow *pWindow, int w, int h)
 	pane.MinSize(w,h);
 	m_mgr.Update();
 	pane.MinSize(10,10);
+}
+
+
+/**
+@brief  
+*/
+
+void CFrame::OnKeyDown(wxKeyEvent& event)
+{
+	if (346 == event.GetKeyCode()) // VK_F7
+	{
+		Hide();
+	}
 }

@@ -18,6 +18,10 @@ typedef int certify_key;
 #define P2P_NETID				(1)		// 연결된 P2P 네트워크 Host NetId를 뜻함 (클라이언트 일 때)
 #define ROOT_GROUP_NETID (-1)	// 서버의 최상위 그룹을 뜻한다.
 
+// Option
+static const bool DISPLAY_PACKET_LOG = true;
+
+
 
 
 namespace network

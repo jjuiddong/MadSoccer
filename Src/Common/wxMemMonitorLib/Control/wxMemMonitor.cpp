@@ -75,11 +75,18 @@ bool memmonitor::Init(EXECUTE_TYPE type, HINSTANCE hInst, const std::string conf
 /**
  @brief Show
  */
-bool memmonitor::Show(bool isShow)
+bool memmonitor::ShowToggle()
 {
 	if (wxTheApp)
+	{
 		if (wxTheApp->GetTopWindow())
-			wxTheApp->GetTopWindow()->Show(isShow);
+		{
+			if (wxTheApp->GetTopWindow()->IsShown())
+				wxTheApp->GetTopWindow()->Hide();
+			else
+				wxTheApp->GetTopWindow()->Show(true);
+		}
+	}	
 	return true;
 }
 

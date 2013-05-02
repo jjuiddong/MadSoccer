@@ -62,9 +62,6 @@
     <ClCompile Include="math\plane.cpp">
       <Filter>Math</Filter>
     </ClCompile>
-    <ClCompile Include="math\Quaternion.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
     <ClCompile Include="math\triangle.cpp">
       <Filter>Math</Filter>
     </ClCompile>
@@ -85,6 +82,9 @@
     </ClCompile>
     <ClCompile Include="event\EventHandler.cpp">
       <Filter>Event</Filter>
+    </ClCompile>
+    <ClCompile Include="math\Quaternion.cpp">
+      <Filter>Math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -151,9 +151,6 @@
     <ClInclude Include="math\plane.h">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="math\Quaternion.h">
-      <Filter>Math</Filter>
-    </ClInclude>
     <ClInclude Include="math\triangle.h">
       <Filter>Math</Filter>
     </ClInclude>
@@ -192,6 +189,9 @@
     </ClInclude>
     <ClInclude Include="container\StableVectorMap.h">
       <Filter>Container</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Quaternion.h">
+      <Filter>Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

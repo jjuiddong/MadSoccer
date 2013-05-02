@@ -47,7 +47,7 @@ bool CCertifyServerApp::OnInit()
 	if (!network::ConnectDelegation("p2p", m_pCertifySvr))
 	{
 		clog::Error( clog::ERROR_CRITICAL, "network :: ConnectDelegation Fail !!\n" );
-		return false;
+		//return false;
 	}
 	return true;
 }

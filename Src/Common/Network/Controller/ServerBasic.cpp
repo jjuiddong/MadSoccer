@@ -435,6 +435,9 @@ bool CServerBasic::SendAll(const CPacket &packet)
 		if (!client || !client->IsConnect())
 			continue;
 
+		if (DISPLAY_PACKET_LOG)
+			protocols::DisplayPacket("Send =", packet);
+
 		const int result = send(client->GetSocket(), packet.GetData(), CPacket::MAX_PACKETSIZE, 0);
 		if (result == INVALID_SOCKET)
 		{
@@ -457,6 +460,9 @@ bool	CServerBasic::Send(netid netId, const SEND_FLAG flag, const CPacket &packet
 		SessionItor it = m_Sessions.find(netId);
 		if (m_Sessions.end() != it && it->second->IsConnect()) // Send To Client
 		{
+			if (DISPLAY_PACKET_LOG)
+				protocols::DisplayPacket("Send =", packet);
+
 			const int result = send(it->second->GetSocket(), packet.GetData(), CPacket::MAX_PACKETSIZE, 0);
 			if (result == INVALID_SOCKET)
 			{

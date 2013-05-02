@@ -10,6 +10,7 @@ using namespace network::multinetwork;
 CMultiPlugDelegation::CMultiPlugDelegation() :
 	CPlug(SERVICE_SEPERATE_THREAD)
 	//m_SvrType(linkSvrType)
+,	m_pMultiPlug(NULL)	
 {
 }
 

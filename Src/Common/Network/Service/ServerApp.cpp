@@ -210,9 +210,7 @@ LRESULT CALLBACK network::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM
 				break;
 			case VK_F7:
 				{
-					static bool isShow=true;
-					memmonitor::Show(isShow);
-					isShow = !isShow;
+					memmonitor::ShowToggle();
 				}
 				break;
 			}

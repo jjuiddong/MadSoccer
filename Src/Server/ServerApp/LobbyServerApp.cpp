@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "ServerApp.h"
+#include "LobbyServerApp.h"
 #include "Lib/ChatServer.h"
 #include "Lib/ServerLauncher.h"
 #include "Lib/LobbyServer.h"
