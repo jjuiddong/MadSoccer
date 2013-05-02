@@ -14,7 +14,7 @@ Date:    4/3/2013
 #pragma once
 
 #include "Plug.h"
-
+/*
 namespace network
 {
 
@@ -94,3 +94,4 @@ namespace network
 	}
 
 }
+/**/

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "ClientBasic.h"
 #include "../Controller/P2PClient.h"
-#include "../Controller/NetController.h"
+#include "../Controller/Controller.h"
 #include "../Service/AllProtocolListener.h"
 #include "../Controller/CoreClient.h"
 
@@ -39,7 +39,7 @@ CClientBasic::~CClientBasic()
 //------------------------------------------------------------------------
 bool CClientBasic::Stop()
 {
-	CNetController::Get()->StopClient(this);
+	CController::Get()->StopClient(this);
 	if (m_pConnectSvr)	
 		m_pConnectSvr->Stop();
 	if (m_pP2p)
@@ -67,7 +67,7 @@ bool CClientBasic::Proc()
 //------------------------------------------------------------------------
 void CClientBasic::Disconnect()
 {
-	CNetController::Get()->RemoveClient(this);
+	CController::Get()->RemoveClient(this);
 	if (m_pConnectSvr)
 		m_pConnectSvr->Disconnect();
 	if (m_pP2p)

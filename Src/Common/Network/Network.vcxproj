@@ -89,14 +89,14 @@
     <ClCompile Include="MultiNetwork\MultiNetworkUtility.cpp" />
     <ClCompile Include="MultiNetwork\MultiPlug.cpp" />
     <ClCompile Include="MultiNetwork\MultiPlugDelegation.cpp" />
-    <ClCompile Include="MultiNetwork\FarmServerConnector.cpp" />
+    <ClCompile Include="MultiNetwork\FarmServerPlug.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="ProtocolHandler\AllProtocolDisplayer.cpp" />
     <ClCompile Include="ProtocolHandler\BasicC2SProtocolHandler.cpp" />
     <ClCompile Include="ProtocolHandler\BasicProtocolDispatcher.cpp" />
     <ClCompile Include="ProtocolHandler\BasicS2CProtocolHandler.cpp" />
     <ClCompile Include="Service\ServerApp.cpp" />
-    <ClCompile Include="Service\SubServerConnector.cpp" />
+    <ClCompile Include="Service\SubServerPlug.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -105,7 +105,7 @@
     <ClCompile Include="DataStructure\Room.cpp" />
     <ClCompile Include="DataStructure\User.cpp" />
     <ClCompile Include="Controller\CoreClient.cpp" />
-    <ClCompile Include="Controller\NetController.cpp" />
+    <ClCompile Include="Controller\Controller.cpp" />
     <ClCompile Include="Controller\Launcher.cpp" />
     <ClCompile Include="Controller\P2PClient.cpp" />
     <ClCompile Include="Service\AllProtocol.cpp" />
@@ -123,7 +123,7 @@
     <ClInclude Include="MultiNetwork\MultiNetworkUtility.h" />
     <ClInclude Include="MultiNetwork\MultiPlug.h" />
     <ClInclude Include="MultiNetwork\MultiPlugDelegation.h" />
-    <ClInclude Include="MultiNetwork\FarmServerConnector.h" />
+    <ClInclude Include="MultiNetwork\FarmServerPlug.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="NetworkDef.h" />
     <ClInclude Include="NetworkUtility.h" />
@@ -132,7 +132,7 @@
     <ClInclude Include="ProtocolHandler\BasicProtocolDispatcher.h" />
     <ClInclude Include="ProtocolHandler\BasicS2CProtocolHandler.h" />
     <ClInclude Include="Service\ServerApp.h" />
-    <ClInclude Include="Service\SubServerConnector.h" />
+    <ClInclude Include="Service\SubServerPlug.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Algorithm\BindCore.h" />
@@ -144,7 +144,7 @@
     <ClInclude Include="Task\TaskLogic.h" />
     <ClInclude Include="Task\TaskWork.h" />
     <ClInclude Include="Controller\CoreClient.h" />
-    <ClInclude Include="Controller\NetController.h" />
+    <ClInclude Include="Controller\Controller.h" />
     <ClInclude Include="Controller\Launcher.h" />
     <ClInclude Include="Controller\P2PClient.h" />
     <ClInclude Include="Service\AllProtocol.h" />

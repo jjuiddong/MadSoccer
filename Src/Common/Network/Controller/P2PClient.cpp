@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "P2PClient.h"
 #include "CoreClient.h"
-#include "NetController.h"
+#include "Controller.h"
 
 using namespace network;
 
@@ -49,8 +49,8 @@ bool	CP2PClient::Connect( const std::string &ip, const int port )
 //------------------------------------------------------------------------
 bool	CP2PClient::Stop()
 {
-	CNetController::Get()->StopServer(m_pP2pHost);
-	CNetController::Get()->StopCoreClient(m_pP2pClient);
+	CController::Get()->StopServer(m_pP2pHost);
+	CController::Get()->StopCoreClient(m_pP2pClient);
 	return true;
 }
 
@@ -82,8 +82,8 @@ bool	CP2PClient::Proc()
 //------------------------------------------------------------------------
 void	CP2PClient::Clear()
 {
-	CNetController::Get()->StopServer(m_pP2pHost);
-	CNetController::Get()->StopCoreClient(m_pP2pClient);
+	CController::Get()->StopServer(m_pP2pHost);
+	CController::Get()->StopCoreClient(m_pP2pClient);
 	SAFE_DELETE(m_pP2pHost);
 	SAFE_DELETE(m_pP2pClient);
 }
@@ -143,7 +143,7 @@ bool	CP2PClient::CreateP2PHost( const int port )
 		}
 	}
 
-	return CNetController::Get()->StartServer(port, m_pP2pHost);
+	return CController::Get()->StartServer(port, m_pP2pHost);
 }
 
 
@@ -169,7 +169,7 @@ bool	CP2PClient::CreateP2PClient( const std::string &ip, const int port )
 		}
 	}
 
-	return CNetController::Get()->StartCoreClient(ip, port, m_pP2pClient);
+	return CController::Get()->StartCoreClient(ip, port, m_pP2pClient);
 }
 
 

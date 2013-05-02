@@ -27,7 +27,7 @@ namespace network
 	{
 		const timeval t = {0, 0}; // 0 millisecond
 		SFd_Set readSockets;
-		CNetController::Get()->MakeCoreClientsFDSET(SERVICE_SEPERATE_THREAD, &readSockets);
+		CController::Get()->MakeCoreClientsFDSET(SERVICE_SEPERATE_THREAD, &readSockets);
 		const SFd_Set sockets = readSockets;
 
 		const int ret = select( readSockets.fd_count, &readSockets, NULL, NULL, &t );
@@ -44,7 +44,7 @@ namespace network
 				{
 					CPacketQueue::Get()->PushPacket( 
 						CPacketQueue::SPacketData(recvId, 
-							DisconnectPacket(recvId, CNetController::Get()->GetUniqueValue()) ));
+							DisconnectPacket(recvId, CController::Get()->GetUniqueValue()) ));
 				}
 				else
 				{

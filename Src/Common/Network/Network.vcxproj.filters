@@ -21,9 +21,6 @@
     <Filter Include="Lib\ErrReport">
       <UniqueIdentifier>{1277187a-a491-476e-a703-7a0500169015}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Lib\Interface">
-      <UniqueIdentifier>{3fd68fa9-b147-451b-b420-892a3d990e26}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Lib\Task">
       <UniqueIdentifier>{3d79bede-b4a9-4f29-b6f8-4c0562f39dd8}</UniqueIdentifier>
     </Filter>
@@ -32,9 +29,6 @@
     </Filter>
     <Filter Include="Lib\Service">
       <UniqueIdentifier>{55f95af7-b0a2-45d0-ae5d-bf4436480343}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Lib\Marshalling">
-      <UniqueIdentifier>{353524c7-21d1-419f-a714-be2bfc3dc60a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Lib\ProtocolHandler">
       <UniqueIdentifier>{0a45ec0b-5b81-40cd-b4e5-ed8a71f44e66}</UniqueIdentifier>
@@ -63,9 +57,6 @@
       <Filter>Lib\DataStructure</Filter>
     </ClCompile>
     <ClCompile Include="Controller\CoreClient.cpp">
-      <Filter>Lib\Controller</Filter>
-    </ClCompile>
-    <ClCompile Include="Controller\NetController.cpp">
       <Filter>Lib\Controller</Filter>
     </ClCompile>
     <ClCompile Include="Controller\P2PClient.cpp">
@@ -104,9 +95,6 @@
     <ClCompile Include="Controller\ClientBasic.cpp">
       <Filter>Lib\Controller</Filter>
     </ClCompile>
-    <ClCompile Include="MultiNetwork\FarmServerConnector.cpp">
-      <Filter>Lib\MultiNetwork</Filter>
-    </ClCompile>
     <ClCompile Include="ProtocolHandler\AllProtocolDisplayer.cpp">
       <Filter>Lib\ProtocolHandler</Filter>
     </ClCompile>
@@ -115,9 +103,6 @@
     </ClCompile>
     <ClCompile Include="MultiNetwork\MultiNetworkUtility.cpp">
       <Filter>Lib\MultiNetwork</Filter>
-    </ClCompile>
-    <ClCompile Include="Service\SubServerConnector.cpp">
-      <Filter>Lib\Service</Filter>
     </ClCompile>
     <ClCompile Include="Controller\Launcher.cpp">
       <Filter>Lib\Controller</Filter>
@@ -130,6 +115,15 @@
     </ClCompile>
     <ClCompile Include="Service\ServerApp.cpp">
       <Filter>Lib\Service</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiNetwork\FarmServerPlug.cpp">
+      <Filter>Lib\MultiNetwork</Filter>
+    </ClCompile>
+    <ClCompile Include="Service\SubServerPlug.cpp">
+      <Filter>Lib\Service</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller\Controller.cpp">
+      <Filter>Lib\Controller</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -170,9 +164,6 @@
       <Filter>Lib\Task</Filter>
     </ClInclude>
     <ClInclude Include="Controller\CoreClient.h">
-      <Filter>Lib\Controller</Filter>
-    </ClInclude>
-    <ClInclude Include="Controller\NetController.h">
       <Filter>Lib\Controller</Filter>
     </ClInclude>
     <ClInclude Include="Controller\P2PClient.h">
@@ -220,9 +211,6 @@
     <ClInclude Include="Controller\ServerBasic.h">
       <Filter>Lib\Controller</Filter>
     </ClInclude>
-    <ClInclude Include="MultiNetwork\FarmServerConnector.h">
-      <Filter>Lib\MultiNetwork</Filter>
-    </ClInclude>
     <ClInclude Include="ProtocolHandler\AllProtocolDisplayer.h">
       <Filter>Lib\ProtocolHandler</Filter>
     </ClInclude>
@@ -241,9 +229,6 @@
     <ClInclude Include="MultiNetwork\MultiNetworkUtility.h">
       <Filter>Lib\MultiNetwork</Filter>
     </ClInclude>
-    <ClInclude Include="Service\SubServerConnector.h">
-      <Filter>Lib\Service</Filter>
-    </ClInclude>
     <ClInclude Include="Controller\Launcher.h">
       <Filter>Lib\Controller</Filter>
     </ClInclude>
@@ -255,6 +240,15 @@
     </ClInclude>
     <ClInclude Include="Service\ServerApp.h">
       <Filter>Lib\Service</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiNetwork\FarmServerPlug.h">
+      <Filter>Lib\MultiNetwork</Filter>
+    </ClInclude>
+    <ClInclude Include="Service\SubServerPlug.h">
+      <Filter>Lib\Service</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\Controller.h">
+      <Filter>Lib\Controller</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

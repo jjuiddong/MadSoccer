@@ -19,13 +19,13 @@ FarmServer 에 접속해서, 필요한 정보를 요청하고, 응답을 받는다.
 namespace network { namespace multinetwork {
 
 	struct SSvrConfigData;
-	class CFarmServerConnector : public CMultiPlugDelegation
-													,public farm::s2c_ProtocolListener
-													,public AllProtocolDisplayer
+	class CFarmServerPlug : public CMultiPlugDelegation
+										,public farm::s2c_ProtocolListener
+										,public AllProtocolDisplayer
 	{
 	public:
-		CFarmServerConnector( const std::string &svrType, const SSvrConfigData &config );
-		virtual ~CFarmServerConnector() {}
+		CFarmServerPlug( const std::string &svrType, const SSvrConfigData &config );
+		virtual ~CFarmServerPlug() {}
 
 		bool		Start( const std::string &ip, const int port );
 

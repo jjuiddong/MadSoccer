@@ -1,6 +1,6 @@
 
 #include "stdafx.h"
-#include "NetController.h"
+#include "Controller.h"
 #include "Launcher.h"
 #include "ServerBasic.h"
 #include "../Service/Server.h"
@@ -16,7 +16,7 @@
 
 using namespace network;
 
-CNetController::CNetController() :
+CController::CController() :
 	m_AcceptThread("AcceptThread")
 ,	m_Servers(VECTOR_RESERVED_SIZE)
 ,	m_Clients(VECTOR_RESERVED_SIZE)
@@ -26,7 +26,7 @@ CNetController::CNetController() :
 
 }
 
-CNetController::~CNetController() 
+CController::~CController() 
 {
 	Clear();
 }
@@ -35,7 +35,7 @@ CNetController::~CNetController()
 //------------------------------------------------------------------------
 // logicThreadCount 갯수만큼 로직쓰레드를 생성한다.
 //------------------------------------------------------------------------
-bool CNetController::Init(int logicThreadCount)
+bool CController::Init(int logicThreadCount)
 {
 	// 로직쓰레드 생성
 	for (int i=0; i < logicThreadCount; ++i)
@@ -62,7 +62,7 @@ bool CNetController::Init(int logicThreadCount)
 /**
 @brief  User Thread Packet process
 */
-void CNetController::Proc()
+void CController::Proc()
 {
 	// client user loop
 	BOOST_FOREACH(ClientBasicPtr &ptr, m_Clients.m_Seq)
@@ -85,7 +85,7 @@ void CNetController::Proc()
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-bool CNetController::StartServer(int port, ServerBasicPtr pSvr)
+bool CController::StartServer(int port, ServerBasicPtr pSvr)
 {
 	RETV(!pSvr, false);
 
@@ -131,7 +131,7 @@ bool CNetController::StartServer(int port, ServerBasicPtr pSvr)
 // remove server container
 // remove thread task
 //------------------------------------------------------------------------
-bool CNetController::StopServer(ServerBasicPtr pSvr)
+bool CController::StopServer(ServerBasicPtr pSvr)
 {
 	RETV(!pSvr, false);
 
@@ -144,7 +144,7 @@ bool CNetController::StopServer(ServerBasicPtr pSvr)
  @brief Remove Server
 	Call from CServerBasic::Disconnect()
  */
-bool	 CNetController::RemoveServer(ServerBasicPtr pSvr)
+bool	 CController::RemoveServer(ServerBasicPtr pSvr)
 {
 	RETV(!pSvr, false);
 
@@ -168,7 +168,7 @@ bool	 CNetController::RemoveServer(ServerBasicPtr pSvr)
 //------------------------------------------------------------------------
 // netId 에 해당하는 서버를 리턴한다.
 //------------------------------------------------------------------------
-ServerBasicPtr CNetController::GetServer(netid netId)
+ServerBasicPtr CController::GetServer(netid netId)
 {
 	common::AutoCSLock cs(m_CS); /// sync
 
@@ -182,7 +182,7 @@ ServerBasicPtr CNetController::GetServer(netid netId)
 //------------------------------------------------------------------------
 // 클라이언트는 ip, port 의 서버에 접속을 시도한다.
 //------------------------------------------------------------------------
-bool CNetController::StartClient(const std::string &ip, int port, ClientBasicPtr pClt)
+bool CController::StartClient(const std::string &ip, int port, ClientBasicPtr pClt)
 {
 	RETV(!pClt, false);
 
@@ -208,7 +208,7 @@ bool CNetController::StartClient(const std::string &ip, int port, ClientBasicPtr
 //------------------------------------------------------------------------
 // 클라이언트를 종료한다.
 //------------------------------------------------------------------------
-bool CNetController::StopClient(ClientBasicPtr pClt)
+bool CController::StopClient(ClientBasicPtr pClt)
 {
 	RETV(!pClt, false);
 
@@ -221,7 +221,7 @@ bool CNetController::StopClient(ClientBasicPtr pClt)
  @brief Remove Client
  Call from CClientBasic::Disconnect
  */
-bool	CNetController::RemoveClient(ClientBasicPtr pClt)
+bool	CController::RemoveClient(ClientBasicPtr pClt)
 {
 	RETV(!pClt, false);
 
@@ -241,7 +241,7 @@ bool	CNetController::RemoveClient(ClientBasicPtr pClt)
 //------------------------------------------------------------------------
 // clientId에 해당하는 클라이언트를 리턴한다.
 //------------------------------------------------------------------------
-ClientBasicPtr CNetController::GetClient(netid netId)
+ClientBasicPtr CController::GetClient(netid netId)
 {
 	common::AutoCSLock cs(m_CS); 	/// Sync
 
@@ -255,7 +255,7 @@ ClientBasicPtr CNetController::GetClient(netid netId)
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-bool CNetController::StartCoreClient(const std::string &ip, int port, CoreClientPtr pClt)
+bool CController::StartCoreClient(const std::string &ip, int port, CoreClientPtr pClt)
 {
 	RETV(!pClt,false);
 
@@ -295,7 +295,7 @@ bool CNetController::StartCoreClient(const std::string &ip, int port, CoreClient
 // remove coreclient list 
 // remove task if SERVICE_EXCLUSIVE_THREAD mode coreclient
 //------------------------------------------------------------------------
-bool CNetController::StopCoreClient(CoreClientPtr pClt)
+bool CController::StopCoreClient(CoreClientPtr pClt)
 {
 	RETV(!pClt, false);
 
@@ -308,7 +308,7 @@ bool CNetController::StopCoreClient(CoreClientPtr pClt)
  @brief Remove CoreClient
  Call from CCoreClient::Disconnect()
  */
-bool	CNetController::RemoveCoreClient(CoreClientPtr  pClt)
+bool	CController::RemoveCoreClient(CoreClientPtr  pClt)
 {
 	RETV(!pClt, false);
 
@@ -337,7 +337,7 @@ bool	CNetController::RemoveCoreClient(CoreClientPtr  pClt)
 //------------------------------------------------------------------------
 // clientId에 해당하는 클라이언트를 리턴한다.
 //------------------------------------------------------------------------
-CoreClientPtr CNetController::GetCoreClient(netid netId)
+CoreClientPtr CController::GetCoreClient(netid netId)
 {
 	common::AutoCSLock cs(m_CS); 	/// Sync
 
@@ -351,7 +351,7 @@ CoreClientPtr CNetController::GetCoreClient(netid netId)
 //------------------------------------------------------------------------
 // Protocol Dispatcher 추가
 //------------------------------------------------------------------------
-void CNetController::AddDispatcher(IProtocolDispatcher *pDispatcher)
+void CController::AddDispatcher(IProtocolDispatcher *pDispatcher)
 {
 	common::AutoCSLock cs(m_CS); 	/// Sync
 
@@ -369,7 +369,7 @@ void CNetController::AddDispatcher(IProtocolDispatcher *pDispatcher)
 //------------------------------------------------------------------------
 // Protocol Dispatcher 얻음
 //------------------------------------------------------------------------
-IProtocolDispatcher* CNetController::GetDispatcher(int protocolID)
+IProtocolDispatcher* CController::GetDispatcher(int protocolID)
 {
 	common::AutoCSLock cs(m_CS); 	/// Sync
 
@@ -383,7 +383,7 @@ IProtocolDispatcher* CNetController::GetDispatcher(int protocolID)
 //------------------------------------------------------------------------
 // 서버들의 fd_set 을 생성해서 리턴한다.
 //------------------------------------------------------------------------
-void CNetController::MakeServersFDSET( SFd_Set *pfdset )
+void CController::MakeServersFDSET( SFd_Set *pfdset )
 {
 	common::AutoCSLock cs(m_CS);
 
@@ -403,7 +403,7 @@ void CNetController::MakeServersFDSET( SFd_Set *pfdset )
 //------------------------------------------------------------------------
 // CoreClient 중에서 procType 에 해당하는 CoreClient들만 fd_set을 구성한다.
 //------------------------------------------------------------------------
-void	CNetController::MakeCoreClientsFDSET( PROCESS_TYPE procType, SFd_Set *pfdset)
+void	CController::MakeCoreClientsFDSET( PROCESS_TYPE procType, SFd_Set *pfdset)
 {
 	common::AutoCSLock cs(m_CS);
 
@@ -423,7 +423,7 @@ void	CNetController::MakeCoreClientsFDSET( PROCESS_TYPE procType, SFd_Set *pfdse
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-void CNetController::Clear()
+void CController::Clear()
 {
 	m_AcceptThread.Terminate();
 
@@ -452,7 +452,7 @@ void CNetController::Clear()
 //------------------------------------------------------------------------
 // 스트링으로 변환, 주로 디버깅에 관련된 정보를 스트링으로 내보낸다.
 //------------------------------------------------------------------------
-std::string CNetController::ToString()
+std::string CController::ToString()
 {
 	std::stringstream ss;
 
@@ -487,7 +487,7 @@ std::string CNetController::ToString()
 //------------------------------------------------------------------------
 // 해당되는 타입의 WorkThread를 리턴한다.
 //------------------------------------------------------------------------
-ThreadPtr CNetController::AllocWorkThread(SERVICE_TYPE serviceType, PlugPtr pConnector)
+ThreadPtr CController::AllocWorkThread(SERVICE_TYPE serviceType, PlugPtr pConnector)
 {
 	RETV(!pConnector, NULL);
 
@@ -555,7 +555,7 @@ ThreadPtr CNetController::AllocWorkThread(SERVICE_TYPE serviceType, PlugPtr pCon
 //------------------------------------------------------------------------
 // find WorkThread of hThreadHandle 
 //------------------------------------------------------------------------
-ThreadPtr CNetController::GetThread( const ThreadList &threads, HANDLE hThreadHandle )
+ThreadPtr CController::GetThread( const ThreadList &threads, HANDLE hThreadHandle )
 {
 	common::AutoCSLock cs(m_CS); 	/// Sync
 
@@ -570,7 +570,7 @@ ThreadPtr CNetController::GetThread( const ThreadList &threads, HANDLE hThreadHa
 /**
  @brief Call Disconnect function through the thread message communication
  */
-void	CNetController::DisconnectServer(ServerBasicPtr pSvr)
+void	CController::DisconnectServer(ServerBasicPtr pSvr)
 {
 	RET(!pSvr);
 
@@ -598,7 +598,7 @@ void	CNetController::DisconnectServer(ServerBasicPtr pSvr)
 /**
  @brief Call Disconnect function through the thread message communication
  */
-void	CNetController::DisconnectClient(ClientBasicPtr pClt)
+void	CController::DisconnectClient(ClientBasicPtr pClt)
 {
 	RET(!pClt);
 
@@ -611,7 +611,7 @@ void	CNetController::DisconnectClient(ClientBasicPtr pClt)
 /**
  @brief Call Disconnect function through the thread message communication
  */
-void	CNetController::DisconnectCoreClient(CoreClientPtr pCoreClt)
+void	CController::DisconnectCoreClient(CoreClientPtr pCoreClt)
 {
 	RET(!pCoreClt);
 
@@ -640,7 +640,7 @@ void	CNetController::DisconnectCoreClient(CoreClientPtr pCoreClt)
 /**
  @brief 제거될 Sever, Client 를 처리한다.
  */
-void	CNetController::RemoveProcess()
+void	CController::RemoveProcess()
 {
 	m_Clients.apply_removes();
 	m_CoreClients.apply_removes();
@@ -651,7 +651,7 @@ void	CNetController::RemoveProcess()
 /**
  @brief Main Loop , Logic Thread 에서 호출한다.
  */
-void	CNetController::MainLoop()
+void	CController::MainLoop()
 {
 	// 제거될 Sever, Client 를 처리한다.
 	RemoveProcess();

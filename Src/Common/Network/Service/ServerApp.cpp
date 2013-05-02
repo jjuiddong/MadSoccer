@@ -4,7 +4,6 @@
 
 MEMORYMONITOR_INNER_PROCESS();
 
-
 namespace network
 {
 	#define MAX_LOADSTRING 100
@@ -38,8 +37,6 @@ int _WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, in
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
-	//LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-	//LoadString(hInstance, IDC_SERVERAPP, szWindowClass, MAX_LOADSTRING);
 
 	CServerApp *pApp = CreateServerApp();
 	if (!pApp)
@@ -84,8 +81,6 @@ int _WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, in
 
 
 	MSG msg;
-	//HACCEL hAccelTable;
-	//hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_SERVERAPP));
 	int tick = GetTickCount();
 	bool bDoingBackgroundProcessing = true;
 	while ( bDoingBackgroundProcessing ) 
@@ -97,7 +92,6 @@ int _WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, in
 				bDoingBackgroundProcessing = FALSE; 
 				break; 
 			}
-			//if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
 			if (!TranslateAccelerator(msg.hwnd, NULL, &msg))
 			{
 				TranslateMessage(&msg);
@@ -106,7 +100,7 @@ int _WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, in
 		}
 
 		const int curT = GetTickCount();
-		if (curT - tick > 300)
+		if (curT - tick > 1000)
 		{
 			InvalidateRect(g_Hwnd,NULL,TRUE);
 			tick = curT;
@@ -116,7 +110,6 @@ int _WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, in
 
 exit:
 	SAFE_DELETE(pApp);
-	//SAFE_DELETE(g_pLobbyServer);
 	network::Clear();
 	memmonitor::Cleanup();
 	return 0;
@@ -134,14 +127,11 @@ ATOM network::MyRegisterClass(HINSTANCE hInstance)
 	wcex.cbClsExtra		= 0;
 	wcex.cbWndExtra		= 0;
 	wcex.hInstance		= hInstance;
-	//wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_SERVERAPP));
 	wcex.hIcon = NULL;
 	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
 	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
-	//wcex.lpszMenuName	= MAKEINTRESOURCE(IDC_SERVERAPP);
 	wcex.lpszMenuName = L"";
-	wcex.lpszClassName	= L"CServerApp"; //common::str2wstr(szWindowClass).c_str();
-	//wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
+	wcex.lpszClassName	= L"CServerApp";
 	wcex.hIconSm = NULL;
 
 	return RegisterClassEx(&wcex);
@@ -202,25 +192,10 @@ void Paint(HDC hdc)
 
 LRESULT CALLBACK network::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	//int wmId, wmEvent;
 	PAINTSTRUCT ps;
 	HDC hdc;
-
 	switch (message)
 	{
-	case WM_COMMAND:
-		//wmId    = LOWORD(wParam);
-		//wmEvent = HIWORD(wParam);
-		//// 메뉴의 선택 영역을 구문 분석합니다.
-		//switch (wmId)
-		//{
-		//case IDM_EXIT:
-		//	DestroyWindow(hWnd);
-		//	break;
-		//default:
-		//	return DefWindowProc(hWnd, message, wParam, lParam);
-		//}
-		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
 		Paint(hdc);
@@ -234,7 +209,11 @@ LRESULT CALLBACK network::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM
 				PostQuitMessage(0);
 				break;
 			case VK_F7:
-				memmonitor::Show(true);
+				{
+					static bool isShow=true;
+					memmonitor::Show(isShow);
+					isShow = !isShow;
+				}
 				break;
 			}
 		}

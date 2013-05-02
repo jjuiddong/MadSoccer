@@ -6,6 +6,14 @@
 #include "Src/LoginServer.h"
 #include "Network/Service/ServerApp.h"
 
+#include "NetProtocol/Src/login_Protocol.cpp"
+#include "NetProtocol/Src/login_ProtocolListener.cpp"
+#include "NetProtocol/Src/server_network_Protocol.cpp"
+#include "NetProtocol/Src/server_network_ProtocolListener.cpp"
+#include "NetProtocol/src/certify_Protocol.cpp"
+#include "NetProtocol/src/certify_ProtocolListener.cpp"
+
+
 using namespace network;
 
 
@@ -49,7 +57,7 @@ bool CLoginServerApp::OnInit()
 		clog::Error( clog::ERROR_CRITICAL, "network :: ConnectDelegation Fail !!\n" );
 		return false;
 	}
-	if (!network::AddDelegation( "lobbysvr", new network::CSubServerConnector()))
+	if (!network::AddDelegation( "lobbysvr", new network::CSubServerPlug()))
 	{
 		clog::Error( clog::ERROR_CRITICAL, "network :: AddDelegation Fail !!\n" );
 		return false;

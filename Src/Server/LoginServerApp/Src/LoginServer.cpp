@@ -1,17 +1,11 @@
 
 #include "stdafx.h"
 #include "LoginServer.h"
-#include "Network/Service/SubServerConnector.h"
-
-#include "NetProtocol/Src/login_Protocol.cpp"
-#include "NetProtocol/Src/login_ProtocolListener.cpp"
-#include "NetProtocol/Src/server_network_Protocol.cpp"
-#include "NetProtocol/Src/server_network_ProtocolListener.cpp"
-#include "NetProtocol/src/certify_Protocol.cpp"
-#include "NetProtocol/src/certify_ProtocolListener.cpp"
+#include "Network/Service/SubServerPlug.h"
 
 #include "Network/ProtocolHandler/BasicC2SProtocolHandler.h"
 #include "BasicC2SProtocolHandler_LoginSvr.h"
+
 
 using namespace network;
 
@@ -35,13 +29,13 @@ void	CLoginServer::OnConnectMultiPlug()
 {
 	CServer::OnConnectMultiPlug();
 
-	MultiPlugPtr pLobbySvrController = multinetwork::CMultiNetwork::Get()->GetController("lobbysvr");
+	MultiPlugPtr pLobbySvrController = multinetwork::CMultiNetwork::Get()->GetMultiPlug("lobbysvr");
 	if (!pLobbySvrController)
 	{
 		clog::Error( clog::ERROR_CRITICAL, "CLoginServer Init Error!! not found lobbysvr netgroupcontroller" );
 		return;
 	}
-	MultiPlugPtr pCertifySvrController = multinetwork::CMultiNetwork::Get()->GetController("certifysvr");
+	MultiPlugPtr pCertifySvrController = multinetwork::CMultiNetwork::Get()->GetMultiPlug("certifysvr");
 	if (!pCertifySvrController)
 	{
 		clog::Error( clog::ERROR_CRITICAL, "CLoginServer Init Error!! not found certify netgroupcontroller" );
@@ -74,13 +68,13 @@ void	CLoginServer::OnConnectMultiPlug()
  */
 void	CLoginServer::OnSubServerConnect(CNetEvent &event)
 {
-	MultiPlugPtr pLobbySvrController = multinetwork::CMultiNetwork::Get()->GetController("lobbysvr");
+	MultiPlugPtr pLobbySvrController = multinetwork::CMultiNetwork::Get()->GetMultiPlug("lobbysvr");
 	if (!pLobbySvrController)
 	{
 		clog::Error( clog::ERROR_CRITICAL, "OnSubServerConnect Error!! not found lobbysvr netgroupcontroller" );
 		return;
 	}
-	MultiPlugPtr pCertifySvrController = multinetwork::CMultiNetwork::Get()->GetController("certifysvr");
+	MultiPlugPtr pCertifySvrController = multinetwork::CMultiNetwork::Get()->GetMultiPlug("certifysvr");
 	if (!pCertifySvrController)
 	{
 		clog::Error( clog::ERROR_CRITICAL, "OnSubServerConnect Error!! not found certify netgroupcontroller" );
@@ -143,7 +137,7 @@ bool CLoginServer::ReqLobbyIn(IProtocolDispatcher &dispatcher, netid senderId)
 		return false;
 	}
 
-	CSubServerConnector *pSubSvrCon = dynamic_cast<CSubServerConnector*>(pLobbySvrDelegation.Get());
+	CSubServerPlug *pSubSvrCon = dynamic_cast<CSubServerPlug*>(pLobbySvrDelegation.Get());
 	if (!pSubSvrCon)
 	{
 		clog::Error( clog::ERROR_CRITICAL, "ReqLobbyIn Error!! CSubServerConnector convert error" );

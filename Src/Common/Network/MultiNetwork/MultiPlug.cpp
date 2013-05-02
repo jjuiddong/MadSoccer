@@ -4,7 +4,7 @@
 #include "../Controller/CoreClient.h"
 #include "../Controller/P2PClient.h"
 #include "../Controller/ServerBasic.h"
-#include "../Controller/NetController.h"
+#include "../Controller/Controller.h"
 
 using namespace network;
 using namespace network::multinetwork;
@@ -164,7 +164,7 @@ bool	CMultiPlug::Connect( SERVICE_TYPE type, const std::string &ip, const int po
 			m_Port = port;
 			if (m_pServer->IsServerOn())
 				m_pServer->Disconnect();
-			CNetController::Get()->StartServer(port, m_pServer);
+			CController::Get()->StartServer(port, m_pServer);
 		}
 		break;
 
@@ -182,7 +182,7 @@ bool	CMultiPlug::Connect( SERVICE_TYPE type, const std::string &ip, const int po
 			//}
 			m_Clients.insert( CoreClients_::value_type(pClient->GetNetId(), pClient) );
 
-			CNetController::Get()->StartCoreClient(ip, port, pClient);
+			CController::Get()->StartCoreClient(ip, port, pClient);
 		}
 		break;
 	}

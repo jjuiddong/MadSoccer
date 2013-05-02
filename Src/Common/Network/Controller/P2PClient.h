@@ -23,7 +23,7 @@ namespace network
 	class CP2PClient : public CPlug
 								, public memmonitor::Monitor<CP2PClient, TYPE_NAME(CP2PClient)>
 	{
-		friend class CNetController;
+		friend class CController;
 		friend class CClient;
 
 	public:

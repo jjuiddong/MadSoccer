@@ -1,5 +1,5 @@
 /**
-Name:   SubServerConnector.h
+Name:   SubServerPlug.h
 Author:  jjuiddong
 Date:    4/25/2013
 
@@ -13,12 +13,12 @@ Date:    4/25/2013
 
 namespace network
 {
-	class CSubServerConnector : public multinetwork::CMultiPlugDelegation
-												, public server_network::s2s_ProtocolListener
+	class CSubServerPlug : public multinetwork::CMultiPlugDelegation
+										, public server_network::s2s_ProtocolListener
 	{
 	public:
-		CSubServerConnector();
-		virtual ~CSubServerConnector();
+		CSubServerPlug();
+		virtual ~CSubServerPlug();
 
 		std::list<SSubServerInfo> GetSubServerInfo();
 

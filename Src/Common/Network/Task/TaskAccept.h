@@ -7,7 +7,7 @@
 //------------------------------------------------------------------------
 #pragma once
 
-#include "NetController.h"
+#include "Controller.h"
 
 namespace network
 {
@@ -33,7 +33,7 @@ namespace network
 	{
 		const timeval t = {0, 10}; // 10 millisecond
 		SFd_Set readSockets;
-		CNetController::Get()->MakeServersFDSET(&readSockets);
+		CController::Get()->MakeServersFDSET(&readSockets);
 		const SFd_Set sockets = readSockets;
 
 		const int ret = select( readSockets.fd_count, &readSockets, NULL, NULL, &t );
@@ -51,7 +51,7 @@ namespace network
 					return RR_CONTINUE;
 				}
 
-				CServerBasic *pSvr = CNetController::Get()->GetServer(sockets.netid_array[ i]);
+				CServerBasic *pSvr = CController::Get()->GetServer(sockets.netid_array[ i]);
 				if (!pSvr)
 				{
 					clog::Error( clog::ERROR_PROBLEM,

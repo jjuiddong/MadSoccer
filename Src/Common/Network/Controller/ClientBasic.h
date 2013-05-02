@@ -17,7 +17,7 @@ namespace network
 	{
 
 		friend class CNetLauncher;
-		friend class CNetController;
+		friend class CController;
 		friend class CBasicS2CProtocolHandler;
 
 	public:

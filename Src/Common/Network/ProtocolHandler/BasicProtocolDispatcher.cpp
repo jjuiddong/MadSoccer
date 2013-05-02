@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 #include "BasicProtocolDispatcher.h"
-#include "Network/Controller/NetController.h"
+#include "Network/Controller/Controller.h"
 #include "../Controller/CoreClient.h"
 
 
@@ -22,7 +22,7 @@ void basic_protocol::ServerDispatcher::Dispatch(CPacket &packet, ServerBasicPtr 
 		{
 			int uniqueValue = 0;
 			newPacket >> uniqueValue;
-			if (CNetController::Get()->GetUniqueValue() != uniqueValue) // 패킷 검증
+			if (CController::Get()->GetUniqueValue() != uniqueValue) // 패킷 검증
 				return;
 				 
 			netid disconnectId = INVALID_NETID;
@@ -42,7 +42,7 @@ void basic_protocol::ServerDispatcher::Dispatch(CPacket &packet, ServerBasicPtr 
 		{
 			int uniqueValue = 0;
 			newPacket >> uniqueValue;
-			if (CNetController::Get()->GetUniqueValue() != uniqueValue) // 패킷 검증
+			if (CController::Get()->GetUniqueValue() != uniqueValue) // 패킷 검증
 				return;
 
 			netid disconnectId = INVALID_NETID;
@@ -79,7 +79,7 @@ void basic_protocol::ClientDispatcher::Dispatch(CPacket &packet, CoreClientPtr p
 		{
 			int uniqueValue = 0;
 			newPacket >> uniqueValue;
-			if (CNetController::Get()->GetUniqueValue() != uniqueValue) // 패킷 검증
+			if (CController::Get()->GetUniqueValue() != uniqueValue) // 패킷 검증
 				return;
 
 			pClt->Disconnect();

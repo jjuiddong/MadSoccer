@@ -29,6 +29,7 @@ protected:
 	void OnContextMenu(wxContextMenuEvent& event);
 	void OnMenuClear(wxCommandEvent& event);
 	int ParseLogType(const std::string &msg);	
+	wxColour GetFileName2Color(const std::string &fileName);
 
 private:
 	wxTimer	m_Timer;

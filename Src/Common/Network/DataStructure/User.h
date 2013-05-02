@@ -30,8 +30,8 @@ namespace network
 		void			SetNetId(netid netId) { m_NetId = netId; }
 		void			SetId(int id) { m_Id = id; }
 		void			SetName(const std::string &name) { m_Name = name; }
-		netid			GetNetId() const { return m_NetId; }
-		int				GetId() const { return m_Id; }
+		netid		GetNetId() const { return m_NetId; }
+		int			GetId() const { return m_Id; }
 		const std::string& GetName() const { return m_Name; }
 
 		bool			AddCharacter(CharacterPtr pChar);

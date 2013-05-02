@@ -16,7 +16,7 @@ namespace all
 	{
 	public:
 		Dispatcher() : IProtocolDispatcher(all::Dispatcher_ID) {}
-		virtual void Dispatch(network::CPacket &packet, const ProtocolListenerList &listeners) override;
+		virtual bool Dispatch(network::CPacket &packet, const ProtocolListenerList &listeners) override;
 	};
 
 

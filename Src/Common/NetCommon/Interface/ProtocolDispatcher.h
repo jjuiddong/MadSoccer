@@ -27,7 +27,7 @@ namespace network
 		virtual void PrintThisPacket(int logType /*common::log::LOG_LEVEL*/, const std::string &msg);
 
 	protected:
-		virtual void Dispatch(CPacket &packet, const ProtocolListenerList &listeners)=0;
+		virtual bool Dispatch(CPacket &packet, const ProtocolListenerList &listeners)=0;
 		int m_Id; // 대응하는 protocol ID 와 동일한 값이다.
 		CPacket *m_pCurrentDispatchPacket;
 	};

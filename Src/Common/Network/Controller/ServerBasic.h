@@ -13,7 +13,7 @@ namespace network
 	class CServerBasic : public CPlug
 	{
 		friend class CNetLauncher;
-		friend class CNetController;
+		friend class CController;
 		friend class CTaskLogic;
 		friend class CP2PClient;
 

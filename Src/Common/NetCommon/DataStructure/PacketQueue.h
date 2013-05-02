@@ -18,7 +18,7 @@ namespace network
 		friend class CTaskWork;
 		friend class CTaskWorkClient;
 		friend class CTaskWorkServer;
-		friend class CNetController;
+		friend class CController;
 		friend class CCoreClient;
 		friend class CServerBasic;
 

@@ -51,8 +51,8 @@ typedef CoreClients_::VectorType	CoreClients_V;
 #include "Algorithm/BindCore.h"
 
 
-typedef std::map<netid,network::CUser*> UserMap;
-typedef UserMap::iterator UserItor;
+typedef common::StableVectorMap<netid,network::CUser*> Users_;
+//typedef Users_::iterator UserItor;
 typedef common::ReferencePtr<network::CUser> UserPtr;
 
 typedef std::map<int,network::CRoom*> RoomMap;
@@ -66,6 +66,7 @@ typedef common::ReferencePtr<network::CRoom> RoomPtr;
 #include "DataStructure/User.h"
 #include "Service/AllProtocol.h"
 #include "Service/AllProtocolListener.h"
+#include "Service/ServerApp.h"
 
 
 typedef std::vector<network::CGroup> GroupVector;

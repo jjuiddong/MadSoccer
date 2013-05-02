@@ -48,7 +48,7 @@ namespace network
 			{
 				CPacketQueue::Get()->PushPacket( 
 					CPacketQueue::SPacketData(m_NetId, 
-						DisconnectPacket(m_NetId, CNetController::Get()->GetUniqueValue()) ));
+						DisconnectPacket(m_NetId, CController::Get()->GetUniqueValue()) ));
 				return RR_END;
 			}
 			else

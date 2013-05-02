@@ -45,6 +45,9 @@
     <ClCompile Include="DataStructure\UserLobby.cpp">
       <Filter>DataStructure</Filter>
     </ClCompile>
+    <ClCompile Include="Lib\BasicC2SHandler_LobbySvr.cpp">
+      <Filter>Lib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h">
@@ -73,6 +76,9 @@
     </ClInclude>
     <ClInclude Include="DataStructure\UserLobby.h">
       <Filter>DataStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\BasicC2SHandler_LobbySvr.h">
+      <Filter>Lib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

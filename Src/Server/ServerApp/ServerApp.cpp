@@ -3,20 +3,19 @@
 
 #include "stdafx.h"
 #include "ServerApp.h"
-
-#include "NetProtocol/Src/login_Protocol.h"
-#include "NetProtocol/Src/login_ProtocolListener.h"
-#include "NetProtocol/Src/login_Protocol.cpp"
-#include "NetProtocol/Src/login_ProtocolListener.cpp"
-
-#include "NetProtocol/Src/basic_Protocol.h"
-#include "NetProtocol/Src/basic_ProtocolListener.h"
-
 #include "Lib/ChatServer.h"
 #include "Lib/ServerLauncher.h"
 #include "Lib/LobbyServer.h"
 
-#include "Network/Service/ServerApp.h"
+#include "NetProtocol/Src/login_Protocol.cpp"
+#include "NetProtocol/Src/login_ProtocolListener.cpp"
+#include "NetProtocol/Src/server_network_Protocol.h"
+#include "NetProtocol/Src/server_network_ProtocolListener.h"
+#include "NetProtocol/Src/server_network_Protocol.cpp"
+#include "NetProtocol/Src/server_network_ProtocolListener.cpp"
+#include "NetProtocol/src/certify_Protocol.cpp"
+#include "NetProtocol/src/certify_ProtocolListener.cpp"
+
 
 
 // CLobbyServerApp

@@ -227,7 +227,7 @@ bool compiler::WriteListenerHeader(ofstream &fs, sRmi *rmi)
 	fs << "public:\n";
 	fs << "\t" << g_className << "();\n";
 	fs << "protected:\n";
-	fs << "\tvirtual void Dispatch(network::CPacket &packet, const ProtocolListenerList &listeners) override;\n";
+	fs << "\tvirtual bool Dispatch(network::CPacket &packet, const ProtocolListenerList &listeners) override;\n";
 	fs << "};\n";
 	fs << endl;
 	fs << endl;
@@ -264,7 +264,7 @@ bool compiler::WriteFirstListenerCpp(sRmi *rmi, bool IsAddStdafxHeader)
 	if (IsAddStdafxHeader)
 		fs << "#include \"stdafx.h\"\n";
 	fs << "#include \"" << headerFileName << "\"\n";
-	fs << "#include \"Network/Controller/NetController.h\"\n";
+	fs << "#include \"Network/Controller/Controller.h\"\n";
 	fs << endl;
 	//fs << "using namespace network;\n";
 	//fs << "using namespace marshalling;\n";
@@ -292,7 +292,7 @@ bool compiler::WriteListenerCpp(ofstream &fs, sRmi *rmi)
 	fs << g_protocolName << "::" << g_className << "::" << g_className << "()\n";
 	fs << "\t: IProtocolDispatcher(" << g_protocolName << "::" << g_protocolId << ")\n";
 	fs << "{\n";
-	fs << "\tCNetController::Get()->AddDispatcher(this);\n";
+	fs << "\tCController::Get()->AddDispatcher(this);\n";
 	fs << "}\n";
 	fs << endl;
 	//
@@ -480,7 +480,7 @@ void compiler::WriteProtocolDispatchFunc(ofstream &fs, sRmi *rmi)
 	fs << "//------------------------------------------------------------------------\n";
 	fs << "// 패킷의 프로토콜에 따라 해당하는 리스너의 함수를 호출한다.\n";
 	fs << "//------------------------------------------------------------------------\n";
-	fs << "void " << g_protocolName << "::" << g_className << "::Dispatch(CPacket &packet, const ProtocolListenerList &listeners)\n", 
+	fs << "bool " << g_protocolName << "::" << g_className << "::Dispatch(CPacket &packet, const ProtocolListenerList &listeners)\n", 
 	fs << "{\n";
 		fs << "\tconst int protocolId = packet.GetProtocolId();\n";
 		fs << "\tconst int packetId = packet.GetPacketId();\n";
@@ -497,6 +497,7 @@ void compiler::WriteProtocolDispatchFunc(ofstream &fs, sRmi *rmi)
 				fs << "\t\tbreak;\n";
 			fs << "\t}\n";
 	}
+	fs << "\treturn true;\n";
 	fs << "}\n";	
 }
 
@@ -514,7 +515,7 @@ void compiler::WriteDispatchSwitchCase(ofstream &fs, sProtocol *pProtocol, int p
 	// call ListenerMatching<T> function 
 	fs << "\t\t\tProtocolListenerList recvListener;\n";
 	fs << "\t\t\tif (!ListenerMatching<" << g_listenerClassName << ">(listeners, recvListener))\n";
-	fs << "\t\t\t\tbreak;\n";
+	fs << "\t\t\t\treturn false;\n";
 	fs << endl;
 
 	// set current packet

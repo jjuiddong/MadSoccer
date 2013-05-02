@@ -22,6 +22,7 @@ wxListCtrl(parent, -1, wxDefaultPosition, wxSize(400,150),
 {
 	InsertColumn(0, "Log Message");
 	SetColumnWidth(0, 1000);
+	SetBackgroundColour( GetFileName2Color(fileName) );
 
 	m_Timer.SetOwner(this, ID_REFRESH_TIMER);
 	m_Timer.Start( REFRESH_INTERVAL );
@@ -123,4 +124,37 @@ int CPrinter::ParseLogType(const string &msg)
 
 	const int type = atoi( number.c_str() );
 	return type;
+}
+
+
+/**
+ @brief GetFileName2Color
+ */
+wxColour CPrinter::GetFileName2Color(const std::string &fileName)
+{
+	if (fileName.empty())
+		return wxColour(255,255,255);
+	if (std::string::npos != fileName.find("Farm"))
+		return wxColour(233,233,200);
+	if (std::string::npos != fileName.find("Login"))
+		return wxColour(233,200,233);
+	if (std::string::npos != fileName.find("Certify"))
+		return wxColour(200,233,233);
+
+	int n = 0;
+	for (u_int i=0; i < fileName.size(); ++i)
+	{
+		n += fileName[ i];
+	}
+	n %= 105;
+	int c = n / 20;
+	switch (c)
+	{
+	case 0: return wxColour(255,255,150+n); break;
+	case 1: return wxColour(255,150+n,255); break;
+	case 2: return wxColour(150+n,255,255); break;
+	case 3: return wxColour(200,233,150+n); break;
+	case 4: return wxColour(200,255,150+n); break;
+	default: return wxColour(255,255,150+n); break;
+	}	
 }

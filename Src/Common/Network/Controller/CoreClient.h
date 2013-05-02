@@ -14,7 +14,7 @@ namespace network
 	class CCoreClient : public CPlug
 	{
 		friend class CNetLauncher;
-		friend class CNetController;
+		friend class CController;
 		friend class CClientBasic;
 		friend class CP2PClient;
 

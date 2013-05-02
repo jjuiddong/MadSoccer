@@ -15,11 +15,12 @@ Date:    12/29/2012
 #include "NetProtocol/src/certify_Protocol.h"
 #include "NetProtocol/src/certify_ProtocolListener.h"
 #include "NetProtocol/Src/server_network_ProtocolListener.h"
+#include "BasicC2SHandler_LobbySvr.h"
 
 
 DECLARE_TYPE_NAME(CLobbyServer)
 class CLobbyServer	: public network::CServer
-								, public login::c2s_ProtocolListener
+								//, public login::c2s_ProtocolListener
 								, public server_network::s2s_ProtocolListener
 
 								// Debug
@@ -41,13 +42,13 @@ public:
 	bool			RemoveUser(netid netId);
 	UserPtr		GetUser(netid netId);
 	
-	bool			AddRoom(network::CRoom *pRoom);
-	bool			RemoveRoom(network::CRoom *pRoom);
-	bool			RemoveRoom(int roomId);
-	RoomPtr	GetRoom(int roomId);
+	//bool			AddRoom(network::CRoom *pRoom);
+	//bool			RemoveRoom(network::CRoom *pRoom);
+	//bool			RemoveRoom(int roomId);
+	//RoomPtr	GetRoom(int roomId);
 
 	// 패킷 보내기
-	void			SendRooms(network::CUser *pUser);
+	//void			SendRooms(network::CUser *pUser);
 	void			SendUsers(network::CUser *pUser);
 
 	login::s2c_Protocol& GetLogInProtocol() { return m_LoginProtocol; }
@@ -56,7 +57,7 @@ public:
 	std::string		ToString();
 
 protected:
-	void			SendRooms(netid userId);
+	//void			SendRooms(netid userId);
 	void			SendUsers(netid userId);
 
 	// Event Handler
@@ -75,8 +76,11 @@ protected:
 
 
 private:
-	UserMap				m_Users;
-	RoomMap			m_Rooms;
+	Users_				m_Users;
+	//RoomMap		m_Rooms;
+
+	// Handler
+	CBasicC2SHandler_LobbySvr *m_pBasicPrtHandler;
 
 	// Protocol
 	login::s2c_Protocol	m_LoginProtocol;

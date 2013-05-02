@@ -2,7 +2,7 @@
 #include "ServerBasic.h"
 #include <winsock.h>
 #include <process.h> 
-#include "../Controller/NetController.h"
+#include "../Controller/Controller.h"
 #include "../ProtocolHandler/BasicProtocolDispatcher.h"
 
 using namespace network;
@@ -94,7 +94,7 @@ void	CServerBasic::Proc()
 
 				CPacketQueue::Get()->PushPacket( 
 					CPacketQueue::SPacketData(GetNetId(), 
-						ClientDisconnectPacket(senderId, CNetController::Get()->GetUniqueValue()) ));
+						ClientDisconnectPacket(senderId, CController::Get()->GetUniqueValue()) ));
 			}
 			else
 			{
@@ -181,7 +181,7 @@ void	CServerBasic::DispatchPacket()
 		return;
 	}
 
-	IProtocolDispatcher *pDispatcher = CNetController::Get()->GetDispatcher(protocolId);
+	IProtocolDispatcher *pDispatcher = CController::Get()->GetDispatcher(protocolId);
 	if (!pDispatcher)
 	{
 		clog::Error( clog::ERROR_WARNING,
@@ -190,7 +190,11 @@ void	CServerBasic::DispatchPacket()
 	}
 	else
 	{
-		pDispatcher->Dispatch(packetData.packet, listeners);
+		if (!pDispatcher->Dispatch(packetData.packet, listeners))
+		{
+			clog::Error( clog::ERROR_CRITICAL,
+				common::format("CServerBasic %d NetConnector의 프로토콜 리스너가 없습니다.\n", GetNetId()) );
+		}
 	}
 }
 
@@ -200,7 +204,7 @@ void	CServerBasic::DispatchPacket()
 //------------------------------------------------------------------------
 bool CServerBasic::Stop()
 {
-	CNetController::Get()->StopServer(this);
+	CController::Get()->StopServer(this);
 	return true;
 }
 
@@ -435,7 +439,7 @@ bool CServerBasic::SendAll(const CPacket &packet)
 		if (result == INVALID_SOCKET)
 		{
 			Send(GetNetId(), SEND_T, 
-				ClientDisconnectPacket(CNetController::Get()->GetUniqueValue(), client->GetNetId()) );
+				ClientDisconnectPacket(CController::Get()->GetUniqueValue(), client->GetNetId()) );
 		}
 	}
 	return true;
@@ -584,7 +588,7 @@ bool	CServerBasic::SendGroup(GroupPtr pGroup, const CPacket &packet)
 void	CServerBasic::Disconnect()
 {
 	Close();
-	CNetController::Get()->RemoveServer(this);
+	CController::Get()->RemoveServer(this);
 	Clear();
 	InitRootGroup();
 }

@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 #include "Network.h"
-#include "Controller/NetController.h"
+#include "Controller/Controller.h"
 #include "MultiNetwork/MultiNetwork.h"
 #include <MMSystem.h>
 
@@ -19,7 +19,7 @@ bool network::Init(int logicThreadCount, const std::string &svrConfigFileName) /
 	common::InitRandNoDuplicate();
 	protocols::Init();
 
-	bool result = CNetController::Get()->Init(logicThreadCount);
+	bool result = CController::Get()->Init(logicThreadCount);
 
 	if (result)
 	{
@@ -37,7 +37,7 @@ void network::Clear()
 {
 	dbg::Print( "Network Clear" );
 	protocols::Cleanup();
-	CNetController::Release();
+	CController::Release();
 	multinetwork::CMultiNetwork::Release();
 }
 
@@ -48,7 +48,7 @@ void network::Clear()
 bool network::StartServer(int port, ServerBasicPtr pSvr)
 {
 	clog::Log( clog::LOG_F_N_O, "StartServer port: %d\n", port );
-	return CNetController::Get()->StartServer(port, pSvr);
+	return CController::Get()->StartServer(port, pSvr);
 }
 
 //------------------------------------------------------------------------
@@ -66,7 +66,7 @@ bool network::StopServer(ServerBasicPtr pSvr)
 //------------------------------------------------------------------------
 ServerBasicPtr network::GetServer(netid serverId)
 {
-	return CNetController::Get()->GetServer(serverId);
+	return CController::Get()->GetServer(serverId);
 }
 
 //------------------------------------------------------------------------
@@ -75,7 +75,7 @@ ServerBasicPtr network::GetServer(netid serverId)
 bool network::StartClient(const std::string &ip, int port, ClientBasicPtr pClt)
 {
 	clog::Log( clog::LOG_F_N_O, "StartClient %s, %d\n", ip.c_str(), port);
-	return CNetController::Get()->StartClient(ip, port, pClt);
+	return CController::Get()->StartClient(ip, port, pClt);
 }
 
 //------------------------------------------------------------------------
@@ -121,11 +121,11 @@ bool	network::StartMultiNetwork()
 //------------------------------------------------------------------------
 ClientBasicPtr network::GetClient(netid clientId)
 {
-	return CNetController::Get()->GetClient(clientId);
+	return CController::Get()->GetClient(clientId);
 }
 CoreClientPtr network::GetCoreClient(netid clientId)
 {
-	return CNetController::Get()->GetCoreClient(clientId);
+	return CController::Get()->GetCoreClient(clientId);
 }
 
 //------------------------------------------------------------------------
@@ -133,7 +133,7 @@ CoreClientPtr network::GetCoreClient(netid clientId)
 //------------------------------------------------------------------------
 void network::Proc()
 {
-	CNetController::Get()->Proc();
+	CController::Get()->Proc();
 }
 
 
@@ -142,5 +142,5 @@ void network::Proc()
 //------------------------------------------------------------------------
 std::string network::ToString()
 {
-	return CNetController::Get()->ToString();
+	return CController::Get()->ToString();
 }

@@ -65,7 +65,7 @@ bool CBasicC2SProtocolHandler_LoginSvr::ReqMoveToServer(IProtocolDispatcher &dis
 		return false;
 	}
 	
-	MultiPlugPtr pNetGroupCtrl = multinetwork::CMultiNetwork::Get()->GetController("lobbysvr");
+	MultiPlugPtr pNetGroupCtrl = multinetwork::CMultiNetwork::Get()->GetMultiPlug("lobbysvr");
 	if (!pNetGroupCtrl)
 	{
 		clog::Error( clog::ERROR_PROBLEM, "ReqMoveToServer Error!! not found server group " );

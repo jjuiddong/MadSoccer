@@ -14,7 +14,7 @@ namespace network { namespace multinetwork {
 
 	class CMultiPlug;
 	class CMultiPlugDelegation;
-	class CFarmServerConnector;
+	class CFarmServerPlug;
 
 	DECLARE_TYPE_NAME_SCOPE(network::multinetwork, CMultiNetwork)
 	class CMultiNetwork : public CPlug
@@ -32,7 +32,7 @@ namespace network { namespace multinetwork {
 
 		bool		AddController( CMultiPlug *ptr );
 		bool		RemoveController( const std::string &linkSvrType );
-		MultiPlugPtr GetController( const std::string &linkSvrType );
+		MultiPlugPtr GetMultiPlug( const std::string &linkSvrType );
 
 		bool		AddDelegation( const std::string &linkSvrType, CMultiPlugDelegation *ptr);
 		bool		RemoveDelegation( const std::string &linkSvrType );
@@ -53,7 +53,7 @@ namespace network { namespace multinetwork {
 		SSvrConfigData m_Config;
 		Controllers m_Controllers;
 		Delegations m_Delegations;
-		CFarmServerConnector *m_pFarmSvrConnector;
+		CFarmServerPlug *m_pFarmSvrConnector;
 
 	};
 }}

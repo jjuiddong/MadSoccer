@@ -3,19 +3,19 @@
 #include "LobbyServer.h"
 #include "../DataStructure/UserLobby.h"
 
-#include "NetProtocol/Src/server_network_Protocol.cpp"
-#include "NetProtocol/Src/server_network_ProtocolListener.cpp"
-
 
 using namespace network;
 
-CLobbyServer::CLobbyServer()
+CLobbyServer::CLobbyServer() :
+	m_pBasicPrtHandler(NULL)
 {
 
 }
 
 CLobbyServer::~CLobbyServer() 
 {
+	RemoveProtocolListener(m_pBasicPrtHandler);
+	SAFE_DELETE(m_pBasicPrtHandler);
 
 }
 
@@ -27,29 +27,33 @@ void	CLobbyServer::OnConnectMultiPlug()
 {
 	CServer::OnConnectMultiPlug();
 
-	MultiPlugPtr pLoginSvrController = multinetwork::CMultiNetwork::Get()->GetController("loginsvr");
-	if (!pLoginSvrController)
+	MultiPlugPtr pLoginMultiPlug = multinetwork::CMultiNetwork::Get()->GetMultiPlug("loginsvr");
+	if (!pLoginMultiPlug)
 	{
 		clog::Error( clog::ERROR_CRITICAL, "CLobbyServer Init Error!! not found lobbysvr netgroupcontroller" );
 		return;
 	}
-	MultiPlugPtr pCertifySvrController = multinetwork::CMultiNetwork::Get()->GetController("certifysvr");
-	if (!pCertifySvrController)
+	MultiPlugPtr pCertifyMultiPlug = multinetwork::CMultiNetwork::Get()->GetMultiPlug("certifysvr");
+	if (!pCertifyMultiPlug)
 	{
 		clog::Error( clog::ERROR_CRITICAL, "CLobbyServer Init Error!! not found certify netgroupcontroller" );
 		return;
 	}
 
-	AddChild( pLoginSvrController );
-	AddChild( pCertifySvrController );
+	AddChild( pLoginMultiPlug );
+	AddChild( pCertifyMultiPlug );
+
+	GetServer()->SetOption( true );
 	
-	//multinetwork::CMultiNetwork::Get()->RegisterProtocol(&m_SvrNetworkProtocol) ;
-	pLoginSvrController->RegisterProtocol( &m_SvrNetworkProtocol );
-	pCertifySvrController->RegisterProtocol(&m_CertifyProtocol);
+	m_pBasicPrtHandler = new CBasicC2SHandler_LobbySvr(*pCertifyMultiPlug, *GetServer());
+
+	pLoginMultiPlug->RegisterProtocol( &m_SvrNetworkProtocol );
+	pCertifyMultiPlug->RegisterProtocol(&m_CertifyProtocol);
 
 	RegisterProtocol(&m_LoginProtocol);
 	RegisterProtocol(&m_BasicProtocol);
 	AddProtocolListener( this );
+	AddProtocolListener(m_pBasicPrtHandler);
 
 	NETEVENT_CONNECT( EVT_CLIENT_JOIN, CLobbyServer, CLobbyServer::OnClientJoin );
 	NETEVENT_CONNECT( EVT_CLIENT_LEAVE, CLobbyServer, CLobbyServer::OnClientLeave );
@@ -64,10 +68,10 @@ void	CLobbyServer::OnConnectMultiPlug()
 //------------------------------------------------------------------------
 bool CLobbyServer::AddUser(CUser *pUser)
 {
-	UserItor it = m_Users.find(pUser->GetNetId());
+	auto it = m_Users.find(pUser->GetNetId());
 	if (m_Users.end() != it)
 		return false; // 이미 존재한다면 실패
-	m_Users.insert( UserMap::value_type(pUser->GetNetId(), pUser) );
+	m_Users.insert( Users_::value_type(pUser->GetNetId(), pUser) );
 	return true;
 }
 
@@ -78,11 +82,12 @@ bool CLobbyServer::AddUser(CUser *pUser)
 //------------------------------------------------------------------------
 bool CLobbyServer::RemoveUser(CUser *pUser)
 {
-	UserItor it = m_Users.find(pUser->GetNetId());
+	auto it = m_Users.find(pUser->GetNetId());
 	if (m_Users.end() == it)
 		return false; // 없다면 실패
+	m_Users.remove(pUser->GetNetId());
+	m_Users.apply_removes();
 	delete pUser;
-	m_Users.erase(it);
 	return true;
 }
 
@@ -93,11 +98,12 @@ bool CLobbyServer::RemoveUser(CUser *pUser)
 //------------------------------------------------------------------------
 bool CLobbyServer::RemoveUser(netid netId)
 {
-	UserItor it = m_Users.find(netId);
+	auto it = m_Users.find(netId);
 	if (m_Users.end() == it)
 		return false; // 없다면 실패
 	delete it->second;
-	m_Users.erase(it);
+	m_Users.remove(netId);
+	m_Users.apply_removes();
 	return true;
 }
 
@@ -107,78 +113,78 @@ bool CLobbyServer::RemoveUser(netid netId)
 //------------------------------------------------------------------------
 UserPtr	CLobbyServer::GetUser(netid netId)
 {
-	UserItor it = m_Users.find(netId);
+	auto it = m_Users.find(netId);
 	if (m_Users.end() == it)
 		return NULL; // 없다면 실패
 	return it->second;
 }
 
 
-//------------------------------------------------------------------------
-// 방 추가
-//------------------------------------------------------------------------
-bool CLobbyServer::AddRoom(CRoom *pRoom)
-{
-	RoomItor it = m_Rooms.find(pRoom->GetId());
-	if (m_Rooms.end() != it)
-		return false; // 이미 존재한다면 실패
-	m_Rooms.insert( RoomMap::value_type(pRoom->GetId(), pRoom) );
-	return true;
-}
+////------------------------------------------------------------------------
+//// 방 추가
+////------------------------------------------------------------------------
+//bool CLobbyServer::AddRoom(CRoom *pRoom)
+//{
+//	RoomItor it = m_Rooms.find(pRoom->GetId());
+//	if (m_Rooms.end() != it)
+//		return false; // 이미 존재한다면 실패
+//	m_Rooms.insert( RoomMap::value_type(pRoom->GetId(), pRoom) );
+//	return true;
+//}
+//
+//
+////------------------------------------------------------------------------
+//// 방제거
+//// 메모리까지 제거된다.
+////------------------------------------------------------------------------
+//bool CLobbyServer::RemoveRoom(CRoom *pRoom)
+//{
+//	RoomItor it = m_Rooms.find(pRoom->GetId());
+//	if (m_Rooms.end() == it)
+//		return false; // 없다면 실패
+//	delete it->second;
+//	m_Rooms.erase(it);
+//	return true;
+//}
+//
+//
+////------------------------------------------------------------------------
+//// 방제거
+//// 메모리까지 제거된다.
+////------------------------------------------------------------------------
+//bool CLobbyServer::RemoveRoom(int roomId)
+//{
+//	RoomItor it = m_Rooms.find(roomId);
+//	if (m_Rooms.end() == it)
+//		return false; // 없다면 실패
+//	delete it->second;
+//	m_Rooms.erase(it);
+//	return true;
+//}
+//
+//
+////------------------------------------------------------------------------
+//// 방정보 얻기
+////------------------------------------------------------------------------
+//RoomPtr CLobbyServer::GetRoom(int roomId)
+//{
+//	RoomItor it = m_Rooms.find(roomId);
+//	if (m_Rooms.end() == it)
+//		return NULL; // 없다면 실패
+//	return it->second;
+//}
 
 
-//------------------------------------------------------------------------
-// 방제거
-// 메모리까지 제거된다.
-//------------------------------------------------------------------------
-bool CLobbyServer::RemoveRoom(CRoom *pRoom)
-{
-	RoomItor it = m_Rooms.find(pRoom->GetId());
-	if (m_Rooms.end() == it)
-		return false; // 없다면 실패
-	delete it->second;
-	m_Rooms.erase(it);
-	return true;
-}
-
-
-//------------------------------------------------------------------------
-// 방제거
-// 메모리까지 제거된다.
-//------------------------------------------------------------------------
-bool CLobbyServer::RemoveRoom(int roomId)
-{
-	RoomItor it = m_Rooms.find(roomId);
-	if (m_Rooms.end() == it)
-		return false; // 없다면 실패
-	delete it->second;
-	m_Rooms.erase(it);
-	return true;
-}
-
-
-//------------------------------------------------------------------------
-// 방정보 얻기
-//------------------------------------------------------------------------
-RoomPtr CLobbyServer::GetRoom(int roomId)
-{
-	RoomItor it = m_Rooms.find(roomId);
-	if (m_Rooms.end() == it)
-		return NULL; // 없다면 실패
-	return it->second;
-}
-
-
-//------------------------------------------------------------------------
-// 방정보를 userId 클라이언트에게 보낸다.
-//------------------------------------------------------------------------
-void CLobbyServer::SendRooms(netid userId)
-{
-	BOOST_FOREACH(RoomMap::value_type &vk, m_Rooms)
-	{
-
-	}
-}
+////------------------------------------------------------------------------
+//// 방정보를 userId 클라이언트에게 보낸다.
+////------------------------------------------------------------------------
+//void CLobbyServer::SendRooms(netid userId)
+//{
+//	BOOST_FOREACH(RoomMap::value_type &vk, m_Rooms)
+//	{
+//
+//	}
+//}
 
 
 //------------------------------------------------------------------------
@@ -199,7 +205,7 @@ void CLobbyServer::OnClientJoin(CNetEvent &event)
 	pUser->SetNetId(event.GetNetId());
 	if (!AddUser( pUser ))
 	{
-		clog::Error( clog::ERROR_PROBLEM, "AddUser() Faile!! id = %d\n", event.GetNetId());
+		clog::Error( clog::ERROR_PROBLEM, "AddUser() Fail!! id = %d\n", event.GetNetId());
 		delete pUser;
 	}
 }
@@ -212,7 +218,7 @@ void CLobbyServer::OnClientLeave(CNetEvent &event)
 {
 	if (!RemoveUser(event.GetNetId()))
 	{
-		clog::Error(clog::ERROR_PROBLEM,  "RemoveUser() Faile!! id = %d\n", event.GetNetId());
+		clog::Error(clog::ERROR_PROBLEM,  "RemoveUser() Fail!! id = %d\n", event.GetNetId());
 	}
 }
 
@@ -244,7 +250,7 @@ void	CLobbyServer::OnTimer( CEvent &event )
 		// 주기적으로 서버 정보를 Login서버에게 보낸다.
 		if (GetServer() && GetServer()->IsServerOn())
 		{
-			MultiPlugPtr pLoginSvrController = multinetwork::CMultiNetwork::Get()->GetController("loginsvr");
+			MultiPlugPtr pLoginSvrController = multinetwork::CMultiNetwork::Get()->GetMultiPlug("loginsvr");
 			if (pLoginSvrController)
 			{
 				pLoginSvrController->RegisterProtocol( &m_SvrNetworkProtocol );
@@ -274,6 +280,8 @@ bool CLobbyServer::ReqMoveUser(IProtocolDispatcher &dispatcher, netid senderId,
 	CSession *pClient = CheckClientId(GetServer(), id, userId, NULL, NULL);
 	if (pClient) // Already exist
 	{ /// !!Error
+		clog::Error( clog::ERROR_PROBLEM, 0, "CLobbyServer::ReqMoveUser user already exist netid: %d, id=%s", 
+			pClient->GetNetId(), pClient->GetName().c_str() );
 		m_SvrNetworkProtocol.AckMoveUser(senderId, SEND_T, error::ERR_MOVEUSER_ALREADY_EXIST,
 			id, userId, ip, port);
 		return false;

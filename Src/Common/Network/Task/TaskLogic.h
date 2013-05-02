@@ -10,7 +10,7 @@
 //------------------------------------------------------------------------
 #pragma once
 
-#include "../Controller/NetController.h"
+#include "../Controller/Controller.h"
 #include "../Service/AllProtocolListener.h"
 #include "../ProtocolHandler/BasicProtocolDispatcher.h"
 
@@ -99,7 +99,7 @@ namespace network
 	inline common::CTask::RUN_RESULT CTaskLogic::Run()
 	{
 		// Main Timer
-		CNetController::Get()->MainLoop();
+		CController::Get()->MainLoop();
 		//
 
 		CPacketQueue::SPacketData packetData;
@@ -155,7 +155,7 @@ namespace network
 			return RR_CONTINUE;
 		}
 
-		IProtocolDispatcher *pDispatcher = CNetController::Get()->GetDispatcher(protocolId);
+		IProtocolDispatcher *pDispatcher = CController::Get()->GetDispatcher(protocolId);
 		if (!pDispatcher)
 		{
 			clog::Error( clog::ERROR_WARNING,
@@ -164,7 +164,12 @@ namespace network
 			return RR_CONTINUE;
 		}
 
-		pDispatcher->Dispatch(packetData.packet, listeners);
+		if (!pDispatcher->Dispatch(packetData.packet, listeners))
+		{
+			clog::Error( clog::ERROR_CRITICAL,
+				common::format("CTaskLogic netid: %d  packet id: %d NetConnector의 프로토콜 리스너가 없습니다.\n", 
+				pCon->GetNetId(), packetData.packet.GetPacketId()) );
+		}
 
 		return RR_CONTINUE;
 	}

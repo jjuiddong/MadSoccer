@@ -5,7 +5,7 @@
 #include "NetworkDef.h"
 #include "Service/Server.h"
 #include "Service/Client.h"
-#include "Service/SubServerConnector.h"
+#include "Service/SubServerPlug.h"
 
 namespace network
 {

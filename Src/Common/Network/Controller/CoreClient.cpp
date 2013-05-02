@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "CoreClient.h"
 #include "../Service/AllProtocolListener.h"
-#include "NetController.h"
+#include "Controller.h"
 #include "../ProtocolHandler/BasicProtocolDispatcher.h"
 #include <boost/bind.hpp>
 
@@ -28,7 +28,7 @@ CCoreClient::~CCoreClient()
 //------------------------------------------------------------------------
 bool CCoreClient::Stop()
 {
-	CNetController::Get()->StopCoreClient(this);
+	CController::Get()->StopCoreClient(this);
 	return true;
 }
 
@@ -55,7 +55,7 @@ bool CCoreClient::Proc()
 		{
 			CPacketQueue::Get()->PushPacket( 
 				CPacketQueue::SPacketData(GetNetId(), 
-					DisconnectPacket(GetNetId(), CNetController::Get()->GetUniqueValue()) ));
+					DisconnectPacket(GetNetId(), CController::Get()->GetUniqueValue()) ));
 		}
 		else
 		{
@@ -103,7 +103,7 @@ void	CCoreClient::DispatchPacket()
 		return;
 	}
 
-	IProtocolDispatcher *pDispatcher = CNetController::Get()->GetDispatcher(protocolId);
+	IProtocolDispatcher *pDispatcher = CController::Get()->GetDispatcher(protocolId);
 	if (!pDispatcher)
 	{
 		clog::Error( clog::ERROR_WARNING, 
@@ -112,7 +112,11 @@ void	CCoreClient::DispatchPacket()
 	}
 	else
 	{
-		pDispatcher->Dispatch(packetData.packet, listeners);
+		if (!pDispatcher->Dispatch(packetData.packet, listeners))
+		{
+			clog::Error( clog::ERROR_CRITICAL,
+				common::format("CCoreClient %d NetConnector의 프로토콜 리스너가 없습니다.\n", GetNetId()) );
+		}
 	}
 
 }
@@ -124,7 +128,7 @@ void	CCoreClient::DispatchPacket()
 void CCoreClient::Disconnect()
 {
 	Close();
-	CNetController::Get()->RemoveCoreClient(this);
+	CController::Get()->RemoveCoreClient(this);
 	OnDisconnect();
 }
 

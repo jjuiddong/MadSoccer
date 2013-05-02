@@ -1,5 +1,5 @@
 /**
-Name:   NetController.h
+Name:   Controller.h
 Author:  jjuiddong
 Date:    12/24/2012
 
@@ -12,13 +12,13 @@ Dipatcher 를 관리한다.
 
 namespace network
 {
-	DECLARE_TYPE_NAME_SCOPE(network, CNetController)
-	class CNetController : public common::CSingleton<CNetController>
-										, public memmonitor::Monitor<CNetController, TYPE_NAME(network::CNetController)>
+	DECLARE_TYPE_NAME_SCOPE(network, CController)
+	class CController : public common::CSingleton<CController>
+								, public memmonitor::Monitor<CController, TYPE_NAME(network::CController)>
 	{
 	public:
-		CNetController();
-		virtual ~CNetController();
+		CController();
+		virtual ~CController();
 		friend class CTaskLogic;
 		friend class CTaskAccept;
 		friend class CTaskWorkClient;
@@ -98,6 +98,6 @@ namespace network
 	};
 
 
-	inline int	CNetController::GetUniqueValue() const { return m_UniqueValue; }
+	inline int	CController::GetUniqueValue() const { return m_UniqueValue; }
 
 }

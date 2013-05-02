@@ -1,31 +1,29 @@
 
 #include "stdafx.h"
-#include "SubServerConnector.h"
-
+#include "SubServerPlug.h"
 
 using namespace network;
 
 
-CSubServerConnector::CSubServerConnector()
+CSubServerPlug::CSubServerPlug()
 {
 
 }
 
-CSubServerConnector::~CSubServerConnector()
+CSubServerPlug::~CSubServerPlug()
 {
 	BOOST_FOREACH(auto &svr, m_RemoteServers.m_Seq)
 	{
 		SAFE_DELETE(svr);
 	}
 	m_RemoteServers.clear();
-
 }
 
 
 /**
  @brief OnConnectNetGroupController
  */
-void	CSubServerConnector::OnConnectMultiPlug()
+void	CSubServerPlug::OnConnectMultiPlug()
 {
 	multinetwork::CMultiPlugDelegation::OnConnectMultiPlug();
 	AddProtocolListener( this );
@@ -36,7 +34,7 @@ void	CSubServerConnector::OnConnectMultiPlug()
 /**
  @brief 서브 서버들로부터 현재 서버 정보를 업데이트 받는다.
  */
-bool CSubServerConnector::SendServerInfo(IProtocolDispatcher &dispatcher, netid senderId, 
+bool CSubServerPlug::SendServerInfo(IProtocolDispatcher &dispatcher, netid senderId, 
 	const std::string &svrType, const std::string &ip, const int &port, const int &userCount)
 {
 	auto it = m_RemoteServers.find(senderId);
@@ -62,7 +60,7 @@ bool CSubServerConnector::SendServerInfo(IProtocolDispatcher &dispatcher, netid 
 /**
  @brief GetSubServerInfo
  */
-std::list<SSubServerInfo> CSubServerConnector::GetSubServerInfo()
+std::list<SSubServerInfo> CSubServerPlug::GetSubServerInfo()
 {
 	std::list<SSubServerInfo> servers;
 	MultiPlugPtr pCtrl = GetMultiPlug();

@@ -4,7 +4,7 @@
 #include "MultiNetworkUtility.h"
 #include "MultiPlug.h"
 #include "MultiPlugDelegation.h"
-#include "FarmServerConnector.h"
+#include "FarmServerPlug.h"
 
 
 using namespace network;
@@ -48,7 +48,7 @@ bool	CMultiNetwork::Init( const std::string &configFileName )
 			if (!AddController(pCtrl))
 				return false;
 
-			m_pFarmSvrConnector = new CFarmServerConnector( m_Config.svrType, m_Config );
+			m_pFarmSvrConnector = new CFarmServerPlug( m_Config.svrType, m_Config );
 			if (!ConnectDelegation("farmsvr", m_pFarmSvrConnector))
 				return false;
 		}
@@ -104,7 +104,7 @@ bool	CMultiNetwork::Start()
 {
 	if ("farmsvr" == m_Config.svrType)
 	{
-		MultiPlugPtr ptr  = GetController("client");
+		MultiPlugPtr ptr  = GetMultiPlug("client");
 		if (!ptr) return false;
 		ptr->Start("localhost", m_Config.port);
 	}
@@ -170,7 +170,7 @@ bool	CMultiNetwork::RemoveController( const std::string &linkSvrType )
 /**
  @brief Get NetGroupController Object
  */
-MultiPlugPtr CMultiNetwork::GetController( const std::string &linkSvrType )
+MultiPlugPtr CMultiNetwork::GetMultiPlug( const std::string &linkSvrType )
 {
 	auto it = m_Controllers.find( linkSvrType );
 	if (m_Controllers.end() == it)

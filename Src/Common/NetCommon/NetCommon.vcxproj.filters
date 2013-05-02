@@ -107,9 +107,6 @@
     <ClInclude Include="Controller\Plug.h">
       <Filter>Controller</Filter>
     </ClInclude>
-    <ClInclude Include="Controller\PlugLinker.h">
-      <Filter>Controller</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
