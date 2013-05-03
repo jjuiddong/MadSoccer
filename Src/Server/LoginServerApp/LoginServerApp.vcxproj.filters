@@ -42,7 +42,7 @@
     <ClInclude Include="Src\LoginServer.h">
       <Filter>Src</Filter>
     </ClInclude>
-    <ClInclude Include="Src\BasicC2SProtocolHandler_LoginSvr.h">
+    <ClInclude Include="Src\BasicC2SHandler_LoginSvr.h">
       <Filter>Src</Filter>
     </ClInclude>
   </ItemGroup>
@@ -56,7 +56,7 @@
     <ClCompile Include="Src\LoginServer.cpp">
       <Filter>Src</Filter>
     </ClCompile>
-    <ClCompile Include="Src\BasicC2SProtocolHandler_LoginSvr.cpp">
+    <ClCompile Include="Src\BasicC2SHandler_LoginSvr.cpp">
       <Filter>Src</Filter>
     </ClCompile>
   </ItemGroup>

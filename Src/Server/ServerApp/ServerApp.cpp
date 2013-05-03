@@ -44,7 +44,7 @@ CLobbyServerApp::CLobbyServerApp() :
 
 CLobbyServerApp::~CLobbyServerApp()
 {
-	SAFE_DELETE(m_pLobbyServer);
+	//SAFE_DELETE(m_pLobbyServer);
 }
 
 std::string CLobbyServerApp::ToString()
@@ -61,7 +61,7 @@ std::string CLobbyServerApp::ToString()
 bool CLobbyServerApp::OnInit()
 {
 	m_pLobbyServer = new CLobbyServer();
-	if (!network::ConnectDelegation( "client", m_pLobbyServer ))
+	if (!network::AddDelegation( "client", m_pLobbyServer ))
 	{
 		clog::Error(log::ERROR_CRITICAL, "network::ConnectDelegation() fail !!\n" );
 		return false;

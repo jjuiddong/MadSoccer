@@ -45,9 +45,6 @@ typedef CoreClients_::VectorType	CoreClients_V;
 //typedef common::VectorMap<netid, CCoreClient*> CoreClientsPtr;
 
 
-
-#include "ErrReport/ErrorCode.h"
-#include "ErrReport/ErrorCheck.h"
 #include "Algorithm/BindCore.h"
 
 
@@ -91,6 +88,11 @@ typedef common::ReferencePtr<network::multinetwork::CMultiPlugDelegation> MultiP
 
 #include "ProtocolHandler\AllProtocolDisplayer.h"
 
+
+
+
+#include "ErrReport/ErrorCode.h"
+#include "ErrReport/ErrorCheck.h"
 
 
 // fastmemloader로 정보를 읽는다.

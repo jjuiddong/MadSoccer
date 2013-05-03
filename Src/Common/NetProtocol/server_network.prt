@@ -2,8 +2,11 @@
 protocol s2s 800
 {
 
-	ReqMoveUser( std::string id, netid userId, std::string ip, int port );
-	AckMoveUser( error::ERROR_CODE errorCode, std::string id, netid userId, std::string ip, int port );
+	ReqMoveUser( std::string id, certify_key c_key, std::string ip, int port );
+	AckMoveUser( error::ERROR_CODE errorCode, std::string id, std::string ip, int port );
+	ReqMoveUserCancel( std::string id );
+	AckMoveUserCancel( error::ERROR_CODE errorCode, std::string id );
+
 
 	SendServerInfo( std::string svrType, std::string ip, int port, int userCount );
 

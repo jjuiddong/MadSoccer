@@ -11,6 +11,7 @@ Date:    2013-03-26
 
 
 typedef int netid;
+typedef int certify_key;
 #define INVALID_NETID		(-1)		// 잘못된 NetId를 뜻한다. 오류값으로 쓰임
 #define SERVER_NETID		(0)		// 연결된 Server의 NetId를 뜻함 (클라이언트 일 때)
 #define ALL_NETID				(0)		// 연결된 Connection 모두를 뜻함 (서버/클라이언트)
@@ -61,7 +62,7 @@ namespace network
 		SESSIONSTATE_LOGIN,
 		SESSIONSTATE_LOGOUT_WAIT,		// 제거 대기 목록에 있는 상태
 	};
-
+	
 	enum P2P_STATE
 	{
 		P2P_HOST,
@@ -130,6 +131,7 @@ typedef common::ReferencePtr<network::CSession> SessionPtr;
 typedef common::StableVectorMap<netid,network::CSession*> Sessions_;
 typedef Sessions_::VectorType	Sessions_V;
 typedef Sessions_::MapType::iterator SessionItor;
+
 
 typedef std::list<network::CGroup*> GroupList;
 typedef GroupList::iterator GroupItor;

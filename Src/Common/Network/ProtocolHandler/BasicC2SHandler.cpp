@@ -1,6 +1,6 @@
 
 #include "stdafx.h"
-#include "BasicC2SProtocolHandler.h"
+#include "BasicC2SHandler.h"
 #include "../Utility/ServerUserAccess.h"
 #include "../Algorithm/GroupTraverse.h"
 #include "Network/ErrReport/ErrorCheck.h"
@@ -11,13 +11,13 @@
 using namespace network;
 using namespace network::error;
 
-CBasicC2SProtocolHandler::CBasicC2SProtocolHandler( CServerBasic &svr ) :
+CBasicC2SHandler::CBasicC2SHandler( CServerBasic &svr ) :
 	m_Server(svr)
 {
 	svr.RegisterProtocol(&m_BasicProtocol);
 }
 
-CBasicC2SProtocolHandler::~CBasicC2SProtocolHandler()
+CBasicC2SHandler::~CBasicC2SHandler()
 {
 }
 
@@ -25,15 +25,19 @@ CBasicC2SProtocolHandler::~CBasicC2SProtocolHandler()
 /**
  @brief ReqLogIn
  */
-bool CBasicC2SProtocolHandler::ReqLogIn(IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, const std::string &passwd)
+bool CBasicC2SHandler::ReqLogIn(IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, 
+	const std::string &passwd, const certify_key &c_key)
 {
 	CSession *pClient = m_Server.GetSession(id);
 	if (pClient)
 	{
-		clog::Error( clog::ERROR_PROBLEM, "ReqLogin Error!! client already exist senderId=%d, id=%s",
-			senderId, id.c_str());
-		m_BasicProtocol.AckLogIn(senderId, SEND_T, error::ERR_ALREADY_EXIST_USER, id, 0);
-		return false;
+		if (pClient->GetState() == SESSIONSTATE_LOGIN)
+		{
+			clog::Error( clog::ERROR_PROBLEM, "ReqLogin Error!! client already exist senderId=%d, id=%s",
+				senderId, id.c_str());
+			m_BasicProtocol.AckLogIn(senderId, SEND_T, error::ERR_ALREADY_EXIST_USER, id, 0);
+			return false;
+		}
 	}
 
 	pClient = m_Server.GetSession(senderId);
@@ -61,7 +65,7 @@ bool CBasicC2SProtocolHandler::ReqLogIn(IProtocolDispatcher &dispatcher, netid s
 /**
  @brief ReqLogOut
  */
-bool CBasicC2SProtocolHandler::ReqLogOut(IProtocolDispatcher &dispatcher, netid senderId, const std::string &id)
+bool CBasicC2SHandler::ReqLogOut(IProtocolDispatcher &dispatcher, netid senderId, const std::string &id)
 {
 
 	return true;
@@ -71,7 +75,7 @@ bool CBasicC2SProtocolHandler::ReqLogOut(IProtocolDispatcher &dispatcher, netid 
 /**
  @brief 
  */
-bool CBasicC2SProtocolHandler::ReqMoveToServer(IProtocolDispatcher &dispatcher, netid senderId, const std::string &serverName)
+bool CBasicC2SHandler::ReqMoveToServer(IProtocolDispatcher &dispatcher, netid senderId, const std::string &serverName)
 {
 	return true;
 }
@@ -80,7 +84,7 @@ bool CBasicC2SProtocolHandler::ReqMoveToServer(IProtocolDispatcher &dispatcher, 
 //------------------------------------------------------------------------
 // groupid : -1 이라면 root 그룹의 자식을 보낸다.
 //------------------------------------------------------------------------
-bool CBasicC2SProtocolHandler::ReqGroupList(IProtocolDispatcher &dispatcher, netid senderId, const netid &groupid)
+bool CBasicC2SHandler::ReqGroupList(IProtocolDispatcher &dispatcher, netid senderId, const netid &groupid)
 {
 	GroupPtr pGroup = NULL;
 	if (ROOT_GROUP_NETID == groupid)
@@ -109,7 +113,7 @@ bool CBasicC2SProtocolHandler::ReqGroupList(IProtocolDispatcher &dispatcher, net
 //------------------------------------------------------------------------
 // Request Joint the Group of groupid
 //------------------------------------------------------------------------
-bool CBasicC2SProtocolHandler::ReqGroupJoin(IProtocolDispatcher &dispatcher, netid senderId, const netid &groupid)
+bool CBasicC2SHandler::ReqGroupJoin(IProtocolDispatcher &dispatcher, netid senderId, const netid &groupid)
 {
 	GroupPtr pTo = (groupid == INVALID_NETID)? &m_Server.GetRootGroup() : m_Server.GetRootGroup().GetChildandThis(groupid);
 	GroupPtr pFrom = m_Server.GetRootGroup().GetChildFromUser( senderId );
@@ -148,7 +152,7 @@ bool CBasicC2SProtocolHandler::ReqGroupJoin(IProtocolDispatcher &dispatcher, net
 // 만약 이렇게 하려면, group에 소속된 멤버들을 새 그룹에 소속시키고, 
 // 현재 group의 자식으로 추가해야 한다. (단말 노드에만 유저가 소속될 수 있다.)
 //------------------------------------------------------------------------
-bool CBasicC2SProtocolHandler::ReqGroupCreate(IProtocolDispatcher &dispatcher, netid senderId, const netid &parentGroupId, const std::string &groupName)
+bool CBasicC2SHandler::ReqGroupCreate(IProtocolDispatcher &dispatcher, netid senderId, const netid &parentGroupId, const std::string &groupName)
 {
 	GroupPtr pParentGroup, pFrom, pNewGroup;
 	if (!CreateBlankGroup(senderId, parentGroupId, groupName, pParentGroup, pFrom, pNewGroup))
@@ -170,7 +174,7 @@ bool CBasicC2SProtocolHandler::ReqGroupCreate(IProtocolDispatcher &dispatcher, n
 /**
  @brief Create Blank Group
  */
-bool CBasicC2SProtocolHandler::ReqGroupCreateBlank(
+bool CBasicC2SHandler::ReqGroupCreateBlank(
 	IProtocolDispatcher &dispatcher, netid senderId, const netid &parentGroupId, const std::string &groupName)
 {
 	GroupPtr pParentGroup, pFrom, pNewGroup;
@@ -194,7 +198,7 @@ bool CBasicC2SProtocolHandler::ReqGroupCreateBlank(
  단말 노드에는 그룹을 추가할 수 없다.
  단말 노드에만 유저가 소속될 수 있다. 
  */
-bool	CBasicC2SProtocolHandler::CreateBlankGroup( 
+bool	CBasicC2SHandler::CreateBlankGroup( 
 	netid senderId, const netid &parentGroupId, const std::string &groupName, 
 	OUT GroupPtr &pParent, OUT GroupPtr &pFrom, OUT GroupPtr &pNew )
 {
@@ -251,7 +255,7 @@ bool	CBasicC2SProtocolHandler::CreateBlankGroup(
 /**
  @brief Request peer to peer connection
  */
-bool CBasicC2SProtocolHandler::ReqP2PConnect(IProtocolDispatcher &dispatcher, netid senderId)
+bool CBasicC2SHandler::ReqP2PConnect(IProtocolDispatcher &dispatcher, netid senderId)
 {
 	// check p2p connection
 	// if networking this group on p2p

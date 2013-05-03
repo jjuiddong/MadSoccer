@@ -77,12 +77,6 @@
     <ClCompile Include="Algorithm\GroupTraverse.cpp">
       <Filter>Lib\Algorithm</Filter>
     </ClCompile>
-    <ClCompile Include="ProtocolHandler\BasicC2SProtocolHandler.cpp">
-      <Filter>Lib\ProtocolHandler</Filter>
-    </ClCompile>
-    <ClCompile Include="ProtocolHandler\BasicS2CProtocolHandler.cpp">
-      <Filter>Lib\ProtocolHandler</Filter>
-    </ClCompile>
     <ClCompile Include="ProtocolHandler\BasicProtocolDispatcher.cpp">
       <Filter>Lib\ProtocolHandler</Filter>
     </ClCompile>
@@ -124,6 +118,12 @@
     </ClCompile>
     <ClCompile Include="Controller\Controller.cpp">
       <Filter>Lib\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="ProtocolHandler\BasicC2SHandler.cpp">
+      <Filter>Lib\ProtocolHandler</Filter>
+    </ClCompile>
+    <ClCompile Include="ProtocolHandler\BasicS2CHandler.cpp">
+      <Filter>Lib\ProtocolHandler</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -193,12 +193,6 @@
     <ClInclude Include="ErrReport\ErrorCode.h">
       <Filter>Lib\ErrReport</Filter>
     </ClInclude>
-    <ClInclude Include="ProtocolHandler\BasicC2SProtocolHandler.h">
-      <Filter>Lib\ProtocolHandler</Filter>
-    </ClInclude>
-    <ClInclude Include="ProtocolHandler\BasicS2CProtocolHandler.h">
-      <Filter>Lib\ProtocolHandler</Filter>
-    </ClInclude>
     <ClInclude Include="ProtocolHandler\BasicProtocolDispatcher.h">
       <Filter>Lib\ProtocolHandler</Filter>
     </ClInclude>
@@ -249,6 +243,12 @@
     </ClInclude>
     <ClInclude Include="Controller\Controller.h">
       <Filter>Lib\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="ProtocolHandler\BasicC2SHandler.h">
+      <Filter>Lib\ProtocolHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="ProtocolHandler\BasicS2CHandler.h">
+      <Filter>Lib\ProtocolHandler</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

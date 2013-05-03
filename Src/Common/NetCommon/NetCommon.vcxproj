@@ -82,7 +82,6 @@
     <ClInclude Include="DataStructure\Group.h" />
     <ClInclude Include="DataStructure\Packet.h" />
     <ClInclude Include="DataStructure\PacketQueue.h" />
-    <ClInclude Include="DataStructure\RemoteClient.h" />
     <ClInclude Include="DataStructure\RemoteServer.h" />
     <ClInclude Include="Event\NetEvent.h" />
     <ClInclude Include="Interface\Factory.h" />
@@ -107,7 +106,6 @@
     <ClCompile Include="Controller\Session.cpp" />
     <ClCompile Include="DataStructure\Group.cpp" />
     <ClCompile Include="DataStructure\Packet.cpp" />
-    <ClCompile Include="DataStructure\RemoteClient.cpp" />
     <ClCompile Include="DataStructure\RemoteServer.cpp" />
     <ClCompile Include="Interface\ProtocolDispatcher.cpp" />
     <ClCompile Include="Marshalling\Marshalling.cpp" />

@@ -98,8 +98,8 @@
     <ClCompile Include="Lib\ChatServer.cpp" />
     <ClCompile Include="Lib\LobbyServer.cpp" />
     <ClCompile Include="Lib\ServerLauncher.cpp" />
-    <ClCompile Include="DataStructure\RoomLobby.cpp" />
-    <ClCompile Include="DataStructure\UserLobby.cpp" />
+    <ClCompile Include="DataStructure\LobbyRoom.cpp" />
+    <ClCompile Include="DataStructure\LobbyUser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lib\BasicC2SHandler_LobbySvr.h" />
@@ -110,8 +110,8 @@
     <ClInclude Include="Lib\ChatServer.h" />
     <ClInclude Include="Lib\LobbyServer.h" />
     <ClInclude Include="Lib\ServerLauncher.h" />
-    <ClInclude Include="DataStructure\RoomLobby.h" />
-    <ClInclude Include="DataStructure\UserLobby.h" />
+    <ClInclude Include="DataStructure\LobbyRoom.h" />
+    <ClInclude Include="DataStructure\LobbyUser.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ServerApp.ico" />

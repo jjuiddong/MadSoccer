@@ -13,10 +13,10 @@ namespace basic { class s2c_Protocol; }
 
 namespace network
 {
-	class CBasicC2SProtocolHandler;
+	class CBasicC2SHandler;
 	class CServer : public multinetwork::CMultiPlugDelegation
 	{
-		friend class CBasicC2SProtocolHandler;
+		friend class CBasicC2SHandler;
 
 	public:
 		CServer();
@@ -32,6 +32,6 @@ namespace network
 
 	private:
 		basic::s2c_Protocol		*m_pBasicProtocol;
-		CBasicC2SProtocolHandler *m_pBasicPrtHandler;
+		CBasicC2SHandler *m_pBasicPrtHandler;
 	};
 }

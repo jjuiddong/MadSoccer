@@ -3,7 +3,7 @@ protocol s2c 100
 {
 	Error( error::ERROR_CODE errorCode );
 
-	AckLogIn( error::ERROR_CODE errorCode, std::string id, netid userId  );
+	AckLogIn( error::ERROR_CODE errorCode, std::string id, certify_key c_key  );
 	AckLogOut( error::ERROR_CODE errorCode, std::string id, int result );
 
 	AckMoveToServer( error::ERROR_CODE errorCode, std::string serverName, std::string ip, int port );
@@ -21,7 +21,7 @@ protocol s2c 100
 
 protocol c2s 200
 {
-	ReqLogIn( std::string id, std::string passwd );
+	ReqLogIn( std::string id, std::string passwd, certify_key c_key );
 	ReqLogOut( std::string id );
 
 	ReqMoveToServer( std::string serverName );

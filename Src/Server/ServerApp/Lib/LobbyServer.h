@@ -8,13 +8,13 @@ Date:    12/29/2012
 #pragma once
 
 #include "NetProtocol/Src/login_Protocol.h"
-#include "NetProtocol/Src/login_ProtocolListener.h"
+//#include "NetProtocol/Src/login_ProtocolListener.h"
 #include "NetProtocol/Src/basic_Protocol.h"
 #include "NetProtocol/Src/basic_ProtocolListener.h"
 #include "NetProtocol/src/server_network_Protocol.h"
-#include "NetProtocol/src/certify_Protocol.h"
-#include "NetProtocol/src/certify_ProtocolListener.h"
 #include "NetProtocol/Src/server_network_ProtocolListener.h"
+//#include "NetProtocol/src/certify_Protocol.h"
+//#include "NetProtocol/src/certify_ProtocolListener.h"
 #include "BasicC2SHandler_LobbySvr.h"
 
 
@@ -41,6 +41,7 @@ public:
 	bool			RemoveUser(network::CUser *pUser);
 	bool			RemoveUser(netid netId);
 	UserPtr		GetUser(netid netId);
+	UserPtr		GetUser(const std::string &id);
 	
 	//bool			AddRoom(network::CRoom *pRoom);
 	//bool			RemoveRoom(network::CRoom *pRoom);
@@ -72,7 +73,7 @@ protected:
 
 
 	// Network Protocol Handler
-	virtual bool ReqMoveUser(network::IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, const netid &userId, const std::string &ip, const int &port) override;
+	virtual bool ReqMoveUser(network::IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, const certify_key &c_key, const std::string &ip, const int &port) override;
 
 
 private:
@@ -85,7 +86,7 @@ private:
 	// Protocol
 	login::s2c_Protocol	m_LoginProtocol;
 	basic::s2c_Protocol	m_BasicProtocol;
-	certify::s2s_Protocol m_CertifyProtocol;
+	//certify::s2s_Protocol m_CertifyProtocol;
 	server_network::s2s_Protocol m_SvrNetworkProtocol;
 
 };

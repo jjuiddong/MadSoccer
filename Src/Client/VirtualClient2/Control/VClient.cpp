@@ -157,13 +157,13 @@ bool CVClient::SendData(IProtocolDispatcher &dispatcher, netid senderId)
  @brief Acknowledge
  */
 bool CVClient::AckLogIn(IProtocolDispatcher &dispatcher, netid senderId, 
-	const network::error::ERROR_CODE &errorCode, const std::string &id, const netid &netId)
+	const network::error::ERROR_CODE &errorCode, const std::string &id, const certify_key &c_key)
 {
 	if (errorCode == error::ERR_SUCCESS)
 	{
-		m_heroId = netId;
-		theApp.GetMainDlg()->SetWindowText( 
-			common::formatw( "netid = %d", netId).c_str() );			
+		m_heroId = GetNetId();
+		m_heroCKey = c_key;
+		theApp.GetMainDlg()->SetWindowText( common::formatw( "id = %s", id.c_str()).c_str() );
 	}
 	else
 	{

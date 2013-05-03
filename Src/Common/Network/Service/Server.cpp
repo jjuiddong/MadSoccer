@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "server.h"
 #include "NetProtocol/Src/basic_Protocol.h"
-#include "../ProtocolHandler/BasicC2SProtocolHandler.h"
+#include "../ProtocolHandler/BasicC2SHandler.h"
 
 
 using namespace network;

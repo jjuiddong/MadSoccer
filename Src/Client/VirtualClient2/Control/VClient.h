@@ -45,13 +45,15 @@ public:
 
 	// basic
 	virtual bool AckGroupList(network::IProtocolDispatcher &dispatcher, netid senderId, const network::error::ERROR_CODE &errorCode, const GroupVector &groups) override;
-	virtual bool AckLogIn(network::IProtocolDispatcher &dispatcher, netid senderId, const network::error::ERROR_CODE &errorCode, const std::string &id, const netid &netId) override;
+	virtual bool AckLogIn(network::IProtocolDispatcher &dispatcher, netid senderId, const network::error::ERROR_CODE &errorCode, const std::string &id, const certify_key &c_key) override;
 
 	// p2pComm
 	virtual bool SendData(network::IProtocolDispatcher &dispatcher, netid senderId) override;
 
 private:
 	netid				m_heroId;
+	certify_key		m_heroCKey;
+
 	all::Protocol		m_Protocol;
 	p2pComm::c2c_Protocol m_P2pProtocol;
 

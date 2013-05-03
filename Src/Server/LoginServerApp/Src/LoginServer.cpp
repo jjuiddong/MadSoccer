@@ -3,8 +3,8 @@
 #include "LoginServer.h"
 #include "Network/Service/SubServerPlug.h"
 
-#include "Network/ProtocolHandler/BasicC2SProtocolHandler.h"
-#include "BasicC2SProtocolHandler_LoginSvr.h"
+#include "Network/ProtocolHandler/BasicC2SHandler.h"
+#include "BasicC2SHandler_LoginSvr.h"
 
 
 using namespace network;
@@ -50,7 +50,7 @@ void	CLoginServer::OnConnectMultiPlug()
 	RegisterProtocol(&m_BasicProtocol);
 	RegisterProtocol(&m_LoginProtocol);
 
-	m_pBasicPrtHandler = new CBasicC2SProtocolHandler_LoginSvr(*pCertifySvrController, *GetServer());
+	m_pBasicPrtHandler = new CBasicC2SHandler_LoginSvr(*pCertifySvrController, *GetServer());
 	AddProtocolListener(this);
 	AddProtocolListener(m_pBasicPrtHandler);
 
@@ -92,7 +92,7 @@ void	CLoginServer::OnSubServerConnect(CNetEvent &event)
  @brief ReqMoveUser
  */
 bool CLoginServer::ReqMoveUser(IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, 
-	const netid &userId, const std::string &ip, const int &port )
+	const certify_key &c_key, const std::string &ip, const int &port )
 {
 	
 	return true;
@@ -102,16 +102,24 @@ bool CLoginServer::ReqMoveUser(IProtocolDispatcher &dispatcher, netid senderId, 
 /**
  @brief AckMoveUser
  */
-bool CLoginServer::AckMoveUser(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode,
-	const std::string &id, const netid &userId, const std::string &ip, const int &port)
+bool CLoginServer::AckMoveUser(IProtocolDispatcher &dispatcher, netid senderId, 
+	const error::ERROR_CODE &errorCode, const std::string &id, const std::string &ip, const int &port)
 {
+	CSession *pClient = CheckClientId(GetServer(), id, 0, NULL, NULL);
+	if (!pClient)
+	{
+		clog::Error( clog::ERROR_CRITICAL, "AckMoveUser Error!! not found client id = %s", id.c_str() );
+		m_SvrNetworkProtocol.ReqMoveUserCancel( senderId, SEND_T, id );
+		return false;
+	}
+
 	if (error::ERR_SUCCESS == errorCode)
 	{
-		m_BasicProtocol.AckMoveToServer( userId, SEND_T, error::ERR_SUCCESS, "lobbysvr", ip, port);
+		m_BasicProtocol.AckMoveToServer( pClient->GetNetId(), SEND_T, error::ERR_SUCCESS, "lobbysvr", ip, port);
 	}
 	else
 	{
-		m_BasicProtocol.AckMoveToServer( userId, SEND_T, errorCode, "lobbysvr", " ", 0);
+		m_BasicProtocol.AckMoveToServer( pClient->GetNetId(), SEND_T, errorCode, "lobbysvr", " ", 0);
 	}
 	return true;
 }
@@ -157,7 +165,7 @@ bool CLoginServer::ReqLobbyIn(IProtocolDispatcher &dispatcher, netid senderId)
 	SSubServerInfo targetSvr = subServers.front();
 	pSubSvrCon->RegisterProtocol( &m_SvrNetworkProtocol );
 	m_SvrNetworkProtocol.ReqMoveUser( targetSvr.serverId, SEND_T, 
-		pClient->GetName(), pClient->GetNetId(), targetSvr.ip, targetSvr.portnum  );
+		pClient->GetName(), pClient->GetCertifyKey(), targetSvr.ip, targetSvr.portnum  );
 
 	return true; 
 }

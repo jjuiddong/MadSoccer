@@ -15,10 +15,12 @@ namespace network { namespace error {
 		ERR_NO_ERROR = ERR_SUCCESS,
 
 		// common
+		ERR_INTERNAL,
 		ERR_NOT_FOUND_GROUP,
 		ERR_NOT_FOUND_USER,
 		ERR_ALREADY_EXIST_USER,
 		ERR_INVALID_USER,
+		ERR_INVALID_CERTIFY_KEY,
 
 		// basic protocol
 		

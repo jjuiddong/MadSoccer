@@ -80,9 +80,6 @@
     <ClInclude Include="Interface\Factory.h">
       <Filter>Interface</Filter>
     </ClInclude>
-    <ClInclude Include="DataStructure\RemoteClient.h">
-      <Filter>DataStructure</Filter>
-    </ClInclude>
     <ClInclude Include="Marshalling\MarshallingGroup.h">
       <Filter>Marshalling</Filter>
     </ClInclude>
@@ -126,9 +123,6 @@
     </ClCompile>
     <ClCompile Include="Marshalling\Marshalling.cpp">
       <Filter>Marshalling</Filter>
-    </ClCompile>
-    <ClCompile Include="DataStructure\RemoteClient.cpp">
-      <Filter>DataStructure</Filter>
     </ClCompile>
     <ClCompile Include="Marshalling\MarshallingGroup.cpp">
       <Filter>Marshalling</Filter>

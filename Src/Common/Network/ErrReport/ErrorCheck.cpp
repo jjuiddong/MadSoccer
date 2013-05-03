@@ -67,3 +67,21 @@ bool network::CheckClientConnection( CSession *pClient,
 	return false;
 }
 
+
+/**
+ @brief CheckDelegation
+ */
+MultiPlugDelegationPtr network::CheckDelegation( const std::string &linkSvrType,
+	netid clientId, basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher )
+{
+	MultiPlugDelegationPtr ptr = multinetwork::CMultiNetwork::Get()->GetDelegation(linkSvrType);
+	if (!ptr)
+	{
+		clog::Error( clog::ERROR_CRITICAL, 0, "CheckDelegation Error!!! linkSvrType=%s", linkSvrType.c_str() );
+		if (pDispatcher)
+			pDispatcher->PrintThisPacket( clog::LOG_FILE, "!!! Error casting err >>" );
+		if (clientId && pProtocol)
+			pProtocol->Error( clientId, SEND_T, error::ERR_INTERNAL );
+	}
+	return ptr;
+}

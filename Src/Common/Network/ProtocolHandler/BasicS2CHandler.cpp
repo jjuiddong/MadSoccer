@@ -1,22 +1,22 @@
 
 #include "stdafx.h"
-#include "BasicS2CProtocolHandler.h"
+#include "BasicS2CHandler.h"
 #include "../Controller/P2PClient.h"
 #include "../Service/Client.h"
 
 using namespace network;
 
 
-CBasicS2CProtocolHandler::CBasicS2CProtocolHandler( CClient &client ) :
+CBasicS2CHandler::CBasicS2CHandler( CClient &client ) :
 	m_Client(client)
 ,	m_IsMoveToServer(false)
 {
 	client.RegisterProtocol(&m_BasicProtocol);
 
-	NETEVENT_CONNECT_TO(&client, this, EVT_DISCONNECT, CBasicS2CProtocolHandler, CBasicS2CProtocolHandler::OnDisconnectClient);
+	NETEVENT_CONNECT_TO(&client, this, EVT_DISCONNECT, CBasicS2CHandler, CBasicS2CHandler::OnDisconnectClient);
 }
 
-CBasicS2CProtocolHandler::~CBasicS2CProtocolHandler()
+CBasicS2CHandler::~CBasicS2CHandler()
 {
 
 }
@@ -25,7 +25,7 @@ CBasicS2CProtocolHandler::~CBasicS2CProtocolHandler()
 /**
  @brief Acknowlege packet of RequestP2PConnect 
  */
-bool CBasicS2CProtocolHandler::AckP2PConnect(
+bool CBasicS2CHandler::AckP2PConnect(
 	IProtocolDispatcher &dispatcher, netid senderId, const network::error::ERROR_CODE &errorCode, 
 	const network::P2P_STATE &state, const std::string &ip, const int &port)
 {
@@ -53,7 +53,7 @@ bool CBasicS2CProtocolHandler::AckP2PConnect(
 /**
  @brief AckMoveToServer
  */
-bool CBasicS2CProtocolHandler::AckMoveToServer(IProtocolDispatcher &dispatcher, netid senderId, 
+bool CBasicS2CHandler::AckMoveToServer(IProtocolDispatcher &dispatcher, netid senderId, 
 	const error::ERROR_CODE &errorCode, const std::string &serverName, const std::string &ip, const int &port)
 {
 	if (error::ERR_SUCCESS != errorCode)
@@ -71,7 +71,7 @@ bool CBasicS2CProtocolHandler::AckMoveToServer(IProtocolDispatcher &dispatcher, 
 /**
  @brief OnDisconnectClient
  */
-void	CBasicS2CProtocolHandler::OnDisconnectClient(CNetEvent &event)
+void	CBasicS2CHandler::OnDisconnectClient(CNetEvent &event)
 {
 	if (m_IsMoveToServer)
 	{

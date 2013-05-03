@@ -13,17 +13,17 @@ basic_protocol.prt Protocol Handler
 namespace network
 {
 	class CServer;
-	class CBasicC2SProtocolHandler : public basic::c2s_ProtocolListener
+	class CBasicC2SHandler : public basic::c2s_ProtocolListener
 	{
 	public:
-		CBasicC2SProtocolHandler( CServerBasic &svr );
-		virtual ~CBasicC2SProtocolHandler();
+		CBasicC2SHandler( CServerBasic &svr );
+		virtual ~CBasicC2SHandler();
 
 		CServerBasic& GetServer();
 		basic::s2c_Protocol& GetBasicProtocol();
 
 		// Network Protocol Handler
-		virtual bool ReqLogIn(IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, const std::string &passwd) override;
+		virtual bool ReqLogIn(IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, const std::string &passwd, const certify_key &c_key) override;
 		virtual bool ReqLogOut(IProtocolDispatcher &dispatcher, netid senderId, const std::string &id) override;
 		virtual bool ReqMoveToServer(IProtocolDispatcher &dispatcher, netid senderId, const std::string &serverName) override;
 
@@ -43,7 +43,7 @@ namespace network
 	};
 
 
-	inline CServerBasic& CBasicC2SProtocolHandler::GetServer() { return m_Server; }
-	inline basic::s2c_Protocol& CBasicC2SProtocolHandler::GetBasicProtocol() { return m_BasicProtocol; }
+	inline CServerBasic& CBasicC2SHandler::GetServer() { return m_Server; }
+	inline basic::s2c_Protocol& CBasicC2SHandler::GetBasicProtocol() { return m_BasicProtocol; }
 
 }

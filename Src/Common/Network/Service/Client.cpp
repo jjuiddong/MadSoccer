@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 #include "Client.h"
-#include "../ProtocolHandler/BasicS2CProtocolHandler.h"
+#include "../ProtocolHandler/BasicS2CHandler.h"
 
 using namespace network;
 
@@ -11,7 +11,7 @@ CClient::CClient(PROCESS_TYPE procType) :
 ,	m_pBasicS2CProtocolHandler(NULL)
 {
 
-	m_pBasicS2CProtocolHandler = new CBasicS2CProtocolHandler(*this);
+	m_pBasicS2CProtocolHandler = new CBasicS2CHandler(*this);
 	AddProtocolListener(m_pBasicS2CProtocolHandler);
 }
 

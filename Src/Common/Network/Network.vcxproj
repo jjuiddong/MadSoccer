@@ -92,9 +92,9 @@
     <ClCompile Include="MultiNetwork\FarmServerPlug.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="ProtocolHandler\AllProtocolDisplayer.cpp" />
-    <ClCompile Include="ProtocolHandler\BasicC2SProtocolHandler.cpp" />
+    <ClCompile Include="ProtocolHandler\BasicC2SHandler.cpp" />
     <ClCompile Include="ProtocolHandler\BasicProtocolDispatcher.cpp" />
-    <ClCompile Include="ProtocolHandler\BasicS2CProtocolHandler.cpp" />
+    <ClCompile Include="ProtocolHandler\BasicS2CHandler.cpp" />
     <ClCompile Include="Service\ServerApp.cpp" />
     <ClCompile Include="Service\SubServerPlug.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -128,9 +128,9 @@
     <ClInclude Include="NetworkDef.h" />
     <ClInclude Include="NetworkUtility.h" />
     <ClInclude Include="ProtocolHandler\AllProtocolDisplayer.h" />
-    <ClInclude Include="ProtocolHandler\BasicC2SProtocolHandler.h" />
+    <ClInclude Include="ProtocolHandler\BasicC2SHandler.h" />
     <ClInclude Include="ProtocolHandler\BasicProtocolDispatcher.h" />
-    <ClInclude Include="ProtocolHandler\BasicS2CProtocolHandler.h" />
+    <ClInclude Include="ProtocolHandler\BasicS2CHandler.h" />
     <ClInclude Include="Service\ServerApp.h" />
     <ClInclude Include="Service\SubServerPlug.h" />
     <ClInclude Include="stdafx.h" />

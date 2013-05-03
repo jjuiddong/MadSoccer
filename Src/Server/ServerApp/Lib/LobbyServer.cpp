@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 #include "LobbyServer.h"
-#include "../DataStructure/UserLobby.h"
+#include "../DataStructure/LobbyUser.h"
 
 
 using namespace network;
@@ -48,7 +48,7 @@ void	CLobbyServer::OnConnectMultiPlug()
 	m_pBasicPrtHandler = new CBasicC2SHandler_LobbySvr(*pCertifyMultiPlug, *GetServer());
 
 	pLoginMultiPlug->RegisterProtocol( &m_SvrNetworkProtocol );
-	pCertifyMultiPlug->RegisterProtocol(&m_CertifyProtocol);
+	//pCertifyMultiPlug->RegisterProtocol(&m_CertifyProtocol);
 
 	RegisterProtocol(&m_LoginProtocol);
 	RegisterProtocol(&m_BasicProtocol);
@@ -70,7 +70,7 @@ bool CLobbyServer::AddUser(CUser *pUser)
 {
 	auto it = m_Users.find(pUser->GetNetId());
 	if (m_Users.end() != it)
-		return false; // 이미 존재한다면 실패
+		return false; // Error!! Already Exist
 	m_Users.insert( Users_::value_type(pUser->GetNetId(), pUser) );
 	return true;
 }
@@ -84,7 +84,7 @@ bool CLobbyServer::RemoveUser(CUser *pUser)
 {
 	auto it = m_Users.find(pUser->GetNetId());
 	if (m_Users.end() == it)
-		return false; // 없다면 실패
+		return false; // Error!! Not Exist
 	m_Users.remove(pUser->GetNetId());
 	m_Users.apply_removes();
 	delete pUser;
@@ -108,15 +108,29 @@ bool CLobbyServer::RemoveUser(netid netId)
 }
 
 
-//------------------------------------------------------------------------
-// 유저 얻기
-//------------------------------------------------------------------------
+/**
+ @brief 유저 얻기
+ */
 UserPtr	CLobbyServer::GetUser(netid netId)
 {
 	auto it = m_Users.find(netId);
 	if (m_Users.end() == it)
 		return NULL; // 없다면 실패
 	return it->second;
+}
+
+
+/**
+ @brief 유저 얻기
+ */
+UserPtr	CLobbyServer::GetUser(const std::string &id)
+{
+	BOOST_FOREACH(auto pUser, m_Users.m_Seq)
+	{
+		if (pUser->GetName() == id)
+			return pUser;
+	}
+	return false;
 }
 
 
@@ -200,14 +214,14 @@ void CLobbyServer::SendUsers(netid userId)
 // 클라이언트가 서버에 붙었을 때 호출된다.
 //------------------------------------------------------------------------
 void CLobbyServer::OnClientJoin(CNetEvent &event)
-{
-	CUserLobby *pUser = new CUserLobby();
-	pUser->SetNetId(event.GetNetId());
-	if (!AddUser( pUser ))
-	{
-		clog::Error( clog::ERROR_PROBLEM, "AddUser() Fail!! id = %d\n", event.GetNetId());
-		delete pUser;
-	}
+{	
+//	CLobbyUser *pUser = new CLobbyUser();
+//	pUser->SetNetId(event.GetNetId());
+//	if (!AddUser( pUser ))
+//	{
+//		clog::Error( clog::ERROR_PROBLEM, "AddUser() Fail!! id = %d\n", event.GetNetId());
+//		delete pUser;
+//	}
 }
 
 
@@ -262,33 +276,30 @@ void	CLobbyServer::OnTimer( CEvent &event )
 }
 
 
-//------------------------------------------------------------------------
-//  Test Packet
-//------------------------------------------------------------------------
-//void CLobbyServer::ReqLogIn(netid senderId, const std::string &id, const std::string &password)
-//{
-//	m_LoginProtocol.AckLogIn(senderId, SEND_TARGET, error::ERR_SUCCESS, id, senderId);
-//}
-
-
 /**
  @brief ReqMoveUser
+			From Login Server
+			From Game Server
  */
 bool CLobbyServer::ReqMoveUser(IProtocolDispatcher &dispatcher, netid senderId, 
-	const std::string &id, const netid &userId, const std::string &ip, const int &port)
+	const std::string &id, const certify_key &c_key, const std::string &ip, const int &port)
 {
-	CSession *pClient = CheckClientId(GetServer(), id, userId, NULL, NULL);
+	CSession *pClient = CheckClientId(GetServer(), id, 0, NULL, NULL);
 	if (pClient) // Already exist
 	{ /// !!Error
-		clog::Error( clog::ERROR_PROBLEM, 0, "CLobbyServer::ReqMoveUser user already exist netid: %d, id=%s", 
+		clog::Error( clog::ERROR_PROBLEM, 0, "ReqMoveUser user already exist netid: %d, id=%s", 
 			pClient->GetNetId(), pClient->GetName().c_str() );
 		m_SvrNetworkProtocol.AckMoveUser(senderId, SEND_T, error::ERR_MOVEUSER_ALREADY_EXIST,
-			id, userId, ip, port);
+			id, ip, port);
 		return false;
 	}
 
-	//multinetwork::CMultiNetwork::Get()->RegisterProtocol(&m_SvrNetworkProtocol) ;
-	m_SvrNetworkProtocol.AckMoveUser(senderId, SEND_T, error::ERR_SUCCESS, id, userId, ip, port);
+	// Add User
+	CLobbyUser *pUser = new CLobbyUser();
+	pUser->SetName(id);
+	pUser->SetCertifyKey(c_key);
+	AddUser( pUser );
 	
+	m_SvrNetworkProtocol.AckMoveUser(senderId, SEND_T, error::ERR_SUCCESS, id, ip, port);	
 	return true;
 }

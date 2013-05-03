@@ -10,7 +10,7 @@ Date:    3/17/2013
 
 namespace network
 {
-	class CBasicS2CProtocolHandler;
+	class CBasicS2CHandler;
 
 	class CClient : public CClientBasic
 	{
@@ -19,7 +19,7 @@ namespace network
 		virtual ~CClient();
 
 	protected:
-		CBasicS2CProtocolHandler *m_pBasicS2CProtocolHandler;
+		CBasicS2CHandler *m_pBasicS2CProtocolHandler;
 	};
 
 };

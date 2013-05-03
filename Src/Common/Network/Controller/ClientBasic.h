@@ -18,7 +18,7 @@ namespace network
 
 		friend class CNetLauncher;
 		friend class CController;
-		friend class CBasicS2CProtocolHandler;
+		friend class CBasicS2CHandler;
 
 	public:
 		CClientBasic(PROCESS_TYPE procType);

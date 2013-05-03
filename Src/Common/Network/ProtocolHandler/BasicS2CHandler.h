@@ -1,8 +1,9 @@
 /**
-Name:   BasicS2CProtocolHandler.h
+Name:   BasicS2CHandler.h
 Author:  jjuiddong
 Date:    3/17/2013
 
+	CBasicS2CHandler
 */
 #pragma once
 
@@ -12,13 +13,12 @@ Date:    3/17/2013
 namespace network
 {
 	class CClient;
-
-	class CBasicS2CProtocolHandler : public common::CEventHandler
-														, public basic::s2c_ProtocolListener
+	class CBasicS2CHandler : public common::CEventHandler
+											, public basic::s2c_ProtocolListener
 	{
 	public:
-		CBasicS2CProtocolHandler( CClient &svr );
-		virtual ~CBasicS2CProtocolHandler();
+		CBasicS2CHandler( CClient &svr );
+		virtual ~CBasicS2CHandler();
 
 	protected:
 		void		OnDisconnectClient(CNetEvent &event);
