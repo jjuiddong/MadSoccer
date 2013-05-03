@@ -23,7 +23,6 @@ namespace network
 			CLIENT_BEGIN_MOVE,
 			CLIENT_CLOSE,
 			CLIENT_CONNECT,
-			CLIENT_LOGIN,
 		};
 
 	public:
@@ -45,8 +44,6 @@ namespace network
 
 		MOVE_STATE	m_ClientState;
 		bool  m_IsMoveToServer;
-		std::string m_ToServerIp;
-		int m_ToServerPort;
 	};
 
 }

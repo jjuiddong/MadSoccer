@@ -10,7 +10,6 @@ using namespace network;
 CBasicS2CHandler::CBasicS2CHandler( CClient &client ) :
 	m_Client(client)
 ,	m_ClientState(CLIENT_END_MOVE)
-,	m_IsMoveToServer(false)
 {
 	client.RegisterProtocol(&m_BasicProtocol);
 
@@ -86,9 +85,8 @@ bool CBasicS2CHandler::AckMoveToServer(IProtocolDispatcher &dispatcher, netid se
 	m_Client.Stop();
 
 	m_ClientState = CLIENT_BEGIN_MOVE;
-	m_IsMoveToServer = true;
-	m_ToServerIp = ip;
-	m_ToServerPort = port;
+	m_Client.SetIp(ip);
+	m_Client.SetPort(port);
 	return true;
 }
 
@@ -101,8 +99,7 @@ void	CBasicS2CHandler::OnDisconnectClient(CNetEvent &event)
 	if (CLIENT_BEGIN_MOVE == m_ClientState)
 	{
 		m_ClientState = CLIENT_CLOSE;
-		StartClient(m_ToServerIp, m_ToServerPort, &m_Client);
-		m_IsMoveToServer = false;
+		StartClient(m_Client.GetIp(), m_Client.GetPort(), &m_Client);
 	}	
 }
 
