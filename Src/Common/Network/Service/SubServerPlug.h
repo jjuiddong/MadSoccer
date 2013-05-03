@@ -30,7 +30,7 @@ namespace network
 		virtual bool SendServerInfo(IProtocolDispatcher &dispatcher, netid senderId, const std::string &svrType, const std::string &ip, const int &port, const int &userCount) override;
 
 	private:
-		typedef VectorMap<netid, CRemoteServer*>	RemoteServers;
+		typedef common::StableVectorMap<netid, CRemoteServer*>	RemoteServers;
 		RemoteServers m_RemoteServers;
 
 	};

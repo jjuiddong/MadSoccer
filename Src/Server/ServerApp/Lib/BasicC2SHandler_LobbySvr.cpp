@@ -56,6 +56,7 @@ bool CBasicC2SHandler_LobbySvr::ReqLogIn( network::IProtocolDispatcher &dispatch
 	
 	pClient->SetCertifyKey(c_key);
 	m_CertifyProtocol.ReqUserMoveServer( SERVER_NETID, SEND_T, id, "lobbysvr" );
+	m_BasicProtocol.AckLogIn( senderId, SEND_T, error::ERR_SUCCESS, id, c_key);
 	return true;
 }
 

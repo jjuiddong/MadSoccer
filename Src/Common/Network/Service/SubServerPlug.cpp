@@ -111,5 +111,7 @@ std::list<SSubServerInfo> CSubServerPlug::GetSubServerInfo()
 		}
 	}
 
+	m_RemoteServers.apply_removes();
+
 	return  servers;
 }

@@ -99,7 +99,7 @@ CGlobalRemoteClient* CCertifyServer::GetClient( const std::string &id )
 bool CCertifyServer::ReqUserLogin(IProtocolDispatcher &dispatcher, netid senderId, 
 	const std::string &id, const std::string &passwd, const std::string &svrType)
 {
-	certify_key key = 0;
+	certify_key key = rand();
 
 	if (!AddClient(id, svrType, key))
 	{ /// Error!! Already Exist 
