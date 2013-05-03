@@ -38,7 +38,7 @@ bool CBasicC2SHandler_LobbySvr::ReqLogIn( network::IProtocolDispatcher &dispatch
 	CLobbyServer *pLobbySvr = CheckCasting<CLobbyServer*>( pLobbySvrDelegation.Get(), senderId, &m_BasicProtocol, &dispatcher );
 	RETV(!pLobbySvr, false);
 
-	UserPtr pUser = pLobbySvr->GetUser(id);
+	PlayerPtr pUser = GetServer().GetPlayer(id);
 	if (!pUser)
 	{
 		clog::Error( clog::ERROR_CRITICAL, 0, "ReqLogIn Error!! not found user id=%s", id.c_str());

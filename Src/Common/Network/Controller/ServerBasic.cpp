@@ -13,6 +13,7 @@ CServerBasic::CServerBasic(PROCESS_TYPE procType) :
 ,	m_RootGroup(NULL, "root")
 ,	m_pSessionFactory(new CSessionFactory()) // defalut 
 ,	m_pGroupFactory(new CGroupFactory()) // default
+,	m_pPlayerFactory(new CPlayerFactory()) // default
 ,	m_IsLoginCheck(false)
 {
 	SetPort(2333);
@@ -27,6 +28,7 @@ CServerBasic::~CServerBasic()
 	m_Timers.clear();
 	SAFE_DELETE(m_pSessionFactory);
 	SAFE_DELETE(m_pGroupFactory);
+	SAFE_DELETE(m_pPlayerFactory);
 }
 
 
@@ -210,6 +212,77 @@ bool CServerBasic::Stop()
 
 
 //------------------------------------------------------------------------
+// 유저 추가
+//------------------------------------------------------------------------
+bool CServerBasic::AddPlayer(CPlayer *pUser)
+{
+	auto it = m_Users.find(pUser->GetNetId());
+	if (m_Users.end() != it)
+		return false; // Error!! Already Exist
+	m_Users.insert( Players_::value_type(pUser->GetNetId(), pUser) );
+	return true;
+}
+
+
+//------------------------------------------------------------------------
+// 유저 제거
+// 인자로 넘어온 pUser 메모리를 제거한다.
+//------------------------------------------------------------------------
+bool CServerBasic::RemovePlayer(CPlayer *pUser)
+{
+	auto it = m_Users.find(pUser->GetNetId());
+	if (m_Users.end() == it)
+		return false; // Error!! Not Exist
+	m_Users.remove(pUser->GetNetId());
+	m_Users.apply_removes();
+	delete pUser;
+	return true;
+}
+
+
+//------------------------------------------------------------------------
+// 유저 제거
+// 메모리까지 제거된다.
+//------------------------------------------------------------------------
+bool CServerBasic::RemovePlayer(netid netId)
+{
+	auto it = m_Users.find(netId);
+	if (m_Users.end() == it)
+		return false; // 없다면 실패
+	delete it->second;
+	m_Users.remove(netId);
+	m_Users.apply_removes();
+	return true;
+}
+
+
+/**
+ @brief 유저 얻기
+ */
+PlayerPtr	CServerBasic::GetPlayer(netid netId)
+{
+	auto it = m_Users.find(netId);
+	if (m_Users.end() == it)
+		return NULL; // 없다면 실패
+	return it->second;
+}
+
+
+/**
+ @brief 유저 얻기
+ */
+PlayerPtr	CServerBasic::GetPlayer(const std::string &id)
+{
+	BOOST_FOREACH(auto pUser, m_Users.m_Seq)
+	{
+		if (pUser->GetName() == id)
+			return pUser;
+	}
+	return false;
+}
+
+
+//------------------------------------------------------------------------
 // 클라이언트 추가
 //------------------------------------------------------------------------
 bool CServerBasic::AddSession(SOCKET sock, const std::string &ip)
@@ -220,25 +293,35 @@ bool CServerBasic::AddSession(SOCKET sock, const std::string &ip)
 
 	SessionItor it = FindSessionBySocket(sock);
 	if (m_Sessions.end() != it)
-		return false; // 이미존재한다면 실패
+		return false; // Error!! Already Exist
 
 	CSession *pNewSession = m_pSessionFactory->New();
 	pNewSession->SetSocket(sock);
 	pNewSession->SetIp(ip);
 	pNewSession->SetState(m_IsLoginCheck? SESSIONSTATE_LOGIN_WAIT : SESSIONSTATE_LOGIN);
 
-	if (!m_RootGroup.AddUser(m_WaitGroupId, pNewSession->GetNetId()))
+	if (PlayerPtr pUser = GetPlayer(pNewSession->GetNetId())) /// Error!! Already Exist 
 	{
-		clog::Error( clog::ERROR_CRITICAL, "CServerBasic::AddClient Error!! netid: %d\n", pNewSession->GetNetId());
+		clog::Error( clog::ERROR_CRITICAL, "CServerBasic::AddClient Error!! Already Exist User netid: %d\n", pNewSession->GetNetId());
 		SAFE_DELETE(pNewSession);
+		return true;
+	}
+
+	if (m_RootGroup.AddUser(m_WaitGroupId, pNewSession->GetNetId()))
+	{
+		CPlayer *pNewUser  = m_pPlayerFactory->New();
+		pNewUser->SetNetId(pNewSession->GetNetId());
+		if (!AddPlayer(pNewUser))
+			clog::Error( clog::ERROR_CRITICAL, "CServerBasic::AddClient Error!! AddUser Err netid: %d\n", pNewUser->GetNetId());
+
+		m_Sessions.insert( Sessions_::value_type(pNewSession->GetNetId(), pNewSession) );
+		clog::Log( clog::LOG_F_N_O, "AddClient netid: %d, socket: %d\n", pNewSession->GetNetId(), sock );
+		OnClientJoin(pNewSession->GetNetId());
 	}
 	else
 	{
-		m_Sessions.insert( 
-			Sessions_::value_type(pNewSession->GetNetId(), pNewSession) );
-
-		clog::Log( clog::LOG_F_N_O, "AddClient netid: %d, socket: %d\n", pNewSession->GetNetId(), sock );
-		OnClientJoin(pNewSession->GetNetId());
+		clog::Error( clog::ERROR_CRITICAL, "CServerBasic::AddClient Error!! netid: %d\n", pNewSession->GetNetId());
+		SAFE_DELETE(pNewSession);
 	}
 
 	return true;
@@ -290,13 +373,23 @@ netid CServerBasic::GetNetIdFromSocket(SOCKET sock)
 //------------------------------------------------------------------------
 bool CServerBasic::RemoveSession(netid netId)
 {
+	bool reval = true;
 	SessionItor it = m_Sessions.find(netId);
-	if (m_Sessions.end() == it)
-		return false; //없다면 실패
-	if (it->second)
-		it->second->SetState(SESSIONSTATE_LOGOUT_WAIT);
-	m_Sessions.remove(netId);
-	return true;
+	if (m_Sessions.end() != it)
+	{
+		if (it->second)
+			it->second->SetState(SESSIONSTATE_LOGOUT_WAIT);
+		m_Sessions.remove(netId);
+	}
+	else
+	{
+		reval = false;
+	}
+
+	if (!RemovePlayer(netId))
+		reval = false;
+	
+	return reval;
 }
 
 

@@ -39,14 +39,14 @@
     <ClCompile Include="Lib\BasicC2SHandler_LobbySvr.cpp">
       <Filter>Lib</Filter>
     </ClCompile>
-    <ClCompile Include="DataStructure\LobbyUser.cpp">
-      <Filter>DataStructure</Filter>
-    </ClCompile>
     <ClCompile Include="DataStructure\LobbyRoom.cpp">
       <Filter>DataStructure</Filter>
     </ClCompile>
     <ClCompile Include="LobbyServerApp.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DataStructure\LobbyPlayer.cpp">
+      <Filter>DataStructure</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -71,14 +71,14 @@
     <ClInclude Include="Lib\BasicC2SHandler_LobbySvr.h">
       <Filter>Lib</Filter>
     </ClInclude>
-    <ClInclude Include="DataStructure\LobbyUser.h">
-      <Filter>DataStructure</Filter>
-    </ClInclude>
     <ClInclude Include="DataStructure\LobbyRoom.h">
       <Filter>DataStructure</Filter>
     </ClInclude>
     <ClInclude Include="LobbyServerApp.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DataStructure\LobbyPlayer.h">
+      <Filter>DataStructure</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

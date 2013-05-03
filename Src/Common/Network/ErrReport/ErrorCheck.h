@@ -18,8 +18,20 @@ namespace network
 	CSession* CheckClientId( ServerBasicPtr pServer, const std::string &id, netid clientId, 
 		basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher );
 
+
 	bool CheckClientConnection( CSession *pClient, 
 		basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher );
+
+	CPlayer* CheckPlayerWaitAck(ServerBasicPtr pServer, netid clientId, 
+		basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher );
+
+	CSession* CheckSessionLogin(ServerBasicPtr pServer, netid clientId, 
+		basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher );
+
+	CPlayer* CheckRecvablePlayer(ServerBasicPtr pServer, netid clientId, 
+		basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher );
+
+
 
 	MultiPlugDelegationPtr CheckDelegation( const std::string &linkSvrType, 
 		netid clientId=0, basic::s2c_Protocol *pProtocol=NULL, IProtocolDispatcher *pDispatcher=NULL );

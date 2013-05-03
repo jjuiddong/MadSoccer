@@ -1,6 +1,8 @@
 
 #include "stdafx.h"
 #include "ProtocolDefine.h"
+#include "../Error/ErrorCode.h"
+
 
 using namespace network;
 using namespace marshalling;
@@ -21,7 +23,7 @@ void network::PrintToken( Tokentype token, char *szTokenString )
 	case RPAREN:	printf( ")" ); break;
 	case LBRACE:	printf( "{" ); break;
 	case RBRACE:	printf( "}" ); break;
-	case COMMA:		printf( "," ); break;
+	case COMMA:	printf( "," ); break;
 	case NUM:		printf( "number" ); break;
 	case OR:		printf( "||" ); break;
 	case AND:		printf( "&&" ); break;
@@ -184,6 +186,9 @@ std::string network::Packet2String(const CPacket &packet, sProtocol *protocol)
 
 		ss << arg->var->var + " = ";
 		ss << common::variant2str(var);
+		if ( arg->var->var == "errorCode")
+			ss << "(" << ErrorCodeString((error::ERROR_CODE)(int)var) << ")";
+
 		ss << ", ";
 
 		arg = arg->next;

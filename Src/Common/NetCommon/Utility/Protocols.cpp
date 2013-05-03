@@ -45,7 +45,7 @@ void protocols::InsertProtocol( sRmi *pRmi, sProtocol *pProtocol )
  */
 void	protocols::Init()
 {
-	std::string protocolDir = "D:/Project/GitHub/MadSoccer/Src/Common/NetProtocol/*.prt";
+	std::string protocolDir = "../Src/Common/NetProtocol/*.prt";
 	std::list<std::string> fileList = common::FindFileList( protocolDir );
 	BOOST_FOREACH(std::string &str, fileList)
 	{

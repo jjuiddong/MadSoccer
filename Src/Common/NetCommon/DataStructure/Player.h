@@ -1,5 +1,5 @@
 /**
-Name:   User.h
+Name:   Player.h
 Author:  jjuiddong
 Date:    12/28/2012
 
@@ -10,12 +10,13 @@ Date:    12/28/2012
 namespace network
 {
 	class CCharacter;
-	class CUser
+	class CPlayer
 	{
 	public:
-		CUser();
-		virtual ~CUser();
+		CPlayer();
+		virtual ~CPlayer();
 
+		void			SetState(PLAYER_STATE state);
 		void			SetNetId(netid netId);
 		void			SetCertifyKey(certify_key key);
 		void			SetId(int id);
@@ -25,6 +26,7 @@ namespace network
 		certify_key GetCertifyKey() const;
 		int			GetId() const;
 		const std::string& GetName() const;
+		bool			IsAckWait() const;
 
 		bool			AddCharacter(CharacterPtr pChar);
 		bool			RemoveCharacter(int characterId);
@@ -32,6 +34,7 @@ namespace network
 		CharacterPtr	GetSelectChracter();
 
 	private:
+		PLAYER_STATE	m_State;
 		netid				m_NetId;
 		certify_key		m_CertifyKey;
 		int					m_Id;
@@ -45,12 +48,15 @@ namespace network
 	};
 
 
-	inline void	CUser::SetNetId(netid netId) { m_NetId = netId; }
-	inline void	CUser::SetId(int id) { m_Id = id; }
-	inline void	CUser::SetName(const std::string &name) { m_Name = name; }
-	inline netid CUser::GetNetId() const { return m_NetId; }
-	inline int CUser::GetId() const { return m_Id; }
-	inline const std::string& CUser::GetName() const { return m_Name; }
-	inline certify_key CUser::GetCertifyKey() const { return m_CertifyKey; }
-	inline void			CUser::SetCertifyKey(certify_key key) { m_CertifyKey = key; }
+	inline void	CPlayer::SetNetId(netid netId) { m_NetId = netId; }
+	inline void	CPlayer::SetId(int id) { m_Id = id; }
+	inline void	CPlayer::SetName(const std::string &name) { m_Name = name; }
+	inline netid CPlayer::GetNetId() const { return m_NetId; }
+	inline int CPlayer::GetId() const { return m_Id; }
+	inline const std::string& CPlayer::GetName() const { return m_Name; }
+	inline certify_key CPlayer::GetCertifyKey() const { return m_CertifyKey; }
+	inline void			CPlayer::SetCertifyKey(certify_key key) { m_CertifyKey = key; }
+	inline void CPlayer::SetState( PLAYER_STATE state) { m_State = state; }		 
+	inline bool CPlayer::IsAckWait() const { return m_State == USERSTATE_WAIT_ACK; }
+
 }

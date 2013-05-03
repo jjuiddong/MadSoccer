@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 #include "LobbyServer.h"
-#include "../DataStructure/LobbyUser.h"
+#include "../DataStructure/LobbyPlayer.h"
 
 
 using namespace network;
@@ -62,76 +62,6 @@ void	CLobbyServer::OnConnectMultiPlug()
 	GetServer()->AddTimer(ID_TIMER_REFRESH, REFRESH_TIMER_INTERVAL);
 }
 
-
-//------------------------------------------------------------------------
-// 유저 추가
-//------------------------------------------------------------------------
-bool CLobbyServer::AddUser(CUser *pUser)
-{
-	auto it = m_Users.find(pUser->GetNetId());
-	if (m_Users.end() != it)
-		return false; // Error!! Already Exist
-	m_Users.insert( Users_::value_type(pUser->GetNetId(), pUser) );
-	return true;
-}
-
-
-//------------------------------------------------------------------------
-// 유저 제거
-// 인자로 넘어온 pUser 메모리를 제거한다.
-//------------------------------------------------------------------------
-bool CLobbyServer::RemoveUser(CUser *pUser)
-{
-	auto it = m_Users.find(pUser->GetNetId());
-	if (m_Users.end() == it)
-		return false; // Error!! Not Exist
-	m_Users.remove(pUser->GetNetId());
-	m_Users.apply_removes();
-	delete pUser;
-	return true;
-}
-
-
-//------------------------------------------------------------------------
-// 유저 제거
-// 메모리까지 제거된다.
-//------------------------------------------------------------------------
-bool CLobbyServer::RemoveUser(netid netId)
-{
-	auto it = m_Users.find(netId);
-	if (m_Users.end() == it)
-		return false; // 없다면 실패
-	delete it->second;
-	m_Users.remove(netId);
-	m_Users.apply_removes();
-	return true;
-}
-
-
-/**
- @brief 유저 얻기
- */
-UserPtr	CLobbyServer::GetUser(netid netId)
-{
-	auto it = m_Users.find(netId);
-	if (m_Users.end() == it)
-		return NULL; // 없다면 실패
-	return it->second;
-}
-
-
-/**
- @brief 유저 얻기
- */
-UserPtr	CLobbyServer::GetUser(const std::string &id)
-{
-	BOOST_FOREACH(auto pUser, m_Users.m_Seq)
-	{
-		if (pUser->GetName() == id)
-			return pUser;
-	}
-	return false;
-}
 
 
 ////------------------------------------------------------------------------
@@ -230,7 +160,9 @@ void CLobbyServer::OnClientJoin(CNetEvent &event)
 //------------------------------------------------------------------------
 void CLobbyServer::OnClientLeave(CNetEvent &event)
 {
-	if (!RemoveUser(event.GetNetId()))
+	RET(!GetServer());
+
+	if (!GetServer()->RemovePlayer(event.GetNetId()))
 	{
 		clog::Error(clog::ERROR_PROBLEM,  "RemoveUser() Fail!! id = %d\n", event.GetNetId());
 	}
@@ -295,10 +227,10 @@ bool CLobbyServer::ReqMoveUser(IProtocolDispatcher &dispatcher, netid senderId,
 	}
 
 	// Add User
-	CLobbyUser *pUser = new CLobbyUser();
+	CLobbyPlayer *pUser = new CLobbyPlayer();
 	pUser->SetName(id);
 	pUser->SetCertifyKey(c_key);
-	AddUser( pUser );
+	GetServer()->AddPlayer( pUser );
 	
 	m_SvrNetworkProtocol.AckMoveUser(senderId, SEND_T, error::ERR_SUCCESS, id, ip, port);	
 	return true;

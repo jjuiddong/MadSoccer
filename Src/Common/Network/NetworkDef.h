@@ -21,9 +21,7 @@ namespace network
 	class CClient;
 	class CCoreClient;
 	class CP2PClient;
-	class CCharacter;
 	class CRoom;
-	class CUser;
 
 }
 
@@ -32,7 +30,7 @@ typedef common::ReferencePtr<network::CClientBasic> ClientBasicPtr;
 typedef common::ReferencePtr<network::CClient> ClientPtr;
 typedef common::ReferencePtr<network::CP2PClient> P2PClientPtr;
 typedef common::ReferencePtr<network::CCoreClient> CoreClientPtr;
-typedef common::ReferencePtr<network::CCharacter> CharacterPtr;
+
 
 typedef common::StableVectorMap<netid, ServerBasicPtr> Servers;
 typedef common::StableVectorMap<netid, ClientBasicPtr> Clients;
@@ -48,9 +46,6 @@ typedef CoreClients_::VectorType	CoreClients_V;
 #include "Algorithm/BindCore.h"
 
 
-typedef common::StableVectorMap<netid,network::CUser*> Users_;
-//typedef Users_::iterator UserItor;
-typedef common::ReferencePtr<network::CUser> UserPtr;
 
 typedef std::map<int,network::CRoom*> RoomMap;
 typedef RoomMap::iterator RoomItor;
@@ -60,7 +55,6 @@ typedef common::ReferencePtr<network::CRoom> RoomPtr;
 #include "Utility/Utility.h"
 
 #include "DataStructure/Room.h"
-#include "DataStructure/User.h"
 #include "Service/AllProtocol.h"
 #include "Service/AllProtocolListener.h"
 #include "Service/ServerApp.h"
@@ -91,7 +85,6 @@ typedef common::ReferencePtr<network::multinetwork::CMultiPlugDelegation> MultiP
 
 
 
-#include "ErrReport/ErrorCode.h"
 #include "ErrReport/ErrorCheck.h"
 
 

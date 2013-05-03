@@ -101,9 +101,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="DataStructure\Character.cpp" />
     <ClCompile Include="DataStructure\Room.cpp" />
-    <ClCompile Include="DataStructure\User.cpp" />
     <ClCompile Include="Controller\CoreClient.cpp" />
     <ClCompile Include="Controller\Controller.cpp" />
     <ClCompile Include="Controller\Launcher.cpp" />
@@ -118,7 +116,6 @@
     <ClInclude Include="Controller\ClientBasic.h" />
     <ClInclude Include="Controller\ServerBasic.h" />
     <ClInclude Include="ErrReport\ErrorCheck.h" />
-    <ClInclude Include="ErrReport\ErrorCode.h" />
     <ClInclude Include="MultiNetwork\MultiNetwork.h" />
     <ClInclude Include="MultiNetwork\MultiNetworkUtility.h" />
     <ClInclude Include="MultiNetwork\MultiPlug.h" />
@@ -136,9 +133,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Algorithm\BindCore.h" />
-    <ClInclude Include="DataStructure\Character.h" />
     <ClInclude Include="DataStructure\Room.h" />
-    <ClInclude Include="DataStructure\User.h" />
     <ClInclude Include="Task\TaskAccept.h" />
     <ClInclude Include="Task\TaskWorkClient.h" />
     <ClInclude Include="Task\TaskLogic.h" />
@@ -152,8 +147,8 @@
     <ClInclude Include="Service\Client.h" />
     <ClInclude Include="Service\Server.h" />
     <ClInclude Include="Task\TaskWorkServer.h" />
-    <ClInclude Include="Utility\ClientUserAccess.h" />
-    <ClInclude Include="Utility\ServerUserAccess.h" />
+    <ClInclude Include="Utility\ClientAccess.h" />
+    <ClInclude Include="Utility\ServerAccess.h" />
     <ClInclude Include="Utility\Utility.h" />
   </ItemGroup>
   <ItemGroup>

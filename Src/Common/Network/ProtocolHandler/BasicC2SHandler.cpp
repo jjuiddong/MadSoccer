@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 #include "BasicC2SHandler.h"
-#include "../Utility/ServerUserAccess.h"
+#include "../Utility/ServerAccess.h"
 #include "../Algorithm/GroupTraverse.h"
 #include "Network/ErrReport/ErrorCheck.h"
 
@@ -28,6 +28,9 @@ CBasicC2SHandler::~CBasicC2SHandler()
 bool CBasicC2SHandler::ReqLogIn(IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, 
 	const std::string &passwd, const certify_key &c_key)
 {
+	PlayerPtr pPlayer = CheckPlayerWaitAck(&GetServer(), senderId, &m_BasicProtocol, &dispatcher);
+	RETV(!pPlayer, false);
+
 	CSession *pClient = m_Server.GetSession(id);
 	if (pClient)
 	{
@@ -43,7 +46,7 @@ bool CBasicC2SHandler::ReqLogIn(IProtocolDispatcher &dispatcher, netid senderId,
 	pClient = m_Server.GetSession(senderId);
 	if (!pClient)
 	{
-		clog::Error( clog::ERROR_PROBLEM, "ReqLogin Error!! client not found senderId=%d, id=%s",
+		clog::Error( clog::ERROR_PROBLEM, "ReqLogin Error!! session  not found senderId=%d, id=%s",
 			senderId, id.c_str());
 		m_BasicProtocol.AckLogIn(senderId, SEND_T, error::ERR_NOT_FOUND_USER, id, 0);
 		return false;
@@ -67,16 +70,19 @@ bool CBasicC2SHandler::ReqLogIn(IProtocolDispatcher &dispatcher, netid senderId,
  */
 bool CBasicC2SHandler::ReqLogOut(IProtocolDispatcher &dispatcher, netid senderId, const std::string &id)
 {
+	if (!CheckRecvablePlayer(&GetServer(), senderId, &m_BasicProtocol, &dispatcher))
+		return false;
 
 	return true;
 }
 
 
 /**
- @brief 
+ @brief ReqMoveToServer
  */
 bool CBasicC2SHandler::ReqMoveToServer(IProtocolDispatcher &dispatcher, netid senderId, const std::string &serverName)
 {
+
 	return true;
 }
 
@@ -86,6 +92,9 @@ bool CBasicC2SHandler::ReqMoveToServer(IProtocolDispatcher &dispatcher, netid se
 //------------------------------------------------------------------------
 bool CBasicC2SHandler::ReqGroupList(IProtocolDispatcher &dispatcher, netid senderId, const netid &groupid)
 {
+	if (!CheckRecvablePlayer(&GetServer(), senderId, &m_BasicProtocol, &dispatcher))
+		return false;
+
 	GroupPtr pGroup = NULL;
 	if (ROOT_GROUP_NETID == groupid)
 	{
@@ -115,6 +124,9 @@ bool CBasicC2SHandler::ReqGroupList(IProtocolDispatcher &dispatcher, netid sende
 //------------------------------------------------------------------------
 bool CBasicC2SHandler::ReqGroupJoin(IProtocolDispatcher &dispatcher, netid senderId, const netid &groupid)
 {
+	if (!CheckRecvablePlayer(&GetServer(), senderId, &m_BasicProtocol, &dispatcher))
+		return false;
+
 	GroupPtr pTo = (groupid == INVALID_NETID)? &m_Server.GetRootGroup() : m_Server.GetRootGroup().GetChildandThis(groupid);
 	GroupPtr pFrom = m_Server.GetRootGroup().GetChildFromUser( senderId );
 	if (pTo && pFrom)
@@ -154,6 +166,9 @@ bool CBasicC2SHandler::ReqGroupJoin(IProtocolDispatcher &dispatcher, netid sende
 //------------------------------------------------------------------------
 bool CBasicC2SHandler::ReqGroupCreate(IProtocolDispatcher &dispatcher, netid senderId, const netid &parentGroupId, const std::string &groupName)
 {
+	if (!CheckRecvablePlayer(&GetServer(), senderId, &m_BasicProtocol, &dispatcher))
+		return false;
+
 	GroupPtr pParentGroup, pFrom, pNewGroup;
 	if (!CreateBlankGroup(senderId, parentGroupId, groupName, pParentGroup, pFrom, pNewGroup))
 		return false;
@@ -177,6 +192,9 @@ bool CBasicC2SHandler::ReqGroupCreate(IProtocolDispatcher &dispatcher, netid sen
 bool CBasicC2SHandler::ReqGroupCreateBlank(
 	IProtocolDispatcher &dispatcher, netid senderId, const netid &parentGroupId, const std::string &groupName)
 {
+	if (!CheckRecvablePlayer(&GetServer(), senderId, &m_BasicProtocol, &dispatcher))
+		return false;
+
 	GroupPtr pParentGroup, pFrom, pNewGroup;
 	if (!CreateBlankGroup(senderId, parentGroupId, groupName, pParentGroup, pFrom, pNewGroup))
 		return false;
@@ -257,6 +275,9 @@ bool	CBasicC2SHandler::CreateBlankGroup(
  */
 bool CBasicC2SHandler::ReqP2PConnect(IProtocolDispatcher &dispatcher, netid senderId)
 {
+	if (!CheckRecvablePlayer(&GetServer(), senderId, &m_BasicProtocol, &dispatcher))
+		return false;
+
 	// check p2p connection
 	// if networking this group on p2p
 	// -> then connect to p2p host with this senderId client
@@ -279,7 +300,7 @@ bool CBasicC2SHandler::ReqP2PConnect(IProtocolDispatcher &dispatcher, netid send
 
 	// search up and down p2p connection
 	// if already connect p2p, then this group is p2p connection group
-	const netid p2pHostClient = group::GetP2PHostClient(pGroup, CServerUserAccess(&m_Server));
+	const netid p2pHostClient = group::GetP2PHostClient(pGroup, CServerSessionAccess(&m_Server));
 	if (INVALID_NETID == p2pHostClient)
 	{
 		const netid newHostClient = group::SelectP2PHostClient(pGroup);

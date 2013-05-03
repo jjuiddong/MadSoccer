@@ -18,12 +18,12 @@ public:
 	int GetInnerPortBase() const;
 
 	bool GetServerInfoCorrespondClient( const std::string &clientSvrType, const std::string &serverSvrType, 
-		network::IUserAccess &userAccess, OUT std::vector<network::SHostInfo> &v);
+		network::ISessionAccess &userAccess, OUT std::vector<network::SHostInfo> &v);
 
-	bool GetCorrespondClientInfo( network::IUserAccess &userAccess, OUT std::vector<std::string> &svrTypes );
+	bool GetCorrespondClientInfo( network::ISessionAccess &userAccess, OUT std::vector<std::string> &svrTypes );
 
-	int GetToBindOuterPort(network::IUserAccess &userAccess);
-	int GetToBindInnerPort(network::IUserAccess &userAccess);
+	int GetToBindOuterPort(network::ISessionAccess &userAccess);
+	int GetToBindInnerPort(network::ISessionAccess &userAccess);
 
 private:
 	std::string m_SvrType;

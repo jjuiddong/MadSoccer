@@ -3,7 +3,7 @@
 #include "FarmServer.h"
 #include "RemoteSubServer.h"
 #include "SubServerGroup.h"
-#include "Network/Utility/ServerUserAccess.h"
+#include "Network/Utility/ServerAccess.h"
 #include "FarmServerUtility.h"
 
 using namespace network;
@@ -237,7 +237,7 @@ bool CFarmServer::ReqServerInfoList(IProtocolDispatcher &dispatcher, netid sende
 	}
 
 	hostInfo.reserve(10);
-	pServerGroup->GetServerInfoCorrespondClient(clientSvrType, serverSvrType, CServerUserAccess(GetServer()), hostInfo);
+	pServerGroup->GetServerInfoCorrespondClient(clientSvrType, serverSvrType, CServerSessionAccess(GetServer()), hostInfo);
 
 	if (hostInfo.empty())
 	{// Error!!
@@ -273,7 +273,7 @@ bool CFarmServer::ReqToBindOuterPort(IProtocolDispatcher &dispatcher, netid send
 		return false;
 	}
 
-	const int bindPort = pSubSvrGroup->GetToBindOuterPort( CServerUserAccess(GetServer()) );
+	const int bindPort = pSubSvrGroup->GetToBindOuterPort( CServerSessionAccess(GetServer()) );
 
 	RemoteSubServerPtr pSubServer = dynamic_cast<CRemoteSubServer*>(
 		GetServer()->GetSession(senderId));
@@ -311,7 +311,7 @@ bool CFarmServer::ReqToBindInnerPort(IProtocolDispatcher &dispatcher, netid send
 		return false;
 	}
 
-	const int bindPort = pSubSvrGroup->GetToBindInnerPort( CServerUserAccess(GetServer()) );
+	const int bindPort = pSubSvrGroup->GetToBindInnerPort( CServerSessionAccess(GetServer()) );
 
 	RemoteSubServerPtr pSubServer = dynamic_cast<CRemoteSubServer*>(
 		GetServer()->GetSession(senderId));
@@ -381,7 +381,7 @@ bool CFarmServer::ReqSubServerBindComplete(IProtocolDispatcher &dispatcher, neti
 	}
 
 	std::vector<std::string> links;
-	pSubSvrGroup->GetCorrespondClientInfo( CServerUserAccess(GetServer()), links );
+	pSubSvrGroup->GetCorrespondClientInfo( CServerSessionAccess(GetServer()), links );
 	BOOST_FOREACH(auto &svrType, links)
 	{
 		SubServerGroupPtr pGroup = FindGroup(svrType);

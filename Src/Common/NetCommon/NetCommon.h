@@ -36,6 +36,8 @@ namespace network
 	class CPacket;
 	class IProtocol;
 	class IProtocolListener;
+	class CCharacter;
+	class CPlayer;
 
 
 	enum SERVICE_TYPE
@@ -63,8 +65,14 @@ namespace network
 	{
 		SESSIONSTATE_DISCONNECT,
 		SESSIONSTATE_LOGIN_WAIT,
-		SESSIONSTATE_LOGIN,
+		SESSIONSTATE_LOGIN,					// 인증이 된 상태
 		SESSIONSTATE_LOGOUT_WAIT,		// 제거 대기 목록에 있는 상태
+	};
+
+	enum PLAYER_STATE
+	{
+		USERSTATE_LISTEN,
+		USERSTATE_WAIT_ACK,
 	};
 	
 	enum P2P_STATE
@@ -120,6 +128,13 @@ typedef std::list<network::CPacket> PacketList;
 typedef PacketList::iterator PacketItor;
 typedef PacketList::const_iterator PacketCItor;
 
+
+typedef common::StableVectorMap<netid,network::CPlayer*> Players_;
+//typedef Users_::iterator UserItor;
+typedef common::ReferencePtr<network::CPlayer> PlayerPtr;
+typedef common::ReferencePtr<network::CCharacter> CharacterPtr;
+
+
 typedef common::ReferencePtr<network::CPlug> PlugPtr;
 typedef common::StableVectorMap<netid, PlugPtr> Plugs;
 typedef Plugs::VectorType PlugsV;
@@ -158,6 +173,8 @@ typedef ProtocolMap::iterator ProtocolItor;
 #include "DataStructure/RemoteClient.h"
 #include "DataStructure/RemoteServer.h"
 #include "DataStructure/Group.h"
+#include "DataStructure/Player.h"
+
 #include "Marshalling/Marshalling.h"
 #include "Marshalling/MarshallingGroup.h"
 #include "Marshalling/MarshallingEtc.h"
@@ -177,6 +194,7 @@ typedef ProtocolMap::iterator ProtocolItor;
 
 #include "Event/NetEvent.h"
 
-#include "Utility/UserAccess.h"
+#include "Utility/PlayerAccess.h"
 #include "Utility/Protocols.h"
 
+#include "Error/ErrorCode.h"

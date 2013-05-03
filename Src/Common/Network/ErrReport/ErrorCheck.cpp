@@ -69,6 +69,83 @@ bool network::CheckClientConnection( CSession *pClient,
 
 
 /**
+@brief  CheckPlayerWaitAck
+			Check Player IsAckWait State
+*/
+CPlayer* network::CheckPlayerWaitAck(ServerBasicPtr pServer, netid clientId, 
+	basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher )
+{
+	RETV(!pServer, NULL);
+	PlayerPtr pPlayer = pServer->GetPlayer(clientId);
+	if (!pPlayer)
+	{
+		if (pDispatcher)
+			pDispatcher->PrintThisPacket( clog::LOG_FILE, "!!! Error Player Wait Ack err >>" );
+		if (clientId && pProtocol)
+			pProtocol->Error( clientId, SEND_T, error::ERR_NOT_FOUND_USER);
+		return NULL;
+	}
+
+	if (pPlayer->IsAckWait())
+	{
+		if (pDispatcher)
+			pDispatcher->PrintThisPacket( clog::LOG_FILE, "!!! Error Player Wait Ack err >>" );
+		if (clientId && pProtocol)
+			pProtocol->Error( clientId, SEND_T, error::ERR_WAIT_ACK_PLAYER);
+		return NULL;
+	}
+
+	return pPlayer;
+}
+
+
+/**
+@brief  CheckSessionLogin
+			Check Session state  SESSIONSTATE_LOGIN
+*/
+CSession* network::CheckSessionLogin( ServerBasicPtr pServer, netid clientId, 
+	basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher )
+{
+	RETV(!pServer, NULL);
+
+	SessionPtr pClient = pServer->GetSession(clientId);
+	if (!pClient)
+	{
+		if (pDispatcher)
+			pDispatcher->PrintThisPacket( clog::LOG_FILE, "CheckSessionLogin!!! Error not found Session >>" );
+		if (clientId && pProtocol)
+			pProtocol->Error( clientId, SEND_T, error::ERR_NOT_FOUND_USER);
+		return NULL;
+	}
+
+	if (pClient->GetState() != SESSIONSTATE_LOGIN)
+	{
+		if (pDispatcher)
+			pDispatcher->PrintThisPacket( clog::LOG_FILE, "CheckSessionLogin!!! Error Session Not Login >>" );
+		if (clientId && pProtocol)
+			pProtocol->Error( clientId, SEND_T, error::ERR_NOT_FOUND_USER);
+		return NULL;
+	}
+	return pClient;	
+}
+
+
+/**
+@brief  CheckPlayerWaitAck() && CheckSessionLogin()
+*/
+CPlayer* network::CheckRecvablePlayer(ServerBasicPtr pServer, netid clientId, 
+	basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher )
+{
+	PlayerPtr pPlayer = CheckPlayerWaitAck(pServer, clientId, pProtocol, pDispatcher);
+	RETV(!pPlayer,NULL);
+	SessionPtr pSession = CheckSessionLogin(pServer, clientId, pProtocol, pDispatcher);
+	RETV(!pSession, NULL);
+
+	return pPlayer;
+}
+
+
+/**
  @brief CheckDelegation
  */
 MultiPlugDelegationPtr network::CheckDelegation( const std::string &linkSvrType,
@@ -85,3 +162,5 @@ MultiPlugDelegationPtr network::CheckDelegation( const std::string &linkSvrType,
 	}
 	return ptr;
 }
+
+

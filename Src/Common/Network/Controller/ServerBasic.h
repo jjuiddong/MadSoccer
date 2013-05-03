@@ -25,6 +25,13 @@ namespace network
 		virtual bool	Send(netid netId, const SEND_FLAG flag, const CPacket &packet) override;
 		virtual bool	SendAll(const CPacket &packet) override;
 
+		/// User
+		bool				AddPlayer(CPlayer *pUser);
+		bool				RemovePlayer(CPlayer *pUser);
+		bool				RemovePlayer(netid netId);
+		PlayerPtr		GetPlayer(netid netId);
+		PlayerPtr		GetPlayer(const std::string &id);
+
 		/// Session
 		bool				AddSession(SOCKET sock, const std::string &ip);
 		CSession*	GetSession(netid netId);
@@ -40,9 +47,11 @@ namespace network
 
 		/// Factory
 		void				SetSessionFactory( ISessionFactory *ptr );
-		void				SetGroupFactory( IGroupFactory *ptr );
 		ISessionFactory* GetSessionFactory() const;
+		void				SetGroupFactory( IGroupFactory *ptr );
 		IGroupFactory* GetGroupFactory() const;
+		void				SetPlayerFactory( IPlayerFactory *ptr );
+		IPlayerFactory* GetPlayerFactory() const;
 
 		/// Etc
 		bool				IsServerOn() const;
@@ -66,6 +75,7 @@ namespace network
 		virtual void	OnTimer(int id);
 
 	protected:
+		/// Etc
 		void				MainLoop();
 		void				InitRootGroup();
 		bool				AcceptProcess();
@@ -79,6 +89,8 @@ namespace network
 
 	private:
 		Sessions_						m_Sessions;					// 서버와 연결된 클라이언트 정보리스트
+		Players_							m_Users;
+		IPlayerFactory				*m_pPlayerFactory;
 		ISessionFactory			*m_pSessionFactory;
 		IGroupFactory			    *m_pGroupFactory;
 		common::CriticalSection  m_CS;
@@ -96,6 +108,8 @@ namespace network
 	inline Sessions_V& CServerBasic::GetSessions() { return m_Sessions.m_Seq; }
 	inline ISessionFactory* CServerBasic::GetSessionFactory() const { return m_pSessionFactory; }
 	inline IGroupFactory* CServerBasic::GetGroupFactory() const { return m_pGroupFactory; }
+	void	CServerBasic::SetPlayerFactory( IPlayerFactory *ptr ) { m_pPlayerFactory = ptr; }
+	IPlayerFactory* CServerBasic::GetPlayerFactory() const { return m_pPlayerFactory; }
 	inline void CServerBasic::SetOption(bool IsLoginCheck) { m_IsLoginCheck = IsLoginCheck; }
 
 };

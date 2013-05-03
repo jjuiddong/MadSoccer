@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------
-// Name:    LobbyUser.h
+// Name:    LobbyPlayer.h
 // Author:  jjuiddong
 // Date:    12/29/2012
 // 
@@ -7,13 +7,13 @@
 //------------------------------------------------------------------------
 #pragma once
 
-DECLARE_TYPE_NAME(CLobbyUser)
-class CLobbyUser : public network::CUser
-			, public memmonitor::Monitor<CLobbyUser, TYPE_NAME(CLobbyUser)>
+DECLARE_TYPE_NAME(CLobbyPlayer)
+class CLobbyPlayer : public network::CPlayer
+			, public memmonitor::Monitor<CLobbyPlayer, TYPE_NAME(CLobbyPlayer)>
 {
 public:
-	CLobbyUser() {}
-	virtual ~CLobbyUser() {}
+	CLobbyPlayer() {}
+	virtual ~CLobbyPlayer() {}
 
 protected:
 

@@ -30,6 +30,9 @@
     <Filter Include="Utility">
       <UniqueIdentifier>{881cff24-bc1d-4751-9094-be053a633700}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Error">
+      <UniqueIdentifier>{a76fa9ea-8def-4ae6-8983-79a2eeb41717}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -92,9 +95,6 @@
     <ClInclude Include="Utility\Protocols.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Utility\UserAccess.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
     <ClInclude Include="DataStructure\RemoteServer.h">
       <Filter>DataStructure</Filter>
     </ClInclude>
@@ -103,6 +103,18 @@
     </ClInclude>
     <ClInclude Include="Controller\Plug.h">
       <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Error\ErrorCode.h">
+      <Filter>Error</Filter>
+    </ClInclude>
+    <ClInclude Include="DataStructure\Character.h">
+      <Filter>DataStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="DataStructure\Player.h">
+      <Filter>DataStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\PlayerAccess.h">
+      <Filter>Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -147,6 +159,12 @@
     </ClCompile>
     <ClCompile Include="Controller\Plug.cpp">
       <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="DataStructure\Character.cpp">
+      <Filter>DataStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="DataStructure\Player.cpp">
+      <Filter>DataStructure</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

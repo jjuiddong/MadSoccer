@@ -99,7 +99,7 @@
     <ClCompile Include="Lib\LobbyServer.cpp" />
     <ClCompile Include="Lib\ServerLauncher.cpp" />
     <ClCompile Include="DataStructure\LobbyRoom.cpp" />
-    <ClCompile Include="DataStructure\LobbyUser.cpp" />
+    <ClCompile Include="DataStructure\LobbyPlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lib\BasicC2SHandler_LobbySvr.h" />
@@ -111,7 +111,7 @@
     <ClInclude Include="Lib\LobbyServer.h" />
     <ClInclude Include="Lib\ServerLauncher.h" />
     <ClInclude Include="DataStructure\LobbyRoom.h" />
-    <ClInclude Include="DataStructure\LobbyUser.h" />
+    <ClInclude Include="DataStructure\LobbyPlayer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ServerApp.ico" />

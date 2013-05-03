@@ -24,7 +24,7 @@ bool	group::IsP2PConnection( GroupPtr pGroup )
 // search up and down tree node 
 // to find p2p host client
 //------------------------------------------------------------------------
-netid group::GetP2PHostClient( GroupPtr pGroup, IUserAccess &userAccess)
+netid group::GetP2PHostClient( GroupPtr pGroup, ISessionAccess &userAccess)
 {
 	GroupPtr p2pGroup = GetP2PGroup(pGroup);
 	if (!p2pGroup)
@@ -33,7 +33,7 @@ netid group::GetP2PHostClient( GroupPtr pGroup, IUserAccess &userAccess)
 	const NetIdes &users = p2pGroup->GetUsers();
 	BOOST_FOREACH(auto &userId, users)
 	{
-		SessionPtr clientPtr = userAccess.GetUser(userId);
+		SessionPtr clientPtr = userAccess.GetSession(userId);
 		if (!clientPtr)
 			continue;
 		if (P2P_HOST == clientPtr->GetP2PState())

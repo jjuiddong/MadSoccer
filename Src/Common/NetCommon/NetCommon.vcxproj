@@ -79,10 +79,13 @@
   <ItemGroup>
     <ClInclude Include="Controller\Plug.h" />
     <ClInclude Include="Controller\Session.h" />
+    <ClInclude Include="DataStructure\Character.h" />
     <ClInclude Include="DataStructure\Group.h" />
     <ClInclude Include="DataStructure\Packet.h" />
     <ClInclude Include="DataStructure\PacketQueue.h" />
     <ClInclude Include="DataStructure\RemoteServer.h" />
+    <ClInclude Include="DataStructure\Player.h" />
+    <ClInclude Include="Error\ErrorCode.h" />
     <ClInclude Include="Event\NetEvent.h" />
     <ClInclude Include="Interface\Factory.h" />
     <ClInclude Include="Interface\Protocol.h" />
@@ -99,14 +102,16 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Utility\Protocols.h" />
-    <ClInclude Include="Utility\UserAccess.h" />
+    <ClInclude Include="Utility\PlayerAccess.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Controller\Plug.cpp" />
     <ClCompile Include="Controller\Session.cpp" />
+    <ClCompile Include="DataStructure\Character.cpp" />
     <ClCompile Include="DataStructure\Group.cpp" />
     <ClCompile Include="DataStructure\Packet.cpp" />
     <ClCompile Include="DataStructure\RemoteServer.cpp" />
+    <ClCompile Include="DataStructure\Player.cpp" />
     <ClCompile Include="Interface\ProtocolDispatcher.cpp" />
     <ClCompile Include="Marshalling\Marshalling.cpp" />
     <ClCompile Include="Marshalling\MarshallingEtc.cpp" />

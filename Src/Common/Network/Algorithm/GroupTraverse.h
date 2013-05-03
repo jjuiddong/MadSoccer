@@ -43,7 +43,7 @@ namespace network { namespace group {
 
 	bool			IsP2PConnection( GroupPtr pGroup );
 
-	netid		GetP2PHostClient( GroupPtr pGroup, IUserAccess &userAccess);
+	netid		GetP2PHostClient( GroupPtr pGroup, ISessionAccess &userAccess);
 
 	GroupPtr	GetP2PGroup( GroupPtr pGroup );
 

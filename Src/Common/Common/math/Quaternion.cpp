@@ -1,16 +1,7 @@
-//-------------------------------------------------------
-//	Quaternion.cpp
-//
-//	Author	:	Joung Man, Kim
-//	Comment	:
-//				
-//
-//	Copyright(C) 2005 by Sunnyzen all right reserved
-//-------------------------------------------------------
-
 // Include
 	#include "stdafx.h"
 	#include "Math.h"
+	#include <D3dx9math.h>
 // ~Include
 
 //--------------------------------
@@ -130,7 +121,7 @@ const Matrix44& Quaternion::GetMatrix() const
 	m._44 = 1.0F;
 /**/
 
-	D3DXMatrixRotationQuaternion( (D3DXMATRIX*)&m, (D3DXQUATERNION*)this );
+	//D3DXMatrixRotationQuaternion( (D3DXMATRIX*)&m, (D3DXQUATERNION*)this );
 	return m;
 } //Quaternion::GetMatrix4
 

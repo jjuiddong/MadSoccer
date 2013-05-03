@@ -1,19 +1,19 @@
 
 #include "stdafx.h"
-#include "User.h"
+#include "Player.h"
 #include "Character.h"
-
 
 using namespace network;
 
 
-CUser::CUser() : 
+CPlayer::CPlayer() : 
 	m_SelectCharacterId(-1)
+,	m_State(USERSTATE_LISTEN)
 {
 
 }
 
-CUser::~CUser() 
+CPlayer::~CPlayer() 
 {
 
 }
@@ -22,7 +22,7 @@ CUser::~CUser()
 //------------------------------------------------------------------------
 // 캐릭터 추가
 //------------------------------------------------------------------------
-bool CUser::AddCharacter(CharacterPtr pChar)
+bool CPlayer::AddCharacter(CharacterPtr pChar)
 {
 	CharacterItor it = m_CharacterMap.find(pChar->GetId());
 	if (m_CharacterMap.end() != it)
@@ -36,7 +36,7 @@ bool CUser::AddCharacter(CharacterPtr pChar)
 //------------------------------------------------------------------------
 // 캐릭터 제거
 //------------------------------------------------------------------------
-bool CUser::RemoveCharacter(int characterId)
+bool CPlayer::RemoveCharacter(int characterId)
 {
 	CharacterItor it = m_CharacterMap.find(characterId);
 	if (m_CharacterMap.end() == it)
@@ -50,7 +50,7 @@ bool CUser::RemoveCharacter(int characterId)
 //------------------------------------------------------------------------
 // 캐릭터 정보 얻음
 //------------------------------------------------------------------------
-CharacterPtr CUser::GetCharacter(int characterId)
+CharacterPtr CPlayer::GetCharacter(int characterId)
 {
 	CharacterItor it = m_CharacterMap.find(characterId);
 	if (m_CharacterMap.end() == it)
@@ -62,7 +62,7 @@ CharacterPtr CUser::GetCharacter(int characterId)
 //------------------------------------------------------------------------
 // 선택된 캐릭터 리턴
 //------------------------------------------------------------------------
-CharacterPtr CUser::GetSelectChracter()
+CharacterPtr CPlayer::GetSelectChracter()
 {
 	CharacterItor it = m_CharacterMap.find(m_SelectCharacterId);
 	if (m_CharacterMap.end() == it)

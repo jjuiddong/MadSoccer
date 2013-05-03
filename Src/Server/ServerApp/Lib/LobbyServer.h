@@ -37,11 +37,11 @@ public:
 	CLobbyServer();
 	virtual ~CLobbyServer();
 
-	bool			AddUser(network::CUser *pUser);
-	bool			RemoveUser(network::CUser *pUser);
-	bool			RemoveUser(netid netId);
-	UserPtr		GetUser(netid netId);
-	UserPtr		GetUser(const std::string &id);
+	//bool			AddUser(network::CUser *pUser);
+	//bool			RemoveUser(network::CUser *pUser);
+	//bool			RemoveUser(netid netId);
+	//UserPtr		GetUser(netid netId);
+	//UserPtr		GetUser(const std::string &id);
 	
 	//bool			AddRoom(network::CRoom *pRoom);
 	//bool			RemoveRoom(network::CRoom *pRoom);
@@ -50,7 +50,7 @@ public:
 
 	// 패킷 보내기
 	//void			SendRooms(network::CUser *pUser);
-	void			SendUsers(network::CUser *pUser);
+	void			SendUsers(network::CPlayer *pUser);
 
 	login::s2c_Protocol& GetLogInProtocol() { return m_LoginProtocol; }
 
@@ -77,7 +77,7 @@ protected:
 
 
 private:
-	Users_				m_Users;
+	//Players_		m_Users;
 	//RoomMap		m_Rooms;
 
 	// Handler

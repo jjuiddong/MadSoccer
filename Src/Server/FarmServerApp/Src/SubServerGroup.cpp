@@ -11,12 +11,12 @@ using namespace network;
  serverSvrType 타입의 서버가 bind 중일 때만 저장한다.
  */
 bool CSubServerGroup::GetServerInfoCorrespondClient( const std::string &clientSvrType, const std::string &serverSvrType, 
-	IUserAccess &userAccess, OUT std::vector<SHostInfo> &v)
+	ISessionAccess &userAccess, OUT std::vector<SHostInfo> &v)
 {
 	BOOST_FOREACH(auto &netId, GetUsers())
 	{
 		RemoteSubServerPtr pSubServer = dynamic_cast<CRemoteSubServer*>(
-			userAccess.GetUser(netId).Get());
+			userAccess.GetSession(netId).Get());
 		if (!pSubServer)
 			continue;
 		pSubServer->GetServerInfoCorrespondClientLink( clientSvrType, v );
@@ -31,7 +31,7 @@ bool CSubServerGroup::GetServerInfoCorrespondClient( const std::string &clientSv
 
 			svrTypes 의 기존 정보는 모두 초기화 된다.
 */
-bool CSubServerGroup::GetCorrespondClientInfo( IUserAccess &userAccess, OUT std::vector<std::string> &svrTypes )
+bool CSubServerGroup::GetCorrespondClientInfo( ISessionAccess &userAccess, OUT std::vector<std::string> &svrTypes )
 {
 	svrTypes.clear();
 	svrTypes.reserve(32);
@@ -39,7 +39,7 @@ bool CSubServerGroup::GetCorrespondClientInfo( IUserAccess &userAccess, OUT std:
 	BOOST_FOREACH(auto &netId, GetUsers())
 	{
 		RemoteSubServerPtr pSubServer = dynamic_cast<CRemoteSubServer*>(
-			userAccess.GetUser(netId).Get());
+			userAccess.GetSession(netId).Get());
 		if (!pSubServer)
 			continue;
 
@@ -57,13 +57,13 @@ bool CSubServerGroup::GetCorrespondClientInfo( IUserAccess &userAccess, OUT std:
 /**
  @brief GetToBindOuterPort
  */
-int CSubServerGroup::GetToBindOuterPort(IUserAccess &userAccess)
+int CSubServerGroup::GetToBindOuterPort(ISessionAccess &userAccess)
 {
 	int port = m_OuterPortBase;
 	BOOST_FOREACH(auto &netId, GetUsers())
 	{
 		RemoteSubServerPtr pSubServer = dynamic_cast<CRemoteSubServer*>(
-			userAccess.GetUser(netId).Get());
+			userAccess.GetSession(netId).Get());
 		if (!pSubServer)
 			continue;
 		port = pSubServer->GetToBindOuterPort(port);
@@ -75,13 +75,13 @@ int CSubServerGroup::GetToBindOuterPort(IUserAccess &userAccess)
 /**
  @brief GetToBindInnerPort
  */
-int CSubServerGroup::GetToBindInnerPort(IUserAccess &userAccess)
+int CSubServerGroup::GetToBindInnerPort(ISessionAccess &userAccess)
 {
 	int port = m_InnerPortBase;
 	BOOST_FOREACH(auto &netId, GetUsers())
 	{
 		RemoteSubServerPtr pSubServer = dynamic_cast<CRemoteSubServer*>(
-			userAccess.GetUser(netId).Get());
+			userAccess.GetSession(netId).Get());
 		if (!pSubServer)
 			continue;
 		port = pSubServer->GetToBindInnerPort(port);

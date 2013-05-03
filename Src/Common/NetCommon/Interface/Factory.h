@@ -8,7 +8,9 @@ Date:    4/7/2013
 #pragma once
 
 #include "DataStructure/RemoteClient.h"
+#include "DataStructure/Player.h"
 #include "Controller/Session.h"
+
 
 namespace network
 {
@@ -27,6 +29,26 @@ namespace network
 		virtual CSession* New() { return new CSession(); }
 		virtual ISessionFactory* Clone() { return new CSessionFactory(); }
 	};
+
+
+	/// CPlayer Factory class
+	class IPlayerFactory
+	{
+	public:
+		virtual ~IPlayerFactory() {}
+		virtual CPlayer* New() = 0;
+		virtual IPlayerFactory* Clone() = 0;
+	};
+
+
+	/// CUser Factory class
+	class CPlayerFactory : public IPlayerFactory
+	{
+	public:
+		virtual CPlayer* New() { return new CPlayer(); }
+		virtual IPlayerFactory* Clone() { return new CPlayerFactory(); }
+	};
+
 
 	/// CRemoteSubServer class Factory
 	class CRemoteServerFactory : public ISessionFactory
