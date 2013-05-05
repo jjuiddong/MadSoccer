@@ -80,7 +80,7 @@ CoreClientPtr CMultiPlugDelegation::GetClientFromServerNetId(netid serverNetId)
 /**
  @brief 
  */
-bool	CMultiPlugDelegation::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
+bool	CMultiPlugDelegation::Send(netid netId, const SEND_FLAG flag, CPacket &packet)
 {
 	RETV(!m_pMultiPlug, false);
 	return m_pMultiPlug->Send(netId, flag, packet);
@@ -90,7 +90,7 @@ bool	CMultiPlugDelegation::Send(netid netId, const SEND_FLAG flag, const CPacket
 /**
  @brief 
  */
-bool	CMultiPlugDelegation::SendAll(const CPacket &packet)
+bool	CMultiPlugDelegation::SendAll(CPacket &packet)
 {
 	RETV(!m_pMultiPlug, false);
 	return m_pMultiPlug->SendAll(packet);

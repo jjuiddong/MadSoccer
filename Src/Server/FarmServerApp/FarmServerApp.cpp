@@ -34,7 +34,7 @@ CFarmServerApp::CFarmServerApp() :
 
 CFarmServerApp::~CFarmServerApp()
 {
-	SAFE_DELETE(m_pFarmSvr);
+	//SAFE_DELETE(m_pFarmSvr);
 }
 
 

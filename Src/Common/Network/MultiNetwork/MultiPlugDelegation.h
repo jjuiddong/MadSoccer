@@ -17,8 +17,8 @@ namespace network { namespace multinetwork {
 		CMultiPlugDelegation();
 		virtual ~CMultiPlugDelegation();
 
-		virtual bool	Send(netid netId, const SEND_FLAG flag, const CPacket &packet) override;
-		virtual bool	SendAll(const CPacket &packet) override;
+		virtual bool	Send(netid netId, const SEND_FLAG flag, CPacket &packet) override;
+		virtual bool	SendAll(CPacket &packet) override;
 
 		void					SetMultiPlug(MultiPlugPtr ptr);
 		MultiPlugPtr		GetMultiPlug() const;

@@ -29,8 +29,8 @@ namespace network
 		void				SetConnect(bool isConnect);
 		netid			GetServerNetId() const;
 
-		virtual bool	Send(netid netId, const SEND_FLAG flag, const CPacket &packet);
-		virtual bool	SendAll(const CPacket &packet) override;
+		virtual bool	Send(netid netId, const SEND_FLAG flag, CPacket &packet);
+		virtual bool	SendAll(CPacket &packet) override;
 
 		// Event Handler
 		void				OnConnect();

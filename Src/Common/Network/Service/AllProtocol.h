@@ -14,6 +14,6 @@ namespace all
 	{
 	public:
 		Protocol() : IProtocol(Protocol_ID) {}
-		void send(netid targetId, const network::SEND_FLAG flag, const network::CPacket &packet);
+		void send(netid targetId, const network::SEND_FLAG flag, network::CPacket &packet);
 	};
 }

@@ -15,7 +15,7 @@ namespace network
 		IProtocolListener() {}
 		virtual ~IProtocolListener() {}
 	public:
-		virtual void BeforePacketProcess(const CPacket &packet) {} // 패킷처리를 시작하기 전에 호출
-		virtual void AfterPacketProcess(const CPacket &packet) {} // 패킷을 처리한 후 호출된다.
+		virtual void BeforePacketProcess(CPacket &packet) {} // 패킷처리를 시작하기 전에 호출
+		virtual void AfterPacketProcess(CPacket &packet) {} // 패킷을 처리한 후 호출된다.
 	};
 }

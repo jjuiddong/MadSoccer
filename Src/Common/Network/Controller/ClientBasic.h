@@ -36,9 +36,9 @@ namespace network
 		// Overriding
 		//virtual bool		AddProtocolListener(ProtocolListenerPtr pListener) override;
 		//virtual bool		RemoveProtocolListener(ProtocolListenerPtr pListener) override;
-		virtual bool		Send(netid netId, const SEND_FLAG flag, const CPacket &packet) override;
-		virtual bool		SendP2P(const CPacket &packet);
-		virtual bool		SendAll(const CPacket &packet) override;
+		virtual bool		Send(netid netId, const SEND_FLAG flag, CPacket &packet) override;
+		virtual bool		SendP2P(CPacket &packet);
+		virtual bool		SendAll(CPacket &packet) override;
 
 	private:
 		// CoreClient/P2P Event Handler

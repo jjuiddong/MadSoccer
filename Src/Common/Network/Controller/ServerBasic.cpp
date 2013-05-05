@@ -521,7 +521,7 @@ bool CServerBasic::IsExist(netid netId)
 //------------------------------------------------------------------------
 // 연결된 모든 클라이언트에게 메세지를 보낸다. 
 //------------------------------------------------------------------------
-bool CServerBasic::SendAll(const CPacket &packet)
+bool CServerBasic::SendAll(CPacket &packet)
 {
 	BOOST_FOREACH(auto &client, m_Sessions.m_Seq)
 	{
@@ -529,7 +529,10 @@ bool CServerBasic::SendAll(const CPacket &packet)
 			continue;
 
 		if (DISPLAY_PACKET_LOG)
+		{
+			packet.SetSenderId(GetNetId());
 			protocols::DisplayPacket("Send =", packet);
+		}
 
 		const int result = send(client->GetSocket(), packet.GetData(), CPacket::MAX_PACKETSIZE, 0);
 		if (result == INVALID_SOCKET)
@@ -545,7 +548,7 @@ bool CServerBasic::SendAll(const CPacket &packet)
 /**
  @brief 
  */
-bool	CServerBasic::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
+bool	CServerBasic::Send(netid netId, const SEND_FLAG flag, CPacket &packet)
 {
 	bool sendResult = true;
 	if ((flag == SEND_T) || (flag == SEND_T_V))
@@ -554,7 +557,10 @@ bool	CServerBasic::Send(netid netId, const SEND_FLAG flag, const CPacket &packet
 		if (m_Sessions.end() != it && it->second->IsConnect()) // Send To Client
 		{
 			if (DISPLAY_PACKET_LOG)
+			{
+				packet.SetSenderId(GetNetId());
 				protocols::DisplayPacket("Send =", packet);
+			}
 
 			const int result = send(it->second->GetSocket(), packet.GetData(), CPacket::MAX_PACKETSIZE, 0);
 			if (result == INVALID_SOCKET)
@@ -605,7 +611,7 @@ bool	CServerBasic::Send(netid netId, const SEND_FLAG flag, const CPacket &packet
  @param groupId: group netid 일 때만 동작한다.
  @param flag: SEND_VIEWER, SEND_TARGET_VIEWER 타입일 때 동작하는 함수다.
  */
-bool	CServerBasic::SendViewer(netid groupId, const SEND_FLAG flag, const CPacket &packet)
+bool	CServerBasic::SendViewer(netid groupId, const SEND_FLAG flag, CPacket &packet)
 {
 	if ((flag != SEND_V) && (flag != SEND_T_V))
 		return false;
@@ -632,7 +638,7 @@ bool	CServerBasic::SendViewer(netid groupId, const SEND_FLAG flag, const CPacket
  @brief pGroup 에 소속된 user들에게 패킷을 전송한다.
  @param excetpGroupId 값에 해당하는 group은 제외하고 패킷을 전송한다.
  */
-bool	CServerBasic::SendViewerRecursive(netid viewerId, const netid exceptGroupId, const CPacket &packet)
+bool	CServerBasic::SendViewerRecursive(netid viewerId, const netid exceptGroupId, CPacket &packet)
 {
 	if (exceptGroupId == viewerId)
 		return true;
@@ -670,7 +676,7 @@ bool	CServerBasic::SendViewerRecursive(netid viewerId, const netid exceptGroupId
 /**
  @brief 
  */
-bool	CServerBasic::SendGroup(GroupPtr pGroup, const CPacket &packet)
+bool	CServerBasic::SendGroup(GroupPtr pGroup, CPacket &packet)
 {
 	RETV(!pGroup, false);
 	BOOST_FOREACH(auto &userId, pGroup->GetUsers())

@@ -43,7 +43,7 @@ CLoginServerApp::CLoginServerApp() :
 
 CLoginServerApp::~CLoginServerApp()
 {
-	SAFE_DELETE(m_pLoginSvr);
+	//SAFE_DELETE(m_pLoginSvr);
 }
 
 

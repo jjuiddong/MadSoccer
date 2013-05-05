@@ -92,7 +92,7 @@ void	CP2PClient::Clear()
 /**
  @brief 
  */
-bool	CP2PClient::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
+bool	CP2PClient::Send(netid netId, const SEND_FLAG flag, CPacket &packet)
 {
 	return SendAll(packet);
 }
@@ -101,7 +101,7 @@ bool	CP2PClient::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
 //------------------------------------------------------------------------
 // send to p2p host client
 //------------------------------------------------------------------------
-bool	CP2PClient::SendAll(const CPacket &packet)
+bool	CP2PClient::SendAll(CPacket &packet)
 {
 	switch (m_State)
 	{

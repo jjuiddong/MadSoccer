@@ -39,8 +39,8 @@ namespace network { namespace multinetwork {
 		bool				Start(const std::vector<SHostInfo> &v);
 		void				Stop();
 
-		virtual bool	Send(netid netId, const SEND_FLAG flag, const CPacket &packet) override;
-		virtual bool	SendAll(const CPacket &packet) override;
+		virtual bool	Send(netid netId, const SEND_FLAG flag, CPacket &packet) override;
+		virtual bool	SendAll(CPacket &packet) override;
 
 		const std::string& GetSvrType() const;
 		const std::string& GetConnectSvrType() const;

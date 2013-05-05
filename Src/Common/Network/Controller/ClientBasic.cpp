@@ -131,7 +131,7 @@ void CClientBasic::Clear()
 /**
  @brief Send Packet
  */
-bool	CClientBasic::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
+bool	CClientBasic::Send(netid netId, const SEND_FLAG flag, CPacket &packet)
 {
 	if (P2P_NETID == netId)
 	{
@@ -149,7 +149,7 @@ bool	CClientBasic::Send(netid netId, const SEND_FLAG flag, const CPacket &packet
 /**
  @brief Send P2P Packet
  */
-bool	CClientBasic::SendP2P(const CPacket &packet)
+bool	CClientBasic::SendP2P(CPacket &packet)
 {
 	if (!m_pP2p)
 		return false;
@@ -160,7 +160,7 @@ bool	CClientBasic::SendP2P(const CPacket &packet)
 //------------------------------------------------------------------------
 // 연결된 모든 클라이언트들에게 메세지를 보낸다.
 //------------------------------------------------------------------------
-bool CClientBasic::SendAll(const CPacket &packet)
+bool CClientBasic::SendAll(CPacket &packet)
 {
 	// 아직 아무것도 없음
 	return true;

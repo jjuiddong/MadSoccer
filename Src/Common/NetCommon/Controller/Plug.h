@@ -33,8 +33,8 @@ namespace network
 		PROCESS_TYPE GetProcessType() const;
 
 		// child implementes
-		virtual bool	Send(netid netId, const SEND_FLAG flag, const CPacket &packet) = 0;
-		virtual bool	SendAll(const CPacket &packet) = 0;
+		virtual bool	Send(netid netId, const SEND_FLAG flag, CPacket &packet) = 0;
+		virtual bool	SendAll(CPacket &packet) = 0;
 
 	protected:
 		// EventHandler Overring

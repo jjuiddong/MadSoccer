@@ -14,7 +14,7 @@ CLobbyServer::CLobbyServer() :
 
 CLobbyServer::~CLobbyServer() 
 {
-	RemoveProtocolListener(m_pBasicPrtHandler);
+//	RemoveProtocolListener(m_pBasicPrtHandler);
 	SAFE_DELETE(m_pBasicPrtHandler);
 
 }
@@ -30,13 +30,13 @@ void	CLobbyServer::OnConnectMultiPlug()
 	MultiPlugPtr pLoginMultiPlug = multinetwork::CMultiNetwork::Get()->GetMultiPlug("loginsvr");
 	if (!pLoginMultiPlug)
 	{
-		clog::Error( clog::ERROR_CRITICAL, "CLobbyServer Init Error!! not found lobbysvr netgroupcontroller" );
+		clog::Error( clog::ERROR_CRITICAL, "CLobbyServer Init Error!! not found lobbysvr multiplug" );
 		return;
 	}
 	MultiPlugPtr pCertifyMultiPlug = multinetwork::CMultiNetwork::Get()->GetMultiPlug("certifysvr");
 	if (!pCertifyMultiPlug)
 	{
-		clog::Error( clog::ERROR_CRITICAL, "CLobbyServer Init Error!! not found certify netgroupcontroller" );
+		clog::Error( clog::ERROR_CRITICAL, "CLobbyServer Init Error!! not found certify multiplug" );
 		return;
 	}
 

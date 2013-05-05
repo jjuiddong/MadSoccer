@@ -156,14 +156,17 @@ void CCoreClient::Clear()
 /**
  @brief Send
  */
-bool	CCoreClient::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
+bool	CCoreClient::Send(netid netId, const SEND_FLAG flag, CPacket &packet)
 {
 	if (!IsConnect())
 		return false;
 	if (netId == SERVER_NETID || (m_ServerNetId == netId))
 	{
 		if (DISPLAY_PACKET_LOG)
+		{
+			packet.SetSenderId(GetNetId());
 			protocols::DisplayPacket("Send =", packet);
+		}
 
 		// send(연결된 소켓, 보낼 버퍼, 버퍼의 길이, 상태값)
 		const int result = send(GetSocket(), packet.GetData(), CPacket::MAX_PACKETSIZE, 0);
@@ -184,7 +187,7 @@ bool	CCoreClient::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
 //------------------------------------------------------------------------
 // 연결된 모든 클라이언트들에게 메세지를 보낸다.
 //------------------------------------------------------------------------
-bool CCoreClient::SendAll(const CPacket &packet)
+bool CCoreClient::SendAll(CPacket &packet)
 {
 	if (!IsConnect())
 		return false;

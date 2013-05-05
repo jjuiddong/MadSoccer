@@ -45,8 +45,8 @@ namespace network
 		//virtual bool	RemoveProtocolListener(ProtocolListenerPtr pListener) override;
 
 		// Child Implementes
-		virtual bool	Send(netid netId, const SEND_FLAG flag, const CPacket &packet) override;
-		virtual bool	SendAll(const CPacket &packet) override;
+		virtual bool	Send(netid netId, const SEND_FLAG flag, CPacket &packet) override;
+		virtual bool	SendAll(CPacket &packet) override;
 
 	protected:
 		void				Clear();

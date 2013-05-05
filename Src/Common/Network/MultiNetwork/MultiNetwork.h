@@ -39,8 +39,8 @@ namespace network { namespace multinetwork {
 		bool		ConnectDelegation( const std::string &linkSvrType, MultiPlugDelegationPtr ptr);
 		MultiPlugDelegationPtr GetDelegation( const std::string &linkSvrType );
 
-		virtual bool	Send(netid netId, const SEND_FLAG flag, const CPacket &packet) override;
-		virtual bool	SendAll(const CPacket &packet) override;
+		virtual bool	Send(netid netId, const SEND_FLAG flag, CPacket &packet) override;
+		virtual bool	SendAll(CPacket &packet) override;
 
 	protected:
 		MultiPlugPtr	GetControllerFromNetId( netid netId );

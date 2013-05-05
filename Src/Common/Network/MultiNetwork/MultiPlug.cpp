@@ -99,7 +99,7 @@ void	CMultiPlug::Stop()
 /**
  @brief Send
  */
-bool	CMultiPlug::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
+bool	CMultiPlug::Send(netid netId, const SEND_FLAG flag, CPacket &packet)
 {
 	switch (m_ServiceType)
 	{
@@ -139,7 +139,7 @@ bool	CMultiPlug::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
 /**
  @brief SendAll
  */
-bool	CMultiPlug::SendAll(const CPacket &packet) 
+bool	CMultiPlug::SendAll(CPacket &packet) 
 {
 	switch (m_ServiceType)
 	{

@@ -22,8 +22,8 @@ namespace network
 		virtual ~CServerBasic();
 
 		/// Packet
-		virtual bool	Send(netid netId, const SEND_FLAG flag, const CPacket &packet) override;
-		virtual bool	SendAll(const CPacket &packet) override;
+		virtual bool	Send(netid netId, const SEND_FLAG flag, CPacket &packet) override;
+		virtual bool	SendAll(CPacket &packet) override;
 
 		/// User
 		bool				AddPlayer(CPlayer *pUser);
@@ -80,9 +80,9 @@ namespace network
 		void				InitRootGroup();
 		bool				AcceptProcess();
 		void				DispatchPacket();
-		bool				SendGroup(GroupPtr pGroup, const CPacket &packet);
-		bool				SendViewer(netid groupId, const SEND_FLAG flag, const CPacket &packet);
-		bool				SendViewerRecursive(netid viewerId, const netid exceptGroupId, const CPacket &packet);
+		bool				SendGroup(GroupPtr pGroup, CPacket &packet);
+		bool				SendViewer(netid groupId, const SEND_FLAG flag, CPacket &packet);
+		bool				SendViewerRecursive(netid viewerId, const netid exceptGroupId, CPacket &packet);
 
 		bool				RemoveClientProcess();
 		SessionItor	FindSessionBySocket(SOCKET sock);
