@@ -39,6 +39,7 @@ CLobbyServerApp::CLobbyServerApp() :
 	m_MemoryMonitorFilePath = "madsoccer_server_monitor.json" ;
 	m_NetworkConfigFilePath  = "madsoccer_server_config.json";
 	m_TitleName = "LobbyServer";
+	m_SvrType = "lobbysvr";
 	SetRect(&m_WindowRect, 400, 0, 200, 300);
 }
 
@@ -64,6 +65,16 @@ bool CLobbyServerApp::OnInit()
 	if (!network::AddDelegation( "client", m_pLobbyServer ))
 	{
 		clog::Error(log::ERROR_CRITICAL, "network::ConnectDelegation() fail !!\n" );
+		return false;
+	}
+	if (!network::AddDelegation( "loginsvr", new network::CSubServerPlug("lobbysvr")))
+	{
+		clog::Error( clog::ERROR_CRITICAL, "network :: AddDelegation Fail !!\n" );
+		return false;
+	}
+	if (!network::AddDelegation( "certifysvr", new network::CSubServerPlug("lobbysvr")))
+	{
+		clog::Error( clog::ERROR_CRITICAL, "network :: AddDelegation Fail !!\n" );
 		return false;
 	}
 	return true;

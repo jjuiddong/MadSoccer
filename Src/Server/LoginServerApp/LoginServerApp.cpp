@@ -37,6 +37,7 @@ CLoginServerApp::CLoginServerApp() :
 	m_MemoryMonitorFilePath = "loginserver_monitor.json";
 	m_NetworkConfigFilePath  = "loginserver_config.json";
 	m_TitleName = "LoginServer";
+	m_SvrType = "loginsvr";
 	SetRect(&m_WindowRect, 0, 300, 200, 300);
 }
 
@@ -57,7 +58,12 @@ bool CLoginServerApp::OnInit()
 		clog::Error( clog::ERROR_CRITICAL, "network :: ConnectDelegation Fail !!\n" );
 		return false;
 	}
-	if (!network::AddDelegation( "lobbysvr", new network::CSubServerPlug()))
+	if (!network::AddDelegation( "lobbysvr", new network::CSubServerPlug("loginsvr")))
+	{
+		clog::Error( clog::ERROR_CRITICAL, "network :: AddDelegation Fail !!\n" );
+		return false;
+	}
+	if (!network::AddDelegation( "certifysvr", new network::CSubServerPlug("loginsvr")))
 	{
 		clog::Error( clog::ERROR_CRITICAL, "network :: AddDelegation Fail !!\n" );
 		return false;

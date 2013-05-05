@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 #include "CertifyServer.h"
-#include "GlobalRemoteClient.h"
+#include "GlobalRemotePlayer.h"
 
 #include "NetProtocol/src/certify_Protocol.cpp"
 #include "NetProtocol/src/certify_ProtocolListener.cpp"
@@ -28,6 +28,34 @@ void	CCertifyServer::OnConnectMultiPlug()
 
 	AddProtocolListener(this);
 	RegisterProtocol( &m_Protocol );
+
+	NETEVENT_CONNECT( EVT_CLIENT_LEAVE, CCertifyServer, CCertifyServer::OnClientLeave );
+}
+
+
+/**
+ @brief OnClientLeave
+ */
+void	CCertifyServer::OnClientLeave(CNetEvent &event)
+{
+	CSession *pSession = CheckClientNetId(GetServer(), event.GetNetId(), NULL, NULL);
+	RET(!pSession);
+
+	PlayerLogoutConnectingServer( pSession->GetName() );
+}
+
+
+/**
+ @brief LogOutCorrespondServer
+ */
+void	CCertifyServer::PlayerLogoutConnectingServer( const std::string &svrType )
+{
+	BOOST_FOREACH(auto player, m_Sessions.m_Seq)
+	{
+		if (player->GetLocateSvrType() == svrType)
+			m_Sessions.remove( player->GetName() );
+	}
+	m_Sessions.apply_removes();
 }
 
 
@@ -47,7 +75,8 @@ void	CCertifyServer::Clear()
 /**
  @brief Add New Session
  */
-bool	CCertifyServer::AddClient( const std::string &id, const std::string &svrType, const certify_key key  )
+bool	CCertifyServer::AddPlayer( const std::string &id, const std::string &svrType, const netid svrId, 
+	const certify_key key  )
 {
 	auto it = m_Sessions.find( id );
 	if (m_Sessions.end() != it)
@@ -56,10 +85,11 @@ bool	CCertifyServer::AddClient( const std::string &id, const std::string &svrTyp
 	if (id.empty())
 		return false;
 
-	CGlobalRemoteClient *pNewClient = new CGlobalRemoteClient();
+	CGlobalRemotePlayer *pNewClient = new CGlobalRemotePlayer();
 	pNewClient->SetState( SESSIONSTATE_LOGIN );
 	pNewClient->SetNetId( 0 );
 	pNewClient->SetName( id );
+	pNewClient->SetLocateSvrId( svrId );
 	pNewClient->SetLocateSvrType(svrType);
 	return m_Sessions.insert( SessionsId::value_type(id, pNewClient) );
 }
@@ -68,7 +98,7 @@ bool	CCertifyServer::AddClient( const std::string &id, const std::string &svrTyp
 /**
  @brief RemoveSession
  */
-bool	CCertifyServer::RemoveClient( const std::string &id )
+bool	CCertifyServer::RemovePlayer( const std::string &id )
 {
 	auto it = m_Sessions.find( id );
 	if (m_Sessions.end() == it)
@@ -84,7 +114,7 @@ bool	CCertifyServer::RemoveClient( const std::string &id )
 /**
  @brief 
  */
-CGlobalRemoteClient* CCertifyServer::GetClient( const std::string &id )
+CGlobalRemotePlayer* CCertifyServer::GetPlayer( const std::string &id )
 {
 	auto it = m_Sessions.find( id );
 	if (m_Sessions.end() == it)
@@ -101,7 +131,7 @@ bool CCertifyServer::ReqUserLogin(IProtocolDispatcher &dispatcher, netid senderI
 {
 	certify_key key = rand();
 
-	if (!AddClient(id, svrType, key))
+	if (!AddPlayer(id, svrType, senderId, key))
 	{ /// Error!! Already Exist 
 		m_Protocol.AckUserLogin( senderId, SEND_T, error::ERR_ALREADY_EXIST_USER, id, 0 );
 		return false;
@@ -119,7 +149,7 @@ bool CCertifyServer::ReqUserLogout(IProtocolDispatcher &dispatcher, netid sender
 	const std::string &id)
 {
 	// Remove Session
-	if (!RemoveClient(id))
+	if (!RemovePlayer(id))
 	{ /// Error!! Not Exist 
 		m_Protocol.AckUserLogout( senderId, SEND_T, error::ERR_NOT_FOUND_USER, id );
 		return false;
@@ -136,7 +166,7 @@ bool CCertifyServer::ReqUserLogout(IProtocolDispatcher &dispatcher, netid sender
 bool CCertifyServer::ReqUserMoveServer(IProtocolDispatcher &dispatcher, netid senderId, 
 	const std::string &id, const std::string &svrType)
 { 
-	CGlobalRemoteClient *pClient = GetClient(id);
+	CGlobalRemotePlayer *pClient = GetPlayer(id);
 	if (!pClient)
 	{ /// Error!!!
 		clog::Error( clog::ERROR_PROBLEM, "ReqUserMoveServer Error!! not found client id=%s",
@@ -150,3 +180,15 @@ bool CCertifyServer::ReqUserMoveServer(IProtocolDispatcher &dispatcher, netid se
 }
 
 
+/**
+ @brief SendServerInfo
+ */
+bool CCertifyServer::SendServerInfo(IProtocolDispatcher &dispatcher, netid senderId, const std::string &svrType,
+	const std::string &ip, const int &port, const int &userCount)
+{
+	CSession *pSession = CheckClientNetId(GetServer(), senderId, NULL, &dispatcher);
+	RETV(!pSession, false);
+
+	pSession->SetName(svrType);
+	return true;
+}

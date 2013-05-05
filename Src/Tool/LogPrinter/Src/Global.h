@@ -17,9 +17,17 @@ Global
 #include "wx/wx.h"
 #endif
 #include "wx/evtloop.h"
+#include <wx/aui/aui.h>
+#include <wx/dir.h>
+#include <wx/busyinfo.h>
 
 #include <string>
 #include <list>
 #include <algorithm>
 #include <fstream>
 #include <set>
+
+
+class CPrinter;
+void ToggleWindow( CPrinter* pActiveWnd, int key );
+

@@ -7,8 +7,12 @@ Date:    4/1/2013
 	Server/Clients/P2p 를 관리한다.
 
 	Propagate NetEvent
-		- EVT_CONNECT
+		- EVT_LISTEN (server)
+		- EVT_CONNECT (client)
 		- EVT_DISCONNECT
+		- EVT_CLIENT_JOIN
+		- EVT_CLIENT_LEAVE
+		
 */
 #pragma once
 
@@ -71,7 +75,6 @@ namespace network { namespace multinetwork {
 		std::string m_Ip;
 		int m_Port;
 
-		//CCoreClient *m_pClient;
 		CServerBasic *m_pServer;
 		CP2PClient *m_pP2p;
 		CoreClients_ m_Clients;

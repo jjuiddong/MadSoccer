@@ -17,7 +17,6 @@ CMultiPlug::CMultiPlug( SERVICE_TYPE type, const std::string &svrType,
 ,	m_ServiceType(type)
 ,	m_svrType(svrType)
 ,	m_connectSvrType(connectSvrType)
-//,	m_pClient(NULL)
 ,	m_pServer(NULL)
 ,	m_pP2p(NULL)
 ,	m_pSessionFactory(NULL)
@@ -36,7 +35,6 @@ CMultiPlug::CMultiPlug( SERVICE_TYPE type, const std::string &svrType,
 
 CMultiPlug::~CMultiPlug()
 {
-	//SAFE_DELETE(m_pClient);
 	SAFE_DELETE(m_pServer);
 	SAFE_DELETE(m_pP2p);
 	SAFE_DELETE(m_pSessionFactory);
@@ -113,9 +111,19 @@ bool	CMultiPlug::Send(netid netId, const SEND_FLAG flag, const CPacket &packet)
 			}
 			else
 			{
+				// 서버 아이디 라면, 서버에게 보낸다.
 				CoreClientPtr pClient = GetClientFromServerNetId(netId);
 				if (pClient)
+				{
 					return pClient->Send(netId, flag, packet);
+				}
+				else
+				{
+					// 클라이언트 아이디라면, 클라이언트와 붙은 서버에게 보낸다.
+					pClient = GetClient(netId);
+					if (pClient)
+						return pClient->Send(SERVER_NETID, flag, packet);
+				}
 			}
 		}
 		break;
@@ -224,7 +232,10 @@ void	CMultiPlug::OnConnect( CNetEvent &event )
 	{
 		m_State = RUN;
 		event.Skip();
-		SearchEventTable(CNetEvent(EVT_CONNECT, this));// Event Propagate
+		if (CLIENT == m_ServiceType)
+			SearchEventTable(CNetEvent(EVT_CONNECT, this));// Event Propagate
+		else
+			SearchEventTable(CNetEvent(EVT_LISTEN, this));// Event Propagate
 	}
 }
 

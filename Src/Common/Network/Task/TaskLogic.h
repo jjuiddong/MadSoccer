@@ -158,7 +158,7 @@ namespace network
 		IProtocolDispatcher *pDispatcher = CController::Get()->GetDispatcher(protocolId);
 		if (!pDispatcher)
 		{
-			clog::Error( clog::ERROR_WARNING,
+			clog::Error( clog::ERROR_PROBLEM,
 				common::format("CTaskLogic:: %d 에 해당하는 프로토콜 디스패쳐가 없습니다.\n", 
 				protocolId) );
 			return RR_CONTINUE;

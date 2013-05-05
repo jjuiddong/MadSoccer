@@ -5,7 +5,8 @@
 using namespace network;
 
 
-CSubServerPlug::CSubServerPlug()
+CSubServerPlug::CSubServerPlug(const std::string &appSvrType) :
+	m_AppSvrType(appSvrType)
 {
 
 }
@@ -26,8 +27,23 @@ CSubServerPlug::~CSubServerPlug()
 void	CSubServerPlug::OnConnectMultiPlug()
 {
 	multinetwork::CMultiPlugDelegation::OnConnectMultiPlug();
+
 	AddProtocolListener( this );
 	GetMultiPlug()->SetSessionFactory( new CRemoteServerFactory() );
+	RegisterProtocol( &m_ServerNetwork_Protocol );
+
+	NETEVENT_CONNECT(EVT_CONNECT, CSubServerPlug, CSubServerPlug::OnConnectSubLink);
+	NETEVENT_CONNECT(EVT_CLIENT_JOIN, CSubServerPlug, CSubServerPlug::OnConnectSubLink);
+}
+
+
+/**
+ @brief  Call, client connection, or server attach remote client
+ */
+void	CSubServerPlug::OnConnectSubLink(CNetEvent &event )
+{
+	m_ServerNetwork_Protocol.SendServerInfo( event.GetNetId(), SEND_T, 
+		m_AppSvrType, "localhost", 0, 0 );
 }
 
 
@@ -50,6 +66,8 @@ bool CSubServerPlug::SendServerInfo(IProtocolDispatcher &dispatcher, netid sende
 	}
 	else
 	{
+		it->second->SetIp( ip );
+		it->second->SetPort(port);
 		it->second->SetUserCount(userCount);
 	}
 

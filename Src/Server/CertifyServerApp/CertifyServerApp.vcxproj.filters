@@ -42,7 +42,7 @@
     <ClInclude Include="Src\CertifyServer.h">
       <Filter>Src</Filter>
     </ClInclude>
-    <ClInclude Include="Src\GlobalRemoteClient.h">
+    <ClInclude Include="Src\GlobalRemotePlayer.h">
       <Filter>Src</Filter>
     </ClInclude>
   </ItemGroup>
@@ -56,7 +56,7 @@
     <ClCompile Include="Src\CertifyServer.cpp">
       <Filter>Src</Filter>
     </ClCompile>
-    <ClCompile Include="Src\GlobalRemoteClient.cpp">
+    <ClCompile Include="Src\GlobalRemotePlayer.cpp">
       <Filter>Src</Filter>
     </ClCompile>
   </ItemGroup>

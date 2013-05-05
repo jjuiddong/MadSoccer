@@ -1,40 +1,17 @@
 
 #include "Global.h"
-#include <wx/aui/aui.h>
-#include <wx/dir.h>
-#include <wx/busyinfo.h>
 
 #include "Printer.h"
 #include "Common/Common.h"
+#include "Frame.h"
 
 using namespace std;
-
-class MyFrame : public wxFrame 
-{
-	enum  {
-		ID_REFRESH_TIMER = 100,
-		REFRESH_INTERVAL = 1000,
-	};
-public:
-	MyFrame(wxWindow* parent);
-	~MyFrame() { m_mgr.UnInit(); }
-protected:
-	// Event Handler
-	DECLARE_EVENT_TABLE()
-	void OnRefreshTimer(wxTimerEvent& event);
-	void OnDropFiles(wxDropFilesEvent& event);
-
-public:
-	wxAuiManager m_mgr;
-	wxTimer	m_Timer;
-	list<string> m_fileList;
-	list<string> m_CmdLine;
-};
 
 
 BEGIN_EVENT_TABLE( MyFrame, wxFrame )
 	EVT_TIMER(ID_REFRESH_TIMER, MyFrame::OnRefreshTimer)
 END_EVENT_TABLE()
+
 
 MyFrame::MyFrame(wxWindow* parent) : wxFrame(parent, -1, _("LogPrinter"),
 	wxDefaultPosition, wxSize(800,600), wxDEFAULT_FRAME_STYLE)
@@ -56,6 +33,7 @@ MyFrame::MyFrame(wxWindow* parent) : wxFrame(parent, -1, _("LogPrinter"),
 
 	DragAcceptFiles(true);
 	Connect(wxEVT_DROP_FILES, wxDropFilesEventHandler(MyFrame::OnDropFiles), NULL, this);
+	Connect(wxEVT_CHAR_HOOK, wxKeyEventHandler(MyFrame::OnKeyDown));
 
 }
 
@@ -135,12 +113,29 @@ void MyFrame::OnDropFiles(wxDropFilesEvent& event)
 			CPrinter *prt = new CPrinter(this, fileName);
 			m_mgr.AddPane(prt, wxLEFT, *it);
 			wxAuiPaneInfo& pane = m_mgr.GetPane(prt);
+			pane.MaximizeButton();
 			pane.MinSize(1000,0);
 			it++;
 		}
 		m_mgr.Update();
 	}
 }
+
+/**
+@brief  
+*/
+void MyFrame::OnKeyDown(wxKeyEvent& event)
+{
+	wxWindow *pWnd = NULL;
+	if (344 == event.GetKeyCode()) // VK_F7
+	{
+		if (IsMaximized())
+			Restore();
+		else
+			Maximize();
+	}
+}
+
 
 
 // our normal wxApp-derived class, as usual
@@ -161,7 +156,7 @@ public:
 
 		SetTopWindow(frame);
 		frame->Show();
-		return true;                    
+		return true;
 	}
 };
 

@@ -135,6 +135,7 @@ bool	CFarmServerPlug::CreateSubController( SERVICE_TYPE serviceType, bool IsInne
 	}
 
 	NETEVENT_CONNECT_TO( pctrl, this, EVT_CONNECT, CFarmServerPlug, CFarmServerPlug::OnConnectLink );
+	NETEVENT_CONNECT_TO( pctrl, this, EVT_LISTEN, CFarmServerPlug, CFarmServerPlug::OnConnectLink );
 	NETEVENT_CONNECT_TO( pctrl, this, EVT_DISCONNECT, CFarmServerPlug, CFarmServerPlug::OnDisconnectLink );
 	return true;
 }

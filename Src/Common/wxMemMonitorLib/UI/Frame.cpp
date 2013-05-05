@@ -192,7 +192,6 @@ void CFrame::UpdatePaneSize(wxWindow *pWindow, int w, int h)
 /**
 @brief  
 */
-
 void CFrame::OnKeyDown(wxKeyEvent& event)
 {
 	if (346 == event.GetKeyCode()) // VK_F7

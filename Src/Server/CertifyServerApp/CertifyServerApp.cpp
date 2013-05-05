@@ -6,6 +6,8 @@
 #include "Src/CertifyServer.h"
 #include "Network/Service/ServerApp.h"
 
+#include "NetProtocol/Src/server_network_ProtocolListener.cpp"
+
 using namespace network;
 
 

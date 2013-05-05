@@ -19,6 +19,7 @@ namespace network
 		virtual std::string ToString() { return ""; }
 		static CServerApp*GetInstance() { return m_pInstance; }
 		static void SetInstance(CServerApp*ptr) { m_pInstance = ptr; }
+		std::string m_SvrType;
 		std::string m_TitleName;
 		std::string m_MemoryMonitorFilePath;
 		std::string m_NetworkConfigFilePath;

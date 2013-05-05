@@ -17,7 +17,7 @@ namespace network
 										, public server_network::s2s_ProtocolListener
 	{
 	public:
-		CSubServerPlug();
+		CSubServerPlug(const std::string &appSvrType);
 		virtual ~CSubServerPlug();
 
 		std::list<SSubServerInfo> GetSubServerInfo();
@@ -25,13 +25,18 @@ namespace network
 	protected:
 		// Event
 		virtual void	OnConnectMultiPlug() override;
+		void				OnConnectSubLink(CNetEvent &event );
 
 		/// Network Protocol Handler
 		virtual bool SendServerInfo(IProtocolDispatcher &dispatcher, netid senderId, const std::string &svrType, const std::string &ip, const int &port, const int &userCount) override;
 
 	private:
 		typedef common::StableVectorMap<netid, CRemoteServer*>	RemoteServers;
+		std::string m_AppSvrType;
 		RemoteServers m_RemoteServers;
+
+
+		server_network::s2s_Protocol		m_ServerNetwork_Protocol;
 
 	};
 

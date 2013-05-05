@@ -11,10 +11,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Global.cpp" />
     <ClCompile Include="Src\main.cpp" />
     <ClCompile Include="Src\Printer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Frame.h" />
     <ClInclude Include="Src\Global.h" />
     <ClInclude Include="Src\Printer.h" />
   </ItemGroup>

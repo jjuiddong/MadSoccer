@@ -60,7 +60,7 @@ const CoreClients_V& CMultiPlugDelegation::GetClients()
 /**
  @brief 
  */
-CoreClientPtr CMultiPlugDelegation::GetClient(netid netId)
+CoreClientPtr CMultiPlugDelegation::GetPlayer(netid netId)
 {
 	RETV(!GetMultiPlug(), NULL);	
 	return GetMultiPlug()->GetClient(netId);

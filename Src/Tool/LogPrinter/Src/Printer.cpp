@@ -34,6 +34,8 @@ wxListCtrl(parent, -1, wxDefaultPosition, wxSize(400,150),
 		m_Pos = m_InputFile.tellg();
 	}
 	m_InputFile.close();
+
+	Connect(wxEVT_CHAR_HOOK, wxKeyEventHandler(CPrinter::OnKeyDown));
 }
 
 CPrinter::~CPrinter()
@@ -157,4 +159,13 @@ wxColour CPrinter::GetFileName2Color(const std::string &fileName)
 	case 4: return wxColour(200,255,150+n); break;
 	default: return wxColour(255,255,150+n); break;
 	}	
+}
+
+
+/**
+ @brief OnKeyDown
+ */
+void CPrinter::OnKeyDown(wxKeyEvent& event)
+{
+	ToggleWindow(this, event.GetKeyCode());
 }
