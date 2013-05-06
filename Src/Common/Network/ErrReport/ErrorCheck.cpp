@@ -54,6 +54,27 @@ CSession* network::CheckClientId( ServerBasicPtr pServer, const std::string &id,
 
 
 /**
+ @brief 
+ */
+GroupPtr network::CheckGroup( ServerBasicPtr pServer, netid groupId, 
+	netid clientId, basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher )
+{
+	RETV(!pServer, NULL);
+
+	GroupPtr pGroup = pServer->GetRootGroup().GetChild( groupId );
+	if (!pGroup)
+	{
+		if (pDispatcher)
+			pDispatcher->PrintThisPacket( clog::LOG_FILE, "!!! Error not found group >>" );
+		if (pProtocol)
+			pProtocol->Error( clientId, SEND_T, error::ERR_NOT_FOUND_GROUP);
+		return NULL;
+	}
+	return pGroup;
+}
+
+
+/**
  @brief CheckClientConnection
  */
 bool network::CheckClientConnection( CSession *pClient, 
@@ -76,15 +97,8 @@ CPlayer* network::CheckPlayerWaitAck(ServerBasicPtr pServer, netid clientId,
 	basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher )
 {
 	RETV(!pServer, NULL);
-	PlayerPtr pPlayer = pServer->GetPlayer(clientId);
-	if (!pPlayer)
-	{
-		if (pDispatcher)
-			pDispatcher->PrintThisPacket( clog::LOG_FILE, "!!! Error Player Wait Ack err >>" );
-		if (clientId && pProtocol)
-			pProtocol->Error( clientId, SEND_T, error::ERR_NOT_FOUND_USER);
-		return NULL;
-	}
+	PlayerPtr pPlayer = CheckPlayerNetId_(pServer, clientId, pProtocol, pDispatcher);
+	RETV(!pPlayer, NULL);
 
 	if (pPlayer->IsAckWait())
 	{
@@ -130,6 +144,33 @@ CSession* network::CheckSessionLogin( ServerBasicPtr pServer, netid clientId,
 }
 
 
+CSession* network::CheckSessionIdLogin(ServerBasicPtr pServer, const std::string &id, netid clientId, 
+	basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher )
+{
+	RETV(!pServer, NULL);
+
+	SessionPtr pClient = pServer->GetSession(id);
+	if (!pClient)
+	{
+		if (pDispatcher)
+			pDispatcher->PrintThisPacket( clog::LOG_FILE, "CheckSessionLogin!!! Error not found Session >>" );
+		if (clientId && pProtocol)
+			pProtocol->Error( clientId, SEND_T, error::ERR_NOT_FOUND_USER);
+		return NULL;
+	}
+
+	if (pClient->GetState() != SESSIONSTATE_LOGIN)
+	{
+		if (pDispatcher)
+			pDispatcher->PrintThisPacket( clog::LOG_FILE, "CheckSessionLogin!!! Error Session Not Login >>" );
+		if (clientId && pProtocol)
+			pProtocol->Error( clientId, SEND_T, error::ERR_NOT_FOUND_USER);
+		return NULL;
+	}
+	return pClient;	
+}
+
+
 /**
 @brief  CheckPlayerWaitAck() && CheckSessionLogin()
 */
@@ -146,6 +187,75 @@ CPlayer* network::CheckRecvablePlayer(ServerBasicPtr pServer, netid clientId,
 
 
 /**
+ @brief CheckPlayerNetId
+ */
+CPlayer* network::CheckPlayerNetId( ServerBasicPtr pServer, netid playerId, 
+	basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher )
+{
+	RETV(!pServer, NULL);
+	if (!CheckSessionLogin(pServer, playerId, pProtocol, pDispatcher))
+		return NULL;
+	PlayerPtr pPlayer = CheckPlayerNetId_(pServer, playerId, pProtocol, pDispatcher);
+	RETV(!pPlayer,NULL);
+	return pPlayer;
+}
+
+
+/**
+ @brief CheckPlayerNetId_
+ */
+CPlayer* network::CheckPlayerNetId_(ServerBasicPtr pServer, netid playerId, 
+	basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher )
+{
+	RETV(!pServer, NULL);
+	PlayerPtr pPlayer = pServer->GetPlayer(playerId);
+	if (!pPlayer)
+	{
+		if (pDispatcher)
+			pDispatcher->PrintThisPacket( clog::LOG_FILE, "!!! Error Player Wait Ack err >>" );
+		if (playerId && pProtocol)
+			pProtocol->Error( playerId, SEND_T, error::ERR_NOT_FOUND_USER);
+		return NULL;
+	}
+	return pPlayer;
+}
+
+
+/**
+ @brief CheckPlayerId
+ */
+CPlayer* network::CheckPlayerId(ServerBasicPtr pServer, const std::string &id, netid playerId, 
+	basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher )
+{
+	if (!CheckSessionIdLogin(pServer, id, playerId, pProtocol, pDispatcher))
+		return NULL;
+	CPlayer *pPlayer = CheckPlayerId_(pServer, id, playerId, pProtocol, pDispatcher);
+	return pPlayer;
+}
+
+
+/**
+ @brief CheckPlayerId_
+ */
+CPlayer* network::CheckPlayerId_(ServerBasicPtr pServer, const std::string &id, netid playerId, 
+	basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher )
+{
+	RETV(!pServer, NULL);
+
+	PlayerPtr pPlayer = pServer->GetPlayer(id);
+	if (!pPlayer)
+	{
+		if (pDispatcher)
+			pDispatcher->PrintThisPacket( clog::LOG_FILE, "!!! Error player not found from id>>" );
+		if (playerId && pProtocol)
+			pProtocol->Error( playerId, SEND_T, error::ERR_NOT_FOUND_USER );
+		return NULL;
+	}
+	return pPlayer;
+}
+
+
+/**
  @brief CheckDelegation
  */
 MultiPlugDelegationPtr network::CheckDelegation( const std::string &linkSvrType,
@@ -156,11 +266,29 @@ MultiPlugDelegationPtr network::CheckDelegation( const std::string &linkSvrType,
 	{
 		clog::Error( clog::ERROR_CRITICAL, 0, "CheckDelegation Error!!! linkSvrType=%s", linkSvrType.c_str() );
 		if (pDispatcher)
-			pDispatcher->PrintThisPacket( clog::LOG_FILE, "!!! Error casting err >>" );
+			pDispatcher->PrintThisPacket( clog::LOG_FILE, "!!! Error CheckDelegation >>" );
 		if (clientId && pProtocol)
 			pProtocol->Error( clientId, SEND_T, error::ERR_INTERNAL );
 	}
 	return ptr;
 }
 
+
+/**
+ @brief 
+ */
+MultiPlugPtr network::CheckMultiPlug( const std::string &linkSvrType, 
+	netid clientId, basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher)
+{
+	MultiPlugPtr ptr = multinetwork::CMultiNetwork::Get()->GetMultiPlug(linkSvrType);
+	if (!ptr)
+	{
+		clog::Error( clog::ERROR_CRITICAL, 0, "CheckMultiPlug Error!!! linkSvrType=%s", linkSvrType.c_str() );
+		if (pDispatcher)
+			pDispatcher->PrintThisPacket( clog::LOG_FILE, "!!! Error CheckMultiPlug  >>" );
+		if (clientId && pProtocol)
+			pProtocol->Error( clientId, SEND_T, error::ERR_INTERNAL );
+	}
+	return ptr;
+}
 

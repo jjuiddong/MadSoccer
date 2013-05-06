@@ -10,7 +10,6 @@ Date:    4/18/2013
 #include "NetProtocol/src/server_network_Protocol.h"
 #include "NetProtocol/Src/server_network_ProtocolListener.h"
 
-
 DECLARE_TYPE_NAME(CGameServer)
 class CGameServer : public network::CServer
 								, public server_network::s2s_ProtocolListener

@@ -84,16 +84,16 @@ bool CFarmServer::ReqSubServerLogin(farm::ReqSubServerLogin_Packet &packet)
 	}
 
 	// Waiting Group -> New Group
-	pFromGroup->RemovePlayer( pFromGroup->GetId(), packet.senderId );
-	if (!pSvrGroup->AddPlayer(pSvrGroup->GetId(), packet.senderId))
+	pFromGroup->RemovePlayer( pFromGroup->GetNetId(), packet.senderId );
+	if (!pSvrGroup->AddPlayer(pSvrGroup->GetNetId(), packet.senderId))
 	{ // Error!!
-		pFromGroup->AddPlayer(pFromGroup->GetId(), packet.senderId); // 복구
+		pFromGroup->AddPlayer(pFromGroup->GetNetId(), packet.senderId); // 복구
 
 		clog::Error( log::ERROR_PROBLEM, "ReqSubServerLogin Error!!, not join group\n" );
 		m_Protocol.AckSubServerLogin( packet.senderId, SEND_T, error::ERR_NOT_JOIN_GROUP);
 		return false;
 	}
-	pSvrGroup->AddViewer( GetServer()->GetRootGroup().GetId() );
+	pSvrGroup->AddViewer( GetServer()->GetRootGroup().GetNetId() );
 
 	m_Protocol.AckSubServerLogin( packet.senderId, SEND_T, error::ERR_SUCCESS);
 	return true;
@@ -390,7 +390,7 @@ bool CFarmServer::ReqSubServerBindComplete(farm::ReqSubServerBindComplete_Packet
 
 		clog::Log( clog::LOG_F_N_O, clog::LOG_MESSAGE, 0, "CorrespondClientInfo %s", svrType.c_str() );
 
-		m_Protocol.BindSubServer( pGroup->GetId(), SEND_T, pSubSvrGroup->GetSvrType(), 
+		m_Protocol.BindSubServer( pGroup->GetNetId(), SEND_T, pSubSvrGroup->GetSvrType(), 
 			bindInfo.front().ip, bindInfo.front().portnum );
 	}
 	return true;

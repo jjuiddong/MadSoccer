@@ -61,8 +61,8 @@ void	CServerBasic::InitRootGroup()
 
 	CGroup *pWaitGroup = m_pGroupFactory->New(); //new CGroup(NULL,"Waiting Group");
 	pWaitGroup->SetName("Waiting Group");
-	pWaitGroup->AddViewer(m_RootGroup.GetId()); /// root group is viewer to waitting group
-	m_WaitGroupId = pWaitGroup->GetId();
+	pWaitGroup->AddViewer(m_RootGroup.GetNetId()); /// root group is viewer to waitting group
+	m_WaitGroupId = pWaitGroup->GetNetId();
 	m_RootGroup.AddChild( pWaitGroup );
 }
 
@@ -309,10 +309,10 @@ bool CServerBasic::AddSession(SOCKET sock, const std::string &ip)
 
 	if (m_RootGroup.AddPlayer(m_WaitGroupId, pNewSession->GetNetId()))
 	{
-		CPlayer *pNewUser  = m_pPlayerFactory->New();
-		pNewUser->SetNetId(pNewSession->GetNetId());
-		if (!AddPlayer(pNewUser))
-			clog::Error( clog::ERROR_CRITICAL, "CServerBasic::AddClient Error!! AddUser Err netid: %d\n", pNewUser->GetNetId());
+		CPlayer *pNewPlayer  = m_pPlayerFactory->New();
+		pNewPlayer->SetNetId(pNewSession->GetNetId());
+		if (!AddPlayer(pNewPlayer))
+			clog::Error( clog::ERROR_CRITICAL, "CServerBasic::AddClient Error!! AddUser Err netid: %d\n", pNewPlayer->GetNetId());
 
 		m_Sessions.insert( Sessions_::value_type(pNewSession->GetNetId(), pNewSession) );
 		clog::Log( clog::LOG_F_N_O, "AddClient netid: %d, socket: %d\n", pNewSession->GetNetId(), sock );
@@ -447,11 +447,11 @@ bool CServerBasic::RemoveClientProcess()
 		 GroupPtr pGroup = m_RootGroup.GetChildFromPlayer(netId);
 		 if (pGroup)
 		 {
-			if (!m_RootGroup.RemovePlayer(pGroup->GetId(), netId))
+			if (!m_RootGroup.RemovePlayer(pGroup->GetNetId(), netId))
 			{
 				clog::Error( clog::ERROR_PROBLEM, 
 					"CServerBasic::RemoveClientProcess() Error!! not remove user groupid: %d, userid: %d\n",
-					pGroup->GetId(), netId);
+					pGroup->GetNetId(), netId);
 			}
 		 }
 		 else
@@ -576,7 +576,7 @@ bool	CServerBasic::Send(netid netId, const SEND_FLAG flag, CPacket &packet)
 			// Send To Group
 			GroupPtr pGroup = (ALL_NETID == netId)? &m_RootGroup : NULL;
 			if (!pGroup)
-				pGroup = (m_RootGroup.GetId() == netId)? &m_RootGroup : m_RootGroup.GetChild(netId);
+				pGroup = (m_RootGroup.GetNetId() == netId)? &m_RootGroup : m_RootGroup.GetChild(netId);
 
 			if (pGroup)
 			{
@@ -616,7 +616,7 @@ bool	CServerBasic::SendViewer(netid groupId, const SEND_FLAG flag, CPacket &pack
 	if ((flag != SEND_V) && (flag != SEND_T_V))
 		return false;
 
-	GroupPtr pGroup = (m_RootGroup.GetId() == groupId)? &m_RootGroup : m_RootGroup.GetChild(groupId);
+	GroupPtr pGroup = (m_RootGroup.GetNetId() == groupId)? &m_RootGroup : m_RootGroup.GetChild(groupId);
 	if (!pGroup)
 		return false;
 
@@ -625,7 +625,7 @@ bool	CServerBasic::SendViewer(netid groupId, const SEND_FLAG flag, CPacket &pack
 
 	BOOST_FOREACH(auto &viewerId, pGroup->GetViewers())
 	{
-		const bool result = SendViewerRecursive(viewerId, ((IsGroupSend)? pGroup->GetId() : INVALID_NETID), packet);
+		const bool result = SendViewerRecursive(viewerId, ((IsGroupSend)? pGroup->GetNetId() : INVALID_NETID), packet);
 		if (!result)
 			sendResult = result;
 	}
@@ -643,7 +643,7 @@ bool	CServerBasic::SendViewerRecursive(netid viewerId, const netid exceptGroupId
 	if (exceptGroupId == viewerId)
 		return true;
 
-	GroupPtr pGroup = (m_RootGroup.GetId() == viewerId)? &m_RootGroup : m_RootGroup.GetChild(viewerId);
+	GroupPtr pGroup = (m_RootGroup.GetNetId() == viewerId)? &m_RootGroup : m_RootGroup.GetChild(viewerId);
 	if (!pGroup)
 		return false;
 
@@ -663,7 +663,7 @@ bool	CServerBasic::SendViewerRecursive(netid viewerId, const netid exceptGroupId
 			BOOST_FOREACH(auto &child, pGroup->GetChildren())
 			{
 				if (!child) continue;
-				const bool result = SendViewerRecursive(child->GetId(), exceptGroupId, packet);
+				const bool result = SendViewerRecursive(child->GetNetId(), exceptGroupId, packet);
 				if (!result)
 					sendResult = false;
 			}

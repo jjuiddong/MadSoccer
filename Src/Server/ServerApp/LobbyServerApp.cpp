@@ -69,13 +69,19 @@ bool CLobbyServerApp::OnInit()
 	}
 	if (!network::AddDelegation( "loginsvr", new network::CSubServerPlug("lobbysvr")))
 	{
-		clog::Error( clog::ERROR_CRITICAL, "network :: AddDelegation Fail !!\n" );
+		clog::Error( clog::ERROR_CRITICAL, "network :: AddDelegation Fail !! loginsvr\n" );
 		return false;
 	}
 	if (!network::AddDelegation( "certifysvr", new network::CSubServerPlug("lobbysvr")))
 	{
-		clog::Error( clog::ERROR_CRITICAL, "network :: AddDelegation Fail !!\n" );
+		clog::Error( clog::ERROR_CRITICAL, "network :: AddDelegation Fail !! certifysvr\n" );
 		return false;
 	}
+	if (!network::AddDelegation( "gamesvr", new network::CSubServerPlug("lobbysvr")))
+	{
+		clog::Error( clog::ERROR_CRITICAL, "network :: AddDelegation Fail !! gamesvr\n" );
+		return false;
+	}
+
 	return true;
 }

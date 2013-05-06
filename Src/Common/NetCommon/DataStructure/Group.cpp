@@ -36,11 +36,11 @@ bool	CGroup::AddChild( CGroup *pGroup )
 {
 	RETV(!pGroup,false);
 
-	GroupPtr ptr = GetChild(pGroup->GetId());
+	GroupPtr ptr = GetChild(pGroup->GetNetId());
 	if (ptr) return false; // already exist
 
 	pGroup->SetParent(this);
-	m_Children.insert(Groups::value_type(pGroup->GetId(), pGroup));
+	m_Children.insert(Groups::value_type(pGroup->GetNetId(), pGroup));
 	
 	// add group member
 	BOOST_FOREACH(auto playerId, pGroup->GetPlayers())
@@ -92,7 +92,7 @@ bool	CGroup::RemoveChild( netid groupId )
 	}
 
 	GroupPtr parent = pGroup->GetParent();
-	if (parent)
+	if (parent) // if parent is null then root group, root group never delete
 	{
 		auto it = parent->m_Children.find(groupId);
 		if (parent->m_Children.end() == it)
@@ -129,7 +129,7 @@ GroupPtr CGroup::GetChild(netid groupId )
  */
 GroupPtr	CGroup::GetChildandThis( netid groupId )
 {
-	if (GetId() == groupId)
+	if (GetNetId() == groupId)
 		return this;
 	return GetChild(groupId);
 }
@@ -173,7 +173,7 @@ bool	CGroup::IsTerminal()
 //------------------------------------------------------------------------
 bool CGroup::AddPlayer(netid groupId, netid playerId)
 {
-	GroupPtr pGroup = (GetId() == groupId)? this : GetChild(groupId);
+	GroupPtr pGroup = (GetNetId() == groupId)? this : GetChild(groupId);
 	if(!pGroup) return false; // not exist group
 	return AddPlayerNApplyParent(pGroup, playerId);	
 }
@@ -184,7 +184,7 @@ bool CGroup::AddPlayer(netid groupId, netid playerId)
 //------------------------------------------------------------------------
 bool CGroup::RemovePlayer(netid groupId, netid playerId)
 {
-	GroupPtr pGroup = (GetId() == groupId)? this : GetChild(groupId);
+	GroupPtr pGroup = (GetNetId() == groupId)? this : GetChild(groupId);
 	if(!pGroup) return false; // not exist group
 	return RemovePlayerNApplyParent(pGroup, playerId);
 }

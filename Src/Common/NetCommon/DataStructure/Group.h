@@ -63,7 +63,8 @@ namespace network
 		bool operator==(const CGroup &rhs) const;
 		CGroup& operator=(const CGroup &rhs);
 
-		netid						GetId() const;
+		void							SetNetId(netid groupId);
+		netid						GetNetId() const;
 		const std::string&	GetName() const;
 		void							SetName(const std::string &name);		
 		DWORD					GetTag() const;
@@ -92,13 +93,13 @@ namespace network
 		Groups			m_Children;
 	};
 
-
-	inline netid CGroup::GetId() const { return m_Id; }
+	inline void	CGroup::SetNetId(netid groupId) { m_Id = groupId; }
+	inline netid CGroup::GetNetId() const { return m_Id; }
 	inline const std::string& CGroup::GetName() const { return m_Name; }
 	inline void CGroup::SetName(const std::string &name) { m_Name = name; }
 	inline CGroup* CGroup::GetParent() const { return m_pParent; }
 	inline netid CGroup::GetParentId() const { return m_ParentId; }
-	inline void CGroup::SetParent(GroupPtr parent) { m_pParent = parent; if(parent) {m_ParentId = parent->GetId();} }
+	inline void CGroup::SetParent(GroupPtr parent) { m_pParent = parent; if(parent) {m_ParentId = parent->GetNetId();} }
 	inline DWORD CGroup::GetTag() const { return m_Tag; }
 	inline void CGroup::SetTag(DWORD tag) { m_Tag = tag; }
 	inline CGroup::NET_STATE CGroup::GetNetState() const { return m_NetState; }
@@ -106,5 +107,5 @@ namespace network
 	inline const Groups::VectorType& CGroup::GetChildren() const { return m_Children.m_Seq; }
 	inline const NetIdes& CGroup::GetPlayers() const { return m_Players; }
 	inline const NetIdes& CGroup::GetViewers() const { return m_Viewers; }
-	inline bool CGroup::operator==(const CGroup &rhs) const { return m_Id==rhs.GetId(); }
+	inline bool CGroup::operator==(const CGroup &rhs) const { return m_Id==rhs.GetNetId(); }
 }

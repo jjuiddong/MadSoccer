@@ -76,16 +76,6 @@ bool CBasicC2SHandler::ReqLogOut(basic::ReqLogOut_Packet &packet)
 }
 
 
-/**
- @brief ReqMoveToServer
- */
-bool CBasicC2SHandler::ReqMoveToServer(basic::ReqMoveToServer_Packet &packet)
-{
-
-	return true;
-}
-
-
 //------------------------------------------------------------------------
 // groupid : -1 이라면 root 그룹의 자식을 보낸다.
 //------------------------------------------------------------------------
@@ -130,7 +120,7 @@ bool CBasicC2SHandler::ReqGroupJoin(basic::ReqGroupJoin_Packet &packet)
 	GroupPtr pFrom = m_Server.GetRootGroup().GetChildFromPlayer( packet.senderId );
 	if (pTo && pFrom)
 	{
-		if (pTo->GetId() == pFrom->GetId())
+		if (pTo->GetNetId() == pFrom->GetNetId())
 		{// Error!!
 			m_BasicProtocol.AckGroupJoin( packet.senderId, SEND_TARGET, ERR_GROUPJOIN_ALREADY_SAME_GROUP, 
 				packet.senderId, packet.groupid );
@@ -143,10 +133,10 @@ bool CBasicC2SHandler::ReqGroupJoin(basic::ReqGroupJoin_Packet &packet)
 			return false;
 		}
 
-		pFrom->RemovePlayer(pFrom->GetId(), packet.senderId);
-		pTo->AddPlayer(pTo->GetId(), packet.senderId);
-		m_BasicProtocol.AckGroupJoin( pTo->GetId(), SEND_T_V, ERR_SUCCESS , packet.senderId, packet.groupid );
-		m_BasicProtocol.AckGroupJoin( pFrom->GetId(), SEND_T_V, ERR_SUCCESS , packet.senderId, packet.groupid );
+		pFrom->RemovePlayer(pFrom->GetNetId(), packet.senderId);
+		pTo->AddPlayer(pTo->GetNetId(), packet.senderId);
+		m_BasicProtocol.AckGroupJoin( pTo->GetNetId(), SEND_T_V, ERR_SUCCESS , packet.senderId, packet.groupid );
+		m_BasicProtocol.AckGroupJoin( pFrom->GetNetId(), SEND_T_V, ERR_SUCCESS , packet.senderId, packet.groupid );
 		return true;
 	}
 	else
@@ -172,14 +162,14 @@ bool CBasicC2SHandler::ReqGroupCreate(basic::ReqGroupCreate_Packet &packet)
 	if (!CreateBlankGroup(packet.senderId, packet.parentGroupId, packet.groupName, pParentGroup, pFrom, pNewGroup))
 		return false;
 
-	pFrom->RemovePlayer(pFrom->GetId(), packet.senderId);
-	pNewGroup->AddPlayer(pNewGroup->GetId(), packet.senderId);
-	pNewGroup->AddViewer( pParentGroup->GetId() );
+	pFrom->RemovePlayer(pFrom->GetNetId(), packet.senderId);
+	pNewGroup->AddPlayer(pNewGroup->GetNetId(), packet.senderId);
+	pNewGroup->AddViewer( pParentGroup->GetNetId() );
 
-	const netid groupId = pNewGroup->GetId();
-	m_BasicProtocol.AckGroupCreate( pNewGroup->GetId(), SEND_T_V, ERR_SUCCESS, 
+	const netid groupId = pNewGroup->GetNetId();
+	m_BasicProtocol.AckGroupCreate( pNewGroup->GetNetId(), SEND_T_V, ERR_SUCCESS, 
 		packet.senderId, groupId, packet.parentGroupId, packet.groupName);
-	m_BasicProtocol.AckGroupJoin( pNewGroup->GetId(), SEND_T_V, ERR_SUCCESS,
+	m_BasicProtocol.AckGroupJoin( pNewGroup->GetNetId(), SEND_T_V, ERR_SUCCESS,
 		packet.senderId, groupId);
 	return true;
 }
@@ -197,9 +187,9 @@ bool CBasicC2SHandler::ReqGroupCreateBlank(basic::ReqGroupCreateBlank_Packet &pa
 	if (!CreateBlankGroup(packet.senderId, packet.parentGroupId, packet.groupName, pParentGroup, pFrom, pNewGroup))
 		return false;
 
-	pNewGroup->AddViewer( pParentGroup->GetId() );
-	m_BasicProtocol.AckGroupCreateBlank( pNewGroup->GetId(), SEND_T_V, ERR_SUCCESS, 
-		packet.senderId, pNewGroup->GetId(), packet.parentGroupId, packet.groupName);
+	pNewGroup->AddViewer( pParentGroup->GetNetId() );
+	m_BasicProtocol.AckGroupCreateBlank( pNewGroup->GetNetId(), SEND_T_V, ERR_SUCCESS, 
+		packet.senderId, pNewGroup->GetNetId(), packet.parentGroupId, packet.groupName);
 	return true;
 }
 

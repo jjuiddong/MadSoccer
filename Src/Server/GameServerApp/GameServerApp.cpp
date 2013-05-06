@@ -53,5 +53,6 @@ bool CGameServerApp::OnInit()
 		clog::Error( clog::ERROR_CRITICAL, "network :: ConnectDelegation Fail !!\n" );
 		return false;
 	}
+
 	return true;
 }

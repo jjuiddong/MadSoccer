@@ -3,3 +3,13 @@
 #include "LobbyPlayer.h"
 
 
+CLobbyPlayer::CLobbyPlayer()  :
+	m_RequestState(REQ_NONE)
+{
+
+}
+
+CLobbyPlayer::~CLobbyPlayer() 
+{
+
+}

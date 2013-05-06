@@ -21,32 +21,31 @@ CGameServer::~CGameServer()
  */
 bool CGameServer::ReqMovePlayer(server_network::ReqMovePlayer_Packet &packet)
 {
-	CSession *pClient = CheckClientId(GetServer(), packet.id, 0, NULL, NULL);
-	if (pClient) // Already exist
+	CSession *pSession = CheckClientId(GetServer(), packet.id, 0, NULL, NULL);
+	if (pSession) // Already exist
 	{///!!Error
 		clog::Error( clog::ERROR_PROBLEM, 0, "ReqMovePlayer Player already exist netid: %d, id=%s", 
-			pClient->GetNetId(), pClient->GetName().c_str() );
+			pSession->GetNetId(), pSession->GetName().c_str() );
 		m_SvrNetworkProtocol.AckMovePlayer(packet.senderId, SEND_T, error::ERR_MOVEUSER_ALREADY_EXIST,
 			packet.id, packet.groupId, packet.ip, packet.port);
 		return false;
 	}
 
-	GroupPtr pGroup = GetServer()->GetRootGroup().GetChild( packet.groupId );
+	GroupPtr pGroup = CheckGroup(GetServer(), packet.groupId, 0, NULL, packet.pdispatcher);
 	if (!pGroup)
 	{
-		clog::Error( clog::ERROR_PROBLEM, 0, "ReqMovePlayer not found group groupId: %d ", packet.groupId );
 		m_SvrNetworkProtocol.AckMovePlayer(packet.senderId, SEND_T, error::ERR_NOT_FOUND_GROUP,
 			packet.id, packet.groupId, packet.ip, packet.port);
 		return false;
 	}
 
 	/// Add Player
-	CGamePlayer *pPlayer = new CGamePlayer();
+	CPlayer *pPlayer = GetServer()->GetPlayerFactory()->New();
 	pPlayer->SetName(packet.id);
 	pPlayer->SetCertifyKey(packet.c_key);
 	GetServer()->AddPlayer( pPlayer );
 
-	if (!pGroup->AddPlayer( pGroup->GetId(), pPlayer->GetNetId() ))
+	if (!pGroup->AddPlayer( pGroup->GetNetId(), pPlayer->GetNetId() ))
 	{
 		clog::Error( clog::ERROR_PROBLEM, 0, "ReqMovePlayer player group join Error groupId: %d, playerId=%d", 
 			packet.groupId, pPlayer->GetNetId() );
@@ -77,7 +76,31 @@ bool CGameServer::ReqMovePlayerCancel(server_network::ReqMovePlayerCancel_Packet
  */
 bool CGameServer::ReqCreateGroup(server_network::ReqCreateGroup_Packet &packet)
 {
+	GroupPtr pGroup = CheckGroup(GetServer(), packet.groupId, 0, NULL, NULL);
+	if (pGroup)
+	{
+		m_SvrNetworkProtocol.AckCreateGroup(packet.senderId, SEND_T, 
+			error::ERR_GROUPJOIN_ALREADY_SAME_GROUP, packet.name, packet.groupId, packet.reqPlayerId );
+		return false;
+	}
 
+	CGroup *pNewGroup = GetServer()->GetGroupFactory()->New();
+	pNewGroup->SetNetId(packet.groupId);
+	pNewGroup->SetName(packet.name);
+	
+	if (!GetServer()->GetRootGroup().AddChild(pNewGroup))
+	{
+		clog::Error( clog::ERROR_PROBLEM, 0, "ReqCreateGroup did'nt add child group groupId: %d", 
+			packet.groupId);
+		m_SvrNetworkProtocol.AckCreateGroup(packet.senderId, SEND_T, 
+			error::ERR_NO_CREATE_GROUP, packet.name, packet.groupId, packet.reqPlayerId );
+
+		SAFE_DELETE(pNewGroup);
+		return false;
+	}
+
+	m_SvrNetworkProtocol.AckCreateGroup(packet.senderId, SEND_T, error::ERR_SUCCESS, 
+		packet.name, packet.groupId, packet.reqPlayerId );
 	return true;
 }
 

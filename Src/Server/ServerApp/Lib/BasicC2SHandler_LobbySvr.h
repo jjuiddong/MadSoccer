@@ -16,6 +16,7 @@ Date:    5/1/2013
 
 class CBasicC2SHandler_LobbySvr : public network::CBasicC2SHandler
 														, public certify::s2s_ProtocolListener
+														, public server_network::s2s_ProtocolListener
 {
 public:
 	CBasicC2SHandler_LobbySvr(network::multinetwork::CMultiPlug &certifySvr, network::CServerBasic &svr);
@@ -26,10 +27,17 @@ protected:
 	// certify server
 	virtual bool AckUserLogin(certify::AckUserLogin_Packet &packet) override;
 
-	// client
+	// basic
 	virtual bool ReqLogIn(basic::ReqLogIn_Packet &packet) override;
+	virtual bool ReqGroupCreate(basic::ReqGroupCreate_Packet &packet) override;
+	virtual bool ReqMoveToServer(basic::ReqMoveToServer_Packet &packet) override;
+
+	// server network
+	virtual bool AckCreateGroup(server_network::AckCreateGroup_Packet &packet) override;
+	virtual bool AckMovePlayer(server_network::AckMovePlayer_Packet &packet) override;
 
 private:
 	basic::s2c_Protocol		m_BasicProtocol;
 	certify::s2s_Protocol	m_CertifyProtocol;
+	server_network::s2s_Protocol		m_SvrNetworkProtocol;
 };

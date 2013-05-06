@@ -39,11 +39,19 @@ void	CLobbyServer::OnConnectMultiPlug()
 		clog::Error( clog::ERROR_CRITICAL, "CLobbyServer Init Error!! not found certify multiplug" );
 		return;
 	}
+	MultiPlugPtr pGameMultiPlug = multinetwork::CMultiNetwork::Get()->GetMultiPlug("gamesvr");
+	if (!pGameMultiPlug)
+	{
+		clog::Error( clog::ERROR_CRITICAL, "CLobbyServer Init Error!! not found gamesvr multiplug" );
+		return;
+	}
 
 	AddChild( pLoginMultiPlug );
 	AddChild( pCertifyMultiPlug );
+	AddChild( pGameMultiPlug );
 
 	GetServer()->SetOption( true );
+	GetServer()->SetPlayerFactory( new CLobbyPlayerFactory() );
 	
 	m_pBasicPrtHandler = new CBasicC2SHandler_LobbySvr(*pCertifyMultiPlug, *GetServer());
 
@@ -215,18 +223,18 @@ void	CLobbyServer::OnTimer( CEvent &event )
  */
 bool CLobbyServer::ReqMovePlayer(server_network::ReqMovePlayer_Packet &packet)
 {
-	CSession *pClient = CheckClientId(GetServer(), packet.id, 0, NULL, NULL);
-	if (pClient) // Already exist
+	CSession *pSession = CheckClientId(GetServer(), packet.id, 0, NULL, NULL);
+	if (pSession) // Already exist
 	{ /// !!Error
 		clog::Error( clog::ERROR_PROBLEM, 0, "ReqMovePlayer Player already exist netid: %d, id=%s", 
-			pClient->GetNetId(), pClient->GetName().c_str() );
+			pSession->GetNetId(), pSession->GetName().c_str() );
 		m_SvrNetworkProtocol.AckMovePlayer(packet.senderId, SEND_T, error::ERR_MOVEUSER_ALREADY_EXIST,
 			packet.id, packet.groupId, packet.ip, packet.port);
 		return false;
 	}
 
 	// Add User
-	CLobbyPlayer *pPlayer = new CLobbyPlayer();
+	CPlayer *pPlayer = GetServer()->GetPlayerFactory()->New();
 	pPlayer->SetName(packet.id);
 	pPlayer->SetCertifyKey(packet.c_key);
 	GetServer()->AddPlayer( pPlayer );

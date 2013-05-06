@@ -135,23 +135,29 @@ bool CLoginServer::ReqLobbyIn(login::ReqLobbyIn_Packet &packet)
 	if (!CheckClientConnection(pClient, &m_BasicProtocol, packet.pdispatcher))
 		return false;
 
-	MultiPlugDelegationPtr pLobbySvrDelegation = multinetwork::CMultiNetwork::Get()->GetDelegation("lobbysvr");
-	if (!pLobbySvrDelegation)
-	{
-		clog::Error( clog::ERROR_CRITICAL, "ReqLobbyIn Error!! not found lobbysvr netgroupdelegation" );
-		m_LoginProtocol.AckLobbyIn( packet.senderId, SEND_T, error::ERR_REQLOBBYIN_NOTFOUND_SERVER );
-		return false;
-	}
+	MultiPlugDelegationPtr pLobbySvrDelegation = CheckDelegation("lobbysvr", packet.senderId, 
+		&m_BasicProtocol, packet.pdispatcher);
+	RETV(!pLobbySvrDelegation, false);
+	//MultiPlugDelegationPtr pLobbySvrDelegation = multinetwork::CMultiNetwork::Get()->GetDelegation("lobbysvr");
+	//if (!pLobbySvrDelegation)
+	//{
+		//clog::Error( clog::ERROR_CRITICAL, "ReqLobbyIn Error!! not found lobbysvr netgroupdelegation" );
+		//m_LoginProtocol.AckLobbyIn( packet.senderId, SEND_T, error::ERR_REQLOBBYIN_NOTFOUND_SERVER );
+	//	return false;
+	//}
 
-	CSubServerPlug *pSubSvrCon = dynamic_cast<CSubServerPlug*>(pLobbySvrDelegation.Get());
-	if (!pSubSvrCon)
-	{
-		clog::Error( clog::ERROR_CRITICAL, "ReqLobbyIn Error!! CSubServerConnector convert error" );
-		m_LoginProtocol.AckLobbyIn( packet.senderId, SEND_T, error::ERR_REQLOBBYIN_NOTFOUND_SERVER );
-		return false;
-	}
+	CSubServerPlug *pSubSvrPlug = CheckCasting<CSubServerPlug*>(pLobbySvrDelegation.Get(), packet.senderId, 
+		&m_BasicProtocol, packet.pdispatcher);
+	RETV(!pSubSvrPlug, false);
+	//CSubServerPlug *pSubSvrCon = dynamic_cast<CSubServerPlug*>(pLobbySvrDelegation.Get());
+	//if (!pSubSvrCon)
+	//{
+	//	clog::Error( clog::ERROR_CRITICAL, "ReqLobbyIn Error!! CSubServerConnector convert error" );
+	//	m_LoginProtocol.AckLobbyIn( packet.senderId, SEND_T, error::ERR_REQLOBBYIN_NOTFOUND_SERVER );
+	//	return false;
+	//}
 
-	std::list<SSubServerInfo> subServers = pSubSvrCon->GetSubServerInfo();
+	std::list<SSubServerInfo> subServers = pSubSvrPlug->GetSubServerInfo();
 	subServers.sort();
 	if (subServers.empty())
 	{
@@ -161,7 +167,7 @@ bool CLoginServer::ReqLobbyIn(login::ReqLobbyIn_Packet &packet)
 	}
 
 	SSubServerInfo targetSvr = subServers.front();
-	pSubSvrCon->RegisterProtocol( &m_SvrNetworkProtocol );
+	pSubSvrPlug->RegisterProtocol( &m_SvrNetworkProtocol );
 	m_SvrNetworkProtocol.ReqMovePlayer( targetSvr.serverId, SEND_T, 
 		pClient->GetName(), pClient->GetCertifyKey(), 0, targetSvr.ip, targetSvr.portnum  );
 

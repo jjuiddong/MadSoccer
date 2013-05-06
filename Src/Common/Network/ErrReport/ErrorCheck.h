@@ -11,6 +11,12 @@ namespace basic { class s2c_Protocol; }
 
 namespace network
 {
+	/// Session
+	CSession* CheckSessionLogin(ServerBasicPtr pServer, netid clientId, 
+		basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher );
+
+	CSession* CheckSessionIdLogin(ServerBasicPtr pServer, const std::string &id, netid clientId, 
+		basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher );
 
 	CSession* CheckClientNetId( ServerBasicPtr pServer, netid clientId, 
 		basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher );
@@ -18,14 +24,27 @@ namespace network
 	CSession* CheckClientId( ServerBasicPtr pServer, const std::string &id, netid clientId, 
 		basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher );
 
+	GroupPtr CheckGroup( ServerBasicPtr pServer, netid groupId, netid clientId,
+		basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher );
 
 	bool CheckClientConnection( CSession *pClient, 
 		basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher );
 
-	CPlayer* CheckPlayerWaitAck(ServerBasicPtr pServer, netid clientId, 
+
+	/// Player
+	CPlayer* CheckPlayerNetId(ServerBasicPtr pServer, netid playerId, 
 		basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher );
 
-	CSession* CheckSessionLogin(ServerBasicPtr pServer, netid clientId, 
+	CPlayer* CheckPlayerNetId_(ServerBasicPtr pServer, netid playerId, 
+		basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher );
+
+	CPlayer* CheckPlayerId(ServerBasicPtr pServer, const std::string &id, netid playerId, 
+		basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher );
+
+	CPlayer* CheckPlayerId_(ServerBasicPtr pServer, const std::string &id, netid playerId, 
+		basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher );
+
+	CPlayer* CheckPlayerWaitAck(ServerBasicPtr pServer, netid clientId, 
 		basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher );
 
 	CPlayer* CheckRecvablePlayer(ServerBasicPtr pServer, netid clientId, 
@@ -34,6 +53,9 @@ namespace network
 
 
 	MultiPlugDelegationPtr CheckDelegation( const std::string &linkSvrType, 
+		netid clientId=0, basic::s2c_Protocol *pProtocol=NULL, IProtocolDispatcher *pDispatcher=NULL );
+
+	MultiPlugPtr CheckMultiPlug( const std::string &linkSvrType, 
 		netid clientId=0, basic::s2c_Protocol *pProtocol=NULL, IProtocolDispatcher *pDispatcher=NULL );
 
 

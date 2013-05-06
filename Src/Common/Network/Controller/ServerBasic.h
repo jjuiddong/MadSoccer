@@ -108,8 +108,8 @@ namespace network
 	inline Sessions_V& CServerBasic::GetSessions() { return m_Sessions.m_Seq; }
 	inline ISessionFactory* CServerBasic::GetSessionFactory() const { return m_pSessionFactory; }
 	inline IGroupFactory* CServerBasic::GetGroupFactory() const { return m_pGroupFactory; }
-	void	CServerBasic::SetPlayerFactory( IPlayerFactory *ptr ) { m_pPlayerFactory = ptr; }
-	IPlayerFactory* CServerBasic::GetPlayerFactory() const { return m_pPlayerFactory; }
+	inline void	CServerBasic::SetPlayerFactory( IPlayerFactory *ptr ) { m_pPlayerFactory = ptr; }
+	inline IPlayerFactory* CServerBasic::GetPlayerFactory() const { return m_pPlayerFactory; }
 	inline void CServerBasic::SetOption(bool IsLoginCheck) { m_IsLoginCheck = IsLoginCheck; }
 
 };

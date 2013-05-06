@@ -31,7 +31,7 @@ namespace network
 	};
 
 
-	/// CPlayer Factory class
+	/// Player Factory class
 	class IPlayerFactory
 	{
 	public:
@@ -41,7 +41,7 @@ namespace network
 	};
 
 
-	/// CUser Factory class
+	/// CPlayer Factory class
 	class CPlayerFactory : public IPlayerFactory
 	{
 	public:

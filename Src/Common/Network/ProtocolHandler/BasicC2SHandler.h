@@ -26,7 +26,6 @@ namespace network
 		// Network Protocol Handler
 		virtual bool ReqLogIn(basic::ReqLogIn_Packet &packet) override;
 		virtual bool ReqLogOut(basic::ReqLogOut_Packet &packet) override;
-		virtual bool ReqMoveToServer(basic::ReqMoveToServer_Packet &packet) override;
 		virtual bool ReqGroupList(basic::ReqGroupList_Packet &packet) override;
 		virtual bool ReqGroupJoin(basic::ReqGroupJoin_Packet &packet) override;
 		virtual bool ReqGroupCreate(basic::ReqGroupCreate_Packet &packet) override;
