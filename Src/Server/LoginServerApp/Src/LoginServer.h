@@ -36,11 +36,11 @@ protected:
 	void				OnSubServerConnect(network::CNetEvent &event);
 
 	// Network Protocol Handler
-	virtual bool ReqLobbyIn(network::IProtocolDispatcher &dispatcher, netid senderId) override;
+	virtual bool ReqLobbyIn(login::ReqLobbyIn_Packet &packet) override;
 
 	// common
-	virtual bool ReqMoveUser(network::IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, const certify_key &c_key, const std::string &ip, const int &port) override;
-	virtual bool AckMoveUser(network::IProtocolDispatcher &dispatcher, netid senderId, const network::error::ERROR_CODE &errorCode, const std::string &id, const std::string &ip, const int &port) override;
+	virtual bool ReqMovePlayer(server_network::ReqMovePlayer_Packet &packet) override;
+	virtual bool AckMovePlayer(server_network::AckMovePlayer_Packet &packet) override;
 
 private:
 	CBasicC2SHandler_LoginSvr *m_pBasicPrtHandler;

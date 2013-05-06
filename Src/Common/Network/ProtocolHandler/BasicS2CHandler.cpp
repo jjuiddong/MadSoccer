@@ -26,10 +26,9 @@ CBasicS2CHandler::~CBasicS2CHandler()
 /**
  @brief AckLogIn
  */
-bool CBasicS2CHandler::AckLogIn(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode, 
-	const std::string &id, const certify_key &c_key)
+bool CBasicS2CHandler::AckLogIn(basic::AckLogIn_Packet &packet)
 { 
-	if (error::ERR_SUCCESS == errorCode)
+	if (error::ERR_SUCCESS == packet.errorCode)
 	{
 		if (CLIENT_CONNECT == m_ClientState)
 		{
@@ -37,8 +36,8 @@ bool CBasicS2CHandler::AckLogIn(IProtocolDispatcher &dispatcher, netid senderId,
 		}
 		else
 		{
-			m_Client.SetName(id);
-			m_Client.SetCertifyKey(c_key);
+			m_Client.SetName(packet.id);
+			m_Client.SetCertifyKey(packet.c_key);
 		}
 	}
 	return true; 
@@ -48,24 +47,22 @@ bool CBasicS2CHandler::AckLogIn(IProtocolDispatcher &dispatcher, netid senderId,
 /**
  @brief Acknowlege packet of RequestP2PConnect 
  */
-bool CBasicS2CHandler::AckP2PConnect(
-	IProtocolDispatcher &dispatcher, netid senderId, const network::error::ERROR_CODE &errorCode, 
-	const network::P2P_STATE &state, const std::string &ip, const int &port)
+bool CBasicS2CHandler::AckP2PConnect(basic::AckP2PConnect_Packet &packet) 
 {
-	if (errorCode != error::ERR_SUCCESS)
+	if (packet.errorCode != error::ERR_SUCCESS)
 		return false; // todo: error process
 
 	if (!m_Client.m_pP2p)
 		return false; // error!!
 	
 	bool result = false;
-	if (state == P2P_HOST)
+	if (packet.state == P2P_HOST)
 	{
-		result = m_Client.m_pP2p->Bind( port );
+		result = m_Client.m_pP2p->Bind( packet.port );
 	}
-	else if(state == P2P_CLIENT)
+	else if(packet.state == P2P_CLIENT)
 	{
-		result = m_Client.m_pP2p->Connect(ip, port);
+		result = m_Client.m_pP2p->Connect(packet.ip, packet.port);
 	}
 
 	m_BasicProtocol.ReqP2PConnectTryResult(SERVER_NETID, SEND_TARGET, result);
@@ -76,17 +73,16 @@ bool CBasicS2CHandler::AckP2PConnect(
 /**
  @brief AckMoveToServer
  */
-bool CBasicS2CHandler::AckMoveToServer(IProtocolDispatcher &dispatcher, netid senderId, 
-	const error::ERROR_CODE &errorCode, const std::string &serverName, const std::string &ip, const int &port)
+bool CBasicS2CHandler::AckMoveToServer(basic::AckMoveToServer_Packet &packet)
 {
-	if (error::ERR_SUCCESS != errorCode)
+	if (error::ERR_SUCCESS != packet.errorCode)
 		return false;
 
 	m_Client.Stop();
 
 	m_ClientState = CLIENT_BEGIN_MOVE;
-	m_Client.SetIp(ip);
-	m_Client.SetPort(port);
+	m_Client.SetIp(packet.ip);
+	m_Client.SetPort(packet.port);
 	return true;
 }
 

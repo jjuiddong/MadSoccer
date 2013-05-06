@@ -20,11 +20,22 @@ namespace compiler
 	void WriteArg(ofstream &fs, sArg *arg, bool comma);
 	void WriteArgVar(ofstream &fs, sArg *arg, bool comma);
 
+
+	// Write Protocol Data Code
+	bool WriteFirstDataHeader(sRmi *rmi);
+	bool WriteProtocolDataHeader(ofstream &fs, sRmi *rmi);
+	bool WriteProtocolData(ofstream &fs, sProtocol *pProtocol);
+	void WriteProtocolDataArg(ofstream &fs, sArg *arg);
+
+
+
 	// Write Dispatcher
 	void WriteProtocolDispatchFunc(ofstream &fs, sRmi *rmi);
 	void WriteDispatchSwitchCase(ofstream &fs, sProtocol *pProtocol, int packetId);
 	void WriteDispatchImpleArg(ofstream &fs, sArg*p);
 	void WriteLastDispatchSwitchCase(ofstream &fs, sProtocol *pProtocol);
+	void WriteDispatchImpleArg2(ofstream &fs, sArg*p);
+	void WriteLastDispatchSwitchCase2(ofstream &fs, sProtocol *pProtocol);
 
 
 	// Write Protocol Code
@@ -79,6 +90,7 @@ bool compiler::WriteProtocolCode(string protocolFileName, sRmi *rmi)
 	WriteFirstListenerHeader(rmi);
 	WriteFirstListenerCpp(rmi, false);
 
+	WriteFirstDataHeader(rmi);
 	return true;
 }
 
@@ -176,6 +188,89 @@ bool compiler::WriteProtocolClassHeader(ofstream &fs, sRmi *rmi)
 }
 
 
+/**
+ @brief WriteFirstDataHeader
+ */
+bool compiler::WriteFirstDataHeader(sRmi *rmi)
+{
+	n_fileName = n_OrigianlFileName + "_ProtocolData.h";
+
+	ofstream fs;
+	fs.open( n_fileName.c_str());
+	if (!fs.is_open()) return false;
+
+	fs << "//------------------------------------------------------------------------\n";
+	fs << "// Name:    " << n_fileName << endl;
+	fs << "// Author:  ProtocolCompiler (by jjuiddong)\n";
+	fs << "// Date:    \n";
+	fs << "//------------------------------------------------------------------------\n";
+
+	fs << "#pragma once\n";
+	fs << endl;
+	fs << "namespace " << g_protocolName << " {\n";
+	fs << endl;
+	fs << "using namespace network;\n";
+	fs << "using namespace marshalling;\n";
+
+	WriteProtocolDataHeader(fs, rmi);
+
+	fs << "}\n";
+	return true;
+}
+
+
+/**
+ @brief WriteDataHeader
+ */
+bool compiler::WriteProtocolDataHeader(ofstream &fs, sRmi *rmi)
+{
+	if (!rmi) return true;
+
+	g_className = GetProtocolDispatcherClassName(g_protocolName, rmi->name);
+	g_protocolId = g_className + "_ID";
+
+	fs << endl;
+	fs << endl;
+
+	WriteProtocolData(fs, rmi->protocol );
+
+	fs << endl;
+	fs << endl;
+
+	return WriteProtocolDataHeader(fs, rmi->next);
+}
+
+
+/**
+ @brief 
+ */
+bool compiler::WriteProtocolData(ofstream &fs, sProtocol *pProtocol)
+{
+	if (!pProtocol) return true;
+
+	fs << "\tstruct " << pProtocol->name << "_Packet {" << endl;
+	fs << "\t\tIProtocolDispatcher *pdispatcher;\n";
+	fs << "\t\tnetid senderId;\n";
+	WriteProtocolDataArg(fs, pProtocol->argList );
+	fs << "\t};";
+	fs << endl;
+	fs << endl;
+
+	return WriteProtocolData(fs, pProtocol->next);
+}
+
+
+/**
+ @brief 
+ */
+void compiler::WriteProtocolDataArg(ofstream &fs, sArg *arg)
+{
+	if (!arg) return;
+	fs << "\t\t" << arg->var->type << " " << arg->var->var << ";" << endl;
+	WriteProtocolDataArg(fs, arg->next);
+}
+
+
 //------------------------------------------------------------------------
 // ProtocolListener 헤더파일에서 처음 들어갈 주석 코드 추가
 //------------------------------------------------------------------------
@@ -194,6 +289,8 @@ bool compiler::WriteFirstListenerHeader(sRmi *rmi)
 	fs << "//------------------------------------------------------------------------\n";
 
 	fs << "#pragma once\n";
+	fs << endl;
+	fs << "#include \"" << g_protocolName << "_ProtocolData.h\"" << endl;
 	fs << endl;
 	fs << "namespace " << g_protocolName << " {\n";
 	fs << endl;
@@ -313,24 +410,43 @@ bool compiler::WriteListenerCpp(ofstream &fs, sRmi *rmi)
 void compiler::WriteDeclProtocolList(ofstream &fs, sProtocol *pProtocol, bool isVirtual, bool isImpl, bool isTarget)
 {
 	if (!pProtocol) return;
-	fs << "\t";
-	if (isVirtual)
+	
+	// First Interface
+	if (!isImpl)
+	{
+		fs << "\t";
+		if (isVirtual)
+			fs << "virtual ";
+
+		if (isImpl)
+			fs << "bool "; // listener header file
+		else
+			fs << "void "; // protocol header file
+
+		//fs << "bool " << pProtocol->name << "(";
+		fs << pProtocol->name << "(";
+		WriteFirstArg(fs, pProtocol->argList, isTarget);
+		fs << ")";
+		if (isImpl)
+			fs << "{ return true; }"; // listener header file
+		else
+			fs << ";"; // protocol header file
+		fs << endl;
+	}
+
+	// Second Interface
+	if (isVirtual && isImpl)
+	{
+		fs << "\t";
 		fs << "virtual ";
-
-	if (isImpl)
 		fs << "bool "; // listener header file
-	else
-		fs << "void "; // protocol header file
+		fs << pProtocol->name << "(";
+		fs << g_protocolName << "::";
+		fs << pProtocol->name << "_Packet &packet";
+		fs << ") { return true; }"; // listener header file
+		fs << endl;
+	}
 
-	//fs << "bool " << pProtocol->name << "(";
-	fs << pProtocol->name << "(";
-	WriteFirstArg(fs, pProtocol->argList, isTarget);
-	fs << ")";
-	if (isImpl)
-		fs << "{ return true; }"; // listener header file
-	else
-		fs << ";"; // protocol header file
-	fs << endl;
 	WriteDeclProtocolList(fs, pProtocol->next, isVirtual, isImpl, isTarget);
 }
 
@@ -519,11 +635,14 @@ void compiler::WriteDispatchSwitchCase(ofstream &fs, sProtocol *pProtocol, int p
 	fs << endl;
 
 	// set current packet
-	fs << "\t\t\tSetCurrentDispatchPacket( &packet );";
+	fs << "\t\t\tSetCurrentDispatchPacket( &packet );\n";
 	fs << endl;
 
-	WriteDispatchImpleArg(fs, pProtocol->argList);
-	WriteLastDispatchSwitchCase(fs, pProtocol);
+	fs << "\t\t\t" << pProtocol->name << "_Packet data;\n";
+	fs << "\t\t\tdata.pdispatcher = this;\n";
+	fs << "\t\t\tdata.senderId = packet.GetSenderId();\n";
+	WriteDispatchImpleArg2(fs, pProtocol->argList);
+	WriteLastDispatchSwitchCase2(fs, pProtocol);
 
 	fs << "\t\t}\n";
 	fs << "\t\tbreak;\n";
@@ -546,7 +665,15 @@ void compiler::WriteDispatchImpleArg(ofstream &fs, sArg*p)
 	fs << "\t\t\tpacket >> " << p->var->var << ";\n";
 	WriteDispatchImpleArg(fs, p->next);
 }
-
+void compiler::WriteDispatchImpleArg2(ofstream &fs, sArg*p)
+{
+	if (!p) return;
+	// 변수 선언
+	//fs << "\t\t\t" << p->var->type << " " << p->var->var << ";\n";
+	// 패킷에서 데이타 얻음
+	fs << "\t\t\tpacket >> " << "data." << p->var->var << ";\n";
+	WriteDispatchImpleArg2(fs, p->next);
+}
 
 //------------------------------------------------------------------------
 // Dispatch 함수의 switch case 문의 마지막에 들어가는 코드로, 리스너의 
@@ -557,4 +684,11 @@ void compiler::WriteLastDispatchSwitchCase(ofstream &fs, sProtocol *pProtocol)
 	fs << "\t\t\tSEND_LISTENER(" << g_listenerClassName << ", recvListener, " << pProtocol->name << "(*this, packet.GetSenderId()";
 	WriteArgVar(fs, pProtocol->argList, true );
 	fs << ") );\n";
+}
+void compiler::WriteLastDispatchSwitchCase2(ofstream &fs, sProtocol *pProtocol)
+{
+	fs << "\t\t\tSEND_LISTENER(" << g_listenerClassName << ", recvListener, " << pProtocol->name << "(data));\n";
+	//SEND_LISTENER(s2s_ProtocolListener, recvListener, ReqMovePlayer(data) );
+	//WriteArgVar(fs, pProtocol->argList, true );
+	//fs << ") );\n";
 }

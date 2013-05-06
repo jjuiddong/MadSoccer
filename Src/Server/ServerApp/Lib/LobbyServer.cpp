@@ -209,29 +209,29 @@ void	CLobbyServer::OnTimer( CEvent &event )
 
 
 /**
- @brief ReqMoveUser
+ @brief ReqMovePlayer
 			From Login Server
 			From Game Server
  */
-bool CLobbyServer::ReqMoveUser(IProtocolDispatcher &dispatcher, netid senderId, 
-	const std::string &id, const certify_key &c_key, const std::string &ip, const int &port)
+bool CLobbyServer::ReqMovePlayer(server_network::ReqMovePlayer_Packet &packet)
 {
-	CSession *pClient = CheckClientId(GetServer(), id, 0, NULL, NULL);
+	CSession *pClient = CheckClientId(GetServer(), packet.id, 0, NULL, NULL);
 	if (pClient) // Already exist
 	{ /// !!Error
-		clog::Error( clog::ERROR_PROBLEM, 0, "ReqMoveUser user already exist netid: %d, id=%s", 
+		clog::Error( clog::ERROR_PROBLEM, 0, "ReqMovePlayer Player already exist netid: %d, id=%s", 
 			pClient->GetNetId(), pClient->GetName().c_str() );
-		m_SvrNetworkProtocol.AckMoveUser(senderId, SEND_T, error::ERR_MOVEUSER_ALREADY_EXIST,
-			id, ip, port);
+		m_SvrNetworkProtocol.AckMovePlayer(packet.senderId, SEND_T, error::ERR_MOVEUSER_ALREADY_EXIST,
+			packet.id, packet.groupId, packet.ip, packet.port);
 		return false;
 	}
 
 	// Add User
-	CLobbyPlayer *pUser = new CLobbyPlayer();
-	pUser->SetName(id);
-	pUser->SetCertifyKey(c_key);
-	GetServer()->AddPlayer( pUser );
+	CLobbyPlayer *pPlayer = new CLobbyPlayer();
+	pPlayer->SetName(packet.id);
+	pPlayer->SetCertifyKey(packet.c_key);
+	GetServer()->AddPlayer( pPlayer );
 	
-	m_SvrNetworkProtocol.AckMoveUser(senderId, SEND_T, error::ERR_SUCCESS, id, ip, port);	
+	m_SvrNetworkProtocol.AckMovePlayer(packet.senderId, SEND_T, error::ERR_SUCCESS, 
+		packet.id, packet.groupId, packet.ip, packet.port);	
 	return true;
 }

@@ -59,43 +59,43 @@ SubServerGroupPtr CFarmServer::FindGroup(const std::string &svrType)
 /**
 @brief ReqSubServerLogin
 */
-bool CFarmServer::ReqSubServerLogin(IProtocolDispatcher &dispatcher, netid senderId, const std::string &svrType)
+bool CFarmServer::ReqSubServerLogin(farm::ReqSubServerLogin_Packet &packet)
 {
-	GroupPtr pFromGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
+	GroupPtr pFromGroup = GetServer()->GetRootGroup().GetChildFromPlayer( packet.senderId );
 	if (!pFromGroup)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "ReqSubServerLogin Error!!, not exist group user id = %d\n\n", senderId );
-		m_Protocol.AckSubServerLogin( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP);
+		clog::Error( log::ERROR_PROBLEM, "ReqSubServerLogin Error!!, not exist group user id = %d\n\n", packet.senderId );
+		m_Protocol.AckSubServerLogin( packet.senderId, SEND_T, error::ERR_NOT_FOUND_GROUP);
 		return false;
 	}
 
-	SubServerGroupPtr pSvrGroup = FindGroup(svrType);
+	SubServerGroupPtr pSvrGroup = FindGroup(packet.svrType);
 	if (!pSvrGroup)
 	{
 		//SubServerGroupPtr pNewGroup = dynamic_cast<CSubServerGroup*>(
 		//	GetServer()->GetRootGroup().AddChild( GetServer()->GetGroupFactory()) );
 		//if (!pNewGroup)
 		{// Error!!
-			clog::Error( log::ERROR_PROBLEM, "ReqSubServerLogin Error!!, not exist group %s \n\n", svrType.c_str() );
-			m_Protocol.AckSubServerLogin( senderId, SEND_T, error::ERR_NO_CREATE_GROUP);
+			clog::Error( log::ERROR_PROBLEM, "ReqSubServerLogin Error!!, not exist group %s \n\n", packet.svrType.c_str() );
+			m_Protocol.AckSubServerLogin( packet.senderId, SEND_T, error::ERR_NO_CREATE_GROUP);
 			return false;
 		}
 		//pSvrGroup = pNewGroup;
 	}
 
 	// Waiting Group -> New Group
-	pFromGroup->RemoveUser( pFromGroup->GetId(), senderId );
-	if (!pSvrGroup->AddUser(pSvrGroup->GetId(), senderId))
+	pFromGroup->RemovePlayer( pFromGroup->GetId(), packet.senderId );
+	if (!pSvrGroup->AddPlayer(pSvrGroup->GetId(), packet.senderId))
 	{ // Error!!
-		pFromGroup->AddUser(pFromGroup->GetId(), senderId); // 복구
+		pFromGroup->AddPlayer(pFromGroup->GetId(), packet.senderId); // 복구
 
 		clog::Error( log::ERROR_PROBLEM, "ReqSubServerLogin Error!!, not join group\n" );
-		m_Protocol.AckSubServerLogin( senderId, SEND_T, error::ERR_NOT_JOIN_GROUP);
+		m_Protocol.AckSubServerLogin( packet.senderId, SEND_T, error::ERR_NOT_JOIN_GROUP);
 		return false;
 	}
 	pSvrGroup->AddViewer( GetServer()->GetRootGroup().GetId() );
 
-	m_Protocol.AckSubServerLogin( senderId, SEND_T, error::ERR_SUCCESS);
+	m_Protocol.AckSubServerLogin( packet.senderId, SEND_T, error::ERR_SUCCESS);
 	return true;
 }
 
@@ -103,27 +103,27 @@ bool CFarmServer::ReqSubServerLogin(IProtocolDispatcher &dispatcher, netid sende
 /**
  @brief SendSubServerP2PCLink
  */
-bool CFarmServer::SendSubServerP2PCLink(IProtocolDispatcher &dispatcher, netid senderId, const std::vector<std::string> &v)
+bool CFarmServer::SendSubServerP2PCLink(farm::SendSubServerP2PCLink_Packet &packet)
 {
-	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
+	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromPlayer( packet.senderId );
 	if (!pGroup)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "SendSubServerP2PCLink Error!!, not exist group user id = %d\n", senderId );
-		m_Protocol.AckSendSubServerP2PCLink( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP);
+		clog::Error( log::ERROR_PROBLEM, "SendSubServerP2PCLink Error!!, not exist group user id = %d\n", packet.senderId );
+		m_Protocol.AckSendSubServerP2PCLink( packet.senderId, SEND_T, error::ERR_NOT_FOUND_GROUP);
 		return false;
 	}
 
 	RemoteSubServerPtr pClient = dynamic_cast<CRemoteSubServer*>(
-		GetServer()->GetSession(senderId));
+		GetServer()->GetSession(packet.senderId));
 	if (!pClient)
 	{
-		clog::Error( log::ERROR_PROBLEM, "SendSubServerP2PCLink Error!!, not exist user id = %d\n", senderId );
-		m_Protocol.AckSendSubServerP2PCLink( senderId, SEND_T, error::ERR_NOT_FOUND_USER );
+		clog::Error( log::ERROR_PROBLEM, "SendSubServerP2PCLink Error!!, not exist user id = %d\n", packet.senderId );
+		m_Protocol.AckSendSubServerP2PCLink( packet.senderId, SEND_T, error::ERR_NOT_FOUND_USER );
 		return false;
 	}
 
-	pClient->SetP2PCLink( v );
-	m_Protocol.AckSendSubServerP2PCLink( senderId, SEND_T, error::ERR_SUCCESS );
+	pClient->SetP2PCLink( packet.v );
+	m_Protocol.AckSendSubServerP2PCLink( packet.senderId, SEND_T, error::ERR_SUCCESS );
 	return true;
 }
 
@@ -131,27 +131,27 @@ bool CFarmServer::SendSubServerP2PCLink(IProtocolDispatcher &dispatcher, netid s
 /**
  @brief SendSubServerP2PSLink
  */
-bool CFarmServer::SendSubServerP2PSLink(IProtocolDispatcher &dispatcher, netid senderId, const std::vector<std::string> &v)
+bool CFarmServer::SendSubServerP2PSLink(farm::SendSubServerP2PSLink_Packet &packet)
 {
-	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
+	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromPlayer( packet.senderId );
 	if (!pGroup)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "SendSubServerP2PSLink Error!!, not exist group user id = %d\n", senderId );
-		m_Protocol.AckSendSubServerP2PSLink( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP);
+		clog::Error( log::ERROR_PROBLEM, "SendSubServerP2PSLink Error!!, not exist group user id = %d\n", packet.senderId );
+		m_Protocol.AckSendSubServerP2PSLink( packet.senderId, SEND_T, error::ERR_NOT_FOUND_GROUP);
 		return false;
 	}	
 
 	RemoteSubServerPtr pClient = dynamic_cast<CRemoteSubServer*>(
-		GetServer()->GetSession(senderId));
+		GetServer()->GetSession(packet.senderId));
 	if (!pClient)
 	{
-		clog::Error( log::ERROR_PROBLEM, "SendSubServerP2PSLink Error!!, not exist user id = %d\n", senderId );
-		m_Protocol.AckSendSubServerP2PSLink( senderId, SEND_T, error::ERR_NOT_FOUND_USER );
+		clog::Error( log::ERROR_PROBLEM, "SendSubServerP2PSLink Error!!, not exist user id = %d\n", packet.senderId );
+		m_Protocol.AckSendSubServerP2PSLink( packet.senderId, SEND_T, error::ERR_NOT_FOUND_USER );
 		return false;
 	}
 
-	pClient->SetP2PSLink( v );
-	m_Protocol.AckSendSubServerP2PSLink( senderId, SEND_T, error::ERR_SUCCESS );
+	pClient->SetP2PSLink( packet.v );
+	m_Protocol.AckSendSubServerP2PSLink( packet.senderId, SEND_T, error::ERR_SUCCESS );
 	return true;
 }
 
@@ -159,27 +159,27 @@ bool CFarmServer::SendSubServerP2PSLink(IProtocolDispatcher &dispatcher, netid s
 /**
  @brief SendSubServerInputLink
  */
-bool CFarmServer::SendSubServerInputLink(IProtocolDispatcher &dispatcher, netid senderId, const std::vector<std::string> &v)
+bool CFarmServer::SendSubServerInputLink(farm::SendSubServerInputLink_Packet &packet)
 {
-	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
+	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromPlayer( packet.senderId );
 	if (!pGroup)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "SendSubServerInputLink Error!!, not exist group user id = %d\n", senderId );
-		m_Protocol.AckSendSubServerInputLink( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP);
+		clog::Error( log::ERROR_PROBLEM, "SendSubServerInputLink Error!!, not exist group user id = %d\n", packet.senderId );
+		m_Protocol.AckSendSubServerInputLink( packet.senderId, SEND_T, error::ERR_NOT_FOUND_GROUP);
 		return false;
 	}	
 
 	RemoteSubServerPtr pClient = dynamic_cast<CRemoteSubServer*>(
-		GetServer()->GetSession(senderId));
+		GetServer()->GetSession(packet.senderId));
 	if (!pClient)
 	{
-		clog::Error( log::ERROR_PROBLEM, "SendSubServerInputLink Error!!, not exist user id = %d\n", senderId );
-		m_Protocol.AckSendSubServerInputLink( senderId, SEND_T, error::ERR_NOT_FOUND_USER );
+		clog::Error( log::ERROR_PROBLEM, "SendSubServerInputLink Error!!, not exist user id = %d\n", packet.senderId );
+		m_Protocol.AckSendSubServerInputLink( packet.senderId, SEND_T, error::ERR_NOT_FOUND_USER );
 		return false;
 	}
 
-	pClient->SetInputLink( v );
-	m_Protocol.AckSendSubServerInputLink( senderId, SEND_T, error::ERR_SUCCESS );
+	pClient->SetInputLink( packet.v );
+	m_Protocol.AckSendSubServerInputLink( packet.senderId, SEND_T, error::ERR_SUCCESS );
 	return true;
 }
 
@@ -187,27 +187,27 @@ bool CFarmServer::SendSubServerInputLink(IProtocolDispatcher &dispatcher, netid 
 /**
  @brief SendSubServerOutputLink
  */
-bool CFarmServer::SendSubServerOutputLink(IProtocolDispatcher &dispatcher, netid senderId, const std::vector<std::string> &v)
+bool CFarmServer::SendSubServerOutputLink(farm::SendSubServerOutputLink_Packet &packet)
 {
-	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
+	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromPlayer( packet.senderId );
 	if (!pGroup)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "SendSubServerOutputLink Error!!, not exist group user id = %d\n", senderId );
-		m_Protocol.AckSendSubServerOutputLink(senderId, SEND_T, error::ERR_NOT_FOUND_GROUP);
+		clog::Error( log::ERROR_PROBLEM, "SendSubServerOutputLink Error!!, not exist group user id = %d\n", packet.senderId );
+		m_Protocol.AckSendSubServerOutputLink(packet.senderId, SEND_T, error::ERR_NOT_FOUND_GROUP);
 		return false;
 	}	
 
 	RemoteSubServerPtr pClient = dynamic_cast<CRemoteSubServer*>(
-		GetServer()->GetSession(senderId));
+		GetServer()->GetSession(packet.senderId));
 	if (!pClient)
 	{
-		clog::Error( log::ERROR_PROBLEM, "SendSubServerOutputLink Error!!, not exist user id = %d\n", senderId );
-		m_Protocol.AckSendSubServerOutputLink( senderId, SEND_T, error::ERR_NOT_FOUND_USER );
+		clog::Error( log::ERROR_PROBLEM, "SendSubServerOutputLink Error!!, not exist user id = %d\n", packet.senderId );
+		m_Protocol.AckSendSubServerOutputLink( packet.senderId, SEND_T, error::ERR_NOT_FOUND_USER );
 		return false;
 	}
 
-	pClient->SetOutputLink( v );
-	m_Protocol.AckSendSubServerOutputLink( senderId, SEND_T, error::ERR_SUCCESS );
+	pClient->SetOutputLink( packet.v );
+	m_Protocol.AckSendSubServerOutputLink( packet.senderId, SEND_T, error::ERR_SUCCESS );
 	return true;
 }
 
@@ -215,39 +215,39 @@ bool CFarmServer::SendSubServerOutputLink(IProtocolDispatcher &dispatcher, netid
 /**
  @brief ReqServerInfoList
  */
-bool CFarmServer::ReqServerInfoList(IProtocolDispatcher &dispatcher, netid senderId, const std::string &clientSvrType, const std::string &serverSvrType)
+bool CFarmServer::ReqServerInfoList(farm::ReqServerInfoList_Packet &packet)
 {
 	std::vector<network::SHostInfo> hostInfo;
-	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
+	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromPlayer( packet.senderId );
 	if (!pGroup)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "ReqServerInfoList Error!!, not exist group user id = %d\n", senderId );
-		dispatcher.PrintThisPacket(clog::LOG_F_N_O, "Error!! ");
-		m_Protocol.AckServerInfoList( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, clientSvrType, serverSvrType, hostInfo);
+		clog::Error( log::ERROR_PROBLEM, "ReqServerInfoList Error!!, not exist group user id = %d\n", packet.senderId );
+		packet.pdispatcher->PrintThisPacket(clog::LOG_F_N_O, "Error!! ");
+		m_Protocol.AckServerInfoList( packet.senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, packet.clientSvrType, packet.serverSvrType, hostInfo);
 		return false;
 	}
 
-	SubServerGroupPtr pServerGroup = FindGroup( serverSvrType );
+	SubServerGroupPtr pServerGroup = FindGroup( packet.serverSvrType );
 	if (!pServerGroup)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "ReqServerInfoList Error!!, not exist serverSvrType group = %s\n", serverSvrType.c_str() );
-		dispatcher.PrintThisPacket(clog::LOG_F_N_O, "Error!! ");
-		m_Protocol.AckServerInfoList( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, clientSvrType, serverSvrType, hostInfo);
+		clog::Error( log::ERROR_PROBLEM, "ReqServerInfoList Error!!, not exist serverSvrType group = %s\n", packet.serverSvrType.c_str() );
+		packet.pdispatcher->PrintThisPacket(clog::LOG_F_N_O, "Error!! ");
+		m_Protocol.AckServerInfoList( packet.senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, packet.clientSvrType, packet.serverSvrType, hostInfo);
 		return false;
 	}
 
 	hostInfo.reserve(10);
-	pServerGroup->GetServerInfoCorrespondClient(clientSvrType, serverSvrType, CServerSessionAccess(GetServer()), hostInfo);
+	pServerGroup->GetServerInfoCorrespondClient(packet.clientSvrType, packet.serverSvrType, CServerSessionAccess(GetServer()), hostInfo);
 
 	if (hostInfo.empty())
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "ReqServerInfoList Error!!, not found ServerInfo svrType = %s\n", clientSvrType.c_str() );
-		dispatcher.PrintThisPacket(clog::LOG_F_N_O, "Error!! ");
+		clog::Error( log::ERROR_PROBLEM, "ReqServerInfoList Error!!, not found ServerInfo svrType = %s\n", packet.clientSvrType.c_str() );
+		packet.pdispatcher->PrintThisPacket(clog::LOG_F_N_O, "Error!! ");
 	}
 
-	m_Protocol.AckServerInfoList( senderId, SEND_T, 
+	m_Protocol.AckServerInfoList( packet.senderId, SEND_T, 
 		(hostInfo.size() <= 0)? error::ERR_REQSERVERINFO_NOTFOUND_SERVER : error::ERR_SUCCESS, 
-		clientSvrType, serverSvrType, hostInfo );
+		packet.clientSvrType, packet.serverSvrType, hostInfo );
 	return true;
 }
 
@@ -255,37 +255,37 @@ bool CFarmServer::ReqServerInfoList(IProtocolDispatcher &dispatcher, netid sende
 /**
  @brief ReqToBindOuterPort
  */
-bool CFarmServer::ReqToBindOuterPort(IProtocolDispatcher &dispatcher, netid senderId, const std::string &bindSubServerSvrType)
+bool CFarmServer::ReqToBindOuterPort(farm::ReqToBindOuterPort_Packet &packet)
 {
-	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
+	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromPlayer( packet.senderId );
 	if (!pGroup)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "ReqToBindOuterPort Error!!, not exist group user id = %d\n", senderId );
-		m_Protocol.AckToBindOuterPort( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, bindSubServerSvrType, 0);
+		clog::Error( log::ERROR_PROBLEM, "ReqToBindOuterPort Error!!, not exist group user id = %d\n", packet.senderId );
+		m_Protocol.AckToBindOuterPort( packet.senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, packet.bindSubServerSvrType, 0);
 		return false;
 	}
 
 	SubServerGroupPtr pSubSvrGroup = dynamic_cast<CSubServerGroup*>(pGroup.Get());
 	if (!pSubSvrGroup)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "ReqToBindOuterPort Error!!, not convert group user id = %d\n", senderId );
-		m_Protocol.AckToBindOuterPort( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, bindSubServerSvrType, 0);
+		clog::Error( log::ERROR_PROBLEM, "ReqToBindOuterPort Error!!, not convert group user id = %d\n", packet.senderId );
+		m_Protocol.AckToBindOuterPort( packet.senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, packet.bindSubServerSvrType, 0);
 		return false;
 	}
 
 	const int bindPort = pSubSvrGroup->GetToBindOuterPort( CServerSessionAccess(GetServer()) );
 
 	RemoteSubServerPtr pSubServer = dynamic_cast<CRemoteSubServer*>(
-		GetServer()->GetSession(senderId));
+		GetServer()->GetSession(packet.senderId));
 	if (!pSubServer)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "ReqToBindOuterPort Error!!, not found user user id = %d\n", senderId );
-		m_Protocol.AckToBindOuterPort( senderId, SEND_T, error::ERR_NOT_FOUND_USER, bindSubServerSvrType, 0);
+		clog::Error( log::ERROR_PROBLEM, "ReqToBindOuterPort Error!!, not found user user id = %d\n", packet.senderId );
+		m_Protocol.AckToBindOuterPort( packet.senderId, SEND_T, error::ERR_NOT_FOUND_USER, packet.bindSubServerSvrType, 0);
 		return false;
 	}
 
 	pSubServer->SetOuterBindPort( "client", bindPort );
-	m_Protocol.AckToBindOuterPort( senderId, SEND_T, error::ERR_SUCCESS, bindSubServerSvrType, bindPort );
+	m_Protocol.AckToBindOuterPort( packet.senderId, SEND_T, error::ERR_SUCCESS, packet.bindSubServerSvrType, bindPort );
 	return true;
 }
 
@@ -293,37 +293,37 @@ bool CFarmServer::ReqToBindOuterPort(IProtocolDispatcher &dispatcher, netid send
 /**
  @brief ReqToBindInnerPort
  */
-bool CFarmServer::ReqToBindInnerPort(IProtocolDispatcher &dispatcher, netid senderId, const std::string &bindSubServerSvrType)
+bool CFarmServer::ReqToBindInnerPort(farm::ReqToBindInnerPort_Packet &packet)
 {
-	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
+	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromPlayer( packet.senderId );
 	if (!pGroup)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "ReqToBindInnerPort Error!!, not exist group user id = %d\n", senderId );
-		m_Protocol.AckToBindOuterPort( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, bindSubServerSvrType, 0);
+		clog::Error( log::ERROR_PROBLEM, "ReqToBindInnerPort Error!!, not exist group user id = %d\n", packet.senderId );
+		m_Protocol.AckToBindOuterPort( packet.senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, packet.bindSubServerSvrType, 0);
 		return false;
 	}
 
 	SubServerGroupPtr pSubSvrGroup = dynamic_cast<CSubServerGroup*>(pGroup.Get());
 	if (!pSubSvrGroup)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "ReqToBindInnerPort Error!!, not convert group user id = %d\n", senderId );
-		m_Protocol.AckToBindOuterPort( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, bindSubServerSvrType, 0);
+		clog::Error( log::ERROR_PROBLEM, "ReqToBindInnerPort Error!!, not convert group user id = %d\n", packet.senderId );
+		m_Protocol.AckToBindOuterPort( packet.senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, packet.bindSubServerSvrType, 0);
 		return false;
 	}
 
 	const int bindPort = pSubSvrGroup->GetToBindInnerPort( CServerSessionAccess(GetServer()) );
 
 	RemoteSubServerPtr pSubServer = dynamic_cast<CRemoteSubServer*>(
-		GetServer()->GetSession(senderId));
+		GetServer()->GetSession(packet.senderId));
 	if (!pSubServer)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "ReqToBindInnerPort Error!!, not found user user id = %d\n", senderId );
-		m_Protocol.AckToBindOuterPort( senderId, SEND_T, error::ERR_NOT_FOUND_USER, bindSubServerSvrType, 0);
+		clog::Error( log::ERROR_PROBLEM, "ReqToBindInnerPort Error!!, not found user user id = %d\n", packet.senderId );
+		m_Protocol.AckToBindOuterPort( packet.senderId, SEND_T, error::ERR_NOT_FOUND_USER, packet.bindSubServerSvrType, 0);
 		return false;
 	}
 
-	pSubServer->SetInnerBindPort( bindSubServerSvrType, bindPort );
-	m_Protocol.AckToBindInnerPort( senderId, SEND_T, error::ERR_SUCCESS, bindSubServerSvrType, bindPort );
+	pSubServer->SetInnerBindPort( packet.bindSubServerSvrType, bindPort );
+	m_Protocol.AckToBindInnerPort( packet.senderId, SEND_T, error::ERR_SUCCESS, packet.bindSubServerSvrType, bindPort );
 	return true;
 }
 
@@ -331,52 +331,52 @@ bool CFarmServer::ReqToBindInnerPort(IProtocolDispatcher &dispatcher, netid send
 /**
  @brief ReqSubServerBindComplete
  */
-bool CFarmServer::ReqSubServerBindComplete(IProtocolDispatcher &dispatcher, netid senderId, const std::string &bindSubServerSvrType)
+bool CFarmServer::ReqSubServerBindComplete(farm::ReqSubServerBindComplete_Packet &packet)
 {
-	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
+	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromPlayer( packet.senderId );
 	if (!pGroup)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "ReqSubServerBindComplete Error!!, not exist group user id = %d\n", senderId );
-		m_Protocol.AckSubServerBindComplete( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, bindSubServerSvrType );
+		clog::Error( log::ERROR_PROBLEM, "ReqSubServerBindComplete Error!!, not exist group user id = %d\n", packet.senderId );
+		m_Protocol.AckSubServerBindComplete( packet.senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, packet.bindSubServerSvrType );
 		return false;
 	}
 
 	SubServerGroupPtr pSubSvrGroup = dynamic_cast<CSubServerGroup*>(pGroup.Get());
 	if (!pSubSvrGroup)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "ReqSubServerBindComplete Error!!, not convert group user id = %d\n", senderId );
-		m_Protocol.AckSubServerBindComplete( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, bindSubServerSvrType );
+		clog::Error( log::ERROR_PROBLEM, "ReqSubServerBindComplete Error!!, not convert group user id = %d\n", packet.senderId );
+		m_Protocol.AckSubServerBindComplete( packet.senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, packet.bindSubServerSvrType );
 		return false;
 	}
 
 	RemoteSubServerPtr pClient = dynamic_cast<CRemoteSubServer*>(
-		GetServer()->GetSession(senderId));
+		GetServer()->GetSession(packet.senderId));
 	if (!pClient)
 	{
-		clog::Error( log::ERROR_PROBLEM, "AckSubServerBindComplete Error!!, not exist user id = %d\n", senderId );
-		m_Protocol.AckSubServerBindComplete( senderId, SEND_T, error::ERR_NOT_FOUND_USER, bindSubServerSvrType );
+		clog::Error( log::ERROR_PROBLEM, "AckSubServerBindComplete Error!!, not exist user id = %d\n", packet.senderId );
+		m_Protocol.AckSubServerBindComplete( packet.senderId, SEND_T, error::ERR_NOT_FOUND_USER, packet.bindSubServerSvrType );
 		return false;
 	}
 
-	pClient->SetBindComplete(bindSubServerSvrType);
-	m_Protocol.AckSubServerBindComplete( senderId, SEND_T, error::ERR_SUCCESS, bindSubServerSvrType );
+	pClient->SetBindComplete(packet.bindSubServerSvrType);
+	m_Protocol.AckSubServerBindComplete( packet.senderId, SEND_T, error::ERR_SUCCESS, packet.bindSubServerSvrType );
 
-	if (bindSubServerSvrType == "client")
+	if (packet.bindSubServerSvrType == "client")
 		return false;
 
 	// pClient 에 p2p link 가 있거나, input_link 가 있는 서버에게 메세지를 보낸다.
 	// 다시 해석하면 pClient에게 p2pS link, output_link 인 서버에게 메세지를 보낸다.
 	std::vector<network::SHostInfo> bindInfo;
 	bindInfo.reserve(10);
-	pClient->GetServerInfoCorrespondClientLink(bindSubServerSvrType, bindInfo);
+	pClient->GetServerInfoCorrespondClientLink(packet.bindSubServerSvrType, bindInfo);
 	if (bindInfo.empty())
 	{
-		clog::Error( clog::ERROR_PROBLEM, "Not Found Bind Server binSvrType : %s", bindSubServerSvrType.c_str() );
+		clog::Error( clog::ERROR_PROBLEM, "Not Found Bind Server binSvrType : %s", packet.bindSubServerSvrType.c_str() );
 		return false;
 	}
 	if (bindInfo.size() > 1)
 	{
-		clog::Error( clog::ERROR_CRITICAL, "Too Many Bind Server Found binSvrType : %s", bindSubServerSvrType.c_str() );
+		clog::Error( clog::ERROR_CRITICAL, "Too Many Bind Server Found binSvrType : %s", packet.bindSubServerSvrType.c_str() );
 		return false;
 	}
 
@@ -400,35 +400,35 @@ bool CFarmServer::ReqSubServerBindComplete(IProtocolDispatcher &dispatcher, neti
 /**
  @brief ReqSubClientConnectComplete
  */
-bool CFarmServer::ReqSubClientConnectComplete(IProtocolDispatcher &dispatcher, netid senderId, const std::string &bindSubServerSvrType)
+bool CFarmServer::ReqSubClientConnectComplete(farm::ReqSubClientConnectComplete_Packet &packet)
 {
-	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( senderId );
+	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromPlayer( packet.senderId );
 	if (!pGroup)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "AckSubClientConnectComplete Error!!, not exist group user id = %d\n", senderId );
-		m_Protocol.AckSubClientConnectComplete( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, bindSubServerSvrType );
+		clog::Error( log::ERROR_PROBLEM, "AckSubClientConnectComplete Error!!, not exist group user id = %d\n", packet.senderId );
+		m_Protocol.AckSubClientConnectComplete( packet.senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, packet.bindSubServerSvrType );
 		return false;
 	}
 
 	SubServerGroupPtr pSubSvrGroup = dynamic_cast<CSubServerGroup*>(pGroup.Get());
 	if (!pSubSvrGroup)
 	{// Error!!
-		clog::Error( log::ERROR_PROBLEM, "AckSubClientConnectComplete Error!!, not convert group user id = %d\n", senderId );
-		m_Protocol.AckSubClientConnectComplete( senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, bindSubServerSvrType );
+		clog::Error( log::ERROR_PROBLEM, "AckSubClientConnectComplete Error!!, not convert group user id = %d\n", packet.senderId );
+		m_Protocol.AckSubClientConnectComplete( packet.senderId, SEND_T, error::ERR_NOT_FOUND_GROUP, packet.bindSubServerSvrType );
 		return false;
 	}
 
 	RemoteSubServerPtr pClient = dynamic_cast<CRemoteSubServer*>(
-		GetServer()->GetSession(senderId));
+		GetServer()->GetSession(packet.senderId));
 	if (!pClient)
 	{
-		clog::Error( log::ERROR_PROBLEM, "AckSubClientConnectComplete Error!!, not exist user id = %d\n", senderId );
-		m_Protocol.AckSubClientConnectComplete( senderId, SEND_T, error::ERR_NOT_FOUND_USER, bindSubServerSvrType );
+		clog::Error( log::ERROR_PROBLEM, "AckSubClientConnectComplete Error!!, not exist user id = %d\n", packet.senderId );
+		m_Protocol.AckSubClientConnectComplete( packet.senderId, SEND_T, error::ERR_NOT_FOUND_USER, packet.bindSubServerSvrType );
 		return false;
 	}
 
-	pClient->SetConnectComplete(bindSubServerSvrType);
-	m_Protocol.AckSubClientConnectComplete( senderId, SEND_T, error::ERR_SUCCESS, bindSubServerSvrType );
+	pClient->SetConnectComplete(packet.bindSubServerSvrType);
+	m_Protocol.AckSubClientConnectComplete( packet.senderId, SEND_T, error::ERR_SUCCESS, packet.bindSubServerSvrType );
 	return true;
 }
 

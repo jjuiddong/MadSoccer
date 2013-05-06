@@ -56,7 +56,7 @@ void CServer::OnClientLeave(CNetEvent &event)
 {
 	RET(!GetServer());
 
-	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromUser( event.GetNetId() );
+	GroupPtr pGroup = GetServer()->GetRootGroup().GetChildFromPlayer( event.GetNetId() );
 	RET(!pGroup);
 
 	m_pBasicProtocol->JoinMember(pGroup->GetId(), SEND_T_V, INVALID_NETID, 

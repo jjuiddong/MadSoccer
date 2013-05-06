@@ -12,7 +12,7 @@ CGroup::CGroup(GroupPtr parent, const std::string &name)  :
 ,	m_pParent(parent)
 ,	m_NetState(NET_STATE_SERVERCLIENT)
 {
-	//m_Users.reserve(32);
+	//m_Players.reserve(32);
 
 }
 
@@ -43,9 +43,9 @@ bool	CGroup::AddChild( CGroup *pGroup )
 	m_Children.insert(Groups::value_type(pGroup->GetId(), pGroup));
 	
 	// add group member
-	BOOST_FOREACH(auto userid, pGroup->GetUsers())
+	BOOST_FOREACH(auto playerId, pGroup->GetPlayers())
 	{
-		AddUserNApplyParent(this, userid);
+		AddPlayerNApplyParent(this, playerId);
 	}
 	return true;
 }
@@ -86,9 +86,9 @@ bool	CGroup::RemoveChild( netid groupId )
 	if (!pGroup) return false; // not exist
 
 	// remove group member
-	BOOST_FOREACH(auto userid, m_Users)
+	BOOST_FOREACH(auto playerId, m_Players)
 	{
-		RemoveUserNApplyParent(pGroup->GetParent(), userid);
+		RemovePlayerNApplyParent(pGroup->GetParent(), playerId);
 	}
 
 	GroupPtr parent = pGroup->GetParent();
@@ -138,9 +138,9 @@ GroupPtr	CGroup::GetChildandThis( netid groupId )
 //------------------------------------------------------------------------
 // return leaf group node object
 //------------------------------------------------------------------------
-GroupPtr CGroup::GetChildFromUser( netid userId )
+GroupPtr CGroup::GetChildFromPlayer( netid playerId )
 {
-	if (!IsExistUser(userId))
+	if (!IsExistPlayer(playerId))
 		return NULL;
 
 	if (m_Children.empty()) // leaf node
@@ -148,8 +148,8 @@ GroupPtr CGroup::GetChildFromUser( netid userId )
 
 	// search children
 	BOOST_FOREACH(auto &child, m_Children.m_Seq)
-	{		
-		GroupPtr ptr = child->GetChildFromUser( userId );
+	{
+		GroupPtr ptr = child->GetChildFromPlayer( playerId );
 		if (ptr) return ptr;
 	}
 
@@ -162,7 +162,7 @@ GroupPtr CGroup::GetChildFromUser( netid userId )
  */
 bool	CGroup::IsTerminal()
 {
-	if ((m_Children.size() <= 0) && (m_Users.size() > 0))
+	if ((m_Children.size() <= 0) && (m_Players.size() > 0))
 		return true;
 	return false;
 }
@@ -171,89 +171,89 @@ bool	CGroup::IsTerminal()
 //------------------------------------------------------------------------
 // 유저 추가
 //------------------------------------------------------------------------
-bool CGroup::AddUser(netid groupId, netid userId)
+bool CGroup::AddPlayer(netid groupId, netid playerId)
 {
 	GroupPtr pGroup = (GetId() == groupId)? this : GetChild(groupId);
 	if(!pGroup) return false; // not exist group
-	return AddUserNApplyParent(pGroup, userId);	
+	return AddPlayerNApplyParent(pGroup, playerId);	
 }
 
 
 //------------------------------------------------------------------------
 // 유저 제거
 //------------------------------------------------------------------------
-bool CGroup::RemoveUser(netid groupId, netid userId)
+bool CGroup::RemovePlayer(netid groupId, netid playerId)
 {
 	GroupPtr pGroup = (GetId() == groupId)? this : GetChild(groupId);
 	if(!pGroup) return false; // not exist group
-	return RemoveUserNApplyParent(pGroup, userId);
+	return RemovePlayerNApplyParent(pGroup, playerId);
 }
 
 
 //------------------------------------------------------------------------
-// User가 Group에 속해있다면 true를 리턴한다.
+// Player가 Group에 속해있다면 true를 리턴한다.
 //------------------------------------------------------------------------
-bool CGroup::IsExistUser(netid groupId, netid userId)
+bool CGroup::IsExistPlayer(netid groupId, netid playerId)
 {
 	GroupPtr pGroup = GetChild(groupId);
 	if(!pGroup) return false; // not exist group
 
-	auto it = find(m_Users.begin(), m_Users.end(), userId);
-	return (m_Users.end() != it);
+	auto it = find(m_Players.begin(), m_Players.end(), playerId);
+	return (m_Players.end() != it);
 }
 
 
 //------------------------------------------------------------------------
 // 유저 추가
 //------------------------------------------------------------------------
-bool CGroup::AddUser(netid userId)
+bool CGroup::AddPlayer(netid playerId)
 {
-	auto it = find(m_Users.begin(), m_Users.end(), userId);
-	if (m_Users.end() != it)
+	auto it = find(m_Players.begin(), m_Players.end(), playerId);
+	if (m_Players.end() != it)
 		return false; // 이미 존재한다면 실패
-	m_Users.push_back( userId );
+	m_Players.push_back( playerId );
 	return true;
 }
 
 
 //------------------------------------------------------------------------
-// Add UserId to Group Object 
+// Add playerId to Group Object 
 // and Make Group Tree
 //------------------------------------------------------------------------
-bool	CGroup::AddUserNApplyParent(GroupPtr pGroup, netid userId)
+bool	CGroup::AddPlayerNApplyParent(GroupPtr pGroup, netid playerId)
 {
 	if (!pGroup) 
 		return true;
-	if (!pGroup->AddUser(userId))
+	if (!pGroup->AddPlayer(playerId))
 		return false;
-	return AddUserNApplyParent(pGroup->GetParent(), userId);
+	return AddPlayerNApplyParent(pGroup->GetParent(), playerId);
 }
 
 
 //------------------------------------------------------------------------
 // 유저 제거
 //------------------------------------------------------------------------
-bool CGroup::RemoveUser(netid userId)
+bool CGroup::RemovePlayer(netid playerId)
 {
 	//auto it = find(m_Users.begin(), m_Users.end(), userId);
 	//if (m_Users.end() == it)
 	//	return false; // 없다면 실패
 	//m_Users.erase(it);
-	return common::removevector(m_Users, userId);
+	return common::removevector(m_Players, playerId);
 }
 
 
 //------------------------------------------------------------------------
-// Remove userId from Group Object
+// Remove playerId from Group Object
 // and Apply Parent Group Node
 //------------------------------------------------------------------------
-bool	CGroup::RemoveUserNApplyParent(GroupPtr pGroup, netid userId)
+bool	CGroup::RemovePlayerNApplyParent(GroupPtr pGroup, netid playerId)
 {
 	if (!pGroup) 
 		return true;
-	if (!pGroup->RemoveUser(userId))
+	if (!pGroup->RemovePlayer(playerId))
 		return false;
-	return RemoveUserNApplyParent(pGroup->GetParent(), userId);
+	return RemovePlayerNApplyParent(pGroup->GetParent(), playerId);
 }
 
 
@@ -280,12 +280,12 @@ bool	CGroup::RemoveViewer(netid id)
 
 
 //------------------------------------------------------------------------
-// User가 Group에 속해있다면 true를 리턴한다.
+// Player가 Group에 속해있다면 true를 리턴한다.
 //------------------------------------------------------------------------
-bool CGroup::IsExistUser(netid userId)
+bool CGroup::IsExistPlayer(netid playerId)
 {
-	auto it = find(m_Users.begin(), m_Users.end(), userId);
-	return (m_Users.end() != it);
+	auto it = find(m_Players.begin(), m_Players.end(), playerId);
+	return (m_Players.end() != it);
 }
 
 
@@ -299,7 +299,7 @@ void CGroup::Clear()
 		SAFE_DELETE(pGroup);
 	}
 	m_Children.clear();
-	m_Users.clear();
+	m_Players.clear();
 }
 
 
@@ -316,7 +316,7 @@ CGroup& CGroup::operator=(const CGroup &rhs)
 		m_Tag = rhs.m_Tag;
 		m_NetState = rhs.m_NetState;
 		m_pParent = NULL;
-		m_Users = rhs.m_Users;
+		m_Players = rhs.m_Players;
 		m_Viewers = rhs.m_Viewers;
 	}
 	return *this;

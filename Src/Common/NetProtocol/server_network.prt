@@ -2,10 +2,14 @@
 protocol s2s 800
 {
 
-	ReqMoveUser( std::string id, certify_key c_key, std::string ip, int port );
-	AckMoveUser( error::ERROR_CODE errorCode, std::string id, std::string ip, int port );
-	ReqMoveUserCancel( std::string id );
-	AckMoveUserCancel( error::ERROR_CODE errorCode, std::string id );
+	ReqMovePlayer( std::string id, certify_key c_key, netid groupId, std::string ip, int port );
+	AckMovePlayer( error::ERROR_CODE errorCode, std::string id, netid groupId, std::string ip, int port );
+	ReqMovePlayerCancel( std::string id );
+	AckMovePlayerCancel( error::ERROR_CODE errorCode, std::string id );
+
+	ReqCreateGroup( std::string name, netid groupId );
+	AckCreateGroup( error::ERROR_CODE errorCode, std::string name, netid groupId );
+	
 
 
 	SendServerInfo( std::string svrType, std::string ip, int port, int userCount );

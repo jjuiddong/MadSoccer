@@ -43,16 +43,16 @@ namespace network
 		bool				RemoveChild( netid groupId );
 		GroupPtr		GetChild( netid groupId );
 		GroupPtr		GetChildandThis( netid groupId );
-		GroupPtr		GetChildFromUser( netid userId );
+		GroupPtr		GetChildFromPlayer( netid playerId );
 		const Groups::VectorType&	GetChildren() const;
 		bool				IsTerminal();
 
-		// User
-		bool				AddUser(netid groupId, netid userId);
-		bool				RemoveUser(netid groupId, netid userId);
-		bool				IsExistUser(netid groupId, netid userId);
-		bool				IsExistUser(netid userId);
-		const NetIdes& GetUsers() const;
+		// playerId
+		bool				AddPlayer(netid groupId, netid playerId);
+		bool				RemovePlayer(netid groupId, netid playerId);
+		bool				IsExistPlayer(netid groupId, netid playerId);
+		bool				IsExistPlayer(netid playerId);
+		const NetIdes& GetPlayers() const;
 		void				Clear();
 
 		// Viewer
@@ -75,10 +75,10 @@ namespace network
 		void							SetNetState(NET_STATE state);
 
 	protected:
-		bool				AddUser(netid userId);
-		bool				AddUserNApplyParent(GroupPtr pGroup, netid userId);
-		bool				RemoveUser(netid userId);
-		bool				RemoveUserNApplyParent(GroupPtr pGroup, netid userId);
+		bool				AddPlayer(netid playerId);
+		bool				AddPlayerNApplyParent(GroupPtr pGroup, netid playerId);
+		bool				RemovePlayer(netid playerId);
+		bool				RemovePlayerNApplyParent(GroupPtr pGroup, netid playerId);
 
 	private:
 		netid			m_Id;
@@ -87,7 +87,7 @@ namespace network
 		DWORD		m_Tag;
 		NET_STATE	m_NetState;
 		CGroup			*m_pParent;
-		NetIdes		m_Users;
+		NetIdes		m_Players;
 		NetIdes		m_Viewers;
 		Groups			m_Children;
 	};
@@ -104,7 +104,7 @@ namespace network
 	inline CGroup::NET_STATE CGroup::GetNetState() const { return m_NetState; }
 	inline void CGroup::SetNetState(NET_STATE state) { m_NetState = state; }
 	inline const Groups::VectorType& CGroup::GetChildren() const { return m_Children.m_Seq; }
-	inline const NetIdes& CGroup::GetUsers() const { return m_Users; }
+	inline const NetIdes& CGroup::GetPlayers() const { return m_Players; }
 	inline const NetIdes& CGroup::GetViewers() const { return m_Viewers; }
 	inline bool CGroup::operator==(const CGroup &rhs) const { return m_Id==rhs.GetId(); }
 }

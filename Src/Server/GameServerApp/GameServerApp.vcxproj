@@ -81,12 +81,14 @@
   <ItemGroup>
     <ClInclude Include="GameServerApp.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="Src\GamePlayer.h" />
     <ClInclude Include="Src\GameServer.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameServerApp.cpp" />
+    <ClCompile Include="Src\GamePlayer.cpp" />
     <ClCompile Include="Src\GameServer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

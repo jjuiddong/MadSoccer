@@ -24,14 +24,14 @@ public:
 protected:
 	// Network Protocol Handler
 	// certify server
-	virtual bool AckUserLogin(network::IProtocolDispatcher &dispatcher, netid senderId, const network::error::ERROR_CODE &errorCode, const std::string &id, const certify_key &c_key) override;
-	virtual bool AckUserLogout(network::IProtocolDispatcher &dispatcher, netid senderId, const network::error::ERROR_CODE &errorCode, const std::string &id) override;
-	virtual bool AckUserMoveServer(network::IProtocolDispatcher &dispatcher, netid senderId, const network::error::ERROR_CODE &errorCode, const std::string &id, const std::string &svrType) override;
+	virtual bool AckUserLogin(certify::AckUserLogin_Packet &packet) override;
+	virtual bool AckUserLogout(certify::AckUserLogout_Packet &packet) override;
+	virtual bool AckUserMoveServer(certify::AckUserMoveServer_Packet &packet) override;
 
 	// client
-	virtual bool ReqLogIn(network::IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, const std::string &passwd, const certify_key &c_key) override;
-	virtual bool ReqLogOut(network::IProtocolDispatcher &dispatcher, netid senderId, const std::string &id) override;
-	virtual bool ReqMoveToServer(network::IProtocolDispatcher &dispatcher, netid senderId, const std::string &serverName) override;
+	virtual bool ReqLogIn(basic::ReqLogIn_Packet &packet) override;
+	virtual bool ReqLogOut(basic::ReqLogOut_Packet &packet) override;
+	virtual bool ReqMoveToServer(basic::ReqMoveToServer_Packet &packet) override;
 
 private:
 	certify::s2s_Protocol	m_CertifyProtocol;

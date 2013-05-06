@@ -46,17 +46,17 @@ namespace network { namespace multinetwork {
 		void OnDisconnectLink(CNetEvent &event);
 
 		// network packet handler
-		virtual bool AckSubServerLogin(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode) override;
-		virtual bool AckSendSubServerP2PSLink(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode) override;
-		virtual bool AckSendSubServerP2PCLink(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode) override;
-		virtual bool AckSendSubServerInputLink(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode) override;
-		virtual bool AckSendSubServerOutputLink(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode) override;
-		virtual bool AckServerInfoList(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode, const std::string &clientSvrType, const std::string &serverSvrType, const std::vector<SHostInfo> &v) override;
-		virtual bool AckToBindOuterPort(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode, const std::string &bindSubServerSvrType, const int &port) override;
-		virtual bool AckToBindInnerPort(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode, const std::string &bindSubServerSvrType, const int &port)override;
-		virtual bool AckSubServerBindComplete(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode, const std::string &subServerSvrType) override;
-		virtual bool AckSubClientConnectComplete(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode, const std::string &subClientSvrType) override;
-		virtual bool BindSubServer(IProtocolDispatcher &dispatcher, netid senderId, const std::string &bindSubSvrType, const std::string &ip, const int &port) override;
+		virtual bool AckSubServerLogin(farm::AckSubServerLogin_Packet &packet) override;
+		virtual bool AckSendSubServerP2PCLink(farm::AckSendSubServerP2PCLink_Packet &packet) override;
+		virtual bool AckSendSubServerP2PSLink(farm::AckSendSubServerP2PSLink_Packet &packet) override;
+		virtual bool AckSendSubServerInputLink(farm::AckSendSubServerInputLink_Packet &packet) override;
+		virtual bool AckSendSubServerOutputLink(farm::AckSendSubServerOutputLink_Packet &packet) override;
+		virtual bool AckServerInfoList(farm::AckServerInfoList_Packet &packet) override;
+		virtual bool AckToBindOuterPort(farm::AckToBindOuterPort_Packet &packet) override;
+		virtual bool AckToBindInnerPort(farm::AckToBindInnerPort_Packet &packet) override;
+		virtual bool AckSubServerBindComplete(farm::AckSubServerBindComplete_Packet &packet) override;
+		virtual bool AckSubClientConnectComplete(farm::AckSubClientConnectComplete_Packet &packet) override;
+		virtual bool BindSubServer(farm::BindSubServer_Packet &packet) override;
 
 	private:
 		farm::c2s_Protocol m_Protocol;

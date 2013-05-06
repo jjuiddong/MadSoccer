@@ -24,10 +24,10 @@ public:
 protected:
 	// Network Protocol Handler
 	// certify server
-	virtual bool AckUserLogin(network::IProtocolDispatcher &dispatcher, netid senderId, const network::error::ERROR_CODE &errorCode, const std::string &id, const certify_key &c_key) override;
+	virtual bool AckUserLogin(certify::AckUserLogin_Packet &packet) override;
 
 	// client
-	virtual bool ReqLogIn(network::IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, const std::string &passwd, const certify_key &c_key) override;
+	virtual bool ReqLogIn(basic::ReqLogIn_Packet &packet) override;
 
 private:
 	basic::s2c_Protocol		m_BasicProtocol;

@@ -24,13 +24,12 @@ CBasicC2SHandler_LoginSvr::~CBasicC2SHandler_LoginSvr()
 /**
  @brief ReqLogIn
  */
-bool CBasicC2SHandler_LoginSvr::ReqLogIn(IProtocolDispatcher &dispatcher,
-	netid senderId, const std::string &id, const std::string &passwd, const certify_key &c_key)
+bool CBasicC2SHandler_LoginSvr::ReqLogIn(basic::ReqLogIn_Packet &packet)
 {
-	if (!CBasicC2SHandler::ReqLogIn(dispatcher, senderId, id, passwd, c_key))
+	if (!CBasicC2SHandler::ReqLogIn(packet))
 		return false;
 
-	m_CertifyProtocol.ReqUserLogin(SERVER_NETID, SEND_T, id, passwd, "loginsvr");
+	m_CertifyProtocol.ReqUserLogin(SERVER_NETID, SEND_T, packet.id, packet.passwd, "loginsvr");
 	return true;
 }
 
@@ -38,7 +37,7 @@ bool CBasicC2SHandler_LoginSvr::ReqLogIn(IProtocolDispatcher &dispatcher,
 /**
  @brief ReqLogOut
  */
-bool CBasicC2SHandler_LoginSvr::ReqLogOut(IProtocolDispatcher &dispatcher, netid senderId, const std::string &id)
+bool CBasicC2SHandler_LoginSvr::ReqLogOut(basic::ReqLogOut_Packet &packet)
 {
 
 	return true;
@@ -48,20 +47,19 @@ bool CBasicC2SHandler_LoginSvr::ReqLogOut(IProtocolDispatcher &dispatcher, netid
 /**
  @brief ReqMoveToServer
  */
-bool CBasicC2SHandler_LoginSvr::ReqMoveToServer(IProtocolDispatcher &dispatcher, 
-	netid senderId, const std::string &serverName)
+bool CBasicC2SHandler_LoginSvr::ReqMoveToServer(basic::ReqMoveToServer_Packet &packet)
 {
-	CSession *pClient = network::CheckClientNetId( &GetServer(), senderId, &m_BasicProtocol, &dispatcher );
+	CSession *pClient = network::CheckClientNetId( &GetServer(), packet.senderId, &m_BasicProtocol, packet.pdispatcher );
 	RETV(!pClient, false);
 
 	// 유저가 서버 이동이 가능한지 판단~
 
 	// 이동할 서버 검색, 로그인 서버는 lobby Server 로만 이동할 수 있다.
-	if (serverName != "lobbysvr" )
+	if (packet.serverName != "lobbysvr" )
 	{
 		clog::Error( clog::ERROR_PROBLEM, "ReqMoveToServer Error!! invalid servername name=%s", 
-			serverName.c_str());
-		m_BasicProtocol.AckMoveToServer(senderId, SEND_T, error::ERR_MOVETOSERVER_INVALID_SERVERNAME, serverName, "", 0);
+			packet.serverName.c_str());
+		m_BasicProtocol.AckMoveToServer(packet.senderId, SEND_T, error::ERR_MOVETOSERVER_INVALID_SERVERNAME, packet.serverName, "", 0);
 		return false;
 	}
 	
@@ -69,7 +67,7 @@ bool CBasicC2SHandler_LoginSvr::ReqMoveToServer(IProtocolDispatcher &dispatcher,
 	if (!pNetGroupCtrl)
 	{
 		clog::Error( clog::ERROR_PROBLEM, "ReqMoveToServer Error!! not found server group " );
-		m_BasicProtocol.AckMoveToServer(senderId, SEND_T, error::ERR_MOVETOSERVER_NOT_FOUND_SERVER, serverName, "", 0);
+		m_BasicProtocol.AckMoveToServer(packet.senderId, SEND_T, error::ERR_MOVETOSERVER_NOT_FOUND_SERVER, packet.serverName, "", 0);
 		return false;
 	}
 	
@@ -82,22 +80,21 @@ bool CBasicC2SHandler_LoginSvr::ReqMoveToServer(IProtocolDispatcher &dispatcher,
 		인증서버로 부터 받는다.
 		ReqLogin -> ReqUserLogin -> AckUserLogin
  */
-bool CBasicC2SHandler_LoginSvr::AckUserLogin(IProtocolDispatcher &dispatcher, netid senderId, 
-	const error::ERROR_CODE &errorCode, const std::string &id, const certify_key &c_key)
+bool CBasicC2SHandler_LoginSvr::AckUserLogin(certify::AckUserLogin_Packet &packet)
 {
-	CSession *pClient = network::CheckClientId( &GetServer(), id, 0, &m_BasicProtocol, &dispatcher );
+	CSession *pClient = network::CheckClientId( &GetServer(), packet.id, 0, &m_BasicProtocol, packet.pdispatcher );
 	RETV(!pClient, false);
 
-	if (errorCode != error::ERR_SUCCESS)
+	if (packet.errorCode != error::ERR_SUCCESS)
 	{
-		clog::Error( clog::ERROR_PROBLEM, "AckUserId Error!! client generate user id Error id=%s", id.c_str());
-		m_BasicProtocol.AckLogIn(pClient->GetNetId(), SEND_T, errorCode, id, 0);
+		clog::Error( clog::ERROR_PROBLEM, "AckUserId Error!! client generate user id Error id=%s", packet.id.c_str());
+		m_BasicProtocol.AckLogIn(pClient->GetNetId(), SEND_T, packet.errorCode, packet.id, 0);
 		return false;
 	}
 
 	pClient->SetState(SESSIONSTATE_LOGIN); // login state
-	pClient->SetCertifyKey( c_key );
-	m_BasicProtocol.AckLogIn(pClient->GetNetId(), SEND_T, errorCode, id, c_key );
+	pClient->SetCertifyKey( packet.c_key );
+	m_BasicProtocol.AckLogIn(pClient->GetNetId(), SEND_T, packet.errorCode, packet.id, packet.c_key );
 	return true;
 }
 
@@ -105,8 +102,7 @@ bool CBasicC2SHandler_LoginSvr::AckUserLogin(IProtocolDispatcher &dispatcher, ne
 /**
  @brief AckUserMoveServer
  */
-bool CBasicC2SHandler_LoginSvr::AckUserMoveServer(IProtocolDispatcher &dispatcher, netid senderId, 
-	const network::error::ERROR_CODE &errorCode, const std::string &id, const std::string &svrType)
+bool CBasicC2SHandler_LoginSvr::AckUserMoveServer(certify::AckUserMoveServer_Packet &packet)
 {
 	
 	return true;
@@ -116,8 +112,7 @@ bool CBasicC2SHandler_LoginSvr::AckUserMoveServer(IProtocolDispatcher &dispatche
 /**
  @brief AckUserLogout
  */
-bool CBasicC2SHandler_LoginSvr::AckUserLogout(IProtocolDispatcher &dispatcher, netid senderId, 
-	const error::ERROR_CODE &errorCode, const std::string &id)
+bool CBasicC2SHandler_LoginSvr::AckUserLogout(certify::AckUserLogout_Packet &packet)
 {
 
 	return true;

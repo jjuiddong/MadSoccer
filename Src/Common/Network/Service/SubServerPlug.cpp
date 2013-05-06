@@ -50,25 +50,24 @@ void	CSubServerPlug::OnConnectSubLink(CNetEvent &event )
 /**
  @brief 서브 서버들로부터 현재 서버 정보를 업데이트 받는다.
  */
-bool CSubServerPlug::SendServerInfo(IProtocolDispatcher &dispatcher, netid senderId, 
-	const std::string &svrType, const std::string &ip, const int &port, const int &userCount)
+bool CSubServerPlug::SendServerInfo(server_network::SendServerInfo_Packet &packet)
 {
-	auto it = m_RemoteServers.find(senderId);
+	auto it = m_RemoteServers.find(packet.senderId);
 	if (m_RemoteServers.end() == it)
 	{
 		CRemoteServer *pNewSvr = new CRemoteServer();
-		pNewSvr->SetNetId(senderId);
-		pNewSvr->SetIp( ip );
-		pNewSvr->SetPort(port);
-		pNewSvr->SetNetId(senderId);
-		pNewSvr->SetUserCount(userCount);
-		m_RemoteServers.insert( RemoteServers::value_type(senderId, pNewSvr) );
+		pNewSvr->SetNetId(packet.senderId);
+		pNewSvr->SetIp( packet.ip );
+		pNewSvr->SetPort(packet.port);
+		pNewSvr->SetNetId(packet.senderId);
+		pNewSvr->SetUserCount(packet.userCount);
+		m_RemoteServers.insert( RemoteServers::value_type(packet.senderId, pNewSvr) );
 	}
 	else
 	{
-		it->second->SetIp( ip );
-		it->second->SetPort(port);
-		it->second->SetUserCount(userCount);
+		it->second->SetIp( packet.ip );
+		it->second->SetPort(packet.port);
+		it->second->SetUserCount(packet.userCount);
 	}
 
 	return true;

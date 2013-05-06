@@ -126,18 +126,17 @@ CGlobalRemotePlayer* CCertifyServer::GetPlayer( const std::string &id )
 /**
  @brief ReqUserLogin
  */
-bool CCertifyServer::ReqUserLogin(IProtocolDispatcher &dispatcher, netid senderId, 
-	const std::string &id, const std::string &passwd, const std::string &svrType)
+bool CCertifyServer::ReqUserLogin(certify::ReqUserLogin_Packet &packet)
 {
 	certify_key key = rand();
 
-	if (!AddPlayer(id, svrType, senderId, key))
+	if (!AddPlayer(packet.id, packet.svrType, packet.senderId, key))
 	{ /// Error!! Already Exist 
-		m_Protocol.AckUserLogin( senderId, SEND_T, error::ERR_ALREADY_EXIST_USER, id, 0 );
+		m_Protocol.AckUserLogin( packet.senderId, SEND_T, error::ERR_ALREADY_EXIST_USER, packet.id, 0 );
 		return false;
 	}
 
-	m_Protocol.AckUserLogin(senderId, SEND_T, error::ERR_SUCCESS, id, key );
+	m_Protocol.AckUserLogin(packet.senderId, SEND_T, error::ERR_SUCCESS, packet.id, key );
 	return true;
 }
 
@@ -145,17 +144,16 @@ bool CCertifyServer::ReqUserLogin(IProtocolDispatcher &dispatcher, netid senderI
 /**
  @brief ReqUserLogout
  */
-bool CCertifyServer::ReqUserLogout(IProtocolDispatcher &dispatcher, netid senderId, 
-	const std::string &id)
+bool CCertifyServer::ReqUserLogout(certify::ReqUserLogout_Packet &packet)
 {
 	// Remove Session
-	if (!RemovePlayer(id))
+	if (!RemovePlayer(packet.id))
 	{ /// Error!! Not Exist 
-		m_Protocol.AckUserLogout( senderId, SEND_T, error::ERR_NOT_FOUND_USER, id );
+		m_Protocol.AckUserLogout( packet.senderId, SEND_T, error::ERR_NOT_FOUND_USER, packet.id );
 		return false;
 	}
 
-	m_Protocol.AckUserLogout( senderId, SEND_T, error::ERR_SUCCESS, id );
+	m_Protocol.AckUserLogout( packet.senderId, SEND_T, error::ERR_SUCCESS, packet.id );
 	return true;
 }
 
@@ -163,19 +161,18 @@ bool CCertifyServer::ReqUserLogout(IProtocolDispatcher &dispatcher, netid sender
 /**
  @brief ReqUserMoveServer
  */
-bool CCertifyServer::ReqUserMoveServer(IProtocolDispatcher &dispatcher, netid senderId, 
-	const std::string &id, const std::string &svrType)
+bool CCertifyServer::ReqUserMoveServer(certify::ReqUserMoveServer_Packet &packet)
 { 
-	CGlobalRemotePlayer *pClient = GetPlayer(id);
+	CGlobalRemotePlayer *pClient = GetPlayer(packet.id);
 	if (!pClient)
 	{ /// Error!!!
 		clog::Error( clog::ERROR_PROBLEM, "ReqUserMoveServer Error!! not found client id=%s",
-			id.c_str() );
-		m_Protocol.AckUserMoveServer( senderId, SEND_T, error::ERR_NOT_FOUND_USER, id, svrType);
+			packet.id.c_str() );
+		m_Protocol.AckUserMoveServer( packet.senderId, SEND_T, error::ERR_NOT_FOUND_USER, packet.id, packet.svrType);
 	}
 
-	pClient->SetLocateSvrType(svrType);
-	m_Protocol.AckUserMoveServer( senderId, SEND_T, error::ERR_SUCCESS, id, svrType);
+	pClient->SetLocateSvrType(packet.svrType);
+	m_Protocol.AckUserMoveServer( packet.senderId, SEND_T, error::ERR_SUCCESS, packet.id, packet.svrType);
 	return true;
 }
 
@@ -183,12 +180,11 @@ bool CCertifyServer::ReqUserMoveServer(IProtocolDispatcher &dispatcher, netid se
 /**
  @brief SendServerInfo
  */
-bool CCertifyServer::SendServerInfo(IProtocolDispatcher &dispatcher, netid senderId, const std::string &svrType,
-	const std::string &ip, const int &port, const int &userCount)
+bool CCertifyServer::SendServerInfo(server_network::SendServerInfo_Packet &packet)
 {
-	CSession *pSession = CheckClientNetId(GetServer(), senderId, NULL, &dispatcher);
+	CSession *pSession = CheckClientNetId(GetServer(), packet.senderId, NULL, packet.pdispatcher);
 	RETV(!pSession, false);
 
-	pSession->SetName(svrType);
+	pSession->SetName(packet.svrType);
 	return true;
 }

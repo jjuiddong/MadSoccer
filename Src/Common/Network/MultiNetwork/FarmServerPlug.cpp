@@ -207,9 +207,9 @@ void CFarmServerPlug::OnDisconnectLink(CNetEvent &event)
 /**
  @brief 
  */
-bool CFarmServerPlug::AckSubServerLogin(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode)
+bool CFarmServerPlug::AckSubServerLogin(farm::AckSubServerLogin_Packet &packet)
 {
-	if (errorCode == error::ERR_SUCCESS)
+	if (packet.errorCode == error::ERR_SUCCESS)
 	{
 		m_Protocol.SendSubServerP2PCLink( SERVER_NETID, SEND_T, m_Config.p2pC );
 		m_Protocol.SendSubServerP2PSLink( SERVER_NETID, SEND_T, m_Config.p2pS );
@@ -219,8 +219,8 @@ bool CFarmServerPlug::AckSubServerLogin(IProtocolDispatcher &dispatcher, netid s
 	}
 	else
 	{
-		clog::Error( clog::ERROR_CRITICAL, "AckSubServerLogin Error!! errorCode= %d, svrType = %s", errorCode, m_Config.svrType.c_str() );
-		clog::ErrorMsg( common::format( "AckSubServerLogin Error!! errorCode= %d, svrType = %s", errorCode, m_Config.svrType.c_str()) );
+		clog::Error( clog::ERROR_CRITICAL, "AckSubServerLogin Error!! errorCode= %d, svrType = %s", packet.errorCode, m_Config.svrType.c_str() );
+		clog::ErrorMsg( common::format( "AckSubServerLogin Error!! errorCode= %d, svrType = %s", packet.errorCode, m_Config.svrType.c_str()) );
 		return false;
 	}
 }
@@ -229,12 +229,12 @@ bool CFarmServerPlug::AckSubServerLogin(IProtocolDispatcher &dispatcher, netid s
 /**
  @brief AckSendSubServerP2PCLink
  */
-bool CFarmServerPlug::AckSendSubServerP2PCLink(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode)
+bool CFarmServerPlug::AckSendSubServerP2PCLink(farm::AckSendSubServerP2PCLink_Packet &packet)
 {
 	if (!m_IsDetectedSendConfig)
-		m_IsDetectedSendConfig = (errorCode != error::ERR_SUCCESS);
+		m_IsDetectedSendConfig = (packet.errorCode != error::ERR_SUCCESS);
 
-	if (errorCode != error::ERR_SUCCESS)
+	if (packet.errorCode != error::ERR_SUCCESS)
 		clog::Error( clog::ERROR_CRITICAL, "P2PC Link Error!!" );
 
 	return true;
@@ -244,12 +244,12 @@ bool CFarmServerPlug::AckSendSubServerP2PCLink(IProtocolDispatcher &dispatcher, 
 /**
  @brief AckSendSubServerP2PSLink
  */
-bool CFarmServerPlug::AckSendSubServerP2PSLink(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode)
+bool CFarmServerPlug::AckSendSubServerP2PSLink(farm::AckSendSubServerP2PSLink_Packet &packet)
 {
 	if (!m_IsDetectedSendConfig)
-		m_IsDetectedSendConfig = (errorCode != error::ERR_SUCCESS);
+		m_IsDetectedSendConfig = (packet.errorCode != error::ERR_SUCCESS);
 
-	if (errorCode != error::ERR_SUCCESS)
+	if (packet.errorCode != error::ERR_SUCCESS)
 		clog::Error( clog::ERROR_CRITICAL, "P2PS Link Error!!" );
 
 	return true;
@@ -258,12 +258,12 @@ bool CFarmServerPlug::AckSendSubServerP2PSLink(IProtocolDispatcher &dispatcher, 
 /**
  @brief 
  */
-bool CFarmServerPlug::AckSendSubServerInputLink(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode)
+bool CFarmServerPlug::AckSendSubServerInputLink(farm::AckSendSubServerInputLink_Packet &packet)
 {
 	if (!m_IsDetectedSendConfig)
-		m_IsDetectedSendConfig = (errorCode != error::ERR_SUCCESS);
+		m_IsDetectedSendConfig = (packet.errorCode != error::ERR_SUCCESS);
 
-	if (errorCode != error::ERR_SUCCESS)
+	if (packet.errorCode != error::ERR_SUCCESS)
 		clog::Error( clog::ERROR_CRITICAL, "P2P Link Error!!" );
 
 	return true;
@@ -273,10 +273,10 @@ bool CFarmServerPlug::AckSendSubServerInputLink(IProtocolDispatcher &dispatcher,
 /**
  @brief 
  */
-bool CFarmServerPlug::AckSendSubServerOutputLink(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode)
+bool CFarmServerPlug::AckSendSubServerOutputLink(farm::AckSendSubServerOutputLink_Packet &packet)
 {
 	if (!m_IsDetectedSendConfig)
-		m_IsDetectedSendConfig = (errorCode != error::ERR_SUCCESS);
+		m_IsDetectedSendConfig = (packet.errorCode != error::ERR_SUCCESS);
 
 	if (m_IsDetectedSendConfig)
 	{
@@ -292,29 +292,27 @@ bool CFarmServerPlug::AckSendSubServerOutputLink(IProtocolDispatcher &dispatcher
 /**
  @brief 
  */
-bool CFarmServerPlug::AckServerInfoList(IProtocolDispatcher &dispatcher, netid senderId, 
-	const error::ERROR_CODE &errorCode, 
-	const std::string &clientSvrType, const std::string &serverSvrType, const std::vector<SHostInfo> &v)
+bool CFarmServerPlug::AckServerInfoList(farm::AckServerInfoList_Packet &packet)
 {
-	if (errorCode != error::ERR_SUCCESS)
+	if (packet.errorCode != error::ERR_SUCCESS)
 	{
 		clog::Error( clog::ERROR_CRITICAL, 
 			"AckServerInfoList Error!!, not found port number  clientSvrType = %s, serverSvrType = %s", 
-			clientSvrType.c_str(), serverSvrType.c_str() );
+			packet.clientSvrType.c_str(), packet.serverSvrType.c_str() );
 		return true;
 	}
 
 	// Connect Client
-	MultiPlugPtr ptr = CMultiNetwork::Get()->GetMultiPlug(serverSvrType);
+	MultiPlugPtr ptr = CMultiNetwork::Get()->GetMultiPlug(packet.serverSvrType);
 	if (!ptr)
 	{
 		clog::Error( clog::ERROR_CRITICAL, 
 			"AckServerInfoList Error!!, not found controller serverSvrType = %s", 
-			serverSvrType.c_str() );
+			packet.serverSvrType.c_str() );
 		return true;
 	}
 	
-	if (!ptr->Start(v))
+	if (!ptr->Start(packet.v))
 	{
 		clog::Error( clog::ERROR_CRITICAL, "NetGroupController Start Error!!" );
 		return false;
@@ -326,28 +324,27 @@ bool CFarmServerPlug::AckServerInfoList(IProtocolDispatcher &dispatcher, netid s
 /**
  @brief 
  */
-bool CFarmServerPlug::AckToBindOuterPort(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode, 
-	const std::string &bindSubServerSvrType, const int &port)
+bool CFarmServerPlug::AckToBindOuterPort(farm::AckToBindOuterPort_Packet &packet)
 {
-	if (errorCode != error::ERR_SUCCESS)
+	if (packet.errorCode != error::ERR_SUCCESS)
 	{
 		clog::Error( clog::ERROR_CRITICAL, 
 			"AckToBindOuterPort Error!!, not found port number  bindSubServerSvrType = %s", 
-			bindSubServerSvrType.c_str() );
+			packet.bindSubServerSvrType.c_str() );
 		return false;
 	}
 
-	MultiPlugPtr ptr = CMultiNetwork::Get()->GetMultiPlug(bindSubServerSvrType);
+	MultiPlugPtr ptr = CMultiNetwork::Get()->GetMultiPlug(packet.bindSubServerSvrType);
 	if (!ptr)
 	{
 		clog::Error( clog::ERROR_CRITICAL, 
 			"AckToBindOuterPort Error!!, not found controller bindSubServerSvrType = %s", 
-			bindSubServerSvrType.c_str() );
+			packet.bindSubServerSvrType.c_str() );
 		return false;
 	}
 
 	// Server Bind
-	if (!ptr->Start( "", port))
+	if (!ptr->Start( "", packet.port))
 	{
 		clog::Error( clog::ERROR_CRITICAL, "NetGroupController Start Error!!" );
 		return false;
@@ -359,28 +356,27 @@ bool CFarmServerPlug::AckToBindOuterPort(IProtocolDispatcher &dispatcher, netid 
 /**
  @brief 
  */
-bool CFarmServerPlug::AckToBindInnerPort(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode, 
-	const std::string &bindSubServerSvrType, const int &port)
+bool CFarmServerPlug::AckToBindInnerPort(farm::AckToBindInnerPort_Packet &packet)
 {
-	if (errorCode != error::ERR_SUCCESS)
+	if (packet.errorCode != error::ERR_SUCCESS)
 	{
 		clog::Error( clog::ERROR_CRITICAL, 
 			"AckToBindInnerPort Error!!, not found port number  bindSubServerSvrType = %s", 
-			bindSubServerSvrType.c_str() );
+			packet.bindSubServerSvrType.c_str() );
 		return false;
 	}
 
-	MultiPlugPtr ptr = CMultiNetwork::Get()->GetMultiPlug(bindSubServerSvrType);
+	MultiPlugPtr ptr = CMultiNetwork::Get()->GetMultiPlug(packet.bindSubServerSvrType);
 	if (!ptr)
 	{
 		clog::Error( clog::ERROR_CRITICAL, 
 			"AckToBindInnerPort Error!!, not found controller bindSubServerSvrType = %s", 
-			bindSubServerSvrType.c_str() );
+			packet.bindSubServerSvrType.c_str() );
 		return false;
 	}
 
 	// Server Bind
-	if (!ptr->Start( "", port))
+	if (!ptr->Start( "", packet.port))
 	{
 		clog::Error( clog::ERROR_CRITICAL, "NetGroupController Start Error!!" );
 		return false;
@@ -392,8 +388,7 @@ bool CFarmServerPlug::AckToBindInnerPort(IProtocolDispatcher &dispatcher, netid 
 /**
  @brief 
  */
-bool CFarmServerPlug::AckSubServerBindComplete(IProtocolDispatcher &dispatcher, netid senderId, 
-	const error::ERROR_CODE &errorCode, const std::string &subServerSvrType)
+bool CFarmServerPlug::AckSubServerBindComplete(farm::AckSubServerBindComplete_Packet &packet)
 {
 	
 	return true;
@@ -403,8 +398,7 @@ bool CFarmServerPlug::AckSubServerBindComplete(IProtocolDispatcher &dispatcher, 
 /**
  @brief 
  */
-bool CFarmServerPlug::AckSubClientConnectComplete(IProtocolDispatcher &dispatcher, netid senderId, 
-	const error::ERROR_CODE &errorCode, const std::string &subClientSvrType)
+bool CFarmServerPlug::AckSubClientConnectComplete(farm::AckSubClientConnectComplete_Packet &packet)
 {
 
 	return true;
@@ -414,19 +408,20 @@ bool CFarmServerPlug::AckSubClientConnectComplete(IProtocolDispatcher &dispatche
 /**
  @brief 
  */
-bool CFarmServerPlug::BindSubServer(IProtocolDispatcher &dispatcher, netid senderId, const std::string &bindSubSvrType, 
-	const std::string &ip, const int &port)
+bool CFarmServerPlug::BindSubServer(farm::BindSubServer_Packet &packet)
 {
-	MultiPlugPtr ptr = CMultiNetwork::Get()->GetMultiPlug(bindSubSvrType);	
+	MultiPlugPtr ptr = CMultiNetwork::Get()->GetMultiPlug(packet.bindSubSvrType);
 	if (!ptr)
 	{
-		clog::Error( clog::ERROR_CRITICAL, "BindSubServer Error!! not found bindSubSvr : %s", bindSubSvrType.c_str() );
+		clog::Error( clog::ERROR_CRITICAL, "BindSubServer Error!! not found bindSubSvr : %s", 
+			packet.bindSubSvrType.c_str() );
 		return false;
 	}
 
-	if (!ptr->Start(ip, port))
+	if (!ptr->Start(packet.ip, packet.port))
 	{
-		clog::Error( clog::ERROR_CRITICAL, "BindSubServer Start Error!! ip=%s, port=%d", ip.c_str(), port );
+		clog::Error( clog::ERROR_CRITICAL, "BindSubServer Start Error!! ip=%s, port=%d", 
+			packet.ip.c_str(), packet.port );
 		return false;
 	}
 	return true;

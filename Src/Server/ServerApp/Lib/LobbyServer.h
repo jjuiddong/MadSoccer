@@ -73,12 +73,10 @@ protected:
 
 
 	// Network Protocol Handler
-	virtual bool ReqMoveUser(network::IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, const certify_key &c_key, const std::string &ip, const int &port) override;
+	virtual bool ReqMovePlayer(server_network::ReqMovePlayer_Packet &packet) override;
 
 
 private:
-	//Players_		m_Users;
-	//RoomMap		m_Rooms;
 
 	// Handler
 	CBasicC2SHandler_LobbySvr *m_pBasicPrtHandler;

@@ -89,10 +89,9 @@ void	CLoginServer::OnSubServerConnect(CNetEvent &event)
 
 
 /**
- @brief ReqMoveUser
+ @brief ReqMovePlayer
  */
-bool CLoginServer::ReqMoveUser(IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, 
-	const certify_key &c_key, const std::string &ip, const int &port )
+bool CLoginServer::ReqMovePlayer(server_network::ReqMovePlayer_Packet &packet)
 {
 	
 	return true;
@@ -100,26 +99,25 @@ bool CLoginServer::ReqMoveUser(IProtocolDispatcher &dispatcher, netid senderId, 
 
 
 /**
- @brief AckMoveUser
+ @brief AckMovePlayer
  */
-bool CLoginServer::AckMoveUser(IProtocolDispatcher &dispatcher, netid senderId, 
-	const error::ERROR_CODE &errorCode, const std::string &id, const std::string &ip, const int &port)
+bool CLoginServer::AckMovePlayer(server_network::AckMovePlayer_Packet &packet)
 {
-	CSession *pClient = CheckClientId(GetServer(), id, 0, NULL, NULL);
+	CSession *pClient = CheckClientId(GetServer(), packet.id, 0, NULL, NULL);
 	if (!pClient)
 	{
-		clog::Error( clog::ERROR_CRITICAL, "AckMoveUser Error!! not found client id = %s", id.c_str() );
-		m_SvrNetworkProtocol.ReqMoveUserCancel( senderId, SEND_T, id );
+		clog::Error( clog::ERROR_CRITICAL, "AckMovePlayer Error!! not found client id = %s", packet.id.c_str() );
+		m_SvrNetworkProtocol.ReqMovePlayerCancel( packet.senderId, SEND_T, packet.id );
 		return false;
 	}
 
-	if (error::ERR_SUCCESS == errorCode)
+	if (error::ERR_SUCCESS == packet.errorCode)
 	{
-		m_BasicProtocol.AckMoveToServer( pClient->GetNetId(), SEND_T, error::ERR_SUCCESS, "lobbysvr", ip, port);
+		m_BasicProtocol.AckMoveToServer( pClient->GetNetId(), SEND_T, error::ERR_SUCCESS, "lobbysvr", packet.ip, packet.port);
 	}
 	else
 	{
-		m_BasicProtocol.AckMoveToServer( pClient->GetNetId(), SEND_T, errorCode, "lobbysvr", " ", 0);
+		m_BasicProtocol.AckMoveToServer( pClient->GetNetId(), SEND_T, packet.errorCode, "lobbysvr", " ", 0);
 	}
 	return true;
 }
@@ -129,19 +127,19 @@ bool CLoginServer::AckMoveUser(IProtocolDispatcher &dispatcher, netid senderId,
  @brief ReqLobbyIn
  로비서버로 이동 요청 
  */
-bool CLoginServer::ReqLobbyIn(IProtocolDispatcher &dispatcher, netid senderId)
+bool CLoginServer::ReqLobbyIn(login::ReqLobbyIn_Packet &packet)
 {
-	CSession *pClient = CheckClientNetId(GetServer(), senderId, &m_BasicProtocol, &dispatcher);
+	CSession *pClient = CheckClientNetId(GetServer(), packet.senderId, &m_BasicProtocol, packet.pdispatcher);
 	RETV(!pClient, false);
 
-	if (!CheckClientConnection(pClient, &m_BasicProtocol, &dispatcher))
+	if (!CheckClientConnection(pClient, &m_BasicProtocol, packet.pdispatcher))
 		return false;
 
 	MultiPlugDelegationPtr pLobbySvrDelegation = multinetwork::CMultiNetwork::Get()->GetDelegation("lobbysvr");
 	if (!pLobbySvrDelegation)
 	{
 		clog::Error( clog::ERROR_CRITICAL, "ReqLobbyIn Error!! not found lobbysvr netgroupdelegation" );
-		m_LoginProtocol.AckLobbyIn( senderId, SEND_T, error::ERR_REQLOBBYIN_NOTFOUND_SERVER );
+		m_LoginProtocol.AckLobbyIn( packet.senderId, SEND_T, error::ERR_REQLOBBYIN_NOTFOUND_SERVER );
 		return false;
 	}
 
@@ -149,7 +147,7 @@ bool CLoginServer::ReqLobbyIn(IProtocolDispatcher &dispatcher, netid senderId)
 	if (!pSubSvrCon)
 	{
 		clog::Error( clog::ERROR_CRITICAL, "ReqLobbyIn Error!! CSubServerConnector convert error" );
-		m_LoginProtocol.AckLobbyIn( senderId, SEND_T, error::ERR_REQLOBBYIN_NOTFOUND_SERVER );
+		m_LoginProtocol.AckLobbyIn( packet.senderId, SEND_T, error::ERR_REQLOBBYIN_NOTFOUND_SERVER );
 		return false;
 	}
 
@@ -158,14 +156,14 @@ bool CLoginServer::ReqLobbyIn(IProtocolDispatcher &dispatcher, netid senderId)
 	if (subServers.empty())
 	{
 		clog::Error( clog::ERROR_CRITICAL, "ReqLobbyIn Error!! not found lobbysvr server" );
-		m_LoginProtocol.AckLobbyIn( senderId, SEND_T, error::ERR_REQLOBBYIN_NOTFOUND_SERVER );
+		m_LoginProtocol.AckLobbyIn( packet.senderId, SEND_T, error::ERR_REQLOBBYIN_NOTFOUND_SERVER );
 		return false;
 	}
 
 	SSubServerInfo targetSvr = subServers.front();
 	pSubSvrCon->RegisterProtocol( &m_SvrNetworkProtocol );
-	m_SvrNetworkProtocol.ReqMoveUser( targetSvr.serverId, SEND_T, 
-		pClient->GetName(), pClient->GetCertifyKey(), targetSvr.ip, targetSvr.portnum  );
+	m_SvrNetworkProtocol.ReqMovePlayer( targetSvr.serverId, SEND_T, 
+		pClient->GetName(), pClient->GetCertifyKey(), 0, targetSvr.ip, targetSvr.portnum  );
 
 	return true; 
 }

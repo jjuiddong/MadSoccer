@@ -23,7 +23,7 @@ CRoom::~CRoom()
 //------------------------------------------------------------------------
 bool CRoom::AddUser(netid groupId, netid userId)
 {
-	const bool result = m_RootGroup.AddUser(groupId, userId);
+	const bool result = m_RootGroup.AddPlayer(groupId, userId);
 
 	return result;
 }
@@ -34,7 +34,7 @@ bool CRoom::AddUser(netid groupId, netid userId)
 //------------------------------------------------------------------------
 bool CRoom::RemoveUser(netid groupId, netid userId)
 {
-	const bool result = m_RootGroup.RemoveUser(groupId, userId);
+	const bool result = m_RootGroup.RemovePlayer(groupId, userId);
 
 	return result;
 }
@@ -96,5 +96,5 @@ GroupPtr CRoom::GetGroup(netid groupId )
 //------------------------------------------------------------------------
 bool CRoom::IsUserExist(netid userId)
 {
-	return m_RootGroup.IsExistUser(userId);
+	return m_RootGroup.IsExistPlayer(userId);
 }

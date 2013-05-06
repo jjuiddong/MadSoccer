@@ -41,11 +41,11 @@ protected:
 	virtual void	OnClientLeave(network::CNetEvent &event);
 
 	// Network Protocol Handler
-	virtual bool ReqUserLogin(network::IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, const std::string &passwd, const std::string &svrType) override;
-	virtual bool ReqUserLogout(network::IProtocolDispatcher &dispatcher, netid senderId, const std::string &id) override;
-	virtual bool ReqUserMoveServer(network::IProtocolDispatcher &dispatcher, netid senderId, const std::string &id, const std::string &svrType) override;
-
-	virtual bool SendServerInfo(network::IProtocolDispatcher &dispatcher, netid senderId, const std::string &svrType, const std::string &ip, const int &port, const int &userCount) override;
+	virtual bool ReqUserLogin(certify::ReqUserLogin_Packet &packet) override;
+	virtual bool ReqUserLogout(certify::ReqUserLogout_Packet &packet) override;
+	virtual bool ReqUserMoveServer(certify::ReqUserMoveServer_Packet &packet) override;
+	/// server_network
+	virtual bool SendServerInfo(server_network::SendServerInfo_Packet &packet) override;
 
 private:
 	SessionsId	m_Sessions;

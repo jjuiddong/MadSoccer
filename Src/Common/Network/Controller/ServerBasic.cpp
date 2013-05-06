@@ -307,7 +307,7 @@ bool CServerBasic::AddSession(SOCKET sock, const std::string &ip)
 		return true;
 	}
 
-	if (m_RootGroup.AddUser(m_WaitGroupId, pNewSession->GetNetId()))
+	if (m_RootGroup.AddPlayer(m_WaitGroupId, pNewSession->GetNetId()))
 	{
 		CPlayer *pNewUser  = m_pPlayerFactory->New();
 		pNewUser->SetNetId(pNewSession->GetNetId());
@@ -444,10 +444,10 @@ bool CServerBasic::RemoveClientProcess()
 		// call before remove client
 		OnClientLeave(netId);
 
-		 GroupPtr pGroup = m_RootGroup.GetChildFromUser(netId);
+		 GroupPtr pGroup = m_RootGroup.GetChildFromPlayer(netId);
 		 if (pGroup)
 		 {
-			if (!m_RootGroup.RemoveUser(pGroup->GetId(), netId))
+			if (!m_RootGroup.RemovePlayer(pGroup->GetId(), netId))
 			{
 				clog::Error( clog::ERROR_PROBLEM, 
 					"CServerBasic::RemoveClientProcess() Error!! not remove user groupid: %d, userid: %d\n",
@@ -679,7 +679,7 @@ bool	CServerBasic::SendViewerRecursive(netid viewerId, const netid exceptGroupId
 bool	CServerBasic::SendGroup(GroupPtr pGroup, CPacket &packet)
 {
 	RETV(!pGroup, false);
-	BOOST_FOREACH(auto &userId, pGroup->GetUsers())
+	BOOST_FOREACH(auto &userId, pGroup->GetPlayers())
 	{
 		Send(userId, SEND_TARGET, packet);
 	}

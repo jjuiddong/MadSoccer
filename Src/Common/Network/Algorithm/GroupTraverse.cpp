@@ -30,7 +30,7 @@ netid group::GetP2PHostClient( GroupPtr pGroup, ISessionAccess &userAccess)
 	if (!p2pGroup)
 		return INVALID_NETID;
 
-	const NetIdes &users = p2pGroup->GetUsers();
+	const NetIdes &users = p2pGroup->GetPlayers();
 	BOOST_FOREACH(auto &userId, users)
 	{
 		SessionPtr clientPtr = userAccess.GetSession(userId);
@@ -77,8 +77,8 @@ netid group::SelectP2PHostClient( GroupPtr pGroup )
 {
 	RETV(!pGroup, INVALID_NETID);
 
-	if (pGroup->GetUsers().size() <= 0)
+	if (pGroup->GetPlayers().size() <= 0)
 		return INVALID_NETID;
 
-	return pGroup->GetUsers().front();
+	return pGroup->GetPlayers().front();
 }

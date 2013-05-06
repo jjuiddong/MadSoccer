@@ -13,7 +13,7 @@ using namespace network;
 bool CSubServerGroup::GetServerInfoCorrespondClient( const std::string &clientSvrType, const std::string &serverSvrType, 
 	ISessionAccess &userAccess, OUT std::vector<SHostInfo> &v)
 {
-	BOOST_FOREACH(auto &netId, GetUsers())
+	BOOST_FOREACH(auto &netId, GetPlayers())
 	{
 		RemoteSubServerPtr pSubServer = dynamic_cast<CRemoteSubServer*>(
 			userAccess.GetSession(netId).Get());
@@ -36,7 +36,7 @@ bool CSubServerGroup::GetCorrespondClientInfo( ISessionAccess &userAccess, OUT s
 	svrTypes.clear();
 	svrTypes.reserve(32);
 
-	BOOST_FOREACH(auto &netId, GetUsers())
+	BOOST_FOREACH(auto &netId, GetPlayers())
 	{
 		RemoteSubServerPtr pSubServer = dynamic_cast<CRemoteSubServer*>(
 			userAccess.GetSession(netId).Get());
@@ -60,7 +60,7 @@ bool CSubServerGroup::GetCorrespondClientInfo( ISessionAccess &userAccess, OUT s
 int CSubServerGroup::GetToBindOuterPort(ISessionAccess &userAccess)
 {
 	int port = m_OuterPortBase;
-	BOOST_FOREACH(auto &netId, GetUsers())
+	BOOST_FOREACH(auto &netId, GetPlayers())
 	{
 		RemoteSubServerPtr pSubServer = dynamic_cast<CRemoteSubServer*>(
 			userAccess.GetSession(netId).Get());
@@ -78,7 +78,7 @@ int CSubServerGroup::GetToBindOuterPort(ISessionAccess &userAccess)
 int CSubServerGroup::GetToBindInnerPort(ISessionAccess &userAccess)
 {
 	int port = m_InnerPortBase;
-	BOOST_FOREACH(auto &netId, GetUsers())
+	BOOST_FOREACH(auto &netId, GetPlayers())
 	{
 		RemoteSubServerPtr pSubServer = dynamic_cast<CRemoteSubServer*>(
 			userAccess.GetSession(netId).Get());

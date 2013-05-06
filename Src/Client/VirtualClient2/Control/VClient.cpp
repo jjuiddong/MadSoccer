@@ -110,29 +110,28 @@ void	CVClient::OnMemberLeave(network::CNetEvent &event)
 //------------------------------------------------------------------------
 // 
 //------------------------------------------------------------------------
-bool CVClient::AckGroupList(IProtocolDispatcher &dispatcher, netid senderId, 
-	const network::error::ERROR_CODE &errorCode, const GroupVector &groups)
+bool CVClient::AckGroupList(basic::AckGroupList_Packet &packet)
 {
 	GetConsole()->AddString( "------------" );
 	GetConsole()->AddString( 
 		common::format( "group count: %d, errorCode: %d",
-		groups.size(), errorCode) );		
+		packet.groups.size(), packet.errorCode) );
 
-	for (u_int i=0; i < groups.size(); ++i)
+	for (u_int i=0; i < packet.groups.size(); ++i)
 	{
 		GetConsole()->AddString( "Group Information" );
 
 		GetConsole()->AddString( 
 			common::format( "    group id: %d",
-			groups[ i].GetId()) );		
+			packet.groups[ i].GetId()) );		
 
 		GetConsole()->AddString( 
 			common::format( "    group name: %s",
-			groups[ i].GetName().c_str()) );		
+			packet.groups[ i].GetName().c_str()) );		
 
 		GetConsole()->AddString( 
 			common::format( "    users: %d",
-			groups[ i].GetUsers().size()) );
+			packet.groups[ i].GetPlayers().size()) );
 	}
 
 	return true;
@@ -142,7 +141,7 @@ bool CVClient::AckGroupList(IProtocolDispatcher &dispatcher, netid senderId,
 /**
  @brief 
  */
-bool CVClient::SendData(IProtocolDispatcher &dispatcher, netid senderId)
+bool CVClient::SendData(p2pComm::SendData_Packet &packet)
 {
 	// Host 일때, 나머지 클라이언트들에게 패킷을 보낸다.
 	if (IsP2PHostClient())
@@ -156,14 +155,13 @@ bool CVClient::SendData(IProtocolDispatcher &dispatcher, netid senderId)
 /**
  @brief Acknowledge
  */
-bool CVClient::AckLogIn(IProtocolDispatcher &dispatcher, netid senderId, 
-	const network::error::ERROR_CODE &errorCode, const std::string &id, const certify_key &c_key)
+bool CVClient::AckLogIn(basic::AckLogIn_Packet &packet)
 {
-	if (errorCode == error::ERR_SUCCESS)
+	if (packet.errorCode == error::ERR_SUCCESS)
 	{
 		m_heroId = GetNetId();
-		m_heroCKey = c_key;
-		theApp.GetMainDlg()->SetWindowText( common::formatw( "id = %s", id.c_str()).c_str() );
+		m_heroCKey = packet.c_key;
+		theApp.GetMainDlg()->SetWindowText( common::formatw( "id = %s", packet.id.c_str()).c_str() );
 	}
 	else
 	{

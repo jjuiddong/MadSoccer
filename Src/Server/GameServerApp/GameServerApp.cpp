@@ -6,6 +6,10 @@
 #include "Src/GameServer.h"
 #include "Network/Service/ServerApp.h"
 
+#include "NetProtocol/src/server_network_Protocol.cpp"
+#include "NetProtocol/Src/server_network_ProtocolListener.cpp"
+
+
 using namespace network;
 
 

@@ -28,7 +28,7 @@ namespace network
 		void				OnConnectSubLink(CNetEvent &event );
 
 		/// Network Protocol Handler
-		virtual bool SendServerInfo(IProtocolDispatcher &dispatcher, netid senderId, const std::string &svrType, const std::string &ip, const int &port, const int &userCount) override;
+		virtual bool SendServerInfo(server_network::SendServerInfo_Packet &packet) override;
 
 	private:
 		typedef common::StableVectorMap<netid, CRemoteServer*>	RemoteServers;

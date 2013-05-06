@@ -34,9 +34,9 @@ namespace network
 		void		OnDisconnectClient(CNetEvent &event);
 
 		// Network Handler
-		virtual bool AckLogIn(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode, const std::string &id, const certify_key &c_key) override;
-		virtual bool AckP2PConnect(IProtocolDispatcher &dispatcher, netid senderId, const network::error::ERROR_CODE &errorCode, const network::P2P_STATE &state, const std::string &ip, const int &port) override;
-		virtual bool AckMoveToServer(IProtocolDispatcher &dispatcher, netid senderId, const error::ERROR_CODE &errorCode, const std::string &serverName, const std::string &ip, const int &port) override;
+		virtual bool AckLogIn(basic::AckLogIn_Packet &packet) override;
+		virtual bool AckP2PConnect(basic::AckP2PConnect_Packet &packet) override;
+		virtual bool AckMoveToServer(basic::AckMoveToServer_Packet &packet) override;
 
 	private:
 		CClient							&m_Client;		/// CClient Reference 
