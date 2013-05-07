@@ -48,8 +48,10 @@ bool multinetwork::ReadServerConfigFile( const std::string &fileName, OUT SSvrCo
 		ReadChildStringType(props, "input link", config.inputLink);
 		ReadChildStringType(props, "output link", config.outputLink);
 	}
-	catch (std::exception &)
+	catch (std::exception &e)
 	{
+		clog::Error( clog::ERROR_CRITICAL, 0, "ReadServerConfigFile() Error!! [%s]",
+			e.what());
 		return false;
 	}
 

@@ -150,8 +150,8 @@ namespace network
 		if (listeners.empty())
 		{
 			clog::Error( clog::ERROR_CRITICAL,
-				common::format("CTaskLogic %d NetConnector의 프로토콜 리스너가 없습니다.\n", 
-				pCon->GetNetId()) );
+				common::format("CTaskLogic %d NetConnector의 protocolId = %d 프로토콜 리스너가 없습니다.\n", 
+				pCon->GetNetId(), protocolId) );
 			return RR_CONTINUE;
 		}
 

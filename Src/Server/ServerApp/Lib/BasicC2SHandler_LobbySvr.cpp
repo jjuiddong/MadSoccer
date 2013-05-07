@@ -28,8 +28,8 @@ bool CBasicC2SHandler_LobbySvr::ReqLogIn( basic::ReqLogIn_Packet &packet)
 	if (!CBasicC2SHandler::ReqLogIn(packet))
 		return false;
 
-	CSession *pClient = network::CheckClientNetId( &GetServer(), packet.senderId, &m_BasicProtocol, packet.pdispatcher );
-	RETV(!pClient, false);
+	CSession *pSession = network::CheckClientNetId( &GetServer(), packet.senderId, &m_BasicProtocol, packet.pdispatcher );
+	RETV(!pSession, false);
 
 	MultiPlugDelegationPtr pLobbySvrDelegation = CheckDelegation( "client", packet.senderId, &m_BasicProtocol, packet.pdispatcher );
 	RETV(!pLobbySvrDelegation, false);
@@ -37,8 +37,8 @@ bool CBasicC2SHandler_LobbySvr::ReqLogIn( basic::ReqLogIn_Packet &packet)
 	CLobbyServer *pLobbySvr = CheckCasting<CLobbyServer*>( pLobbySvrDelegation.Get(), packet.senderId, &m_BasicProtocol, packet.pdispatcher );
 	RETV(!pLobbySvr, false);
 
-	PlayerPtr pUser = GetServer().GetPlayer(packet.id);
-	if (!pUser)
+	PlayerPtr pPlayer = GetServer().GetPlayer(packet.id);
+	if (!pPlayer)
 	{
 		clog::Error( clog::ERROR_CRITICAL, 0, "ReqLogIn Error!! not found user id=%s", packet.id.c_str());
 		m_BasicProtocol.AckLogIn( packet.senderId, SEND_T, error::ERR_NOT_FOUND_USER, packet.id, packet.c_key);
@@ -46,14 +46,34 @@ bool CBasicC2SHandler_LobbySvr::ReqLogIn( basic::ReqLogIn_Packet &packet)
 	}
 
 	// check certify key
-	if (pUser->GetCertifyKey() != packet.c_key)
+	if (pPlayer->GetCertifyKey() != packet.c_key)
 	{
 		clog::Error( clog::ERROR_PROBLEM, 0, "ReqLogIn Error!! invalid certify key key=%d", packet.c_key );
 		m_BasicProtocol.AckLogIn( packet.senderId, SEND_T, error::ERR_INVALID_CERTIFY_KEY, packet.id, packet.c_key);
 		return false;
 	}
-	
-	pClient->SetCertifyKey(packet.c_key);
+
+	// player mapping
+	PlayerPtr pAutoConstuctPlayer = GetServer().GetPlayer(packet.senderId);
+	if (!pAutoConstuctPlayer)
+	{
+		clog::Error( clog::ERROR_CRITICAL, 0, "ReqLogIn Error!! not foudn auto construct player netid=%d", packet.senderId);
+		m_BasicProtocol.AckLogIn( packet.senderId, SEND_T, error::ERR_NOT_FOUND_USER, packet.id, packet.c_key);
+
+		GetServer().RemovePlayer(pPlayer->GetNetId());
+		return false;
+	}
+
+	pSession->SetName(packet.id);
+	pSession->SetCertifyKey(packet.c_key);
+	pSession->SetState( SESSIONSTATE_LOGIN );
+
+	// player mapping
+	// *pAutoConstuctPlayer = *pPlayer
+	pAutoConstuctPlayer->SetName( pPlayer->GetName() );
+	// remove temperate player object
+	GetServer().RemovePlayer(pPlayer->GetNetId());
+
 	m_CertifyProtocol.ReqUserMoveServer( SERVER_NETID, SEND_T, packet.id, "lobbysvr" );
 	m_BasicProtocol.AckLogIn( packet.senderId, SEND_T, error::ERR_SUCCESS, packet.id, packet.c_key);
 	return true;
@@ -186,7 +206,8 @@ bool CBasicC2SHandler_LobbySvr::AckCreateGroup(server_network::AckCreateGroup_Pa
 
 
 /**
- @brief AckMovePlayer
+ @brief AckMovePlayer 
+			from GameServer
  */
 bool CBasicC2SHandler_LobbySvr::AckMovePlayer(server_network::AckMovePlayer_Packet &packet)
 {
@@ -254,8 +275,22 @@ bool CBasicC2SHandler_LobbySvr::AckMovePlayer(server_network::AckMovePlayer_Pack
 	pLobbyPlayer->SetRequestState(CLobbyPlayer::REQ_NONE);
 
 	// Send Move to Server
+	MultiPlugDelegationPtr pGamesSvr = CheckDelegation("gamesvr", pLobbyPlayer->GetNetId(), &m_BasicProtocol, packet.pdispatcher );
+	RETV(!pGamesSvr, false);
 
+	CSubServerPlug* pSubServerPlug = CheckCasting<CSubServerPlug*>(pGamesSvr.Get(), pLobbyPlayer->GetNetId(), 
+		&m_BasicProtocol, packet.pdispatcher);
+	RETV(!pSubServerPlug, false);
 
+	SSubServerInfo subSeverInfo = pSubServerPlug->GetSubServerInfo(packet.senderId);
+	if (INVALID_NETID == subSeverInfo.serverId)
+	{
+		m_BasicProtocol.Error( pLobbyPlayer->GetNetId(), SEND_T, error::ERR_MOVETOSERVER_NOT_FOUND_SERVER );
+		return false;
+	}
+
+	m_BasicProtocol.AckMoveToServer( pLobbyPlayer->GetNetId(), SEND_T, error::ERR_SUCCESS, "gamesvr", 
+		subSeverInfo.ip, subSeverInfo.portnum );
 
 	return true;
 }

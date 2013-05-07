@@ -20,6 +20,8 @@ bool network::Init(int logicThreadCount, const std::string &svrConfigFileName) /
 	protocols::Init();
 
 	bool result = CController::Get()->Init(logicThreadCount);
+	if (!result)
+		clog::Error( clog::ERROR_CRITICAL, 0, "CController::Get()->Init() Error!!" );
 
 	if (result)
 	{

@@ -17,11 +17,22 @@ class CGameServer : public network::CServer
 								, public network::AllProtocolDisplayer
 								, public memmonitor::Monitor<CGameServer, TYPE_NAME(CGameServer)>
 {
+	enum
+	{
+		ID_TIMER_REFRESH = 100,
+		REFRESH_TIMER_INTERVAL = 10000,
+	};
+
 public:
 	CGameServer();
 	virtual ~CGameServer();
 
 protected:
+	// Event Handler
+	virtual void	OnConnectMultiPlug() override;
+	void				OnTimer( network::CEvent &event );	
+
+
 	// Network Protocol Handler
 	virtual bool ReqMovePlayer(server_network::ReqMovePlayer_Packet &packet) override;
 	virtual bool ReqMovePlayerCancel(server_network::ReqMovePlayerCancel_Packet &packet) override;

@@ -20,6 +20,7 @@ class CVClient : public network::CClient
 						,public all::ProtocolListener
 						,public basic::s2c_ProtocolListener
 						//,public login::s2c_ProtocolListener
+
 						,public p2pComm::c2c_ProtocolListener
 						,public common::CSingleton<CVClient>
 						,public memmonitor::Monitor<CVClient, TYPE_NAME(CVClient)>

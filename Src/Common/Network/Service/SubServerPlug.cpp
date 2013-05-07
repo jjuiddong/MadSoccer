@@ -132,3 +132,22 @@ std::list<SSubServerInfo> CSubServerPlug::GetSubServerInfo()
 
 	return  servers;
 }
+
+
+/**
+@brief  serverId  의  Server 정보를 리턴한다.
+*/
+SSubServerInfo CSubServerPlug::GetSubServerInfo(netid serverId)
+{
+	SSubServerInfo info;
+	info.serverId = INVALID_NETID;
+
+	std::list<SSubServerInfo> subServers = GetSubServerInfo();
+	BOOST_FOREACH(auto &svr, subServers)
+	{
+		if (serverId == svr.serverId)
+			return svr;
+	}
+
+	return info;
+}

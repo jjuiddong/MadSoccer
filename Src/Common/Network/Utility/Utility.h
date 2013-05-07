@@ -30,6 +30,9 @@ namespace network
 	};
 
 
-	//struct S
+	// Error Message
+	static std::string g_LastError;
+	inline std::string GetLastError() { return g_LastError; }
+	inline void SetLastError(const std::string &err) { g_LastError = err; }
 
 }

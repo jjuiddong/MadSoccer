@@ -38,7 +38,7 @@ CGameServerApp::CGameServerApp() :
 
 CGameServerApp::~CGameServerApp()
 {
-	SAFE_DELETE(m_pGameSvr);
+	//SAFE_DELETE(m_pGameSvr);
 }
 
 
@@ -47,8 +47,14 @@ CGameServerApp::~CGameServerApp()
  */
 bool CGameServerApp::OnInit()
 {
+	if (!network::AddDelegation("lobbysvr", 	new CSubServerPlug("gamesvr")))
+	{
+		clog::Error( clog::ERROR_CRITICAL, "network :: ConnectDelegation Fail !! lobbysvr \n" );
+		return false;
+	}
+
 	m_pGameSvr = new CGameServer();
-	if (!network::ConnectDelegation("client", 	m_pGameSvr))
+	if (!network::AddDelegation("client", 	m_pGameSvr))
 	{
 		clog::Error( clog::ERROR_CRITICAL, "network :: ConnectDelegation Fail !!\n" );
 		return false;

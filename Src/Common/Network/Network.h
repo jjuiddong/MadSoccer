@@ -37,6 +37,7 @@ namespace network
 
 	// Debug
 	std::string	ToString();
+	std::string	GetLastError();
 
 };
 

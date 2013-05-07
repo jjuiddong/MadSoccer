@@ -123,7 +123,7 @@ bool CVClient::AckGroupList(basic::AckGroupList_Packet &packet)
 
 		GetConsole()->AddString( 
 			common::format( "    group id: %d",
-			packet.groups[ i].GetId()) );		
+			packet.groups[ i].GetNetId()) );		
 
 		GetConsole()->AddString( 
 			common::format( "    group name: %s",
@@ -136,7 +136,7 @@ bool CVClient::AckGroupList(basic::AckGroupList_Packet &packet)
 
 	return true;
 }
-\
+
 
 /**
  @brief 

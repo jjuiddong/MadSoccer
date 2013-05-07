@@ -21,6 +21,7 @@ namespace network
 		virtual ~CSubServerPlug();
 
 		std::list<SSubServerInfo> GetSubServerInfo();
+		SSubServerInfo GetSubServerInfo(netid serverId);
 
 	protected:
 		// Event

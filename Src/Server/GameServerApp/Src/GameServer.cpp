@@ -17,6 +17,46 @@ CGameServer::~CGameServer()
 
 
 /**
+@brief  OnConnectMultiPlug
+*/
+void	CGameServer::OnConnectMultiPlug()
+{
+	MultiPlugDelegationPtr pLobbySvrDelegation = CheckDelegation("lobbysvr");
+	RET(!pLobbySvrDelegation);
+
+	AddChild(pLobbySvrDelegation);
+
+	AddProtocolListener(this);
+
+	EVENT_CONNECT_TO( GetServer(), this, EVT_TIMER, CGameServer, CGameServer::OnTimer );
+	GetServer()->AddTimer(ID_TIMER_REFRESH, REFRESH_TIMER_INTERVAL);
+
+}
+
+
+/**
+@brief  OnTimer
+*/
+void	CGameServer::OnTimer( network::CEvent &event )
+{
+	if (ID_TIMER_REFRESH == event.GetParam())
+	{
+		if (GetServer() && GetServer()->IsServerOn())
+		{
+			MultiPlugPtr pLoginSvrController = multinetwork::CMultiNetwork::Get()->GetMultiPlug("lobbysvr");
+			if (pLoginSvrController)
+			{
+				pLoginSvrController->RegisterProtocol( &m_SvrNetworkProtocol );
+				m_SvrNetworkProtocol.SendServerInfo( ALL_NETID, network::SEND_T, "gamesvr", 
+					GetServer()->GetIp(), GetServer()->GetPort(), GetServer()->GetSessions().size() );
+			}
+		}
+	}
+
+}
+
+
+/**
  @brief ReqMovePlayer
  */
 bool CGameServer::ReqMovePlayer(server_network::ReqMovePlayer_Packet &packet)
@@ -107,6 +147,7 @@ bool CGameServer::ReqCreateGroup(server_network::ReqCreateGroup_Packet &packet)
 
 /**
  @brief SendServerInfo
+	receiv from lobby server
  */
 bool CGameServer::SendServerInfo(server_network::SendServerInfo_Packet &packet)
 {
