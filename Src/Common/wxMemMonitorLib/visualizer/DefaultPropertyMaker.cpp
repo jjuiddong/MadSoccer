@@ -300,12 +300,32 @@ void visualizer ::MakeProperty_UDTChild(wxPGProperty *pParentProp,
 			ULONG celt = 0;
 			while (SUCCEEDED(pEnumChildren->Next(1, &pChild, &celt)) && (celt == 1)) 
 			{
+				enum SymTagEnum childSymTag;
+				HRESULT hr = pChild->get_symTag((DWORD*)&childSymTag);
+				switch (childSymTag)
+				{
+				case SymTagUDT:
+				case SymTagData:
+				case SymTagEnum:
+				case SymTagPointerType:
+				case SymTagBaseType:
+				case SymTagTypedef:
+				case SymTagBaseClass:
+					// process types
+					break;
+
+				case SymTagVTable:
+					break;
+
+				default:
+					pChild->Release();
+					continue;
+				}
+
 				bool childIsUdtExpand = IsUdtExpand;
 				int childDepth = option.depth - 1;
 				if (IsUdtExpand && (option.depth == 2))
 				{
-					enum SymTagEnum childSymTag;
-					HRESULT hr = pChild->get_symTag((DWORD*)&childSymTag);
 					if (SymTagUDT == childSymTag || SymTagBaseClass == childSymTag)
 					{
 						childIsUdtExpand = false;
