@@ -428,8 +428,7 @@ void visualizer::MakePropertyIteratorStmt_List( SVisBracketIterator_Stmt *pitor_
 /**
  @brief Execute vector command
  */
-void visualizer::MakePropertyIteratorStmt_Array( SVisBracketIterator_Stmt *pitor_stmt, 
-	const SMakerData &makerData )
+void visualizer::MakePropertyIteratorStmt_Array( SVisBracketIterator_Stmt *pitor_stmt, const SMakerData &makerData )
 {
 	CheckError( pitor_stmt->stmts->expr || pitor_stmt->disp_stmt , makerData, "#array expr, disp_stmt not setting" );
 
