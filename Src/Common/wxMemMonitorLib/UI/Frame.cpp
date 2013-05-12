@@ -190,10 +190,11 @@ void CFrame::UpdatePaneSize(wxWindow *pWindow, int w, int h)
 
 
 /**
-@brief  
+@brief  OnKeyDown
 */
 void CFrame::OnKeyDown(wxKeyEvent& event)
 {
+	event.Skip();
 	if (346 == event.GetKeyCode()) // VK_F7
 	{
 		Hide();

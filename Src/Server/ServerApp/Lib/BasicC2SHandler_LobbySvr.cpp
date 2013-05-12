@@ -232,7 +232,6 @@ bool CBasicC2SHandler_LobbySvr::AckMovePlayer(server_network::AckMovePlayer_Pack
 		return false;
 	}
 
-
 	GroupPtr pToGroup = CheckGroup(&GetServer(), packet.groupId, pLobbyPlayer->GetNetId(), &m_BasicProtocol, packet.pdispatcher);
 	RETV(!pToGroup, false);
 

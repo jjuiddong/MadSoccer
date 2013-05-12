@@ -34,6 +34,7 @@ namespace visualizer
 				index = rhs.index;
 				rank = rhs.rank;
 				count = rhs.count;
+				depth = rhs.depth;
 
 				propertyWindow = rhs.propertyWindow;
 				parentProperty = rhs.parentProperty;

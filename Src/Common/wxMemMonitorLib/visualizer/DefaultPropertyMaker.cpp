@@ -17,7 +17,6 @@ namespace visualizer
 	{
 		int depth;
 		bool isApplyVisualizer;
-
 		SVisOption() {}
 		SVisOption(int _depth, bool _isApplyVisualizer) : depth(_depth), isApplyVisualizer(_isApplyVisualizer) {}
 	}; 
@@ -29,6 +28,8 @@ namespace visualizer
 
 	bool		MakeProperty_Child(  wxPGProperty *pParentProp,  const SSymbolInfo &symbol, 
 		const bool IsUdtExpand, const SVisOption &option );
+
+
 
 	void		MakeProperty_UDTChild(wxPGProperty *pParentProp, const SSymbolInfo &symbol, 
 		const bool IsUdtExpand, const SVisOption &option );
@@ -49,7 +50,7 @@ namespace visualizer
 	wxPGProperty* MakeProperty_BaseType(wxPGProperty *pParentProp, 
 		const std::string valueName,  const SSymbolInfo &symbol );
 
-	wxPGProperty* MakeProperty_PointerData(wxPGProperty *pParentProp, 
+	wxPGProperty* MakeProperty_Pointer_Preview(wxPGProperty *pParentProp, 
 		const SSymbolInfo &symbol );
 
  	wxPGProperty* MakeProperty_ArrayData(wxPGProperty *pParentProp, 
@@ -219,7 +220,9 @@ void visualizer::MakeProperty_Preview(wxPGProperty *pParentProp, const SSymbolIn
 		break;
 
 	case SymTagPointerType:
-		MakeProperty_Pointer_Children(pParentProp, symbol, IsUdtExpand, option);
+		pProp = MakeProperty_Pointer_Preview(pParentProp, symbol);
+		if (pProp)
+			MakeProperty_Child(pProp, symbol, IsUdtExpand, option);
 		break;
 
 	case SymTagBaseClass:
@@ -421,9 +424,9 @@ void visualizer ::MakeProperty_Data(wxPGProperty *pParentProp, const SSymbolInfo
 		break;
 
 	case SymTagPointerType:
-		pPgProp = MakeProperty_PointerData(pParentProp, symbol);
+		pPgProp = MakeProperty_Pointer_Preview(pParentProp, SSymbolInfo(pBaseType, symbol.mem));
 		if (pPgProp)
-			MakeProperty_Child(pPgProp, SSymbolInfo(pBaseType, symbol.mem), IsUdtExpand, SVisOption(option.depth-1, option.isApplyVisualizer));
+			MakeProperty_Child(pPgProp, SSymbolInfo(pBaseType, symbol.mem, false), IsUdtExpand, SVisOption(option.depth-1, option.isApplyVisualizer));
 		break;
 
 	default:
@@ -495,17 +498,21 @@ wxPGProperty* visualizer::MakeProperty_ArrayData(wxPGProperty *pParentProp,
 //------------------------------------------------------------------------
 // Pointer Type Preview 
 //------------------------------------------------------------------------
-wxPGProperty* visualizer::MakeProperty_PointerData(
+wxPGProperty* visualizer::MakeProperty_Pointer_Preview(
 	wxPGProperty *pParentProp, const SSymbolInfo &symbol )
 {
 	wxPGProperty *pProp = NULL;
 
-	CComPtr<IDiaSymbol> pPointerType;
-	HRESULT hr = symbol.pSym->get_type(&pPointerType);
-	ASSERT_RETV(hr == S_OK, pProp);  // PointerType
+	//CComPtr<IDiaSymbol> pPointerType;
+	//HRESULT hr = symbol.pSym->get_type(&pPointerType);
+	//ASSERT_RETV(hr == S_OK, pProp);  // PointerType
+
+	//CComPtr<IDiaSymbol> pBaseType;
+	//hr = pPointerType->get_type(&pBaseType);
+	//ASSERT_RETV(hr == S_OK, pProp);  // BasicDataType or UDTDataType
 
 	CComPtr<IDiaSymbol> pBaseType;
-	hr = pPointerType->get_type(&pBaseType);
+	HRESULT hr = symbol.pSym->get_type(&pBaseType);
 	ASSERT_RETV(hr == S_OK, pProp);  // BasicDataType or UDTDataType
 
 	void *srcPtr = (void*)*(DWORD*)symbol.mem.ptr;
