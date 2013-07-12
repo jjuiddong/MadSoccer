@@ -4,16 +4,16 @@
 #include "Printer.h"
 
 
-void ToggleWindow( CPrinter* pActiveWnd, int key )
+bool ToggleWindow( CPrinter* pActiveWnd, int key )
 {
 	if (!pActiveWnd)
-		return;
+		return false;
 
 	if (key ==  WXK_F5) // f5, maximize, minimize toggle
 	{
 		MyFrame *pFrame = dynamic_cast<MyFrame*>(wxTheApp->GetTopWindow());
 		if (!pFrame)
-			return;
+			return false;
 
 		wxAuiPaneInfo& pane = pFrame->m_mgr.GetPane(pActiveWnd);
 		if (pFrame->IsMaximized())
@@ -24,6 +24,7 @@ void ToggleWindow( CPrinter* pActiveWnd, int key )
 		{
 			pFrame->Maximize();
 		}
+		return true;
 	}
 
 
@@ -32,7 +33,7 @@ void ToggleWindow( CPrinter* pActiveWnd, int key )
 		static bool isMinimized = true;
 		MyFrame *pFrame = dynamic_cast<MyFrame*>(wxTheApp->GetTopWindow());
 		if (!pFrame)
-			return;
+			return false;
 
 		wxAuiPaneInfo& activePane = pFrame->m_mgr.GetPane(pActiveWnd);
 		wxAuiPaneInfoArray &panes = pFrame->m_mgr.GetAllPanes();
@@ -53,6 +54,8 @@ void ToggleWindow( CPrinter* pActiveWnd, int key )
 		}
 		isMinimized = !isMinimized;
 		pFrame->m_mgr.Update();
+		return true;
 	}
 
+	return false;
 }

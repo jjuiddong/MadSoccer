@@ -10,15 +10,16 @@ BEGIN_EVENT_TABLE( CPrinter, wxListCtrl)
 	EVT_CONTEXT_MENU(CPrinter::OnContextMenu)
 	EVT_TIMER(ID_REFRESH_TIMER, CPrinter::OnRefreshTimer)
 	EVT_MENU(MENU_CLEAR, CPrinter::OnMenuClear)
+	EVT_MENU(MENU_SCROLL, CPrinter::OnMenuScroll)
+	EVT_MENU(MENU_NOSCROLL, CPrinter::OnMenuNoScroll)
 END_EVENT_TABLE()
 
 
 CPrinter::CPrinter(wxWindow *parent, const std::string &fileName) : 
-	//wxTextCtrl(parent, -1, fileName + "\n", wxDefaultPosition, wxSize(400,150),
-		//wxTE_READONLY | wxTE_MULTILINE | wxSUNKEN_BORDER)
-wxListCtrl(parent, -1, wxDefaultPosition, wxSize(400,150), 
+	wxListCtrl(parent, -1, wxDefaultPosition, wxSize(400,150), 
 	wxLC_REPORT)
 ,	m_fileName(fileName)
+,	m_Scroll(true)
 {
 	InsertColumn(0, "Log Message");
 	SetColumnWidth(0, 1000);
@@ -57,13 +58,16 @@ void CPrinter::OnRefreshTimer(wxTimerEvent& event)
 	for (std::string line; std::getline(m_InputFile, line); )
 	{
 		const int idx = GetItemCount();
-		InsertItem( idx, line );
-		EnsureVisible(idx);
 		const int logType = ParseLogType( line );
+		InsertItem( idx, line );
+		if (m_Scroll)
+			EnsureVisible(idx);
 		switch (logType)
 		{
 		case 0: SetItemBackgroundColour(idx, wxColour(255,100,0)); break;
 		case 1: SetItemBackgroundColour(idx, wxColour(255,255,0)); break;
+		case 2: SetItemBackgroundColour(idx, wxColour(154,205,50)); break;
+		case 3: SetItemBackgroundColour(idx, wxColour(143,188,143)); break;
 		}
 		
 		m_Pos = m_InputFile.tellg();
@@ -82,6 +86,11 @@ void CPrinter::OnContextMenu(wxContextMenuEvent& event)
 
 	wxMenu menu;
 	menu.Append(MENU_CLEAR, wxT("&Clear"));
+	menu.AppendSeparator();
+	menu.AppendCheckItem(MENU_SCROLL, "&Scroll");
+	menu.AppendCheckItem(MENU_NOSCROLL, "&NoScroll");
+	menu.Check(MENU_SCROLL, m_Scroll);
+	menu.Check(MENU_NOSCROLL, !m_Scroll);
 	PopupMenu(&menu, point);
 }
 
@@ -95,22 +104,45 @@ void CPrinter::OnMenuClear(wxCommandEvent& event)
 }
 
 
+void CPrinter::OnMenuNoScroll(wxCommandEvent& event)
+{
+	m_Scroll = false;
+}
+
+void CPrinter::OnMenuScroll(wxCommandEvent& event)
+{
+	m_Scroll = true;
+}
+
+void ReplaceAll (string& strSrc, const string& strFind, const string& strDest)
+{
+	size_t j;
+	while ((j = strSrc.find(strFind)) != string::npos)
+		strSrc.replace(j, strFind.length(), strDest);
+} 
+
+
 /**
 @brief   { type number } parse 
 */
-int CPrinter::ParseLogType(const string &msg)
+int CPrinter::ParseLogType(string &msg)
 {
-	const int critical_pos = msg.find( "Critical" );
-	if (string::npos != critical_pos)
+	if (string::npos != msg.find( "Critical" ))
 		return 0;
 
-	const int problem_pos = msg.find( "Problem" );
-	if (string::npos != problem_pos)
+	if (string::npos != msg.find( "Problem" ))
+		return 1;
+	if (string::npos != msg.find( "Error" ))
 		return 1;
 
-	const int error_pos = msg.find( "Error" );
-	if (string::npos != error_pos)
-		return 1;
+	if (string::npos != msg.find("Success"))
+		return 2;
+
+	if (string::npos != msg.find("#highlight"))
+	{
+		ReplaceAll(msg, "#highlight", "");
+		return 3;
+	}
 
 	const int pos1 = msg.find( "{" );
 	const int pos2 = msg.find( "}" );
@@ -167,5 +199,7 @@ wxColour CPrinter::GetFileName2Color(const std::string &fileName)
  */
 void CPrinter::OnKeyDown(wxKeyEvent& event)
 {
-	ToggleWindow(this, event.GetKeyCode());
+	//event.Skip();
+	if (!ToggleWindow(this, event.GetKeyCode()))
+		event.Skip();
 }

@@ -1,5 +1,5 @@
 #include "basic_ProtocolListener.h"
-#include "Network/Controller/NetController.h"
+#include "Network/Controller/Controller.h"
 
 using namespace basic;
 
@@ -8,13 +8,13 @@ static basic::s2c_Dispatcher g_basic_s2c_Dispatcher;
 basic::s2c_Dispatcher::s2c_Dispatcher()
 	: IProtocolDispatcher(basic::s2c_Dispatcher_ID)
 {
-	CNetController::Get()->AddDispatcher(this);
+	CController::Get()->AddDispatcher(this);
 }
 
 //------------------------------------------------------------------------
 // 패킷의 프로토콜에 따라 해당하는 리스너의 함수를 호출한다.
 //------------------------------------------------------------------------
-void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList &listeners)
+bool basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList &listeners)
 {
 	const int protocolId = packet.GetProtocolId();
 	const int packetId = packet.GetPacketId();
@@ -24,9 +24,14 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		{
 			ProtocolListenerList recvListener;
 			if (!ListenerMatching<s2c_ProtocolListener>(listeners, recvListener))
-				break;
+				return false;
 
-			SEND_LISTENER(s2c_ProtocolListener, recvListener, func1(packet.GetSenderId()) );
+			SetCurrentDispatchPacket( &packet );
+
+			func1_Packet data;
+			data.pdispatcher = this;
+			data.senderId = packet.GetSenderId();
+			SEND_LISTENER(s2c_ProtocolListener, recvListener, func1(data));
 		}
 		break;
 
@@ -34,11 +39,15 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		{
 			ProtocolListenerList recvListener;
 			if (!ListenerMatching<s2c_ProtocolListener>(listeners, recvListener))
-				break;
+				return false;
 
-			std::string str;
-			packet >> str;
-			SEND_LISTENER(s2c_ProtocolListener, recvListener, func2(packet.GetSenderId(), str) );
+			SetCurrentDispatchPacket( &packet );
+
+			func2_Packet data;
+			data.pdispatcher = this;
+			data.senderId = packet.GetSenderId();
+			packet >> data.str;
+			SEND_LISTENER(s2c_ProtocolListener, recvListener, func2(data));
 		}
 		break;
 
@@ -46,11 +55,15 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		{
 			ProtocolListenerList recvListener;
 			if (!ListenerMatching<s2c_ProtocolListener>(listeners, recvListener))
-				break;
+				return false;
 
-			float value;
-			packet >> value;
-			SEND_LISTENER(s2c_ProtocolListener, recvListener, func3(packet.GetSenderId(), value) );
+			SetCurrentDispatchPacket( &packet );
+
+			func3_Packet data;
+			data.pdispatcher = this;
+			data.senderId = packet.GetSenderId();
+			packet >> data.value;
+			SEND_LISTENER(s2c_ProtocolListener, recvListener, func3(data));
 		}
 		break;
 
@@ -58,9 +71,14 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		{
 			ProtocolListenerList recvListener;
 			if (!ListenerMatching<s2c_ProtocolListener>(listeners, recvListener))
-				break;
+				return false;
 
-			SEND_LISTENER(s2c_ProtocolListener, recvListener, func4(packet.GetSenderId()) );
+			SetCurrentDispatchPacket( &packet );
+
+			func4_Packet data;
+			data.pdispatcher = this;
+			data.senderId = packet.GetSenderId();
+			SEND_LISTENER(s2c_ProtocolListener, recvListener, func4(data));
 		}
 		break;
 
@@ -68,6 +86,7 @@ void basic::s2c_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		assert(0);
 		break;
 	}
+	return true;
 }
 
 
@@ -77,13 +96,13 @@ static basic::c2s_Dispatcher g_basic_c2s_Dispatcher;
 basic::c2s_Dispatcher::c2s_Dispatcher()
 	: IProtocolDispatcher(basic::c2s_Dispatcher_ID)
 {
-	CNetController::Get()->AddDispatcher(this);
+	CController::Get()->AddDispatcher(this);
 }
 
 //------------------------------------------------------------------------
 // 패킷의 프로토콜에 따라 해당하는 리스너의 함수를 호출한다.
 //------------------------------------------------------------------------
-void basic::c2s_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList &listeners)
+bool basic::c2s_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList &listeners)
 {
 	const int protocolId = packet.GetProtocolId();
 	const int packetId = packet.GetPacketId();
@@ -93,11 +112,15 @@ void basic::c2s_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		{
 			ProtocolListenerList recvListener;
 			if (!ListenerMatching<c2s_ProtocolListener>(listeners, recvListener))
-				break;
+				return false;
 
-			std::string str;
-			packet >> str;
-			SEND_LISTENER(c2s_ProtocolListener, recvListener, func2(packet.GetSenderId(), str) );
+			SetCurrentDispatchPacket( &packet );
+
+			func2_Packet data;
+			data.pdispatcher = this;
+			data.senderId = packet.GetSenderId();
+			packet >> data.str;
+			SEND_LISTENER(c2s_ProtocolListener, recvListener, func2(data));
 		}
 		break;
 
@@ -105,11 +128,15 @@ void basic::c2s_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		{
 			ProtocolListenerList recvListener;
 			if (!ListenerMatching<c2s_ProtocolListener>(listeners, recvListener))
-				break;
+				return false;
 
-			float value;
-			packet >> value;
-			SEND_LISTENER(c2s_ProtocolListener, recvListener, func3(packet.GetSenderId(), value) );
+			SetCurrentDispatchPacket( &packet );
+
+			func3_Packet data;
+			data.pdispatcher = this;
+			data.senderId = packet.GetSenderId();
+			packet >> data.value;
+			SEND_LISTENER(c2s_ProtocolListener, recvListener, func3(data));
 		}
 		break;
 
@@ -117,6 +144,7 @@ void basic::c2s_Dispatcher::Dispatch(CPacket &packet, const ProtocolListenerList
 		assert(0);
 		break;
 	}
+	return true;
 }
 
 

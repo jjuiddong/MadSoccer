@@ -29,5 +29,5 @@ Global
 
 
 class CPrinter;
-void ToggleWindow( CPrinter* pActiveWnd, int key );
+bool ToggleWindow( CPrinter* pActiveWnd, int key );
 

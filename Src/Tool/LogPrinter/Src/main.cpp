@@ -127,12 +127,16 @@ void MyFrame::OnDropFiles(wxDropFilesEvent& event)
 void MyFrame::OnKeyDown(wxKeyEvent& event)
 {
 	wxWindow *pWnd = NULL;
-	if (344 == event.GetKeyCode()) // VK_F7
+	if (WXK_F5 == event.GetKeyCode())
 	{
 		if (IsMaximized())
 			Restore();
 		else
 			Maximize();
+	}
+	else
+	{
+		event.Skip();
 	}
 }
 
