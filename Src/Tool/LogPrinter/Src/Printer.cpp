@@ -3,6 +3,8 @@
 #include "printer.h"
 #include <iostream>
 #include <fstream>
+#include "frame.h"
+
 
 using namespace std;
 
@@ -10,6 +12,7 @@ BEGIN_EVENT_TABLE( CPrinter, wxListCtrl)
 	EVT_CONTEXT_MENU(CPrinter::OnContextMenu)
 	EVT_TIMER(ID_REFRESH_TIMER, CPrinter::OnRefreshTimer)
 	EVT_MENU(MENU_CLEAR, CPrinter::OnMenuClear)
+	EVT_MENU(MENU_TOPMOST, CPrinter::OnMenuTopmost)
 	EVT_MENU(MENU_SCROLL, CPrinter::OnMenuScroll)
 	EVT_MENU(MENU_NOSCROLL, CPrinter::OnMenuNoScroll)
 END_EVENT_TABLE()
@@ -22,7 +25,7 @@ CPrinter::CPrinter(wxWindow *parent, const std::string &fileName) :
 ,	m_Scroll(true)
 {
 	InsertColumn(0, "Log Message");
-	SetColumnWidth(0, 1000);
+	SetColumnWidth(0, 2000);
 	SetBackgroundColour( GetFileName2Color(fileName) );
 
 	m_Timer.SetOwner(this, ID_REFRESH_TIMER);
@@ -85,12 +88,17 @@ void CPrinter::OnContextMenu(wxContextMenuEvent& event)
 	point = ScreenToClient(point);
 
 	wxMenu menu;
+	menu.AppendCheckItem(MENU_TOPMOST, wxT("&TopMost"));
 	menu.Append(MENU_CLEAR, wxT("&Clear"));
 	menu.AppendSeparator();
 	menu.AppendCheckItem(MENU_SCROLL, "&Scroll");
 	menu.AppendCheckItem(MENU_NOSCROLL, "&NoScroll");
 	menu.Check(MENU_SCROLL, m_Scroll);
 	menu.Check(MENU_NOSCROLL, !m_Scroll);
+
+	MyFrame *pFrame = dynamic_cast<MyFrame*>(wxTheApp->GetTopWindow());
+	if (pFrame)
+		menu.Check(MENU_TOPMOST, pFrame->IsTopMost());
 	PopupMenu(&menu, point);
 }
 
@@ -202,4 +210,15 @@ void CPrinter::OnKeyDown(wxKeyEvent& event)
 	//event.Skip();
 	if (!ToggleWindow(this, event.GetKeyCode()))
 		event.Skip();
+}
+
+
+/**
+ @brief 
+ */
+void CPrinter::OnMenuTopmost(wxCommandEvent& event)
+{
+	MyFrame *pFrame = dynamic_cast<MyFrame*>(wxTheApp->GetTopWindow());
+	if (pFrame)
+		pFrame->ToggleTopMost();	
 }

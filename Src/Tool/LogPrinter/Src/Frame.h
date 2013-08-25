@@ -18,6 +18,9 @@ class MyFrame : public wxFrame
 public:
 	MyFrame(wxWindow* parent);
 	~MyFrame() { m_mgr.UnInit(); }
+	void ToggleTopMost();
+	bool IsTopMost();
+
 protected:
 	// Event Handler
 	DECLARE_EVENT_TABLE()
@@ -30,5 +33,8 @@ public:
 	wxTimer	m_Timer;
 	std::list<std::string> m_fileList;
 	std::list<std::string> m_CmdLine;
+	bool m_IsTopMost; // default false
 };
 
+
+inline bool MyFrame::IsTopMost() { return m_IsTopMost; }

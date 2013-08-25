@@ -12,9 +12,16 @@ BEGIN_EVENT_TABLE( MyFrame, wxFrame )
 	EVT_TIMER(ID_REFRESH_TIMER, MyFrame::OnRefreshTimer)
 END_EVENT_TABLE()
 
+LONG WINAPI ExceptionFilter(__in PEXCEPTION_POINTERS pExceptionPointer)
+{
+	exit(0);
+	return 0;
+}
+
 
 MyFrame::MyFrame(wxWindow* parent) : wxFrame(parent, -1, _("LogPrinter"),
 	wxDefaultPosition, wxSize(800,600), wxDEFAULT_FRAME_STYLE)
+,	m_IsTopMost(false)
 {
 	// notify wxAUI which frame to use
 	m_mgr.SetManagedWindow(this);
@@ -35,6 +42,8 @@ MyFrame::MyFrame(wxWindow* parent) : wxFrame(parent, -1, _("LogPrinter"),
 	Connect(wxEVT_DROP_FILES, wxDropFilesEventHandler(MyFrame::OnDropFiles), NULL, this);
 	Connect(wxEVT_CHAR_HOOK, wxKeyEventHandler(MyFrame::OnKeyDown));
 
+	SetUnhandledExceptionFilter(ExceptionFilter);	
+	
 }
 
 
@@ -114,7 +123,7 @@ void MyFrame::OnDropFiles(wxDropFilesEvent& event)
 			m_mgr.AddPane(prt, wxLEFT, *it);
 			wxAuiPaneInfo& pane = m_mgr.GetPane(prt);
 			pane.MaximizeButton();
-			pane.MinSize(1000,0);
+			pane.MinSize(2000,0);
 			it++;
 		}
 		m_mgr.Update();
@@ -138,6 +147,19 @@ void MyFrame::OnKeyDown(wxKeyEvent& event)
 	{
 		event.Skip();
 	}
+}
+
+
+/**
+ @brief 
+ */
+void MyFrame::ToggleTopMost()
+{
+	if (!m_IsTopMost)
+		SetWindowStyle( wxDEFAULT_FRAME_STYLE | wxSTAY_ON_TOP );
+	else
+		SetWindowStyle( wxDEFAULT_FRAME_STYLE );
+	m_IsTopMost = !m_IsTopMost;
 }
 
 

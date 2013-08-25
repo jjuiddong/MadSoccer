@@ -13,6 +13,7 @@ class CPrinter : public wxListCtrl
 {
 	enum  {
 		MENU_CLEAR = 100,
+		MENU_TOPMOST,
 		MENU_SCROLL,
 		MENU_NOSCROLL,
 		ID_REFRESH_TIMER = 100,
@@ -29,6 +30,7 @@ protected:
 	void OnRefreshTimer(wxTimerEvent& event);
 	void OnContextMenu(wxContextMenuEvent& event);
 	void OnMenuClear(wxCommandEvent& event);
+	void OnMenuTopmost(wxCommandEvent& event);
 	void OnMenuScroll(wxCommandEvent& event);
 	void OnMenuNoScroll(wxCommandEvent& event);
 	void OnKeyDown(wxKeyEvent& event);
