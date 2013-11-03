@@ -7,9 +7,16 @@
 
 using namespace std;
 
+namespace {
+	enum {
+		MENU_OPENFILE,
+	};
+}
 
 BEGIN_EVENT_TABLE( MyFrame, wxFrame )
 	EVT_TIMER(ID_REFRESH_TIMER, MyFrame::OnRefreshTimer)
+	EVT_CONTEXT_MENU(MyFrame::OnContextMenu)
+	EVT_MENU(MENU_OPENFILE, MyFrame::OnMenuOpenFile)
 END_EVENT_TABLE()
 
 LONG WINAPI ExceptionFilter(__in PEXCEPTION_POINTERS pExceptionPointer)
@@ -92,6 +99,38 @@ void MyFrame::OnRefreshTimer(wxTimerEvent& event)
 
 
 /**
+@brief  
+*/
+void MyFrame::OnContextMenu(wxContextMenuEvent& event)
+{
+	wxPoint point = event.GetPosition();
+	point = ScreenToClient(point);
+
+	wxMenu menu;
+	menu.AppendCheckItem(MENU_OPENFILE, wxT("&OpenFile"));
+	PopupMenu(&menu, point);
+}
+
+
+/**
+@brief  
+*/
+void MyFrame::OnMenuOpenFile(wxCommandEvent& event)
+{
+	const string filename = wxFileSelector("Choose a file to open");
+	if (!filename.empty())
+	{
+		CPrinter *prt = new CPrinter(this, filename);
+		m_mgr.AddPane(prt, wxLEFT, filename);
+		wxAuiPaneInfo& pane = m_mgr.GetPane(prt);
+		pane.MaximizeButton();
+		pane.MinSize(2000,0);
+		m_mgr.Update();
+	}
+}
+
+
+/**
  @brief 
  */
 void MyFrame::OnDropFiles(wxDropFilesEvent& event)    
@@ -120,7 +159,7 @@ void MyFrame::OnDropFiles(wxDropFilesEvent& event)
 		{
 			std::string fileName = *it;
 			CPrinter *prt = new CPrinter(this, fileName);
-			m_mgr.AddPane(prt, wxLEFT, *it);
+			m_mgr.AddPane(prt, wxLEFT, fileName);
 			wxAuiPaneInfo& pane = m_mgr.GetPane(prt);
 			pane.MaximizeButton();
 			pane.MinSize(2000,0);

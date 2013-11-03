@@ -24,7 +24,9 @@ public:
 protected:
 	// Event Handler
 	DECLARE_EVENT_TABLE()
+	void OnContextMenu(wxContextMenuEvent& event);
 	void OnRefreshTimer(wxTimerEvent& event);
+	void OnMenuOpenFile(wxCommandEvent& event);
 	void OnDropFiles(wxDropFilesEvent& event);
 	void OnKeyDown(wxKeyEvent& event);
 
