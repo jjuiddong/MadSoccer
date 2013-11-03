@@ -26,7 +26,10 @@ Global
 #include <algorithm>
 #include <fstream>
 #include <set>
+#include <vector>
 
+using std::string;
+using std::vector;
 
 class CPrinter;
 bool ToggleWindow( CPrinter* pActiveWnd, int key );

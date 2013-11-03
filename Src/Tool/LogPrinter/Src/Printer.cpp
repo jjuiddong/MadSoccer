@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include "frame.h"
+#include <wx/kbdstate.h>
 
 
 using namespace std;
@@ -13,6 +14,7 @@ BEGIN_EVENT_TABLE( CPrinter, wxListCtrl)
 	EVT_TIMER(ID_REFRESH_TIMER, CPrinter::OnRefreshTimer)
 	EVT_MENU(MENU_CLEAR, CPrinter::OnMenuClear)
 	EVT_MENU(MENU_TOPMOST, CPrinter::OnMenuTopmost)
+	EVT_MENU(MENU_SEARCH, CPrinter::OnMenuSearch)
 	EVT_MENU(MENU_SCROLL, CPrinter::OnMenuScroll)
 	EVT_MENU(MENU_NOSCROLL, CPrinter::OnMenuNoScroll)
 END_EVENT_TABLE()
@@ -39,6 +41,7 @@ CPrinter::CPrinter(wxWindow *parent, const std::string &fileName) :
 	}
 	m_InputFile.close();
 
+	m_SearchIndice.reserve(128);
 	Connect(wxEVT_CHAR_HOOK, wxKeyEventHandler(CPrinter::OnKeyDown));
 }
 
@@ -89,6 +92,7 @@ void CPrinter::OnContextMenu(wxContextMenuEvent& event)
 
 	wxMenu menu;
 	menu.AppendCheckItem(MENU_TOPMOST, wxT("&TopMost"));
+	menu.AppendCheckItem(MENU_SEARCH, wxT("&Search"));
 	menu.Append(MENU_CLEAR, wxT("&Clear"));
 	menu.AppendSeparator();
 	menu.AppendCheckItem(MENU_SCROLL, "&Scroll");
@@ -209,7 +213,14 @@ void CPrinter::OnKeyDown(wxKeyEvent& event)
 {
 	//event.Skip();
 	if (!ToggleWindow(this, event.GetKeyCode()))
+	{
+		switch(event.GetKeyCode())
+		{
+		case WXK_F3: NextSearchText(event.ShiftDown()); break;
+		}
+
 		event.Skip();
+	}
 }
 
 
@@ -221,4 +232,134 @@ void CPrinter::OnMenuTopmost(wxCommandEvent& event)
 	MyFrame *pFrame = dynamic_cast<MyFrame*>(wxTheApp->GetTopWindow());
 	if (pFrame)
 		pFrame->ToggleTopMost();	
+}
+
+
+/**
+@brief  
+*/
+void CPrinter::OnMenuSearch(wxCommandEvent& event)
+{
+	m_SearchIndice.clear();
+
+	string searchText = wxGetTextFromUser("Text", "Search");
+	if (searchText.empty())
+		return;
+
+	const string srcSearchText = searchText;
+	std::transform(searchText.begin(), searchText.end(), searchText.begin(), tolower);
+
+	const int size = GetItemCount();
+	for (int i=0; i < size; ++i)
+	{
+		string text = GetItemText(i);
+		std::transform(text.begin(), text.end(), text.begin(), tolower);
+
+		if (text.find(searchText) != string::npos)
+			m_SearchIndice.push_back(i);
+	}
+
+	if (m_SearchIndice.empty())
+	{// Not Found
+		wxMessageBox( wxString::Format("Not Found '%s'", srcSearchText.c_str()) );
+	}
+	else
+	{
+		// Select 된 모든 라인을 초기화 하고, 첫 번째 검색 라인으로 이동한다.
+		SelectAllSearchText();
+
+		const int row = m_SearchIndice[0];
+		EnsureVisible(row);
+		SetItemState(row, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
+	}
+}
+
+
+/**
+@brief  
+*/
+void CPrinter::NextSearchText(const bool IsFindPrev) // IsFindPrev=false
+{
+	if (m_SearchIndice.empty() || (GetItemCount()==0))
+	{
+		wxMessageBox( "Not Exist Search Text" );
+		return;
+	}
+
+	int focusIdx = GetFocusItem();
+
+	const int first = (IsFindPrev)? m_SearchIndice.size()-1 : 0;
+	const int last = (IsFindPrev)? -1 : m_SearchIndice.size();
+	const int add = (IsFindPrev)? -1 : 1;
+
+	bool IsFindNext = false;
+	for (int i=first; i != last; i+=add)
+	{
+		if ((IsFindPrev && (m_SearchIndice[ i] < focusIdx)) ||
+			(!IsFindPrev && (m_SearchIndice[ i] > focusIdx)))
+		{
+			IsFindNext = true;
+
+			SelectAllSearchText();
+
+			const int row = m_SearchIndice[ i];
+			EnsureVisible(row);
+			SetItemState(row, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
+			break;
+		}
+	}
+
+	if (!IsFindNext)
+	{
+		if (focusIdx > 0)
+		{
+			SetItemState(focusIdx, 0, wxLIST_STATE_SELECTED);
+			SetItemState(focusIdx, 0, wxLIST_STATE_FOCUSED);
+		}
+
+		if (IsFindPrev)
+		{
+			wxMessageBox( "Go To Last Line" );
+			SetItemState(GetItemCount()-1, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
+		}
+		else
+		{
+			wxMessageBox( "Go To First Line" );
+			SetItemState(0, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
+		}
+	}
+}
+
+
+/**
+@brief  
+*/
+int CPrinter::GetFocusItem()
+{
+	const int size = GetItemCount();
+	for (int i=0; i < size; ++i)
+	{
+		if (wxLIST_STATE_FOCUSED == GetItemState(i, wxLIST_STATE_FOCUSED))
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+
+/**
+@brief  선택한 모든 라인을 초기화 하고, 검색 스트링이 포함된 라인을 선택해서 출력한다.
+*/
+void CPrinter::SelectAllSearchText()
+{
+	const int size = GetItemCount();
+	for (int i=0; i < size; ++i)
+	{
+		if (wxLIST_STATE_SELECTED == GetItemState(i, wxLIST_STATE_SELECTED))
+			SetItemState(i, 0, wxLIST_STATE_SELECTED);
+	}
+
+	for (u_int i=0; i < m_SearchIndice.size(); ++i)
+		SetItemState(m_SearchIndice[ i], wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 }
