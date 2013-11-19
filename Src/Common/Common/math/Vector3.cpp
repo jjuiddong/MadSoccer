@@ -66,7 +66,7 @@ Vector3 Vector3::operator + ( const Vector3& v ) const
 //-------------------------------
 // operator -
 //-------------------------------
-Vector3 Vector3::operator - ( Vector3& v ) const
+Vector3 Vector3::operator - ( const Vector3& v ) const
 {
 	Vector3	vDummy;
 	vDummy.x = x - v.x;

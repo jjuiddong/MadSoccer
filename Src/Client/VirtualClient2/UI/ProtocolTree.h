@@ -17,7 +17,7 @@ namespace network
 class CDlgProperty;
 class CProtocolTree : public CTreeCtrlBase
 {
-	DECLARE_DYNAMIC(CProtocolTree)
+	//DECLARE_DYNAMIC(CProtocolTree)
 public:
 	CProtocolTree();
 	virtual ~CProtocolTree();

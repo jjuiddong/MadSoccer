@@ -48,7 +48,7 @@ namespace common
 		HANDLE		GetHandle() const;
 
 		void			Start();				// 쓰레드 실행
-		void			Terminate();		// 쓰레드 종료
+		void			Terminate(const int milliSeconds=-1);		// 쓰레드 종료
 
 		void			Send2ThreadMessage( threadmsg::MSG msg, WPARAM wParam, LPARAM lParam, LPARAM added=0);
 		void			Send2ExternalMessage( int msg, WPARAM wParam, LPARAM lParam, LPARAM added=0 );
@@ -57,6 +57,8 @@ namespace common
 		
 		bool			AddTask(CTask *pTask);
 		bool			RemoveTask(CTask *pTask);
+		int			GetTaskCount();
+		CTask*		GetTask(const int taskId);
 		void			Clear();
 		void			Run();
 		void			Exit(); // call exit thread

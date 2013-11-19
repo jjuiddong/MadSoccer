@@ -87,6 +87,11 @@ namespace common
 			return m_RandomAccess.size();
 		}
 
+		void reserve(unsigned int size)
+		{
+			m_Seq.reserve(size);
+		}
+
 		iterator find(const KeyType &key) { return m_RandomAccess.find(key); }
 		iterator begin() { return m_RandomAccess.begin(); }
 		iterator end() { return m_RandomAccess.end(); }

@@ -720,7 +720,7 @@ BOOL CFastMemLoader::CollectPointerRec( DWORD curFilePos, BYTE *pStruct, MemberL
 			SDataStructure type = titor->second;
 			if( type.pointer ) // Pointer를 포함하고 있다면 true
 			{
-				int nArraySize = it->nSize / type.size; // MemberSize는 배열갯수만큼 곱해진 상태다.
+				int nArraySize = it->nSize / type.size; // MemberSize는 배열개수만큼 곱해진 상태다.
 				for( int i=0; i < nArraySize; ++i )
 				{
 					if (!CollectPointerRec( filePos + (type.size*i), (pStruct + (type.size*i)), type.pMember, pWspList ))
@@ -1086,7 +1086,7 @@ void CFastMemLoader::WriteTextData( FILE *fp, BYTE *pSrc, SMemberType *pTok )
 
 
 //-----------------------------------------------------------------------------//
-// Tab 갯수만큼 이동
+// Tab 개수만큼 이동
 //-----------------------------------------------------------------------------//
 void CFastMemLoader::WriteTab( FILE *fp, int tab )
 {

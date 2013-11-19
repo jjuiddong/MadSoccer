@@ -7,6 +7,7 @@
 
 // Include
 //	#include "stdafx.h"
+#include "../Common.h"
 	#include <d3dx9.h>
 	#include <windows.h>
 	#include <math.h>

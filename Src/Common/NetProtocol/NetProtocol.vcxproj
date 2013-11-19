@@ -13,13 +13,13 @@
   <ItemGroup>
     <CustomBuild Include="basic.prt">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(BIN)\ProtocolCompiler.exe %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\Bin\ProtocolCompiler.exe %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Src\%(Filename)_Protocol.h;Src\%(Filename)_Protocol.cpp;Src\%(Filename)_ProtocolListener.h;Src\%(Filename)_ProtocolListener.cpp;</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename) protocol Compile...</Message>
     </CustomBuild>
     <CustomBuild Include="login.prt">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(BIN)\ProtocolCompiler.exe %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\Bin\ProtocolCompiler.exe %(FullPath)</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename) protocol Compile...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Src\%(Filename)_Protocol.h;Src\%(Filename)_Protocol.cpp;Src\%(Filename)_ProtocolListener.h;Src\%(Filename)_ProtocolListener.cpp;</Outputs>
     </CustomBuild>
@@ -27,7 +27,7 @@
   <ItemGroup>
     <CustomBuild Include="p2pComm.prt">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(BIN)\ProtocolCompiler.exe %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\Bin\ProtocolCompiler.exe %(FullPath)</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename) protocol Compile...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Src\%(Filename)_Protocol.h;Src\%(Filename)_Protocol.cpp;Src\%(Filename)_ProtocolListener.h;Src\%(Filename)_ProtocolListener.cpp;</Outputs>
     </CustomBuild>
@@ -35,7 +35,7 @@
   <ItemGroup>
     <CustomBuild Include="farm.prt">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(BIN)\ProtocolCompiler.exe %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\Bin\ProtocolCompiler.exe %(FullPath)</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename) protocol Compile...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Src\%(Filename)_Protocol.h;Src\%(Filename)_Protocol.cpp;Src\%(Filename)_ProtocolListener.h;Src\%(Filename)_ProtocolListener.cpp;</Outputs>
     </CustomBuild>
@@ -43,7 +43,7 @@
   <ItemGroup>
     <CustomBuild Include="server_network.prt">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(BIN)\ProtocolCompiler.exe %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\Bin\ProtocolCompiler.exe %(FullPath)</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename) protocol Compile...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Src\%(Filename)_Protocol.h;Src\%(Filename)_Protocol.cpp;Src\%(Filename)_ProtocolListener.h;Src\%(Filename)_ProtocolListener.cpp;</Outputs>
     </CustomBuild>
@@ -51,7 +51,7 @@
   <ItemGroup>
     <CustomBuild Include="certify.prt">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(BIN)\ProtocolCompiler.exe %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\Bin\ProtocolCompiler.exe %(FullPath)</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename) protocol Compile...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Src\%(Filename)_Protocol.h;Src\%(Filename)_Protocol.cpp;Src\%(Filename)_ProtocolListener.h;Src\%(Filename)_ProtocolListener.cpp;</Outputs>
     </CustomBuild>
@@ -84,8 +84,13 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(LIBOUT)</OutDir>
-    <IntDir>$(OUT)</IntDir>
+    <OutDir>../../../Lib/$(ProjectName)/$(Configuration)/</OutDir>
+    <IntDir>../../../Obj/$(ProjectName)/$(Configuration)/</IntDir>
+    <IncludePath>$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>../../../Lib/$(ProjectName)/$(Configuration)/</OutDir>
+    <IntDir>../../../Obj/$(ProjectName)/$(Configuration)/</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

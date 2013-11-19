@@ -1,5 +1,6 @@
 
 #include "stdafx.h"
+//#include "../Common.h"
 #include "math.h"
 
 Vector3 v0;

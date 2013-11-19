@@ -11,7 +11,7 @@
 using namespace network;
 
 // CProtocolTree
-IMPLEMENT_DYNAMIC(CProtocolTree, CTreeCtrlBase)
+//IMPLEMENT_DYNAMIC(CProtocolTree, CTreeCtrlBase)
 
 CProtocolTree::CProtocolTree() : CTreeCtrlBase(TREE_ITEM)
 {

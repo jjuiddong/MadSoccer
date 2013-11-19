@@ -51,11 +51,16 @@ void CThread::Start()
 //------------------------------------------------------------------------
 // 쓰레드 종료
 //------------------------------------------------------------------------
-void CThread::Terminate()
+void CThread::Terminate(const int milliSeconds) //milliSeconds = -1
 {
 	m_State = END;
-	WaitForSingleObject(m_hThread, 500); // 쓰레드가 종료될 때까지 기다린다.
-
+	DWORD timeOutTime = (milliSeconds>=0)? milliSeconds : INFINITE;
+	WaitForSingleObject(m_hThread, timeOutTime); // 쓰레드가 종료될 때까지 기다린다.
+	//TerminateThread(m_hThread, 0);
+	//_endthreadex(m_hThread);
+	//WaitForSingleObject(m_hThread, 0); // 쓰레드가 종료될 때까지 기다린다.
+	CloseHandle(m_hThread);
+	m_hThread = NULL;
 }
 
 
@@ -172,6 +177,29 @@ bool CThread::RemoveTask(CTask *pTask)
 
 	m_Tasks.remove_if( IsTask(pTask->GetId()) );
 	return true;
+}
+
+
+/**
+ @brief 
+ */
+int CThread::GetTaskCount()
+{
+	AutoCSLock cs(m_TaskCS);
+	return m_Tasks.size();
+}
+
+
+/**
+@brief  taskId에 해당하는 task를 리턴.
+*/
+CTask*	CThread::GetTask(const int taskId)
+{
+	//AutoCSLock cs(m_TaskCS); 동기화 하지 않는다.
+	TaskItor it = find_if(m_Tasks.begin(), m_Tasks.end(), IsTask(taskId));
+	if (m_Tasks.end() == it)
+		return NULL; // 없다면 실패
+	return *it;
 }
 
 

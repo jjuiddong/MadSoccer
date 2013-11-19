@@ -112,6 +112,7 @@ typedef unsigned short u_short;
 #include "etc/Dump.h"
 #include "CodeGen.h"
 #include "container/VectorMap.h"
+#include "container/VectorSet.h"
 #include "container/StableVectorMap.h"
 
 #include "event/Event.h"

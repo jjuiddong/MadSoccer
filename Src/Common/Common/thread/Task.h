@@ -24,6 +24,7 @@ namespace common
 		int GetId() const;
 		const std::string& GetName() const;
 		void	SetThread(CThread *p);
+		CThread* GetThread();
 
 		// overriding
 		virtual RUN_RESULT	Run() { return RR_END; }
@@ -39,6 +40,7 @@ namespace common
 	inline int CTask::GetId() const { return m_Id; }
 	inline const std::string& CTask::GetName() const { return m_Name; }
 	inline void	 CTask::SetThread(CThread *p) { m_pThread = p; }
+	inline CThread* CTask::GetThread() { return m_pThread; }
 
 
 	// list<CTask*>에서 CTask를 찾는 객체

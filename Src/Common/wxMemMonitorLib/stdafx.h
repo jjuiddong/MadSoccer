@@ -16,8 +16,8 @@
 #define VC_EXTRALEAN            // 거의 사용되지 않는 내용은 Windows 헤더에서 제외합니다.
 #endif
 
-#include <afx.h>
-#include <afxwin.h>         // MFC 핵심 및 표준 구성 요소입니다.
+//#include <afx.h>
+//#include <afxwin.h>         // MFC 핵심 및 표준 구성 요소입니다.
 
 
 
@@ -74,6 +74,7 @@
 #pragma warning(disable: 4355) // disable warning, using this pointer in constructor 
 
 #define  BOOST_DATE_TIME_NO_LIB // boost/interprocess
+#define  BOOST_SPIRIT_THREADSAFE // boost spirits thread safe mode
 
 #undef wxUSE_CMDLINE_PARSER
 
