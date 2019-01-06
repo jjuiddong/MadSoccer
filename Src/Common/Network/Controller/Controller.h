@@ -82,12 +82,12 @@ namespace network
 		DispatcherMap				m_Dispatchers;
 		common::CThread		m_AcceptThread;
 
-		/// CServer가 SERVICE_THREAD 타입일때 추가된다.
-		/// Thread 인스턴스는 m_WorkThreads 에 저장된다.
+		// CServer가 SERVICE_THREAD 타입일때 추가된다.
+		// Thread 인스턴스는 m_WorkThreads 에 저장된다.
 		ThreadPtr						m_pSeperateServerWorkThread;
 
-		/// CCoreClient가 SERVICE_THREAD 타입일때 추가된다.
-		/// Thread 인스턴스는 m_WorkThreads 에 저장된다.
+		// CCoreClient가 SERVICE_THREAD 타입일때 추가된다.
+		// Thread 인스턴스는 m_WorkThreads 에 저장된다.
 		ThreadPtr						m_pSeperateClientWorkThread;	
 
 		ThreadList					m_WorkThreads;

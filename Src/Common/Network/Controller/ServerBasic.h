@@ -21,18 +21,18 @@ namespace network
 		CServerBasic(PROCESS_TYPE procType);
 		virtual ~CServerBasic();
 
-		/// Packet
+		// Packet
 		virtual bool	Send(netid netId, const SEND_FLAG flag, CPacket &packet) override;
 		virtual bool	SendAll(CPacket &packet) override;
 
-		/// User
+		// User
 		bool				AddPlayer(CPlayer *pUser);
 		bool				RemovePlayer(CPlayer *pUser);
 		bool				RemovePlayer(netid netId);
 		PlayerPtr		GetPlayer(netid netId);
 		PlayerPtr		GetPlayer(const std::string &id);
 
-		/// Session
+		// Session
 		bool				AddSession(SOCKET sock, const std::string &ip);
 		CSession*	GetSession(netid netId);
 		CSession*	GetSession(const std::string &clientId);
@@ -42,10 +42,10 @@ namespace network
 		bool				IsExist(netid netId);
 		netid			GetNetIdFromSocket(SOCKET sock);
 
-		/// Group
+		// Group
 		CGroup&		GetRootGroup();
 
-		/// Factory
+		// Factory
 		void				SetSessionFactory( ISessionFactory *ptr );
 		ISessionFactory* GetSessionFactory() const;
 		void				SetGroupFactory( IGroupFactory *ptr );
@@ -53,7 +53,7 @@ namespace network
 		void				SetPlayerFactory( IPlayerFactory *ptr );
 		IPlayerFactory* GetPlayerFactory() const;
 
-		/// Etc
+		// Etc
 		bool				IsServerOn() const;
 		void				Proc();
 		bool				Stop();
@@ -75,7 +75,7 @@ namespace network
 		virtual void	OnTimer(int id);
 
 	protected:
-		/// Etc
+		// Etc
 		void				MainLoop();
 		void				InitRootGroup();
 		bool				AcceptProcess();

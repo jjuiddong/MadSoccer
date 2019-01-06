@@ -24,7 +24,7 @@ namespace network
 
 		struct SPacketData
 		{
-			netid rcvNetId;	/// 패킷을 받은 서버의 netid
+			netid rcvNetId;	// 패킷을 받은 서버의 netid
 			CPacket packet;
 			SPacketData() {}
 			SPacketData(netid _rcvNetId, const CPacket &p) : rcvNetId(_rcvNetId), packet(p) {}
@@ -39,19 +39,19 @@ namespace network
 	protected:
 		typedef std::list<SPacketData> PacketQueue;
 		typedef PacketQueue::iterator PacketItor;
-		PacketQueue	m_Packets;				/// 네트워크로부터 받은 패킷을 저장한다.
+		PacketQueue	m_Packets;				// 네트워크로부터 받은 패킷을 저장한다.
 		common::CriticalSection	m_CS;
 	};
 
 
-	/// Push Packet 
+	// Push Packet 
 	inline void CPacketQueue::PushPacket(const SPacketData &data)
 	{
 		common::AutoCSLock cs(m_CS);
 		m_Packets.push_back(data);
 	}
 
-	/// Pop Packet
+	// Pop Packet
 	inline bool CPacketQueue::PopPacket(OUT SPacketData &data)
 	{
 		common::AutoCSLock cs(m_CS);
@@ -62,7 +62,7 @@ namespace network
 		return true;
 	}
 
-	/// Pop Packet whose recvId
+	// Pop Packet whose recvId
 	inline bool CPacketQueue::PopPacket(netid recvId, OUT SPacketData &data)
 	{
 		common::AutoCSLock cs(m_CS);
@@ -83,7 +83,7 @@ namespace network
 		return false;
 	}
 
-	/// recvId 가 받는 패킷을 모두 제거한다.
+	// recvId 가 받는 패킷을 모두 제거한다.
 	inline bool CPacketQueue::RemovePacket( netid recvId )
 	{
 		common::AutoCSLock cs(m_CS);

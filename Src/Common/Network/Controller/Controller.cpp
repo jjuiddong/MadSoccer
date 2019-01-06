@@ -89,8 +89,8 @@ bool CController::StartServer(int port, ServerBasicPtr pSvr)
 {
 	RETV(!pSvr, false);
 
-	{ /// Sync
-		common::AutoCSLock cs(m_CS); 	/// Sync
+	{ // Sync
+		common::AutoCSLock cs(m_CS); 	// Sync
 		Servers::iterator it = m_Servers.find(pSvr->GetNetId());
 		if (m_Servers.end() != it)
 		{
@@ -108,8 +108,8 @@ bool CController::StartServer(int port, ServerBasicPtr pSvr)
 	// 서버 시작에 관련된 코드 추가
 	clog::Log( clog::LOG_F_N_O, "%d Server Start\n", pSvr->GetNetId() );
 
-	{ /// Sync
-		common::AutoCSLock cs(m_CS); /// Sync
+	{ // Sync
+		common::AutoCSLock cs(m_CS); // Sync
 		m_Servers.insert( Servers::value_type(pSvr->GetNetId(), pSvr) );
 		//m_ServerSockets.insert( ServerSockets::value_type(pSvr->GetSocket(), pSvr) );
 	}

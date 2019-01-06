@@ -39,10 +39,10 @@
     <ClInclude Include="LoginServerApp.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Src\LoginServer.h">
+    <ClInclude Include="Src\BasicC2SHandler_LoginSvr.h">
       <Filter>Src</Filter>
     </ClInclude>
-    <ClInclude Include="Src\BasicC2SHandler_LoginSvr.h">
+    <ClInclude Include="Src\LoginServer.h">
       <Filter>Src</Filter>
     </ClInclude>
   </ItemGroup>

@@ -25,7 +25,7 @@ void	 CMultiPlugDelegation::SetMultiPlug(MultiPlugPtr ptr)
 	//CPlugLinker::SetPlug( p); 
 	//if (p)
 	if (ptr)
-		OnConnectMultiPlug(); /// Call Event Handler
+		OnConnectMultiPlug(); // Call Event Handler
 }
 
 MultiPlugPtr CMultiPlugDelegation::GetMultiPlug() const 

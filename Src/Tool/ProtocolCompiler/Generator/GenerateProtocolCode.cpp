@@ -394,7 +394,7 @@ bool compiler::WriteListenerCpp(ofstream &fs, sRmi *rmi)
 	fs << endl;
 	//
 
-	// Diaptcher 클래스의 Dispatch() 함수 코드 생성
+	// Dispatcher 클래스의 Dispatch() 함수 코드 생성
 	WriteProtocolDispatchFunc(fs, rmi);
 	fs << endl;
 	fs << endl;

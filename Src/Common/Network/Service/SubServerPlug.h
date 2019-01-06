@@ -28,7 +28,7 @@ namespace network
 		virtual void	OnConnectMultiPlug() override;
 		void				OnConnectSubLink(CNetEvent &event );
 
-		/// Network Protocol Handler
+		// Network Protocol Handler
 		virtual bool SendServerInfo(server_network::SendServerInfo_Packet &packet) override;
 
 	private:

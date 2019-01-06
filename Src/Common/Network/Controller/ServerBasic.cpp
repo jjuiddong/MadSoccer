@@ -8,13 +8,13 @@
 using namespace network;
 
 
-CServerBasic::CServerBasic(PROCESS_TYPE procType) :
-	CPlug(procType)
-,	m_RootGroup(NULL, "root")
-,	m_pSessionFactory(new CSessionFactory()) // defalut 
-,	m_pGroupFactory(new CGroupFactory()) // default
-,	m_pPlayerFactory(new CPlayerFactory()) // default
-,	m_IsLoginCheck(false)
+CServerBasic::CServerBasic(PROCESS_TYPE procType) 
+	: CPlug(procType)
+	, m_RootGroup(NULL, "root")
+	, m_pSessionFactory(new CSessionFactory()) // defalut 
+	, m_pGroupFactory(new CGroupFactory()) // default
+	, m_pPlayerFactory(new CPlayerFactory()) // default
+	, m_IsLoginCheck(false)
 {
 	SetPort(2333);
 	m_Timers.reserve(10);
@@ -61,7 +61,7 @@ void	CServerBasic::InitRootGroup()
 
 	CGroup *pWaitGroup = m_pGroupFactory->New(); //new CGroup(NULL,"Waiting Group");
 	pWaitGroup->SetName("Waiting Group");
-	pWaitGroup->AddViewer(m_RootGroup.GetNetId()); /// root group is viewer to waitting group
+	pWaitGroup->AddViewer(m_RootGroup.GetNetId()); // root group is viewer to waitting group
 	m_WaitGroupId = pWaitGroup->GetNetId();
 	m_RootGroup.AddChild( pWaitGroup );
 }
@@ -72,7 +72,7 @@ void	CServerBasic::InitRootGroup()
 */
 void	CServerBasic::Proc()
 {
-	/// Accept
+	// Accept
 	AcceptProcess();
 	
 	const timeval t = {0, 10}; // 10 millisecond
@@ -106,7 +106,7 @@ void	CServerBasic::Proc()
 		}
 	}
 
-	/// Dispatch Packet
+	// Dispatch Packet
 	DispatchPacket();
 
 }

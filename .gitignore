@@ -177,3 +177,6 @@ Src/Client/VirtualClient2/virtualclient2_config.json
 Src/Common/NetProtocol/Src/*
 *.json
 *~
+*.db
+*.db-shm
+*.db-wal

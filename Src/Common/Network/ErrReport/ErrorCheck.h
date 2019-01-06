@@ -11,7 +11,7 @@ namespace basic { class s2c_Protocol; }
 
 namespace network
 {
-	/// Session
+	// Session
 	CSession* CheckSessionLogin(ServerBasicPtr pServer, netid clientId, 
 		basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher );
 
@@ -31,7 +31,7 @@ namespace network
 		basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher );
 
 
-	/// Player
+	// Player
 	CPlayer* CheckPlayerNetId(ServerBasicPtr pServer, netid playerId, 
 		basic::s2c_Protocol *pProtocol, IProtocolDispatcher *pDispatcher );
 

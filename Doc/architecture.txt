@@ -1,0 +1,38 @@
+
+CController
+	- 객체 관리
+	- acceptthread
+	- workerthread
+	- server
+	- client
+
+
+
+CMultiNetwork
+	- config 파일을 읽어서 server, client를 실행한다.
+	- create server, client
+
+	- CMultiPlugDelegation
+	- MultiPlugPtr
+
+
+CPlug
+	- CMultiPlug
+		- server/client mode
+		- CServerBasic
+		- CP2PClient
+		- CoreClient
+
+CMultiPlugDelegation
+	- MultiPlug 대리자
+	- Server/Client가 자동으로 생성되면, 인터페이스를 밖으로 노출하기 위해 만들어진것 같음
+
+	- CServer
+
+
+CServerBasic
+	
+
+Dispatcher
+ProtocolListener
+Protocol

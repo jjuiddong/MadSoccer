@@ -83,7 +83,7 @@ bool	CPlug::AddChild( CPlug *pChild )
 
 	auto it = m_Children.find(pChild->GetNetId());
 	if (m_Children.end() != it)
-		return false; /// Already Exist
+		return false; // Already Exist
 	
 	pChild->SetParent(this);
 	m_Children.insert( Plugs_::value_type(pChild->GetNetId(), pChild) );

@@ -10,7 +10,7 @@ network::multinetwork::CNetGroupDelegation 구현
 
 namespace network { namespace multinetwork {
 
-	/// Network Group 에 접속하는 Controller를 통해 패킷을 전달받고, 이벤트를 핸들링한다.
+	// Network Group 에 접속하는 Controller를 통해 패킷을 전달받고, 이벤트를 핸들링한다.
 	class CMultiPlugDelegation : public CPlug //public CPlugLinker
 	{
 	public:
