@@ -55,11 +55,11 @@ int _WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, in
 	// init memmonitor
 	if (!pApp->m_MemoryMonitorFilePath.empty())
 	{
-		if (!memmonitor::Init( memmonitor::INNER_PROCESS, hInstance, pApp->m_MemoryMonitorFilePath))
-		{
-			clog::Error(log::ERROR_CRITICAL, "memmonitor::init() fail !!\n" );
-			goto exit;
-		}
+		//if (!memmonitor::Init( memmonitor::INNER_PROCESS, hInstance, pApp->m_MemoryMonitorFilePath))
+		//{
+		//	clog::Error(log::ERROR_CRITICAL, "memmonitor::init() fail !!\n" );
+		//	goto exit;
+		//}
 	}
 
 	// init network
@@ -111,7 +111,7 @@ int _WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, in
 exit:
 	SAFE_DELETE(pApp);
 	network::Clear();
-	memmonitor::Cleanup();
+	//memmonitor::Cleanup();
 	return 0;
 }
 

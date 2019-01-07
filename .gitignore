@@ -180,3 +180,4 @@ Src/Common/NetProtocol/Src/*
 *.db
 *.db-shm
 *.db-wal
+*.opendb

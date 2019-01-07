@@ -1,9 +1,7 @@
-// Include
-	#include "stdafx.h"
-//#include "../Common.h"
-	#include "Math.h"
-	#include <D3dx9math.h>
-// ~Include
+#include "stdafx.h"
+#include "Math.h"
+//#include <D3dx9math.h>
+
 
 //--------------------------------
 //	Constructor
